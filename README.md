@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/ahmed1707hamed-tech/My-Portfolio/main/public/portfolio-preview.png" />
+</p>
+
 # 🚀 Ahmed Hamed | Cloud & DevOps Engineer  
 
 <p align="center">
@@ -21,7 +25,7 @@
 
 I am **Ahmed Hamed**, a senior IT student at Mansoura University specializing in **Cloud Computing and DevOps Engineering**.  
 
-I focus on building scalable cloud infrastructure, automating deployments, and designing cloud-native systems using modern DevOps practices.  
+I focus on building scalable cloud infrastructure, automating deployments, and designing cloud-native systems using modern DevOps practices.
 
 ---
 
@@ -86,7 +90,7 @@ I focus on building scalable cloud infrastructure, automating deployments, and d
 
 ✔ Migrated PHP app to AWS  
 ✔ Improved scalability & availability  
-✔ Applied cloud migration strategies  
+✔ Applied cloud migration best practices  
 
 ---
 

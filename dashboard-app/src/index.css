@@ -1,0 +1,258 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+    scroll-behavior: smooth;
+}
+
+:root {
+    /* Theme Variables - Dark Mode (Default) */
+    --clr-bg: #0a0c10;
+    --clr-bg-alt: transparent;
+    --clr-card-bg: rgba(15, 23, 42, 0.6);
+    --clr-card-border: rgba(255, 255, 255, 0.1);
+    --clr-text: #e0e6ed;
+    --clr-text-dim: #94a3b8;
+    --clr-accent: #00d2ff;
+    --clr-accent-2: #3a7bd5;
+    --clr-accent-3: #5ffbf1;
+    --clr-nav-bg: rgba(10, 12, 16, 0.95);
+    --clr-terminal-bg: #0d1117;
+    --clr-terminal-header: #161b22;
+    --clr-f-ln: #0077b5;
+    --clr-f-gh: #333;
+    --clr-f-wa: #25d366;
+    --clr-f-tw: #1da1f2;
+    --clr-f-ml: #ea4335;
+
+    /* Constants */
+    --clr-yellow: #ffbd2e;
+    --clr-red: #ff5f56;
+    --clr-green: #27c93f;
+    --clr-glass-overlay: rgba(255, 255, 255, 0.05);
+
+    /* Typography */
+    --ff-primary: 'Outfit', 'Inter', sans-serif;
+    --ff-mono: 'Fira Code', monospace;
+
+    /* Spacing */
+    --container-width: 1200px;
+    --gap: 2rem;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+
+    /* Transitions */
+    --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Shadows */
+    --shadow-accent: 0 4px 20px rgba(0, 210, 255, 0.2);
+    --shadow-card: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.light-theme {
+    --clr-bg: #f8fafc;
+    --clr-bg-alt: #f1f5f9;
+    --clr-card-bg: #ffffff;
+    --clr-card-border: rgba(0, 0, 0, 0.1);
+    --clr-text: #1f2937;
+    --clr-text-dim: #4b5563;
+    --clr-accent: #00c8ff;
+    --clr-accent-2: #3a7bd5;
+    --clr-accent-3: #00c8ff;
+    --clr-nav-bg: rgba(248, 250, 252, 0.95);
+    --clr-terminal-bg: #ffffff;
+    --clr-terminal-header: #f1f5f9;
+    --shadow-card: 0 10px 40px rgba(0, 0, 0, 0.05);
+}
+
+@layer base {
+  body {
+    @apply bg-[var(--clr-bg)] text-[var(--clr-text)] font-sans antialiased transition-colors duration-500;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--clr-bg);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--clr-accent-2);
+    border-radius: 10px;
+    border: 2px solid var(--clr-bg);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--clr-accent);
+  }
+
+  /* Support for Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--clr-accent-2) var(--clr-bg);
+  }
+}
+
+.page-container {
+    @apply max-w-[1400px] mx-auto px-4 sm:px-8 md:px-12 lg:px-16;
+}
+
+@layer components {
+  .container-custom {
+    @apply max-w-[var(--container-width)] mx-auto px-8;
+  }
+  
+  .card {
+    background-color: var(--clr-card-bg);
+    border: 1px solid var(--clr-card-border);
+    backdrop-filter: blur(6px); /* Slightly reduced blur */
+    border-radius: var(--radius-md);
+    padding: 2rem;
+    transition: var(--transition-smooth);
+    transform: translateZ(0); /* GPU acceleration */
+  }
+
+  .card:hover {
+    border-color: var(--clr-accent);
+    transform: translateY(-5px) translateZ(0);
+    opacity: 0.95;
+  }
+
+  .btn-premium {
+    padding: 0.9rem 1.8rem;
+    background: var(--clr-accent);
+    color: #fff;
+    font-weight: 700;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(0, 210, 255, 0.2);
+    border: 1px solid var(--clr-accent);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .btn-premium:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(0, 210, 255, 0.4);
+  }
+
+  .btn-cv {
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-radius: 12px;
+    background: var(--clr-accent);
+    color: #fffefe !important;
+    transition: all var(--transition-smooth);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
+    text-decoration: none;
+  }
+
+  .btn-cv:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 0 30px rgba(0, 210, 255, 0.6);
+  }
+}
+
+@layer utilities {
+  .hero-background {
+    @apply fixed inset-0 z-[-1] pointer-events-none;
+  }
+
+  .grid-overlay {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(0, 210, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 210, 255, 0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+    mask-image: radial-gradient(ellipse at center, black, transparent 80%);
+  }
+
+  .glow-sphere {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) translateZ(0); /* GPU acceleration */
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0, 210, 255, 0.12) 0%, transparent 70%);
+    filter: blur(60px); /* Reduced blur for performance */
+    will-change: transform;
+  }
+
+  .section {
+    @apply py-24 relative overflow-hidden bg-transparent;
+  }
+
+  .section-alt {
+    @apply bg-transparent;
+  }
+
+  .animate-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .animate-up.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Mobile Adjustments */
+  @media (max-width: 768px) {
+    h2 { font-size: 2.25rem !important; text-align: left !important; }
+    h3 { font-size: 1.5rem !important; }
+    .section-header { text-align: left !important; margin-bottom: 3rem !important; }
+    .container { padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
+    
+    .floating-social-container, .scroll-top-btn {
+      bottom: 15px !important;
+    }
+    .floating-social-container { left: 15px !important; }
+    .scroll-top-btn { right: 15px !important; }
+    
+    body.menu-open .floating-social-container,
+    body.menu-open .scroll-top-btn {
+      display: none !important;
+    }
+  }
+
+  @keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes blink-cursor {
+    from, to { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  @keyframes line-fade-in {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .terminal-line {
+      opacity: 0;
+      transform: translateY(10px);
+      animation: line-fade-in 0.4s forwards;
+  }
+}

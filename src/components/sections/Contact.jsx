@@ -36,7 +36,7 @@ const Contact = () => {
         emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, formRef.current, PUBLIC_KEY)
             .then(() => {
                 setTimeout(() => {
-                    setLogLines(prev => [...prev, { text: "$ message delivered successfully ✔", class: "success" }]);
+                    setLogLines(prev => [...prev, { text: "$ message delivered successfully âœ”", class: "success" }]);
                     setTimeout(() => {
                         setFinalSuccess(true);
                         setStatus("DEPLOYED");

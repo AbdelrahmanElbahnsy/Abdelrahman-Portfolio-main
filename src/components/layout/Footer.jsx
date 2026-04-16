@@ -1,5 +1,3 @@
-import React from 'react';
-
 const Footer = () => {
     return (
         <footer id="footer" className="py-16 bg-transparent border-t border-[var(--clr-card-border)] animate-up">

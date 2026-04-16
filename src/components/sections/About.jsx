@@ -31,7 +31,7 @@ const About = () => {
                                     <span className="dot yellow w-3.5 h-3.5 rounded-full bg-[#ffbd2e]"></span>
                                     <span className="dot green w-3.5 h-3.5 rounded-full bg-[#27c93f]"></span>
                                 </div>
-                                <span className="terminal-title font-mono text-xs text-[var(--clr-text-dim)] uppercase tracking-wider">~/ahmed-hamed — devops-bash</span>
+                                <span className="terminal-title font-mono text-xs text-[var(--clr-text-dim)] uppercase tracking-wider">~/ahmed-hamed â€” devops-bash</span>
                             </div>
                             <div className="terminal-body bg-[var(--clr-terminal-bg)] p-6 md:p-8 flex-grow flex items-center overflow-x-hidden">
                                 <ul className="terminal-list space-y-4 font-mono text-xs md:text-base w-full">

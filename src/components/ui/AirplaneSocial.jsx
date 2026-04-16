@@ -105,4 +105,3 @@ const AirplaneSocial = () => {
 };
 
 export default AirplaneSocial;
-

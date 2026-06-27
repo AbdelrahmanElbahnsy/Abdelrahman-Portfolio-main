@@ -1,14 +1,16 @@
-// EmailJS Configuration
+import { contact } from '../data/portfolioData';
+
+const emailjsConfig = contact.emailjs;
+
 export const EMAILJS_CONFIG = {
-  SERVICE_ID: 'service_xqf8lth',
-  TEMPLATE_ID: 'template_0fafhc9',
-  PUBLIC_KEY: '5ARUwkGWcGbfTxqeO',
+  SERVICE_ID: import.meta.env.VITE_EMAILJS_SERVICE_ID || emailjsConfig.SERVICE_ID,
+  TEMPLATE_ID: import.meta.env.VITE_EMAILJS_TEMPLATE_ID || emailjsConfig.TEMPLATE_ID,
+  PUBLIC_KEY: import.meta.env.VITE_EMAILJS_PUBLIC_KEY || emailjsConfig.PUBLIC_KEY,
 };
 
-// Helper function to send email
 export const sendEmail = async (formData) => {
-  const emailjs = await import('emailjs-com');
-  
+  const emailjs = await import('@emailjs/browser');
+
   const templateParams = {
     from_name: formData.get('from_name'),
     from_email: formData.get('from_email'),
@@ -20,6 +22,6 @@ export const sendEmail = async (formData) => {
     EMAILJS_CONFIG.SERVICE_ID,
     EMAILJS_CONFIG.TEMPLATE_ID,
     templateParams,
-    EMAILJS_CONFIG.PUBLIC_KEY
+    { publicKey: EMAILJS_CONFIG.PUBLIC_KEY }
   );
 };

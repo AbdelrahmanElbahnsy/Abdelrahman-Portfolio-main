@@ -1,27 +1,8 @@
 import React from 'react';
+import { toolchain } from '../../data/portfolioData';
 
 const Toolchain = () => {
-    const row1 = [
-        { name: 'AWS', icon: 'fab fa-aws' }, 
-        { name: 'Docker', icon: 'fab fa-docker' },
-        { name: 'Kubernetes', icon: 'fas fa-dharmachakra' },
-        { name: 'Terraform', icon: 'fas fa-code-branch' },
-        { name: 'Jenkins', icon: 'fab fa-jenkins' },
-        { name: 'GitHub Actions', icon: 'fab fa-github' },
-        { name: 'Linux', icon: 'fab fa-linux' },
-        { name: 'Python', icon: 'fab fa-python' }
-    ];
-
-    const row2 = [
-        { name: 'Bash', icon: 'fas fa-terminal' },
-        { name: 'Prometheus', icon: 'fas fa-chart-line' },
-        { name: 'Grafana', icon: 'fas fa-chart-pie' },
-        { name: 'Git', icon: 'fab fa-git-alt' },
-        { name: 'Nginx', icon: 'fas fa-server' },
-        { name: 'YAML', icon: 'fas fa-file-code' },
-        { name: 'VS Code', icon: 'fas fa-code' },
-        { name: 'SSH', icon: 'fas fa-terminal' }
-    ];
+    const { row1, row2 } = toolchain;
 
     return (
         <section id="toolchain" className="section   relative overflow-hidden bg-[rgba(10,10,10,0.3)]">
@@ -35,7 +16,6 @@ const Toolchain = () => {
             </div>
 
             <div className="toolchain-wrapper flex flex-col gap-8">
-                {/* First Row - Moving Left */}
                 <div className="scroll-container overflow-hidden whitespace-nowrap mask-edges py-2">
                     <div className="scroll-content animate-scroll-left flex gap-6 w-max">
                         {[...row1, ...row1, ...row1].map((tool, idx) => (
@@ -47,7 +27,6 @@ const Toolchain = () => {
                     </div>
                 </div>
 
-                {/* Second Row - Moving Right */}
                 <div className="scroll-container overflow-hidden whitespace-nowrap mask-edges py-2">
                     <div className="scroll-content animate-scroll-right flex gap-6 w-max">
                         {[...row2, ...row2, ...row2].map((tool, idx) => (
@@ -100,4 +79,3 @@ const Toolchain = () => {
 };
 
 export default Toolchain;
-

@@ -30,7 +30,7 @@ const ProjectCard = ({ project, onClickDetails }) => {
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-cyan-400/15 bg-[#020617]/80 shadow-[0_20px_60px_-40px_rgba(6,182,212,0.45)] transition duration-300 hover:-translate-y-1 hover:border-cyan-400/35 hover:shadow-[0_30px_80px_-35px_rgba(6,182,212,0.5)]">
-      <div className="relative h-56 overflow-hidden bg-slate-950">
+      <div className="relative h-44 overflow-hidden bg-slate-950">
         <img
           src={imageSrc}
           alt={project?.title || 'Project preview'}
@@ -43,24 +43,24 @@ const ProjectCard = ({ project, onClickDetails }) => {
         <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/30 to-transparent" />
       </div>
 
-      <div className="flex flex-1 flex-col p-6">
+      <div className="flex flex-1 flex-col p-5">
         <div className="flex-1">
-          <h3 className="text-xl font-black tracking-tight text-white">
+          <h3 className="text-[1.15rem] font-bold tracking-tight text-white leading-snug">
             {project?.title || 'Untitled Project'}
           </h3>
 
-          <TechTags technologies={technologies} maxVisible={3} className="mt-4" />
+          <TechTags technologies={technologies} maxVisible={3} className="mt-2.5" />
 
-          <p className="mt-5 line-clamp-4 text-sm leading-7 text-slate-300">
+          <p className="mt-4 line-clamp-4 text-[13px] leading-6 text-slate-300">
             {project?.description || project?.desc || 'No description available.'}
           </p>
         </div>
 
-        <div className="mt-6 flex items-center justify-between gap-3">
+        <div className="mt-5 flex items-center justify-between gap-2.5">
           <button
             type="button"
             onClick={handleOpenDetails}
-            className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:brightness-110"
+            className="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-cyan-400 to-blue-500 px-3.5 py-2 text-xs font-semibold text-slate-950 transition hover:brightness-110"
           >
             View Details
           </button>
@@ -70,7 +70,7 @@ const ProjectCard = ({ project, onClickDetails }) => {
               href={project.repo}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center rounded-xl border border-slate-600 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-cyan-400 hover:text-white"
+              className="inline-flex items-center justify-center rounded-lg border border-slate-600 px-3.5 py-2 text-xs font-semibold text-slate-200 transition hover:border-cyan-400 hover:text-white"
             >
               Repository
             </a>

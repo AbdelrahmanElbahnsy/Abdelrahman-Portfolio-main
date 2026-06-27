@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { journey } from '../../data/portfolioData';
 
 const Journey = () => {
     const sectionRef = useRef(null);
     const [scrollProgress, setScrollProgress] = useState(0);
+    const { subtitle, title, description, phases } = journey;
 
     useEffect(() => {
         const handleScroll = () => {
@@ -10,20 +12,15 @@ const Journey = () => {
             const element = sectionRef.current;
             const rect = element.getBoundingClientRect();
             const viewportHeight = window.innerHeight;
-            
-            // Calculate progress based on section visibility
-            // Start when top of section is at bottom of viewport
-            // End when bottom of section is at top of viewport
+
             const start = viewportHeight;
             const end = -rect.height;
             const current = rect.top;
-            
+
             let progress = (start - current) / (start - end);
             progress = Math.max(0, Math.min(1, progress));
-            
-            // Adjust progress to better match the timeline track length
-            // We want it to start filling as soon as the first node appears
-            setScrollProgress(progress * 1.1); 
+
+            setScrollProgress(progress * 1.1);
         };
 
         const observerOptions = {
@@ -43,7 +40,7 @@ const Journey = () => {
         timelineItems.forEach(item => revealOnScroll.observe(item));
 
         window.addEventListener('scroll', handleScroll);
-        handleScroll(); // Initial check
+        handleScroll();
 
         return () => {
             window.removeEventListener('scroll', handleScroll);
@@ -51,80 +48,38 @@ const Journey = () => {
         };
     }, []);
 
-    const journeyPhases = [
-        {
-            phase: '01',
-            title: 'Networking foundations',
-            desc: 'Routing, Switching, TCP/IP, and network design foundations built through CCNA-level networking.',
-            tags: ['Routing', 'Switching', 'TCP/IP', 'Network Design', 'CCNA']
-        },
-        {
-            phase: '02',
-            title: 'System Administration',
-            desc: 'Managing Linux and Windows Server environments, Active Directory, and core system services.',
-            tags: ['Linux', 'Windows Server', 'Active Directory', 'System Admin']
-        },
-        {
-            phase: '03',
-            title: 'Cloud Engineering',
-            desc: 'Designing and deploying cloud infrastructure on AWS using EC2, S3, IAM, and VPC networking.',
-            tags: ['AWS', 'EC2', 'S3', 'IAM', 'VPC']
-        },
-        {
-            phase: '04',
-            title: 'DevOps Foundations',
-            desc: 'Building CI/CD pipelines, containerizing applications with Docker, and automating delivery.',
-            tags: ['Docker', 'Containers', 'CI/CD', 'Jenkins', 'GitHub Actions']
-        },
-        {
-            phase: '05',
-            title: 'Infrastructure as Code',
-            desc: 'Automating infrastructure provisioning with Terraform to build scalable, repeatable environments.',
-            tags: ['Terraform', 'IaC', 'Automation', 'Scalability']
-        },
-        {
-            phase: '06',
-            title: 'Kubernetes & Observability',
-            desc: 'Running workloads on Kubernetes with full observability using Prometheus, Grafana, and logging.',
-            tags: ['Kubernetes', 'Prometheus', 'Grafana', 'Logging', 'Monitoring']
-        }
-    ];
-
     return (
         <section id="journey" className="section bg-transparent" ref={sectionRef}>
             <div className="container mx-auto px-4 sm:px-8">
                 <div className="section-header animate-up text-center mb-20">
-                    <span className="section-subtitle text-[var(--clr-accent)] font-mono uppercase tracking-widest text-sm mb-2 block">Roadmap</span>
-                    <h2 className="section-title text-2xl sm:text-3xl md:text-5xl font-black mb-4">DevOps Engineering Journey</h2>
-                    <p className="text-[var(--clr-text-dim)] max-w-xl mx-auto">Tracing the evolution from network packets to automated cloud ecosystems.</p>
+                    <span className="section-subtitle text-[var(--clr-accent)] font-mono uppercase tracking-widest text-sm mb-2 block">{subtitle}</span>
+                    <h2 className="section-title text-2xl sm:text-3xl md:text-5xl font-black mb-4">{title}</h2>
+                    <p className="text-[var(--clr-text-dim)] max-w-xl mx-auto">{description}</p>
                 </div>
 
                 <div className="timeline relative max-w-5xl mx-auto px-0 sm:px-4">
-                    {/* Main Track Background */}
                     <div className="timeline-track absolute left-[20px] md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-[2px] bg-[rgba(255,255,255,0.05)]">
-                        {/* Progressive Path */}
-                        <div 
+                        <div
                             className="timeline-track-progress absolute top-0 left-0 w-full bg-gradient-to-b from-[var(--clr-accent)] to-[var(--clr-accent-2)] shadow-[0_0_15px_var(--clr-accent)] transition-all duration-300 ease-out"
                             style={{ height: `${scrollProgress * 100}%` }}
                         ></div>
                     </div>
-                    
+
                     <div className="timeline-items space-y-24 md:space-y-32">
-                        {journeyPhases.map((phase, idx) => (
+                        {phases.map((phase, idx) => (
                             <div key={idx} className={`timeline-item relative flex items-start md:items-center gap-12 md:gap-0 ${idx % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
-                                {/* Vertical Milestone Node */}
                                 <div className={`timeline-node absolute left-[20px] md:left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 w-5 h-5 rounded-full z-10 transition-all duration-700 ${scrollProgress * 100 > (idx * 16) ? 'bg-[var(--clr-accent)] shadow-[0_0_20px_var(--clr-accent)] scale-125' : 'bg-[#1a1c23] border-2 border-[rgba(255,255,255,0.1)]'}`}>
                                     {scrollProgress * 100 > (idx * 16) && <div className="absolute inset-0 rounded-full animate-ping bg-[var(--clr-accent)] opacity-40"></div>}
                                 </div>
-                                
+
                                 <div className={`timeline-card-wrapper w-full md:w-[45%] pl-10 md:pl-0 ${idx % 2 === 0 ? 'timeline-reveal-left' : 'timeline-reveal-right'}`}>
-                                    <div className={`timeline-card card p-6 sm:p-8 border border-[var(--clr-card-border)] bg-[var(--clr-card-bg)] hover:border-[var(--clr-accent)] transition-all duration-500 rounded-3xl group relative overflow-hidden h-full`}>
+                                    <div className="timeline-card card p-6 sm:p-8 border border-[var(--clr-card-border)] bg-[var(--clr-card-bg)] hover:border-[var(--clr-accent)] transition-all duration-500 rounded-3xl group relative overflow-hidden h-full">
                                         <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--clr-accent)] opacity-[0.02] rounded-full -translate-y-1/2 translate-x-1/2 group-hover:opacity-10 transition-opacity"></div>
-                                        
+
                                         <span className="timeline-phase-label text-[var(--clr-accent)] font-black text-[10px] uppercase tracking-[0.2em] mb-3 block">PHASE {phase.phase}</span>
                                         <h3 className="timeline-title text-2xl font-black mb-4 group-hover:text-white transition-colors">{phase.title}</h3>
-                                        <p className="timeline-description text-sm text-[var(--clr-text-dim)] leading-relaxed mb-8">{phase.desc}</p>
-                                        
+                                        <p className="timeline-description text-sm text-[var(--clr-text-dim)] leading-relaxed mb-8">{phase.description}</p>
+
                                         <div className="timeline-tags flex flex-wrap gap-2">
                                             {phase.tags.map((tag, tidx) => (
                                                 <span key={tidx} className="tag px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.08)] text-[var(--clr-text-dim)] group-hover:border-[rgba(0,210,255,0.2)] group-hover:text-white transition-all">

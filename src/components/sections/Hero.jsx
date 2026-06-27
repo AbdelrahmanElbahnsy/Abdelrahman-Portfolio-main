@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, FreeMode } from 'swiper/modules';
 import 'swiper/css';
+import { heroTechSlider, personalInfo } from '../../data/portfolioData';
+import { SiMicrosoftazure } from 'react-icons/si';
 
 const Hero = () => {
     const [typedText, setTypedText] = useState('');
-    const roles = ["Cloud Engineer", "DevOps Engineer", "AWS & Kubernetes", "CI/CD Automation"];
-    
+    const { roles, badge, firstName, lastName, description, portrait, fullName, cvUrl } = personalInfo;
+
     useEffect(() => {
         let roleIndex = 0;
         let charIndex = 0;
@@ -15,7 +17,7 @@ const Hero = () => {
 
         const type = () => {
             const currentRole = roles[roleIndex];
-            
+
             if (isDeleting) {
                 setTypedText(currentRole.substring(0, charIndex - 1));
                 charIndex--;
@@ -40,44 +42,30 @@ const Hero = () => {
 
         timeout = setTimeout(type, 1500);
         return () => clearTimeout(timeout);
-    }, []);
-
-    const techItems = [
-        { icon: 'fab fa-aws', label: 'AWS (Cloud)' },
-        { icon: 'fab fa-docker', label: 'Kubernetes' },
-        { icon: 'fas fa-rocket', label: 'CI/CD' },
-        { icon: 'fas fa-code', label: 'Terraform' },
-        { icon: 'fab fa-linux', label: 'Linux Admin' },
-        { icon: 'fas fa-network-wired', label: 'Networking' },
-    ];
+    }, [roles]);
 
     return (
         <section id="hero" className="relative flex items-center min-h-screen overflow-hidden bg-transparent">
             <div className="container px-8 mx-auto">
                 <div className="grid items-center grid-cols-1 gap-16 pt-20 hero-grid md:grid-cols-2">
-                    
-                    {/* Left Side: Content */}
+
                     <div className="hero-left animate-up">
                         <div className="hero-badge-wrapper mb-3 pt-10">
                             <div className="hero-badge">
                                 <i className="fas fa-wand-magic-sparkles sparkle-icon"></i>
-                                <span>Cloud & DevOps Engineer</span>
+                                <span>{badge}</span>
                             </div>
                         </div>
-                        <h1 className="hero-name text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-[1.1] tracking-[-2px] whitespace-nowrap">
-                            Ahmed <span className="highlight-surname text-[var(--clr-accent)]">Hamed</span>
+                        <h1 className="hero-name text-5xl md:text-6xl font-black mb-6 leading-[1.1] tracking-[-2px] whitespace-nowrap">
+                            {firstName} <span className="highlight-surname text-[var(--clr-accent)]">{lastName}</span>
                         </h1>
                         <h2 className="hero-subtitle text-xl font-semibold mb-6 h-10 text-[var(--clr-accent-3)] whitespace-nowrap">
                             <span>{typedText}</span><span className="typing-cursor ml-1 animate-[blink-cursor_0.8s_infinite]">|</span>
                         </h2>
                         <p className="hero-description text-[var(--clr-text-dim)] text-lg leading-relaxed max-w-[600px] mb-10 line-clamp-5">
-                            Specialist in designing, automating, and scaling high-availability cloud infrastructure. 
-                            Expert in bridging the gap between legacy networking and modern DevOps practices using 
-                            AWS, Kubernetes, and Infrastructure as Code. Passionate about building resilient systems 
-                            that empower businesses through seamless automation and continuous innovation.
+                            {description}
                         </p>
 
-                        {/* Tech Slider */}
                         <div className="mb-8 overflow-hidden tech-slider-container">
                             <Swiper
                                 dir="ltr"
@@ -93,10 +81,14 @@ const Hero = () => {
                                 freeMode={true}
                                 className="tech-slider"
                             >
-                                {techItems.map((item, idx) => (
+                                {heroTechSlider.map((item, idx) => (
                                     <SwiperSlide key={idx} style={{ width: 'auto' }}>
                                         <span className="tech-badge flex items-center gap-2 px-5 py-2 rounded-full border border-[rgba(0,210,255,0.1)] bg-[rgba(0,210,255,0.05)] text-[var(--clr-text-dim)] hover:text-[var(--clr-accent)] transition-all duration-300">
-                                            <i className={item.icon}></i>
+                                            {item.icon === 'SiMicrosoftazure' ? (
+                                                <SiMicrosoftazure />
+                                            ) : (
+                                                <i className={item.icon}></i>
+                                            )}
                                             {item.label}
                                         </span>
                                     </SwiperSlide>
@@ -105,20 +97,19 @@ const Hero = () => {
                         </div>
 
                         <div className="flex gap-6 hero-cta-group">
-                            <a id="hero-btn-cv" href="https://drive.google.com/file/d/15tyIpHbM3vfBsw4VlT5B0ZL8oS73VTM1/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="btn-cv">
+                            <a id="hero-btn-cv" href={cvUrl} target="_blank" rel="noopener noreferrer" className="btn-cv">
                                 <i className="fas fa-file-download"></i>
                                 <span>Download CV</span>
                             </a>
                         </div>
                     </div>
 
-                    {/* Right Side: Portrait */}
-                    <div className="hero-right animate-up delay-1">
-                        <div className="relative w-full hero-portrait group">
+                    <div className="hero-right animate-up delay-1 md:ml-6">
+                        <div className="relative w-full hero-portrait group md:translate-x-8">
                             <div className="portrait-frame relative aspect-[4/5] rounded-[30px] overflow-hidden">
-                                <img 
-                                    src="/assets/ahmed.jpeg" 
-                                    alt="Ahmed Hamed" 
+                                <img
+                                    src={portrait}
+                                    alt={fullName}
                                     className="w-full h-full object-cover object-[center_20%] transition-transform duration-500 group-hover:scale-105"
                                     loading="eager"
                                 />
@@ -157,10 +148,6 @@ const Hero = () => {
                     -webkit-background-clip: text;
                     background-clip: text;
                     -webkit-text-fill-color: transparent;
-                }
-
-                .hero-name {
-                    font-size: clamp(3rem, 8vw, 5rem);
                 }
 
                 .tech-slider {

@@ -1,9 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import React, { useCallback, useMemo, useState } from 'react';
 import ProjectModal from '../ui/ProjectModal';
 import ProjectCard from '../ui/ProjectCard';
-import { db } from '../../services/firebase';
-import { projects as fallbackProjects } from '../../data/projectsData';
+import { projects as localProjects } from '../../data/portfolioData';
 import { normalizeProjectTechnologies } from '../../utils/projectTechnologies';
 
 const getProjectRepo = (project) => {
@@ -33,62 +31,10 @@ const normalizeProject = (project, index) => ({
 
 const Projects = () => {
   const [selectedProject, setSelectedProject] = useState(null);
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let isMounted = true;
-    const projectsQuery = query(collection(db, 'projects'), orderBy('createdAt', 'desc'));
-
-    const unsubscribe = onSnapshot(
-      projectsQuery,
-      (snapshot) => {
-        if (!isMounted) {
-          return;
-        }
-
-        const nextProjects = snapshot.docs.map((projectDoc, index) =>
-          normalizeProject(
-            {
-              id: projectDoc.id,
-              ...projectDoc.data(),
-            },
-            index
-          )
-        );
-
-        setProjects(nextProjects);
-        setLoading(false);
-      },
-      (error) => {
-        console.error('Failed to subscribe to projects:', error);
-
-        if (!isMounted) {
-          return;
-        }
-
-        setProjects(fallbackProjects.map(normalizeProject));
-        setLoading(false);
-      }
-    );
-
-    return () => {
-      isMounted = false;
-      unsubscribe();
-    };
-  }, []);
 
   const visibleProjects = useMemo(() => {
-    if (projects.length > 0) {
-      return projects;
-    }
-
-    if (loading) {
-      return [];
-    }
-
-    return fallbackProjects.map(normalizeProject);
-  }, [loading, projects]);
+    return localProjects.map(normalizeProject);
+  }, [localProjects]);
 
   const handleOpenProject = useCallback((project) => {
     setSelectedProject(project);
@@ -121,15 +67,8 @@ const Projects = () => {
           </h2>
         </div>
 
-        <div className="projects-grid grid grid-cols-1 gap-8 animate-up md:grid-cols-2 lg:grid-cols-3">
-          {loading ? (
-            <div className="col-span-full flex flex-col items-center justify-center py-20 opacity-70">
-              <span className="mb-4 animate-pulse text-4xl text-cyan-500">...</span>
-              <p className="font-mono text-sm uppercase tracking-widest text-cyan-400">
-                Fetching deployments...
-              </p>
-            </div>
-          ) : visibleProjects.length === 0 ? (
+        <div className="projects-grid grid grid-cols-1 gap-y-8 gap-x-10 lg:gap-x-12 animate-up md:grid-cols-2 lg:grid-cols-3">
+          {visibleProjects.length === 0 ? (
             <div className="col-span-full flex flex-col items-center justify-center py-20 opacity-70">
               <p className="font-mono text-sm uppercase tracking-widest text-cyan-400">
                 No projects available.

@@ -1,22 +1,22 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import emailjs from "@emailjs/browser";
+import { contact } from "../../data/portfolioData";
 
 const Contact = () => {
     const [status, setStatus] = useState("READY");
     const [logLines, setLogLines] = useState([]);
     const [finalSuccess, setFinalSuccess] = useState(false);
     const formRef = useRef();
-    const logOutputRef = useRef();
-
-    const SERVICE_ID = "service_xqf8lth";
-    const TEMPLATE_ID = "template_0fafhc9";
-    const PUBLIC_KEY = "5ARUwkGWcGbfTxqeO";
+    const { subtitle, title, channels, formSubjects, opportunities, emailjs: emailjsConfig } = contact;
+    const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || emailjsConfig.SERVICE_ID;
+    const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || emailjsConfig.TEMPLATE_ID;
+    const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || emailjsConfig.PUBLIC_KEY;
 
     const handleSubmit = (e) => {
         e.preventDefault();
         setStatus("PROVISIONING");
         setLogLines([]);
-        
+
         const sequence = [
             { text: "$ initializing deployment sequence...", delay: 600 },
             { text: "$ connecting to mail-relay.aws.internal...", delay: 800 },
@@ -26,17 +26,17 @@ const Contact = () => {
         ];
 
         let currentDelay = 0;
-        sequence.forEach((line, index) => {
+        sequence.forEach((line) => {
             currentDelay += line.delay;
             setTimeout(() => {
                 setLogLines(prev => [...prev, { text: line.text, class: "" }]);
             }, currentDelay);
         });
 
-        emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, formRef.current, PUBLIC_KEY)
+        emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, formRef.current, { publicKey: PUBLIC_KEY })
             .then(() => {
                 setTimeout(() => {
-                    setLogLines(prev => [...prev, { text: "$ message delivered successfully âœ”", class: "success" }]);
+                    setLogLines(prev => [...prev, { text: "$ message delivered successfully ✔", class: "success" }]);
                     setTimeout(() => {
                         setFinalSuccess(true);
                         setStatus("DEPLOYED");
@@ -44,9 +44,12 @@ const Contact = () => {
                 }, currentDelay + 1000);
             })
             .catch((error) => {
-                console.error("EmailJS error:", error);
+                console.error("EmailJS error status:", error?.status);
+                console.error("EmailJS error text:", error?.text);
+                console.error("EmailJS error message:", error?.message);
+                console.error("EmailJS error raw:", error);
                 setTimeout(() => {
-                    setLogLines(prev => [...prev, { text: "$ ERROR: Failed to send message. Please try again.", class: "error" }]);
+                    setLogLines(prev => [...prev, { text: `$ ERROR: Failed to send message (${error?.text || 'Unknown Error'}).`, class: "error" }]);
                     setStatus("FAILED");
                     setTimeout(() => {
                         setStatus("READY");
@@ -60,12 +63,11 @@ const Contact = () => {
         <section id="contact" className="section">
             <div className="container mx-auto px-4 sm:px-8">
                 <div className="section-header animate-up text-center mb-16">
-                    <span className="section-subtitle text-[var(--clr-accent)] font-mono uppercase tracking-widest text-sm mb-2 block">Get In Touch</span>
-                    <h2 className="section-title text-2xl sm:text-3xl md:text-5xl font-black mb-4">Deployment Request</h2>
+                    <span className="section-subtitle text-[var(--clr-accent)] font-mono uppercase tracking-widest text-sm mb-2 block">{subtitle}</span>
+                    <h2 className="section-title text-2xl sm:text-3xl md:text-5xl font-black mb-4">{title}</h2>
                 </div>
 
                 <div className="contact-grid grid grid-cols-1 lg:grid-cols-2 gap-12">
-                    {/* Left Column: Channels */}
                     <div className="contact-left animate-left">
                         <div className="contact-info-wrapper space-y-8">
                             <div className="channels-section bg-[var(--clr-card-bg)] border border-[var(--clr-card-border)] p-6 sm:p-8 rounded-2xl">
@@ -73,13 +75,7 @@ const Contact = () => {
                                     <i className="fas fa-network-wired"></i> Contact Channels
                                 </h3>
                                 <div className="channel-list space-y-6">
-                                    {[
-                                        { icon: 'fas fa-envelope', label: 'Email', value: 'ahmed.1707.hamed@gmail.com', link: 'mailto:ahmed.1707.hamed@gmail.com' },
-                                        { icon: 'fas fa-phone', label: 'Phone', value: '01062425594', link: 'tel:01062425594' },
-                                        { icon: 'fab fa-github', label: 'GitHub', value: 'github.com/ahmed1707hamed-tech', link: 'https://github.com/ahmed1707hamed-tech' },
-                                        { icon: 'fab fa-linkedin', label: 'LinkedIn', value: 'LinkedIn Profile', link: 'https://www.linkedin.com/in/ahmed-hamed-340570364' },
-                                        { icon: 'fas fa-map-marker-alt', label: 'Location', value: 'Mansoura, Egypt', link: null }
-                                    ].map((channel, i) => (
+                                    {channels.map((channel, i) => (
                                         <div key={i} className="channel-item flex items-center gap-4 group">
                                             <div className="icon-box w-12 h-12 flex-shrink-0 sm:w-14 sm:h-14 rounded-xl bg-[rgba(255,255,255,0.03)] flex items-center justify-center text-[var(--clr-accent)] text-lg sm:text-xl group-hover:scale-110 transition-all border border-[rgba(255,255,255,0.05)]">
                                                 <i className={channel.icon}></i>
@@ -99,7 +95,6 @@ const Contact = () => {
                         </div>
                     </div>
 
-                    {/* Right Column: Terminal Form */}
                     <div className="contact-right animate-right">
                         <div className="terminal-form-window bg-[var(--clr-terminal-bg)] rounded-2xl border border-[var(--clr-card-border)] overflow-hidden shadow-2xl">
                             <div className="terminal-header py-4 px-6 bg-[var(--clr-terminal-header)] flex items-center justify-between border-b border-[rgba(255,255,255,0.05)]">
@@ -131,10 +126,9 @@ const Contact = () => {
                                                 <label className="block text-xs font-mono text-[var(--clr-text-dim)] mb-2"><span className="text-[var(--clr-accent)] mr-2">$</span> Subject</label>
                                                 <select name="subject" className="w-full bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.1)] rounded-lg p-3 text-sm focus:border-[var(--clr-accent)] outline-none" required>
                                                     <option value="" disabled>Select an option</option>
-                                                    <option value="Job Opportunity">Job Opportunity</option>
-                                                    <option value="Collaboration">Collaboration</option>
-                                                    <option value="Internship">Internship</option>
-                                                    <option value="General Inquiry">General Inquiry</option>
+                                                    {formSubjects.map((subject) => (
+                                                        <option key={subject} value={subject}>{subject}</option>
+                                                    ))}
                                                 </select>
                                             </div>
                                             <div className="form-group">
@@ -168,17 +162,12 @@ const Contact = () => {
                     </div>
                 </div>
 
-                {/* Bottom Section: Available For */}
                 <div className="opportunity-section-full mt-24 pt-24 border-t border-[rgba(255,255,255,0.05)] text-center animate-up">
                     <h3 className="contact-sub-title text-[var(--clr-accent)] font-bold flex items-center justify-center gap-3 mb-12">
                         <i className="fas fa-briefcase"></i> Available For
                     </h3>
                     <div className="opp-cards-full grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {[
-                            { icon: 'fas fa-graduation-cap', title: 'Internships', desc: 'Cloud & DevOps programs' },
-                            { icon: 'fas fa-user-gear', title: 'Junior DevOps Roles', desc: 'Entry-level engineering' },
-                            { icon: 'fab fa-aws', title: 'Cloud Engineering', desc: 'AWS infrastructure roles' }
-                        ].map((opp, i) => (
+                        {opportunities.map((opp, i) => (
                             <div key={i} className="opp-card p-6 sm:p-8 bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.05)] rounded-2xl hover:border-[var(--clr-accent)] transition-all group">
                                 <div className="opp-icon text-3xl text-[var(--clr-accent)] mb-4 group-hover:scale-110 transition-transform">
                                     <i className={opp.icon}></i>

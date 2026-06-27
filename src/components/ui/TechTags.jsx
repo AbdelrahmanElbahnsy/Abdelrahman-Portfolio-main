@@ -20,18 +20,18 @@ const TechTags = ({ technologies = [], maxVisible, className = '' }) => {
   }
 
   return (
-    <div className={`flex flex-wrap gap-2 ${className}`.trim()}>
+    <div className={`flex flex-wrap gap-1.5 ${className}`.trim()}>
       {visibleTech.map((technology) => (
         <span
           key={technology}
-          className="rounded-md border border-cyan-400 bg-transparent px-3 py-1 text-xs font-semibold uppercase text-cyan-300"
+          className="rounded border border-cyan-500/30 bg-transparent px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-cyan-300"
         >
           {technology}
         </span>
       ))}
 
       {remaining > 0 ? (
-        <span className="rounded-md border border-cyan-400 bg-transparent px-3 py-1 text-xs font-semibold uppercase text-cyan-300">
+        <span className="rounded border border-cyan-500/30 bg-transparent px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-cyan-300">
           +{remaining}
         </span>
       ) : null}

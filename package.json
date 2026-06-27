@@ -1,5 +1,5 @@
 {
-  "name": "ahmed_hamed",
+  "name": "abdelrahman-el-bahnsy",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -19,6 +19,7 @@
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-hot-toast": "^2.6.0",
+    "react-icons": "^4.12.0",
     "react-router-dom": "^7.13.2",
     "swiper": "^12.1.3"
   },

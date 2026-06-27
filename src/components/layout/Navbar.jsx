@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
+import { personalInfo, socialLinks } from '../../data/portfolioData';
 
 const Navbar = () => {
+    const { firstName, lastName } = personalInfo;
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [activeSection, setActiveSection] = useState('hero');
@@ -72,7 +74,7 @@ const Navbar = () => {
                         {/* Logo */}
                         <a href="#" className="logo flex items-center gap-2 group shrink-0" onClick={() => handleNavClick('hero')}>
                             <span className={`font-black tracking-tighter text-white transition-all duration-500 ${isScrolled ? 'text-xl' : 'text-2xl'}`}>
-                                <span className="text-[var(--clr-accent)]">&lt;</span>A<span className="hidden md:inline">HMED</span><span className="text-[var(--clr-accent)]">/</span>H<span className="hidden md:inline">AMED</span><span className="text-[var(--clr-accent)]">&gt;</span>
+                                <span className="text-[var(--clr-accent)]">&lt;</span>{firstName.charAt(0)}<span className="hidden md:inline">{firstName.slice(1).toUpperCase()}</span><span className="text-[var(--clr-accent)]">/</span>{lastName.charAt(0)}<span className="hidden md:inline">{lastName.slice(1).toUpperCase()}</span><span className="text-[var(--clr-accent)]">&gt;</span>
                             </span>
                         </a>
 
@@ -138,9 +140,11 @@ const Navbar = () => {
                     <div className="mobile-menu-footer border-t border-[rgba(255,255,255,0.1)] pt-12">
                         <p className="text-[var(--clr-text-dim)] uppercase text-[10px] font-black tracking-[0.2em] mb-6">Let's Connect</p>
                         <div className="flex gap-8">
-                            <a href="https://github.com/ahmed1707hamed-tech" target="_blank" rel="noreferrer" className="text-3xl text-white hover:text-[var(--clr-accent)] transition-all"><i className="fab fa-github"></i></a>
-                            <a href="https://www.linkedin.com/in/ahmed-hamed-340570364" target="_blank" rel="noreferrer" className="text-3xl text-white hover:text-[var(--clr-accent)] transition-all"><i className="fab fa-linkedin"></i></a>
-                            <a href="https://t.me/Eng_Ahmed_7amed" target="_blank" rel="noreferrer" className="text-3xl text-white hover:text-[var(--clr-accent)] transition-all"><i className="fab fa-telegram"></i></a>
+                            {socialLinks.navbarMobile.map((social, idx) => (
+                                <a key={idx} href={social.link} target="_blank" rel="noreferrer" className="text-3xl text-white hover:text-[var(--clr-accent)] transition-all">
+                                    <i className={social.icon}></i>
+                                </a>
+                            ))}
                         </div>
                     </div>
                 </div>

@@ -13,7 +13,7 @@ export const personalInfo = {
   description:
     'Specializing in designing and scaling high-availability cloud infrastructure. I bridge the gap between legacy networking and modern DevOps through Azure, Kubernetes, and IaC. Passionate about building resilient, automated systems that turn complex technical challenges into seamless business innovation.',
   portrait: '/assets/abdelrahman.jpeg',
-  cvUrl: 'https://drive.google.com/file/d/15tyIpHbM3vfBsw4VlT5B0ZL8oS73VTM1/view?usp=sharing',
+  cvUrl: 'https://drive.google.com/file/d/1fYl9kYJHw_CnOjCuDAvXe2yXXa4mCWGD/view?usp=drive_link',
   footerTagline: 'Automating Infrastructure & Building Scalable Cloud Solutions with Passion.',
   availabilityStatus: 'Available for Opportunities',
   copyrightYear: 2026,

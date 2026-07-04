@@ -233,7 +233,7 @@ const AnimatedBackground = () => {
                 }}
             />
 
-            {/* ─── Blob 1: Deep Blue ────────────────────────────────── */}
+            {/* ─── Blob 1: Deep Sea Blue (لون البحر) ──────────────────── */}
             <div
                 className="bg-blob bg-blob-1"
                 style={{
@@ -244,7 +244,7 @@ const AnimatedBackground = () => {
                     height: 'clamp(500px, 60vw, 900px)',
                     borderRadius: '50%',
                     background:
-                        'radial-gradient(circle, rgba(15,30,80,0.7) 0%, rgba(15,30,80,0.2) 45%, transparent 70%)',
+                        'radial-gradient(circle, rgba(0, 105, 148, 0.45) 0%, rgba(0, 105, 148, 0.15) 45%, transparent 70%)',
                     filter: 'blur(60px)',
                     willChange: 'transform',
                     animation: prefersReducedMotion
@@ -253,7 +253,7 @@ const AnimatedBackground = () => {
                 }}
             />
 
-            {/* ─── Blob 2: Warm Amber / Tea-with-Milk ───────────────── */}
+            {/* ─── Blob 2: Deep Sky Blue (لون السماوي الغامق) ──────── */}
             <div
                 className="bg-blob bg-blob-2"
                 style={{
@@ -264,12 +264,32 @@ const AnimatedBackground = () => {
                     height: 'clamp(450px, 55vw, 850px)',
                     borderRadius: '50%',
                     background:
-                        'radial-gradient(circle, rgba(180,130,70,0.35) 0%, rgba(180,130,70,0.1) 45%, transparent 70%)',
+                        'radial-gradient(circle, rgba(15, 75, 150, 0.45) 0%, rgba(15, 75, 150, 0.1) 45%, transparent 70%)',
                     filter: 'blur(70px)',
                     willChange: 'transform',
                     animation: prefersReducedMotion
                         ? 'none'
                         : 'blob-orbit-2 18s ease-in-out infinite alternate',
+                }}
+            />
+
+            {/* ─── Blob 3: Touch of Brown (ميكساية بني صغيرة) ──────── */}
+            <div
+                className="bg-blob bg-blob-3"
+                style={{
+                    position: 'absolute',
+                    top: '40%',
+                    left: '40%',
+                    width: 'clamp(250px, 35vw, 500px)',
+                    height: 'clamp(250px, 35vw, 500px)',
+                    borderRadius: '50%',
+                    background:
+                        'radial-gradient(circle, rgba(139, 90, 43, 0.35) 0%, rgba(139, 90, 43, 0.08) 40%, transparent 65%)',
+                    filter: 'blur(60px)',
+                    willChange: 'transform',
+                    animation: prefersReducedMotion
+                        ? 'none'
+                        : 'blob-orbit-3 20s ease-in-out infinite alternate',
                 }}
             />
 
@@ -370,10 +390,23 @@ const AnimatedBackground = () => {
                     100% {
                         transform: translate(40px, -40px) scale(1) rotate(3deg);
                     }
+                @keyframes blob-orbit-3 {
+                    0% {
+                        transform: translate(0, 0) scale(1) rotate(0deg);
+                    }
+                    33% {
+                        transform: translate(80px, -50px) scale(1.1) rotate(4deg);
+                    }
+                    66% {
+                        transform: translate(-60px, 90px) scale(0.9) rotate(-3deg);
+                    }
+                    100% {
+                        transform: translate(0, 0) scale(1) rotate(0deg);
+                    }
                 }
 
                 @media (max-width: 768px) {
-                    .bg-blob-1, .bg-blob-2 {
+                    .bg-blob-1, .bg-blob-2, .bg-blob-3 {
                         filter: blur(80px) !important;
                         opacity: 0.7;
                     }

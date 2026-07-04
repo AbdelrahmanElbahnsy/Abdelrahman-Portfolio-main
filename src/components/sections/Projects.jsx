@@ -131,11 +131,10 @@ const Projects = () => {
         </div>
 
         {/* Horizontal scrolling track */}
-        <div className="flex-1 flex items-center">
+        <div className="flex-1 flex items-center w-full">
           <div
             ref={trackRef}
-            className="flex items-stretch gap-8 pl-8"
-            style={{ width: 'max-content', paddingRight: '15vw' }}
+            className="flex items-stretch gap-8 px-8 w-max"
           >
               {visibleProjects.length === 0 ? (
                 <div className="flex items-center justify-center w-screen">
@@ -148,7 +147,7 @@ const Projects = () => {
                   <div
                     key={getProjectKey(project, index)}
                     className="project-card-wrapper flex-shrink-0"
-                    style={{ width: 'clamp(320px, 26vw, 400px)' }}
+                    style={{ width: 'clamp(320px, 28vw, 420px)' }}
                   >
                     <ProjectCard
                       project={project}
@@ -157,6 +156,8 @@ const Projects = () => {
                   </div>
                 ))
               )}
+              {/* Spacer to ensure the last card can scroll fully into the center/left */}
+              <div className="w-[10vw] flex-shrink-0" aria-hidden="true" />
             </div>
           </div>
       </section>

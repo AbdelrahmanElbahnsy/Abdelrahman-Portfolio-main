@@ -1,21 +1,47 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay, Navigation, Keyboard } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { certifications } from '../../data/portfolioData';
 import { SiMicrosoftazure } from 'react-icons/si';
 
 const Certifications = () => {
+    const sectionRef = useRef(null);
+    const headerRef = useRef(null);
+    const swiperContainerRef = useRef(null);
+
+    useGSAP(
+        () => {
+            const subtitleEl = headerRef.current?.querySelector('.section-subtitle');
+            const titleEl = headerRef.current?.querySelector('.section-title');
+
+            gsap.set([subtitleEl, titleEl].filter(Boolean), { opacity: 0, y: 30 });
+            if (swiperContainerRef.current) gsap.set(swiperContainerRef.current, { opacity: 0, y: 35 });
+
+            const tl = gsap.timeline({
+                defaults: { ease: 'power3.out' },
+                scrollTrigger: { trigger: sectionRef.current, start: 'top 80%', toggleActions: 'play none none none' },
+            });
+
+            tl.to(subtitleEl, { opacity: 1, y: 0, duration: 0.4 })
+              .to(titleEl, { opacity: 1, y: 0, duration: 0.5 }, '-=0.15')
+              .to(swiperContainerRef.current, { opacity: 1, y: 0, duration: 0.6 }, '-=0.1');
+        },
+        { scope: sectionRef, dependencies: [] },
+    );
+
     return (
-        <section id="certifications" className="section">
+        <section id="certifications" className="section" ref={sectionRef}>
             <div className="container mx-auto px-8">
-                <div className="section-header animate-up text-center mb-16">
+                <div ref={headerRef} className="section-header text-center mb-16">
                     <span className="section-subtitle text-[var(--clr-accent)] font-mono uppercase tracking-widest text-sm mb-2 block">Validation</span>
                     <h2 className="section-title text-4xl md:text-5xl font-black mb-4">Professional Certifications</h2>
                 </div>
 
-                <div className="certs-swiper-container pb-12 pt-4">
+                <div ref={swiperContainerRef} className="certs-swiper-container pb-12 pt-4">
                     <div className="relative group/carousel">
                         {/* Navigation Arrows */}
                         <button 

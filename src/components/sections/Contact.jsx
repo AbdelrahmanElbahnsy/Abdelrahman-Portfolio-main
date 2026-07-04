@@ -1,5 +1,7 @@
 import React, { useState, useRef } from "react";
 import emailjs from "@emailjs/browser";
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { contact } from "../../data/portfolioData";
 
 const Contact = () => {
@@ -7,10 +9,56 @@ const Contact = () => {
     const [logLines, setLogLines] = useState([]);
     const [finalSuccess, setFinalSuccess] = useState(false);
     const formRef = useRef();
+    const sectionRef = useRef(null);
+    const headerRef = useRef(null);
+    const leftRef = useRef(null);
+    const rightRef = useRef(null);
+    const oppsRef = useRef(null);
     const { subtitle, title, channels, formSubjects, opportunities, emailjs: emailjsConfig } = contact;
     const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || emailjsConfig.SERVICE_ID;
     const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || emailjsConfig.TEMPLATE_ID;
     const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || emailjsConfig.PUBLIC_KEY;
+
+    // GSAP animations
+    useGSAP(
+        () => {
+            const subtitleEl = headerRef.current?.querySelector('.section-subtitle');
+            const titleEl = headerRef.current?.querySelector('.section-title');
+            const channelItems = leftRef.current?.querySelectorAll('.channel-item');
+            const oppCards = oppsRef.current?.querySelectorAll('.opp-card');
+
+            gsap.set([subtitleEl, titleEl].filter(Boolean), { opacity: 0, y: 30 });
+            gsap.set(leftRef.current, { opacity: 0, x: -35 });
+            gsap.set(rightRef.current, { opacity: 0, x: 35, rotateY: 3 });
+            if (channelItems?.length) gsap.set(channelItems, { opacity: 0, x: -20 });
+            if (oppCards?.length) gsap.set(oppCards, { opacity: 0, y: 30 });
+
+            const tl = gsap.timeline({
+                defaults: { ease: 'power3.out' },
+                scrollTrigger: { trigger: sectionRef.current, start: 'top 80%', toggleActions: 'play none none none' },
+            });
+
+            tl.to(subtitleEl, { opacity: 1, y: 0, duration: 0.4 })
+              .to(titleEl, { opacity: 1, y: 0, duration: 0.5 }, '-=0.15')
+              .to(leftRef.current, { opacity: 1, x: 0, duration: 0.5 }, '-=0.1')
+
+            if (channelItems?.length) {
+                tl.to(channelItems, { opacity: 1, x: 0, duration: 0.3, stagger: 0.05 }, '-=0.3');
+            }
+
+            tl.to(rightRef.current, { opacity: 1, x: 0, rotateY: 0, transformPerspective: 800, duration: 0.6 }, '-=0.2')
+
+            if (oppCards?.length) {
+                gsap.set(oppCards, { opacity: 0, y: 30 });
+                const oppTl = gsap.timeline({
+                    defaults: { ease: 'power3.out' },
+                    scrollTrigger: { trigger: oppsRef.current, start: 'top 85%', toggleActions: 'play none none none' },
+                });
+                oppTl.to(oppCards, { opacity: 1, y: 0, duration: 0.4, stagger: 0.08 });
+            }
+        },
+        { scope: sectionRef, dependencies: [] },
+    );
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -60,15 +108,15 @@ const Contact = () => {
     };
 
     return (
-        <section id="contact" className="section">
+        <section id="contact" className="section" ref={sectionRef}>
             <div className="container mx-auto px-4 sm:px-8">
-                <div className="section-header animate-up text-center mb-16">
+                <div ref={headerRef} className="section-header text-center mb-16">
                     <span className="section-subtitle text-[var(--clr-accent)] font-mono uppercase tracking-widest text-sm mb-2 block">{subtitle}</span>
                     <h2 className="section-title text-2xl sm:text-3xl md:text-5xl font-black mb-4">{title}</h2>
                 </div>
 
                 <div className="contact-grid grid grid-cols-1 lg:grid-cols-2 gap-12">
-                    <div className="contact-left animate-left">
+                    <div ref={leftRef} className="contact-left">
                         <div className="contact-info-wrapper space-y-8">
                             <div className="channels-section bg-[var(--clr-card-bg)] border border-[var(--clr-card-border)] p-6 sm:p-8 rounded-2xl">
                                 <h3 className="contact-sub-title text-[var(--clr-accent)] font-bold flex items-center gap-3 mb-6">
@@ -95,7 +143,7 @@ const Contact = () => {
                         </div>
                     </div>
 
-                    <div className="contact-right animate-right">
+                    <div ref={rightRef} className="contact-right">
                         <div className="terminal-form-window bg-[var(--clr-terminal-bg)] rounded-2xl border border-[var(--clr-card-border)] overflow-hidden shadow-2xl">
                             <div className="terminal-header py-4 px-6 bg-[var(--clr-terminal-header)] flex items-center justify-between border-b border-[rgba(255,255,255,0.05)]">
                                 <div className="terminal-buttons flex gap-2">
@@ -162,7 +210,7 @@ const Contact = () => {
                     </div>
                 </div>
 
-                <div className="opportunity-section-full mt-24 pt-24 border-t border-[rgba(255,255,255,0.05)] text-center animate-up">
+                <div ref={oppsRef} className="opportunity-section-full mt-24 pt-24 border-t border-[rgba(255,255,255,0.05)] text-center">
                     <h3 className="contact-sub-title text-[var(--clr-accent)] font-bold flex items-center justify-center gap-3 mb-12">
                         <i className="fas fa-briefcase"></i> Available For
                     </h3>

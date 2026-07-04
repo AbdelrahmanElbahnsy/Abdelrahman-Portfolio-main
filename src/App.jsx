@@ -1,35 +1,57 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './routes/ProtectedRoute';
+import SplashScreen from './components/ui/SplashScreen';
 
+/* ─── Lazy Imports ───────────────────────────────────────────────────────── */
 const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Login'));
 const Admin = lazy(() => import('./pages/Admin'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
 
-const PageLoader = () => (
-  <div className="min-h-screen bg-[#0a0f1c] flex items-center justify-center">
-    <div className="w-10 h-10 border-4 border-[#1e293b] border-t-[#14f195] rounded-full animate-spin"></div>
-  </div>
-);
+/* ─── Eagerly preload the Home chunk during splash ───────────────────────── */
+const homePreload = import('./pages/Home');
 
 function App() {
+  const [splashDone, setSplashDone] = useState(false);
+  const [contentReady, setContentReady] = useState(false);
+
+  // Preload Home chunk as soon as App mounts (while splash is playing)
+  useEffect(() => {
+    homePreload
+      .then(() => setContentReady(true))
+      .catch(() => setContentReady(true)); // Don't block on errors
+  }, []);
+
   return (
-    <Suspense fallback={<PageLoader />}>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route 
-          path="/admin/*" 
-          element={
-            <ProtectedRoute>
-              <Admin />
-            </ProtectedRoute>
-          } 
+    <>
+      {/* Splash stays until BOTH animation + chunk load finish */}
+      {!splashDone && (
+        <SplashScreen
+          contentReady={contentReady}
+          onComplete={() => setSplashDone(true)}
         />
-      </Routes>
-    </Suspense>
+      )}
+
+      {/* Only mount routes after splash is fully done */}
+      {splashDone && (
+        <Suspense fallback={null}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route
+              path="/admin/*"
+              element={
+                <ProtectedRoute>
+                  <Admin />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </Suspense>
+      )}
+    </>
   );
 }
 

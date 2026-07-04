@@ -77,7 +77,7 @@ const Projects = () => {
       const section = sectionRef.current;
       if (!track || !section) return;
 
-      const getScrollAmount = () => Math.max(0, track.scrollWidth - window.innerWidth);
+      const getScrollAmount = () => Math.max(0, track.scrollWidth - section.offsetWidth);
       const getPinDuration = () => Math.max(getScrollAmount() * 1.5, window.innerHeight);
 
       const cards = track.querySelectorAll('.project-card-wrapper');
@@ -109,6 +109,11 @@ const Projects = () => {
           },
         },
       });
+
+      // Refresh ScrollTrigger after all resources (images/fonts) are fully loaded
+      const handleLoad = () => ScrollTrigger.refresh();
+      window.addEventListener('load', handleLoad);
+      return () => window.removeEventListener('load', handleLoad);
     },
     { scope: sectionRef, dependencies: [] },
   );
@@ -123,7 +128,7 @@ const Projects = () => {
         {/* Header */}
         <div ref={headerRef} className="section-header text-center px-8 mb-8 flex-shrink-0">
           <span className="section-subtitle mb-2 block font-mono text-sm font-bold uppercase tracking-widest text-[var(--clr-accent)]">
-            [ Projects_Database ]
+            [ Projects_Database : {visibleProjects.length} Systems ]
           </span>
           <h2 className="section-title text-4xl font-black tracking-tight text-white drop-shadow-md md:text-5xl">
             Featured Systems

@@ -1,22 +1,22 @@
-import React, { useRef, useEffect, useCallback, useMemo } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 
 /**
- * AnimatedBackground — Ambient Mesh Gradient
+ * AnimatedBackground — Mixed Color Mesh + Interactive Starfield
  *
- * A living, breathing background with:
- *  1. 4 large color blobs that orbit, morph and pulse (GSAP + CSS keyframes)
- *  2. Mouse-reactive aurora glow with GSAP quickTo inertia
- *  3. Scroll-linked hue shift via ScrollTrigger
- *  4. SVG noise texture overlay for premium grain
- *  5. Grid with glowing intersection dots
+ * Features:
+ *  1. Two large gradient blobs (deep blue + warm amber) that orbit & blend
+ *  2. ~40 stars that glow + scatter on mouse proximity
+ *  3. Scroll parallax — stars at different depths move at different rates
+ *  4. SVG noise texture overlay
+ *  5. Subtle grid with glowing intersections
  */
 const AnimatedBackground = () => {
     const containerRef = useRef(null);
     const auroraRef = useRef(null);
-    const hueLayerRef = useRef(null);
+    const starsRef = useRef([]);
 
     const prefersReducedMotion =
         typeof window !== 'undefined' &&
@@ -26,7 +26,78 @@ const AnimatedBackground = () => {
         typeof window !== 'undefined' &&
         ('ontouchstart' in window || navigator.maxTouchPoints > 0);
 
-    // ─── Mouse Aurora ──────────────────────────────────────────────
+    // ─── Generate star data (stable across renders) ────────────────
+    const starData = useMemo(() => {
+        const count = isTouchDevice ? 20 : 40;
+        const stars = [];
+        for (let i = 0; i < count; i++) {
+            stars.push({
+                id: i,
+                x: Math.random() * 100,
+                y: Math.random() * 100,
+                size: Math.random() * 2.5 + 1,
+                depth: Math.random(), // 0 = far (slow), 1 = near (fast)
+                baseOpacity: Math.random() * 0.4 + 0.15,
+                twinkleDuration: Math.random() * 3 + 2,
+            });
+        }
+        return stars;
+    }, [isTouchDevice]);
+
+    // ─── Mouse proximity effect on stars ───────────────────────────
+    useEffect(() => {
+        if (prefersReducedMotion || isTouchDevice) return;
+
+        const handleMouseMove = (e) => {
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+            const radius = 150; // Influence radius in px
+
+            starsRef.current.forEach((starEl) => {
+                if (!starEl) return;
+                const rect = starEl.getBoundingClientRect();
+                const starCX = rect.left + rect.width / 2;
+                const starCY = rect.top + rect.height / 2;
+                const dx = mouseX - starCX;
+                const dy = mouseY - starCY;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < radius) {
+                    const intensity = 1 - dist / radius;
+                    // Push star away from cursor
+                    const pushX = -(dx / dist) * intensity * 20;
+                    const pushY = -(dy / dist) * intensity * 20;
+
+                    gsap.to(starEl, {
+                        x: pushX,
+                        y: pushY,
+                        scale: 1 + intensity * 1.5,
+                        opacity: Math.min(1, parseFloat(starEl.dataset.baseOpacity) + intensity * 0.6),
+                        boxShadow: `0 0 ${6 + intensity * 12}px var(--clr-accent)`,
+                        duration: 0.3,
+                        ease: 'power2.out',
+                        overwrite: 'auto',
+                    });
+                } else {
+                    gsap.to(starEl, {
+                        x: 0,
+                        y: 0,
+                        scale: 1,
+                        opacity: parseFloat(starEl.dataset.baseOpacity),
+                        boxShadow: `0 0 4px var(--clr-accent)`,
+                        duration: 0.8,
+                        ease: 'power2.out',
+                        overwrite: 'auto',
+                    });
+                }
+            });
+        };
+
+        window.addEventListener('mousemove', handleMouseMove, { passive: true });
+        return () => window.removeEventListener('mousemove', handleMouseMove);
+    }, [prefersReducedMotion, isTouchDevice]);
+
+    // ─── Mouse aurora tracking ─────────────────────────────────────
     useEffect(() => {
         if (prefersReducedMotion || isTouchDevice || !auroraRef.current) return;
 
@@ -42,38 +113,51 @@ const AnimatedBackground = () => {
         return () => window.removeEventListener('mousemove', handleMouseMove);
     }, [prefersReducedMotion, isTouchDevice]);
 
-    // ─── Scroll Hue Shift ──────────────────────────────────────────
+    // ─── GSAP: Star twinkle + scroll parallax + grid glow ──────────
     useGSAP(
         () => {
-            if (prefersReducedMotion || !hueLayerRef.current) return;
+            if (prefersReducedMotion) return;
 
-            gsap.fromTo(
-                hueLayerRef.current,
-                {
-                    background:
-                        'linear-gradient(180deg, rgba(12,18,32,0) 0%, rgba(0,210,255,0.04) 50%, rgba(12,18,32,0) 100%)',
-                },
-                {
-                    background:
-                        'linear-gradient(180deg, rgba(12,18,32,0) 0%, rgba(0,210,255,0.12) 50%, rgba(12,18,32,0) 100%)',
+            // Star twinkle animation
+            starsRef.current.forEach((starEl) => {
+                if (!starEl) return;
+                gsap.to(starEl, {
+                    opacity: `random(0.1, 0.7)`,
+                    duration: `random(1.5, 4)`,
+                    ease: 'sine.inOut',
+                    repeat: -1,
+                    yoyo: true,
+                    repeatRefresh: true,
+                    delay: Math.random() * 2,
+                });
+            });
+
+            // Scroll parallax for stars
+            starsRef.current.forEach((starEl) => {
+                if (!starEl) return;
+                const depth = parseFloat(starEl.dataset.depth || '0.5');
+                const moveAmount = (depth - 0.5) * 200; // -100 to +100
+
+                gsap.to(starEl, {
+                    yPercent: moveAmount,
                     ease: 'none',
                     scrollTrigger: {
                         trigger: document.body,
                         start: 'top top',
                         end: 'bottom bottom',
-                        scrub: 1,
+                        scrub: 0.5,
                     },
-                },
-            );
+                });
+            });
 
             // Grid glow dots pulsing
             const glowDots = containerRef.current?.querySelectorAll('.grid-glow-dot');
             if (glowDots?.length) {
                 glowDots.forEach((dot, i) => {
                     gsap.to(dot, {
-                        opacity: `random(0.4, 0.8)`,
+                        opacity: `random(0.3, 0.7)`,
                         scale: `random(1.2, 2)`,
-                        duration: `random(1.5, 3.5)`,
+                        duration: `random(1.5, 3)`,
                         delay: i * 0.3,
                         ease: 'sine.inOut',
                         repeat: -1,
@@ -86,15 +170,15 @@ const AnimatedBackground = () => {
         { scope: containerRef, dependencies: [] },
     );
 
-    // ─── Grid Glow Dots ────────────────────────────────────────────
+    // ─── Grid glow dots (memoized) ─────────────────────────────────
     const glowDots = useMemo(() => {
         const dots = [];
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 8; i++) {
             const x = Math.round((Math.random() * 80 + 10) / 5) * 5;
             const y = Math.round((Math.random() * 80 + 10) / 5) * 5;
             dots.push(
                 <div
-                    key={i}
+                    key={`dot-${i}`}
                     className="grid-glow-dot"
                     style={{
                         position: 'absolute',
@@ -149,73 +233,71 @@ const AnimatedBackground = () => {
                 }}
             />
 
-            {/* ─── Animated Gradient Blobs ───────────────────────────── */}
-            {/* Each blob uses CSS @keyframes for reliable, always-running animation */}
+            {/* ─── Blob 1: Deep Blue ────────────────────────────────── */}
             <div
                 className="bg-blob bg-blob-1"
                 style={{
                     position: 'absolute',
-                    top: '-5%',
+                    top: '-10%',
                     left: '-5%',
                     width: 'clamp(500px, 60vw, 900px)',
                     height: 'clamp(500px, 60vw, 900px)',
                     borderRadius: '50%',
-                    background: 'radial-gradient(circle, rgba(10,37,64,0.7) 0%, rgba(10,37,64,0.15) 50%, transparent 70%)',
+                    background:
+                        'radial-gradient(circle, rgba(15,30,80,0.7) 0%, rgba(15,30,80,0.2) 45%, transparent 70%)',
                     filter: 'blur(60px)',
                     willChange: 'transform',
-                    animation: prefersReducedMotion ? 'none' : 'blob-drift-1 12s ease-in-out infinite alternate',
+                    animation: prefersReducedMotion
+                        ? 'none'
+                        : 'blob-orbit-1 14s ease-in-out infinite alternate',
                 }}
             />
 
+            {/* ─── Blob 2: Warm Amber / Tea-with-Milk ───────────────── */}
             <div
                 className="bg-blob bg-blob-2"
                 style={{
                     position: 'absolute',
-                    top: '40%',
-                    right: '-10%',
-                    width: 'clamp(450px, 55vw, 800px)',
-                    height: 'clamp(450px, 55vw, 800px)',
+                    bottom: '0%',
+                    right: '-5%',
+                    width: 'clamp(450px, 55vw, 850px)',
+                    height: 'clamp(450px, 55vw, 850px)',
                     borderRadius: '50%',
-                    background: 'radial-gradient(circle, rgba(13,59,77,0.65) 0%, rgba(13,59,77,0.12) 50%, transparent 70%)',
+                    background:
+                        'radial-gradient(circle, rgba(180,130,70,0.35) 0%, rgba(180,130,70,0.1) 45%, transparent 70%)',
                     filter: 'blur(70px)',
                     willChange: 'transform',
-                    animation: prefersReducedMotion ? 'none' : 'blob-drift-2 15s ease-in-out infinite alternate',
+                    animation: prefersReducedMotion
+                        ? 'none'
+                        : 'blob-orbit-2 18s ease-in-out infinite alternate',
                 }}
             />
 
-            <div
-                className="bg-blob bg-blob-3"
-                style={{
-                    position: 'absolute',
-                    bottom: '-10%',
-                    left: '20%',
-                    width: 'clamp(400px, 50vw, 750px)',
-                    height: 'clamp(400px, 50vw, 750px)',
-                    borderRadius: '50%',
-                    background: 'radial-gradient(circle, rgba(26,26,62,0.6) 0%, rgba(26,26,62,0.12) 50%, transparent 70%)',
-                    filter: 'blur(65px)',
-                    willChange: 'transform',
-                    animation: prefersReducedMotion ? 'none' : 'blob-drift-3 18s ease-in-out infinite alternate',
-                }}
-            />
+            {/* ─── Interactive Star Field ───────────────────────────── */}
+            {starData.map((star, i) => (
+                <div
+                    key={star.id}
+                    ref={(el) => (starsRef.current[i] = el)}
+                    data-depth={star.depth}
+                    data-base-opacity={star.baseOpacity}
+                    style={{
+                        position: 'absolute',
+                        left: `${star.x}%`,
+                        top: `${star.y}%`,
+                        width: `${star.size}px`,
+                        height: `${star.size}px`,
+                        borderRadius: '50%',
+                        background: star.depth > 0.6 ? 'var(--clr-accent)' : 'var(--clr-accent-3)',
+                        opacity: star.baseOpacity,
+                        boxShadow: `0 0 4px var(--clr-accent)`,
+                        pointerEvents: 'none',
+                        willChange: 'transform, opacity',
+                        transform: 'translateZ(0)',
+                    }}
+                />
+            ))}
 
-            <div
-                className="bg-blob bg-blob-4"
-                style={{
-                    position: 'absolute',
-                    top: '20%',
-                    left: '50%',
-                    width: 'clamp(300px, 35vw, 550px)',
-                    height: 'clamp(300px, 35vw, 550px)',
-                    borderRadius: '50%',
-                    background: 'radial-gradient(circle, rgba(0,210,255,0.08) 0%, rgba(0,210,255,0.03) 40%, transparent 70%)',
-                    filter: 'blur(50px)',
-                    willChange: 'transform',
-                    animation: prefersReducedMotion ? 'none' : 'blob-drift-4 10s ease-in-out infinite alternate',
-                }}
-            />
-
-            {/* ─── Mouse Aurora ──────────────────────────────────────── */}
+            {/* ─── Mouse Aurora Glow ────────────────────────────────── */}
             {!isTouchDevice && (
                 <div
                     ref={auroraRef}
@@ -223,10 +305,11 @@ const AnimatedBackground = () => {
                         position: 'absolute',
                         top: '50%',
                         left: '50%',
-                        width: '450px',
-                        height: '450px',
+                        width: '400px',
+                        height: '400px',
                         borderRadius: '50%',
-                        background: 'radial-gradient(circle, rgba(0,210,255,0.12) 0%, rgba(0,210,255,0.04) 40%, transparent 65%)',
+                        background:
+                            'radial-gradient(circle, rgba(var(--accent-rgb), 0.1) 0%, rgba(var(--accent-rgb), 0.03) 40%, transparent 65%)',
                         filter: 'blur(30px)',
                         willChange: 'transform',
                         transform: 'translate(-50%, -50%) translateZ(0)',
@@ -241,7 +324,7 @@ const AnimatedBackground = () => {
                     position: 'absolute',
                     inset: 0,
                     backgroundImage:
-                        'linear-gradient(rgba(0,210,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,210,255,0.04) 1px, transparent 1px)',
+                        'linear-gradient(rgba(var(--accent-rgb), 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(var(--accent-rgb), 0.03) 1px, transparent 1px)',
                     backgroundSize: '50px 50px',
                     maskImage: 'radial-gradient(ellipse at center, black 20%, transparent 75%)',
                     pointerEvents: 'none',
@@ -251,71 +334,48 @@ const AnimatedBackground = () => {
             {/* ─── Grid Glow Dots ────────────────────────────────────── */}
             {glowDots}
 
-            {/* ─── Scroll Hue Shift Layer ────────────────────────────── */}
-            <div ref={hueLayerRef} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }} />
-
-            {/* ─── CSS Keyframes for blob animation ──────────────────── */}
+            {/* ─── CSS Keyframes ──────────────────────────────────────── */}
             <style>{`
-                @keyframes blob-drift-1 {
+                @keyframes blob-orbit-1 {
                     0% {
                         transform: translate(0, 0) scale(1) rotate(0deg);
                     }
-                    33% {
-                        transform: translate(80px, 60px) scale(1.15) rotate(5deg);
-                    }
-                    66% {
-                        transform: translate(-40px, 100px) scale(0.9) rotate(-3deg);
-                    }
-                    100% {
-                        transform: translate(60px, -30px) scale(1.1) rotate(8deg);
-                    }
-                }
-
-                @keyframes blob-drift-2 {
-                    0% {
-                        transform: translate(0, 0) scale(1) rotate(0deg);
-                    }
-                    33% {
-                        transform: translate(-100px, -50px) scale(1.2) rotate(-6deg);
-                    }
-                    66% {
-                        transform: translate(50px, -80px) scale(0.85) rotate(4deg);
-                    }
-                    100% {
-                        transform: translate(-70px, 60px) scale(1.1) rotate(-8deg);
-                    }
-                }
-
-                @keyframes blob-drift-3 {
-                    0% {
-                        transform: translate(0, 0) scale(1) rotate(0deg);
-                    }
-                    33% {
-                        transform: translate(60px, -70px) scale(1.1) rotate(4deg);
-                    }
-                    66% {
-                        transform: translate(-80px, -40px) scale(1.2) rotate(-5deg);
-                    }
-                    100% {
-                        transform: translate(40px, 80px) scale(0.9) rotate(7deg);
-                    }
-                }
-
-                @keyframes blob-drift-4 {
-                    0% {
-                        transform: translate(0, 0) scale(1) rotate(0deg);
+                    25% {
+                        transform: translate(100px, 80px) scale(1.15) rotate(5deg);
                     }
                     50% {
-                        transform: translate(-60px, 40px) scale(1.3) rotate(-4deg);
+                        transform: translate(-50px, 120px) scale(0.9) rotate(-3deg);
+                    }
+                    75% {
+                        transform: translate(80px, -20px) scale(1.2) rotate(8deg);
                     }
                     100% {
-                        transform: translate(50px, -50px) scale(0.95) rotate(6deg);
+                        transform: translate(-30px, 60px) scale(1.05) rotate(-5deg);
+                    }
+                }
+
+                @keyframes blob-orbit-2 {
+                    0% {
+                        transform: translate(0, 0) scale(1) rotate(0deg);
+                    }
+                    25% {
+                        transform: translate(-120px, -60px) scale(1.2) rotate(-6deg);
+                    }
+                    50% {
+                        transform: translate(70px, -100px) scale(0.85) rotate(4deg);
+                    }
+                    75% {
+                        transform: translate(-80px, 70px) scale(1.15) rotate(-8deg);
+                    }
+                    100% {
+                        transform: translate(40px, -40px) scale(1) rotate(3deg);
                     }
                 }
 
                 @media (max-width: 768px) {
-                    .bg-blob-3, .bg-blob-4 {
-                        display: none;
+                    .bg-blob-1, .bg-blob-2 {
+                        filter: blur(80px) !important;
+                        opacity: 0.7;
                     }
                 }
             `}</style>

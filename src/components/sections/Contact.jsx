@@ -183,7 +183,7 @@ const Contact = () => {
                                                 <label className="block text-xs font-mono text-[var(--clr-text-dim)] mb-2"><span className="text-[var(--clr-accent)] mr-2">$</span> Message</label>
                                                 <textarea name="message" rows="4" className="w-full bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.1)] rounded-lg p-3 text-sm focus:border-[var(--clr-accent)] outline-none resize-none" placeholder="Tell me about the opportunity..." required></textarea>
                                             </div>
-                                            <button type="submit" className="terminal-submit-btn w-full py-4 bg-[var(--clr-accent)] text-black font-black uppercase text-sm rounded-xl flex items-center justify-center gap-3 hover:shadow-[0_0_20px_rgba(0,210,255,0.4)] transition-all">
+                                            <button type="submit" className="terminal-submit-btn w-full py-4 bg-[var(--clr-accent)] text-black font-black uppercase text-sm rounded-xl flex items-center justify-center gap-3 hover:shadow-[0_0_20px_rgba(200,162,110,0.4)] transition-all">
                                                 Send Message <i className="fas fa-paper-plane"></i>
                                             </button>
                                         </form>

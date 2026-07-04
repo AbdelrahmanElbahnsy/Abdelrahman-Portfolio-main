@@ -8,16 +8,17 @@ html {
 
 :root {
     /* Theme Variables - Dark Mode (Default) */
-    --clr-bg: #0c1220;
+    --clr-bg: #0a0e17;
     --clr-bg-alt: transparent;
-    --clr-card-bg: rgba(15, 23, 42, 0.6);
-    --clr-card-border: rgba(255, 255, 255, 0.1);
+    --clr-card-bg: rgba(12, 18, 32, 0.7);
+    --clr-card-border: rgba(255, 255, 255, 0.08);
     --clr-text: #e0e6ed;
     --clr-text-dim: #94a3b8;
-    --clr-accent: #00d2ff;
-    --clr-accent-2: #3a7bd5;
-    --clr-accent-3: #5ffbf1;
-    --clr-nav-bg: rgba(10, 12, 16, 0.95);
+    --clr-accent: #c8a26e;
+    --clr-accent-2: #1e3a5f;
+    --clr-accent-3: #dbb88a;
+    --accent-rgb: 200, 162, 110;
+    --clr-nav-bg: rgba(10, 14, 23, 0.95);
     --clr-terminal-bg: #0d1117;
     --clr-terminal-header: #161b22;
     --clr-f-ln: #0077b5;
@@ -49,7 +50,7 @@ html {
     --transition-slow: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 
     /* Shadows */
-    --shadow-accent: 0 4px 20px rgba(0, 210, 255, 0.2);
+    --shadow-accent: 0 4px 20px rgba(200, 162, 110, 0.2);
     --shadow-card: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
@@ -60,9 +61,10 @@ html {
     --clr-card-border: rgba(0, 0, 0, 0.1);
     --clr-text: #1f2937;
     --clr-text-dim: #4b5563;
-    --clr-accent: #00c8ff;
-    --clr-accent-2: #3a7bd5;
-    --clr-accent-3: #00c8ff;
+    --clr-accent: #b08d57;
+    --clr-accent-2: #1e3a5f;
+    --clr-accent-3: #c8a26e;
+    --accent-rgb: 176, 141, 87;
     --clr-nav-bg: rgba(248, 250, 252, 0.95);
     --clr-terminal-bg: #ffffff;
     --clr-terminal-header: #f1f5f9;
@@ -137,7 +139,7 @@ html {
     justify-content: center;
     gap: 0.8rem;
     transition: all 0.3s ease;
-    box-shadow: 0 10px 20px rgba(0, 210, 255, 0.2);
+    box-shadow: 0 10px 20px rgba(200, 162, 110, 0.2);
     border: 1px solid var(--clr-accent);
     cursor: pointer;
     text-decoration: none;
@@ -145,7 +147,7 @@ html {
 
   .btn-premium:hover {
     transform: translateY(-3px);
-    box-shadow: 0 15px 30px rgba(0, 210, 255, 0.4);
+    box-shadow: 0 15px 30px rgba(200, 162, 110, 0.4);
   }
 
   .btn-cv {
@@ -161,13 +163,13 @@ html {
     transition: all var(--transition-smooth);
     text-transform: uppercase;
     letter-spacing: 1px;
-    box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
+    box-shadow: 0 0 20px rgba(200, 162, 110, 0.4);
     text-decoration: none;
   }
 
   .btn-cv:hover {
     transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 0 30px rgba(0, 210, 255, 0.6);
+    box-shadow: 0 0 30px rgba(200, 162, 110, 0.6);
   }
 }
 

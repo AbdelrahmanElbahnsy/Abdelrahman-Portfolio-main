@@ -118,7 +118,7 @@ const Toolchain = () => {
                     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
                 }
                 .tool-card:hover {
-                    box-shadow: 0 0 20px rgba(0, 210, 255, 0.2);
+                    box-shadow: 0 0 20px rgba(200, 162, 110, 0.2);
                     transform: translateY(-5px);
                 }
                 .light-theme .tool-card {

@@ -123,7 +123,7 @@ const Certifications = () => {
                     content: '';
                     position: absolute;
                     inset: 0;
-                    background: radial-gradient(circle at top right, rgba(0, 210, 255, 0.05), transparent 70%);
+                    background: radial-gradient(circle at top right, rgba(200, 162, 110, 0.05), transparent 70%);
                     pointer-events: none;
                 }
             ` }} />

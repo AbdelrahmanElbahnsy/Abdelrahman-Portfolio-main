@@ -142,7 +142,7 @@ const About = () => {
                     right: 0;
                     width: 100px;
                     height: 100px;
-                    background: radial-gradient(circle at bottom right, rgba(0, 210, 255, 0.05), transparent 70%);
+                    background: radial-gradient(circle at bottom right, rgba(200, 162, 110, 0.05), transparent 70%);
                     pointer-events: none;
                 }
             ` }} />

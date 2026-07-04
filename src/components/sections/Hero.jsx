@@ -241,8 +241,8 @@ const Hero = () => {
                     gap: 10px;
                     padding: 6px 16px;
                     border-radius: 9999px;
-                    background: rgba(0, 210, 255, 0.05);
-                    border: 1px solid rgba(0, 210, 255, 0.2);
+                    background: rgba(200, 162, 110, 0.05);
+                    border: 1px solid rgba(200, 162, 110, 0.2);
                     color: var(--clr-accent);
                     font-size: 0.9rem;
                     font-weight: 500;
@@ -253,15 +253,15 @@ const Hero = () => {
                 }
 
                 .hero-badge:hover {
-                    background: rgba(0, 210, 255, 0.1);
+                    background: rgba(200, 162, 110, 0.1);
                     border-color: var(--clr-accent);
                     transform: translateY(-2px);
-                    box-shadow: 0 0 20px rgba(0, 210, 255, 0.15);
+                    box-shadow: 0 0 20px rgba(200, 162, 110, 0.15);
                 }
 
                 .sparkle-icon {
                     color: var(--clr-accent-3);
-                    filter: drop-shadow(0 0 5px rgba(0, 210, 255, 0.3));
+                    filter: drop-shadow(0 0 5px rgba(200, 162, 110, 0.3));
                     font-size: 0.8rem;
                 }
             ` }} />

@@ -1,6 +1,7 @@
-import React, { memo, useCallback, useMemo } from 'react';
+import React, { memo, useCallback, useMemo, useRef } from 'react';
 import { normalizeProjectTechnologies } from '../../utils/projectTechnologies';
 import TechTags from './TechTags';
+import { useTiltEffect } from '../../hooks/useTiltEffect';
 
 const FALLBACK_IMAGE = '/portfolio-preview.png';
 
@@ -13,8 +14,12 @@ const isValidImageSource = (value) => {
 };
 
 const ProjectCard = ({ project, onClickDetails }) => {
+  const cardRef = useRef(null);
   const imageSrc = isValidImageSource(project?.image) ? project.image.trim() : FALLBACK_IMAGE;
   const technologies = useMemo(() => normalizeProjectTechnologies(project), [project]);
+
+  // 3D tilt effect with spotlight glare
+  useTiltEffect(cardRef, { maxTilt: 8, glare: true });
 
   const handleOpenDetails = useCallback(() => {
     if (project) {
@@ -29,8 +34,11 @@ const ProjectCard = ({ project, onClickDetails }) => {
   }, []);
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-cyan-400/15 bg-[#020617]/80 shadow-[0_20px_60px_-40px_rgba(6,182,212,0.45)] transition duration-300 hover:-translate-y-1 hover:border-cyan-400/35 hover:shadow-[0_30px_80px_-35px_rgba(6,182,212,0.5)]">
-      <div className="relative h-44 overflow-hidden bg-slate-950">
+    <article
+      ref={cardRef}
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[rgba(200,162,110,0.15)] bg-[rgba(10,14,23,0.8)] shadow-[0_20px_60px_-40px_rgba(200,162,110,0.2)] transition duration-300 hover:-translate-y-1 hover:border-[rgba(200,162,110,0.35)] hover:shadow-[0_30px_80px_-35px_rgba(200,162,110,0.25)]"
+    >
+      <div className="relative h-44 overflow-hidden bg-[#060a14]">
         <img
           src={imageSrc}
           alt={project?.title || 'Project preview'}
@@ -40,7 +48,7 @@ const ProjectCard = ({ project, onClickDetails }) => {
           onError={handleImageError}
           className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e17] via-[#0a0e17]/30 to-transparent" />
       </div>
 
       <div className="flex flex-1 flex-col p-5">
@@ -60,7 +68,7 @@ const ProjectCard = ({ project, onClickDetails }) => {
           <button
             type="button"
             onClick={handleOpenDetails}
-            className="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-cyan-400 to-blue-500 px-3.5 py-2 text-xs font-semibold text-slate-950 transition hover:brightness-110"
+            className="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-[var(--clr-accent)] to-[var(--clr-accent-2)] px-3.5 py-2 text-xs font-semibold text-white transition hover:brightness-110"
           >
             View Details
           </button>
@@ -70,7 +78,7 @@ const ProjectCard = ({ project, onClickDetails }) => {
               href={project.repo}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center rounded-lg border border-slate-600 px-3.5 py-2 text-xs font-semibold text-slate-200 transition hover:border-cyan-400 hover:text-white"
+              className="inline-flex items-center justify-center rounded-lg border border-slate-600 px-3.5 py-2 text-xs font-semibold text-slate-200 transition hover:border-[var(--clr-accent)] hover:text-white"
             >
               Repository
             </a>

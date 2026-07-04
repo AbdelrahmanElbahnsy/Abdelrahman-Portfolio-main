@@ -6,6 +6,8 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { heroTechSlider, personalInfo } from '../../data/portfolioData';
 import { SiMicrosoftazure } from 'react-icons/si';
+import { useMagneticEffect } from '../../hooks/useMagneticEffect';
+import SplitText from '../ui/SplitText';
 
 const Hero = () => {
     const [typedText, setTypedText] = useState('');
@@ -21,6 +23,9 @@ const Hero = () => {
     const ctaRef = useRef(null);
     const portraitRef = useRef(null);
     const scrollIndicatorRef = useRef(null);
+
+    // Magnetic effect on CTA button
+    useMagneticEffect(ctaRef, { strength: 0.35, radius: 80 });
 
     // Typing effect
     useEffect(() => {
@@ -81,14 +86,28 @@ const Hero = () => {
                 delay: 0.15,
             });
 
-            tl.to(badgeRef.current, { opacity: 1, y: 0, duration: 0.4, ease: 'back.out(1.4)' })
-              .to(nameRef.current, { opacity: 1, y: 0, duration: 0.6 }, '-=0.1')
-              .to(subtitleRef.current, { opacity: 1, y: 0, duration: 0.5 }, '-=0.2')
-              .to(portraitRef.current, { opacity: 1, scale: 1, clipPath: 'circle(75% at 50% 50%)', duration: 0.9, ease: 'power3.out' }, '-=0.3')
-              .to(descRef.current, { opacity: 1, y: 0, duration: 0.5 }, '-=0.6')
-              .to(sliderRef.current, { opacity: 1, y: 0, duration: 0.5 }, '-=0.2')
-              .to(ctaRef.current, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'back.out(1.7)' }, '-=0.2')
-              .to(scrollIndicatorRef.current, { opacity: 1, y: 0, duration: 0.4 }, '-=0.1');
+            tl.to(badgeRef.current, { opacity: 1, y: 0, duration: 0.4, ease: 'back.out(1.4)' });
+
+            // Char-by-char name reveal
+            const nameChars = nameRef.current?.querySelectorAll('.split-unit');
+            if (nameChars?.length) {
+                gsap.set(nameChars, { opacity: 0, y: 30, rotateX: -40 });
+                tl.to(nameChars, {
+                    opacity: 1, y: 0, rotateX: 0,
+                    duration: 0.5, stagger: 0.03,
+                    ease: 'back.out(1.2)',
+                }, '-=0.1');
+                tl.to(nameRef.current, { opacity: 1, y: 0, duration: 0.01 }, '<');
+            } else {
+                tl.to(nameRef.current, { opacity: 1, y: 0, duration: 0.6 }, '-=0.1');
+            }
+
+            tl.to(subtitleRef.current, { opacity: 1, y: 0, duration: 0.5 }, '-=0.2');
+            tl.to(portraitRef.current, { opacity: 1, scale: 1, clipPath: 'circle(75% at 50% 50%)', duration: 0.9, ease: 'power3.out' }, '-=0.3');
+            tl.to(descRef.current, { opacity: 1, y: 0, duration: 0.5 }, '-=0.6');
+            tl.to(sliderRef.current, { opacity: 1, y: 0, duration: 0.5 }, '-=0.2');
+            tl.to(ctaRef.current, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'back.out(1.7)' }, '-=0.2');
+            tl.to(scrollIndicatorRef.current, { opacity: 1, y: 0, duration: 0.4 }, '-=0.1');
 
             // Continuous float for portrait
             tl.then(() => {
@@ -117,9 +136,9 @@ const Hero = () => {
                             ref={nameRef}
                             className="hero-name text-5xl md:text-6xl font-black mb-6 leading-[1.1] tracking-[-2px] whitespace-nowrap"
                         >
-                            {firstName}{' '}
+                            <SplitText mode="char">{firstName}</SplitText>{' '}
                             <span className="highlight-surname text-[var(--clr-accent)]">
-                                {lastName}
+                                <SplitText mode="char">{lastName}</SplitText>
                             </span>
                         </h1>
                         <h2

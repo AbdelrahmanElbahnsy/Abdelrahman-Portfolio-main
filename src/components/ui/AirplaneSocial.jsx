@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { socialLinks } from '../../data/portfolioData';
+import { useMagneticEffect } from '../../hooks/useMagneticEffect';
 
 const AirplaneSocial = () => {
     const [isActive, setIsActive] = useState(false);
     const menuRef = useRef(null);
     const triggerRef = useRef(null);
+
+    // Magnetic pull on the toggle button
+    useMagneticEffect(triggerRef, { strength: 0.4, radius: 60 });
 
     const toggleMenu = (e) => {
         e.stopPropagation();

@@ -8,7 +8,7 @@ html {
 
 :root {
     /* Theme Variables - Dark Mode (Default) */
-    --clr-bg: #0a0c10;
+    --clr-bg: #0c1220;
     --clr-bg-alt: transparent;
     --clr-card-bg: rgba(15, 23, 42, 0.6);
     --clr-card-border: rgba(255, 255, 255, 0.1);
@@ -172,31 +172,6 @@ html {
 }
 
 @layer utilities {
-  .hero-background {
-    @apply fixed inset-0 z-[-1] pointer-events-none;
-  }
-
-  .grid-overlay {
-    position: absolute;
-    inset: 0;
-    background-image:
-        linear-gradient(rgba(0, 210, 255, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 210, 255, 0.05) 1px, transparent 1px);
-    background-size: 50px 50px;
-    mask-image: radial-gradient(ellipse at center, black, transparent 80%);
-  }
-
-  .glow-sphere {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) translateZ(0); /* GPU acceleration */
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(0, 210, 255, 0.12) 0%, transparent 70%);
-    filter: blur(60px); /* Reduced blur for performance */
-    will-change: transform;
-  }
 
   .section {
     @apply py-24 relative overflow-hidden bg-transparent;

@@ -1,59 +1,93 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay, Navigation, Keyboard } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
 import { skills } from '../../data/portfolioData';
 import { SiMicrosoftazure } from 'react-icons/si';
 
 const Skills = () => {
     const sectionRef = useRef(null);
+    const headerRef = useRef(null);
+    const circularRef = useRef(null);
     const { subtitle, title, description, circularSkills, categories } = skills;
 
-    useEffect(() => {
-        const skillsObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const items = entry.target.querySelectorAll('.circular-skill-item');
-                    items.forEach((item, idx) => {
-                        setTimeout(() => {
-                            item.classList.add('reveal');
+    useGSAP(
+        () => {
+            const subtitleEl = headerRef.current?.querySelector('.section-subtitle');
+            const titleEl = headerRef.current?.querySelector('.section-title');
+            const descEl = headerRef.current?.querySelector('.section-desc');
+            const skillItems = circularRef.current?.querySelectorAll('.circular-skill-item');
+
+            gsap.set([subtitleEl, titleEl, descEl].filter(Boolean), { opacity: 0, y: 30 });
+            if (skillItems?.length) gsap.set(skillItems, { opacity: 0, y: 20, scale: 0.85 });
+
+            const tl = gsap.timeline({
+                defaults: { ease: 'power3.out' },
+                scrollTrigger: {
+                    trigger: sectionRef.current,
+                    start: 'top 80%',
+                    toggleActions: 'play none none none',
+                },
+            });
+
+            tl.to(subtitleEl, { opacity: 1, y: 0, duration: 0.4 })
+              .to(titleEl, { opacity: 1, y: 0, duration: 0.5 }, '-=0.15')
+              .to(descEl, { opacity: 1, y: 0, duration: 0.4 }, '-=0.2')
+
+            if (skillItems?.length) {
+                tl.to(skillItems, {
+                    opacity: 1, y: 0, scale: 1,
+                    duration: 0.5, stagger: 0.08,
+                    ease: 'back.out(1.4)',
+                    onComplete: () => {
+                        skillItems.forEach((item, idx) => {
                             const circle = item.querySelector('.progress-ring-circle');
                             const percent = parseFloat(item.dataset.percent || '0');
-                            const radius = circle.r.baseVal.value;
+                            const radius = circle?.r?.baseVal?.value || 54;
                             const circumference = 2 * Math.PI * radius;
                             const offset = circumference - (percent / 100) * circumference;
-                            circle.style.strokeDashoffset = offset;
-                        }, idx * 180);
+                            if (circle) {
+                                gsap.to(circle, { strokeDashoffset: offset, duration: 0.8, delay: idx * 0.06, ease: 'power3.out' });
+                            }
+                        });
+                    },
+                }, '-=0.1');
+            }
+
+            const progressBars = sectionRef.current?.querySelectorAll('.skill-progress-bar');
+            if (progressBars?.length) {
+                progressBars.forEach((bar) => {
+                    const targetWidth = bar.style.getPropertyValue('--target-width');
+                    gsap.to(bar, {
+                        width: targetWidth, duration: 0.8, ease: 'power3.out',
+                        scrollTrigger: { trigger: bar, start: 'top 90%', toggleActions: 'play none none none' },
                     });
-                    skillsObserver.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.2 });
-
-        if (sectionRef.current) {
-            skillsObserver.observe(sectionRef.current);
-        }
-
-        return () => skillsObserver.disconnect();
-    }, []);
+                });
+            }
+        },
+        { scope: sectionRef, dependencies: [] },
+    );
 
     return (
         <section id="skills" className="section" ref={sectionRef}>
             <div className="container mx-auto px-8">
-                <div className="section-header animate-up text-center mb-16">
+                <div ref={headerRef} className="section-header text-center mb-16">
                     <span className="section-subtitle text-[var(--clr-accent)] font-mono uppercase tracking-widest text-sm mb-2 block">{subtitle}</span>
                     <h2 className="section-title text-4xl md:text-5xl font-black mb-4">{title}</h2>
                     <p className="section-desc text-[var(--clr-text-dim)] max-w-2xl mx-auto">{description}</p>
                 </div>
 
-                <div className="skills-circular-row flex flex-wrap justify-center gap-12 mb-20">
+                <div ref={circularRef} className="skills-circular-row flex flex-wrap justify-center gap-12 mb-20">
                     {circularSkills.map((skill, idx) => (
                         <div key={idx} className="circular-skill-item group" data-percent={skill.percent}>
                             <div className="circle-box relative w-[120px] h-[120px] flex items-center justify-center">
                                 <svg className="progress-ring rotate-[-90deg]" width="120" height="120">
                                     <circle className="progress-ring-bg" cx="60" cy="60" r="54" fill="transparent" stroke="rgba(255,255,255,0.05)" strokeWidth="8" />
-                                    <circle className="progress-ring-circle transition-all duration-1000 ease-out" cx="60" cy="60" r="54" fill="transparent" stroke="var(--clr-accent)" strokeWidth="8" strokeDasharray="339.292" strokeDashoffset="339.292" />
+                                    <circle className="progress-ring-circle transition-none" cx="60" cy="60" r="54" fill="transparent" stroke="var(--clr-accent)" strokeWidth="8" strokeDasharray="339.292" strokeDashoffset="339.292" />
                                 </svg>
                                 <div className="skill-icon absolute text-3xl text-[var(--clr-accent)] transition-transform duration-300 group-hover:scale-125 flex items-center justify-center">
                                     {skill.icon === 'SiMicrosoftazure' ? (
@@ -126,19 +160,8 @@ const Skills = () => {
                                                     </div>
                                                     <div className="skill-progress h-1 bg-[rgba(255,255,255,0.05)] rounded-full overflow-hidden">
                                                         <div
-                                                            className="skill-progress-bar h-full bg-[var(--clr-accent)] transition-all duration-1000 ease-in-out"
+                                                            className="skill-progress-bar h-full bg-[var(--clr-accent)] rounded-full"
                                                             style={{ width: '0%', '--target-width': `${metric.percent}%` }}
-                                                            ref={(el) => {
-                                                                if (el) {
-                                                                    const observer = new IntersectionObserver((entries) => {
-                                                                        if (entries[0].isIntersecting) {
-                                                                            el.style.width = el.style.getPropertyValue('--target-width');
-                                                                            observer.disconnect();
-                                                                        }
-                                                                    });
-                                                                    observer.observe(el);
-                                                                }
-                                                            }}
                                                         ></div>
                                                     </div>
                                                 </div>

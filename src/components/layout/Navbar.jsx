@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { personalInfo, socialLinks } from '../../data/portfolioData';
 
 const Navbar = () => {
@@ -6,6 +8,11 @@ const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [activeSection, setActiveSection] = useState('hero');
+
+    const headerRef = useRef(null);
+    const navRef = useRef(null);
+    const menuOverlayRef = useRef(null);
+    const menuItemsRef = useRef(null);
 
     const navLinks = [
         { name: 'Home', href: '#hero', id: 'hero', icon: 'fas fa-home' },
@@ -19,6 +26,22 @@ const Navbar = () => {
         setActiveSection(id);
         if (isMenuOpen) toggleMenu();
     };
+
+    // GSAP entrance animation
+    useGSAP(
+        () => {
+            if (!headerRef.current) return;
+
+            gsap.from(headerRef.current, {
+                y: -80,
+                opacity: 0,
+                duration: 0.8,
+                ease: 'power4.out',
+                delay: 0.1,
+            });
+        },
+        { scope: headerRef, dependencies: [] },
+    );
 
     useEffect(() => {
         const handleScroll = () => {
@@ -55,6 +78,45 @@ const Navbar = () => {
         };
     }, []);
 
+    // Animate mobile menu open/close
+    useEffect(() => {
+        if (!menuOverlayRef.current || !menuItemsRef.current) return;
+
+        if (isMenuOpen) {
+            gsap.to(menuOverlayRef.current, {
+                opacity: 1,
+                y: 0,
+                duration: 0.5,
+                ease: 'power4.out',
+                onStart: () => {
+                    menuOverlayRef.current.style.pointerEvents = 'auto';
+                },
+            });
+
+            const items = menuItemsRef.current.querySelectorAll('.mobile-nav-item');
+            gsap.from(items, {
+                opacity: 0,
+                y: 30,
+                duration: 0.5,
+                stagger: 0.08,
+                ease: 'power4.out',
+                delay: 0.2,
+            });
+        } else {
+            gsap.to(menuOverlayRef.current, {
+                opacity: 0,
+                y: '-100%',
+                duration: 0.4,
+                ease: 'power3.in',
+                onComplete: () => {
+                    if (menuOverlayRef.current) {
+                        menuOverlayRef.current.style.pointerEvents = 'none';
+                    }
+                },
+            });
+        }
+    }, [isMenuOpen]);
+
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
         if (!isMenuOpen) {
@@ -68,9 +130,9 @@ const Navbar = () => {
 
     return (
         <>
-            <header className={`fixed top-0 left-0 w-full z-[1000] transition-all duration-700 ${isScrolled ? 'pt-4' : 'pt-8'}`}>
+            <header ref={headerRef} className={`fixed top-0 left-0 w-full z-[1000] transition-all duration-700 ${isScrolled ? 'pt-4' : 'pt-8'}`}>
                 <div className={`mx-auto transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isScrolled ? 'max-w-[1240px] px-8' : 'page-container px-4'}`}>
-                    <nav className={`flex items-center justify-between px-6 py-2.5 rounded-full border transition-all duration-700 ${isScrolled ? 'bg-[rgba(10,12,16,0.92)] border-[rgba(0,210,255,0.35)] backdrop-blur-2xl shadow-[0_15px_50px_rgba(0,0,0,0.7)]' : 'bg-transparent border-transparent'}`}>
+                    <nav ref={navRef} className={`flex items-center justify-between px-6 py-2.5 rounded-full border transition-all duration-700 ${isScrolled ? 'bg-[rgba(10,12,16,0.92)] border-[rgba(0,210,255,0.35)] backdrop-blur-2xl shadow-[0_15px_50px_rgba(0,0,0,0.7)]' : 'bg-transparent border-transparent'}`}>
                         {/* Logo */}
                         <a href="#" className="logo flex items-center gap-2 group shrink-0" onClick={() => handleNavClick('hero')}>
                             <span className={`font-black tracking-tighter text-white transition-all duration-500 ${isScrolled ? 'text-xl' : 'text-2xl'}`}>
@@ -120,11 +182,15 @@ const Navbar = () => {
             </header>
 
             {/* Mobile Menu Overlay */}
-            <div className={`fixed inset-0 z-[999] bg-[#0a0c10]/98 backdrop-blur-2xl transition-all duration-700 lg:hidden ${isMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full pointer-events-none'}`}>
-                <div className="mobile-menu-content h-full flex flex-col justify-between p-12 py-32 relative z-10">
+            <div
+                ref={menuOverlayRef}
+                className="fixed inset-0 z-[999] bg-[#0a0c10]/98 backdrop-blur-2xl lg:hidden"
+                style={{ opacity: 0, transform: 'translateY(-100%)', pointerEvents: 'none' }}
+            >
+                <div ref={menuItemsRef} className="mobile-menu-content h-full flex flex-col justify-between p-12 py-32 relative z-10">
                     <ul className="flex flex-col gap-6">
                         {[...navLinks, { name: 'Contact', href: '#contact', id: 'contact', icon: 'fas fa-paper-plane' }].map((link, idx) => (
-                            <li key={idx}>
+                            <li key={idx} className="mobile-nav-item">
                                 <a 
                                     href={link.href}
                                     onClick={() => handleNavClick(link.id)}

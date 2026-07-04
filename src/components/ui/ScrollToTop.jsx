@@ -48,7 +48,7 @@ const ScrollToTop = () => {
                     align-items: center;
                     justify-content: center;
                     font-size: 1.2rem;
-                    box-shadow: 0 5px 15px rgba(0, 210, 255, 0.3);
+                    box-shadow: 0 5px 15px rgba(200, 162, 110, 0.3);
                     opacity: 0;
                     visibility: hidden;
                     transform: translateY(20px);
@@ -63,7 +63,7 @@ const ScrollToTop = () => {
                 }
 
                     transform: translateY(-5px);
-                    box-shadow: 0 8px 20px rgba(0, 210, 255, 0.4);
+                    box-shadow: 0 8px 20px rgba(200, 162, 110, 0.4);
                 }
 
                 @media (max-width: 768px) {

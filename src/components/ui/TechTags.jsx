@@ -24,14 +24,14 @@ const TechTags = ({ technologies = [], maxVisible, className = '' }) => {
       {visibleTech.map((technology) => (
         <span
           key={technology}
-          className="rounded border border-cyan-500/30 bg-transparent px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-cyan-300"
+          className="rounded border border-[rgba(200,162,110,0.3)] bg-transparent px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--clr-accent-3)]"
         >
           {technology}
         </span>
       ))}
 
       {remaining > 0 ? (
-        <span className="rounded border border-cyan-500/30 bg-transparent px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-cyan-300">
+        <span className="rounded border border-[rgba(200,162,110,0.3)] bg-transparent px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--clr-accent-3)]">
           +{remaining}
         </span>
       ) : null}

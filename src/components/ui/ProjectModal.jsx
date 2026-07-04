@@ -83,7 +83,7 @@ const ProjectModal = ({ project, onClose }) => {
     >
       <div
         ref={modalRef}
-        className={`relative w-full max-w-4xl overflow-hidden rounded-2xl border border-cyan-400/20 bg-[#020617]/95 shadow-[0_30px_100px_-40px_rgba(6,182,212,0.45)] transition-all duration-300 ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
+        className={`relative w-full max-w-4xl overflow-hidden rounded-2xl border border-[rgba(200,162,110,0.2)] bg-[rgba(10,14,23,0.95)] shadow-[0_30px_100px_-40px_rgba(200,162,110,0.2)] transition-all duration-300 ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
       >
         <div className="relative h-64 overflow-hidden bg-slate-950 sm:h-[250px]">
           <img
@@ -95,7 +95,7 @@ const ProjectModal = ({ project, onClose }) => {
             onError={handleImageError}
             className="h-full w-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#020617]/95 via-[#020617]/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e17]/95 via-[#0a0e17]/60 to-transparent" />
           <div className="absolute left-4 top-4 z-10 flex items-center gap-2">
             <span className="h-3 w-3 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.45)]" />
             <span className="h-3 w-3 rounded-full bg-yellow-400 shadow-[0_0_8px_rgba(245,158,11,0.35)]" />
@@ -119,8 +119,8 @@ const ProjectModal = ({ project, onClose }) => {
 
           <TechTags technologies={technologies} className="mt-4" />
 
-          <div className="mt-8 rounded-[28px] border-l-2 border-cyan-400/70 bg-[#020617] p-6 shadow-inner shadow-cyan-500/10">
-            <div className="mb-4 font-mono text-xs uppercase tracking-[0.35em] text-cyan-300 opacity-90">
+          <div className="mt-8 rounded-[28px] border-l-2 border-[rgba(200,162,110,0.7)] bg-[#0a0e17] p-6 shadow-inner shadow-[rgba(200,162,110,0.1)]">
+            <div className="mb-4 font-mono text-xs uppercase tracking-[0.35em] text-[var(--clr-accent-3)] opacity-90">
               $ cat description.txt
             </div>
             <p className="whitespace-pre-line text-sm leading-7 text-slate-300">
@@ -134,7 +134,7 @@ const ProjectModal = ({ project, onClose }) => {
                 href={repoLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 px-5 py-3 text-sm font-semibold text-slate-950 shadow-[0_0_30px_-10px_rgba(6,182,212,0.65)] transition hover:shadow-[0_0_30px_0_rgba(6,182,212,0.85)]"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[var(--clr-accent)] to-[var(--clr-accent-2)] px-5 py-3 text-sm font-semibold text-white shadow-[0_0_30px_-10px_rgba(200,162,110,0.4)] transition hover:shadow-[0_0_30px_0_rgba(200,162,110,0.6)]"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
@@ -145,7 +145,7 @@ const ProjectModal = ({ project, onClose }) => {
             <button
               type="button"
               onClick={onClose}
-              className="inline-flex items-center justify-center rounded-xl border border-slate-600 bg-transparent px-5 py-3 text-sm font-semibold text-slate-300 transition hover:border-cyan-400 hover:text-white"
+              className="inline-flex items-center justify-center rounded-xl border border-slate-600 bg-transparent px-5 py-3 text-sm font-semibold text-slate-300 transition hover:border-[var(--clr-accent)] hover:text-white"
             >
               Close
             </button>

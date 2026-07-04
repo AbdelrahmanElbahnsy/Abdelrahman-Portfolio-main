@@ -77,7 +77,7 @@ const Projects = () => {
       const section = sectionRef.current;
       if (!track || !section) return;
 
-      const getScrollAmount = () => Math.max(0, track.scrollWidth - section.offsetWidth);
+      const getScrollAmount = () => Math.max(0, track.scrollWidth - window.innerWidth);
       const getPinDuration = () => Math.max(getScrollAmount() * 1.5, window.innerHeight);
 
       const cards = track.querySelectorAll('.project-card-wrapper');
@@ -123,12 +123,12 @@ const Projects = () => {
       <section
         id="projects"
         ref={sectionRef}
-        className="relative bg-transparent text-white min-h-screen flex flex-col justify-center py-12 overflow-hidden"
+        className="relative bg-transparent text-white min-h-screen flex flex-col justify-center py-12 overflow-hidden w-full"
       >
         {/* Header */}
         <div ref={headerRef} className="section-header text-center px-8 mb-8 flex-shrink-0">
           <span className="section-subtitle mb-2 block font-mono text-sm font-bold uppercase tracking-widest text-[var(--clr-accent)]">
-            [ Projects_Database : {visibleProjects.length} Systems ]
+            [ Projects_Database ]
           </span>
           <h2 className="section-title text-4xl font-black tracking-tight text-white drop-shadow-md md:text-5xl">
             Featured Systems

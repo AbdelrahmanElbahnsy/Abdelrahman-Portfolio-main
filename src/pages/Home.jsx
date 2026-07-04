@@ -48,7 +48,11 @@ function Home() {
           <Toolchain />
           <Skills />
           <WaveDivider position="bottom" />
-          <Projects />
+        </div>
+
+        <Projects />
+
+        <div className="page-container">
           <Certifications />
           <WaveDivider position="bottom" flip />
           <Journey />

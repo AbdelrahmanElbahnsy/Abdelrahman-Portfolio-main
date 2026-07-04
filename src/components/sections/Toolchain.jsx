@@ -78,7 +78,7 @@ const Toolchain = () => {
         <section id="toolchain" className="section relative overflow-hidden bg-[rgba(10,10,10,0.3)]" ref={sectionRef}>
             <div className="container mx-auto px-8 mb-12">
                 <div ref={headerRef} className="section-header text-center">
-                    <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-full bg-[rgba(0,210,255,0.05)] border border-[rgba(0,210,255,0.1)]">
+                    <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-full bg-[rgba(200,162,110,0.05)] border border-[rgba(200,162,110,0.1)]">
                         <i className="fas fa-briefcase text-[var(--clr-accent)]"></i>
                         <span className="text-sm font-bold tracking-wider uppercase text-[var(--clr-accent)]">DevOps Toolchain</span>
                     </div>
@@ -89,7 +89,7 @@ const Toolchain = () => {
                 <div className="scroll-container overflow-hidden whitespace-nowrap mask-edges py-2">
                     <div ref={row1Ref} className="flex gap-6 w-max">
                         {[...row1, ...row1, ...row1].map((tool, idx) => (
-                            <div key={`r1-${idx}`} className="tool-card flex items-center gap-3 px-6 py-3 rounded-2xl bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.05)] backdrop-blur-sm hover:border-[var(--clr-accent)] hover:bg-[rgba(0,210,255,0.05)] transition-all duration-300 group">
+                            <div key={`r1-${idx}`} className="tool-card flex items-center gap-3 px-6 py-3 rounded-2xl bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.05)] backdrop-blur-sm hover:border-[var(--clr-accent)] hover:bg-[rgba(200,162,110,0.05)] transition-all duration-300 group">
                                 <i className={`${tool.icon} text-xl text-[var(--clr-accent)] group-hover:scale-110 transition-transform`}></i>
                                 <span className="text-sm font-medium tracking-tight whitespace-nowrap">{tool.name}</span>
                             </div>
@@ -100,7 +100,7 @@ const Toolchain = () => {
                 <div className="scroll-container overflow-hidden whitespace-nowrap mask-edges py-2">
                     <div ref={row2Ref} className="flex gap-6 w-max">
                         {[...row2, ...row2, ...row2].map((tool, idx) => (
-                            <div key={`r2-${idx}`} className="tool-card flex items-center gap-3 px-6 py-3 rounded-2xl bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.05)] backdrop-blur-sm hover:border-[var(--clr-accent)] hover:bg-[rgba(0,210,255,0.05)] transition-all duration-300 group">
+                            <div key={`r2-${idx}`} className="tool-card flex items-center gap-3 px-6 py-3 rounded-2xl bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.05)] backdrop-blur-sm hover:border-[var(--clr-accent)] hover:bg-[rgba(200,162,110,0.05)] transition-all duration-300 group">
                                 <i className={`${tool.icon} text-xl text-[var(--clr-accent)] group-hover:scale-110 transition-transform`}></i>
                                 <span className="text-sm font-medium tracking-tight whitespace-nowrap">{tool.name}</span>
                             </div>
@@ -118,7 +118,7 @@ const Toolchain = () => {
                     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
                 }
                 .tool-card:hover {
-                    box-shadow: 0 0 20px rgba(0, 210, 255, 0.2);
+                    box-shadow: 0 0 20px rgba(200, 162, 110, 0.2);
                     transform: translateY(-5px);
                 }
                 .light-theme .tool-card {

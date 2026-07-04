@@ -12,10 +12,17 @@ import Contact from '../components/sections/Contact';
 import ScrollToTop from '../components/ui/ScrollToTop';
 import AirplaneSocial from '../components/ui/AirplaneSocial';
 import AnimatedBackground from '../components/ui/AnimatedBackground';
+import WaveDivider from '../components/ui/WaveDivider';
+import { useScrollVelocityBlur } from '../hooks/useScrollVelocityBlur';
 import { trackVisit } from '../services/analytics';
 
 function Home() {
   const hasTrackedVisitRef = useRef(false);
+  const mainRef = useRef(null);
+
+  // Cinematic scroll blur on fast scroll
+  // Disabled: CSS filter: blur() breaks position: fixed, causing pinned sections to disappear
+  // useScrollVelocityBlur(mainRef, { maxBlur: 2, threshold: 1000 });
 
   useEffect(() => {
     if (!hasTrackedVisitRef.current) {
@@ -32,14 +39,22 @@ function Home() {
 
       <Navbar />
       
-      <main className="flex-grow">
+      <main ref={mainRef} className="flex-grow">
         <div className="page-container">
           <Hero />
+          <WaveDivider position="bottom" />
           <About />
+          <WaveDivider position="bottom" flip />
           <Toolchain />
           <Skills />
-          <Projects />
+          <WaveDivider position="bottom" />
+        </div>
+
+        <Projects />
+
+        <div className="page-container">
           <Certifications />
+          <WaveDivider position="bottom" flip />
           <Journey />
           <Contact />
         </div>

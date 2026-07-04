@@ -24,7 +24,7 @@ const Particles = () => {
       particle.style.height = `${size}px`;
       particle.style.left = `${posX}%`;
       particle.style.top = `${posY}%`;
-      particle.style.background = '#00d2ff';
+      particle.style.background = '#c8a26e';
       particle.style.borderRadius = '50%';
       particle.style.opacity = '0.3';
       particle.style.animation = `float-particle ${duration}s ease-in-out infinite alternate`;

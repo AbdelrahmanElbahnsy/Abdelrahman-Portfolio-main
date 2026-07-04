@@ -1,78 +1,116 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
 import { journey } from '../../data/portfolioData';
 
 const Journey = () => {
     const sectionRef = useRef(null);
-    const [scrollProgress, setScrollProgress] = useState(0);
+    const headerRef = useRef(null);
+    const trackRef = useRef(null);
+    const trackProgressRef = useRef(null);
     const { subtitle, title, description, phases } = journey;
 
-    useEffect(() => {
-        const handleScroll = () => {
-            if (!sectionRef.current) return;
-            const element = sectionRef.current;
-            const rect = element.getBoundingClientRect();
-            const viewportHeight = window.innerHeight;
+    useGSAP(
+        () => {
+            const subtitleEl = headerRef.current?.querySelector('.section-subtitle');
+            const titleEl = headerRef.current?.querySelector('.section-title');
+            const descEl = headerRef.current?.querySelector('p');
 
-            const start = viewportHeight;
-            const end = -rect.height;
-            const current = rect.top;
+            // Set initial states for header elements
+            gsap.set([subtitleEl, titleEl, descEl].filter(Boolean), { opacity: 0, y: 30 });
 
-            let progress = (start - current) / (start - end);
-            progress = Math.max(0, Math.min(1, progress));
-
-            setScrollProgress(progress * 1.1);
-        };
-
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const revealOnScroll = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate-in');
-                }
+            const headerTl = gsap.timeline({
+                defaults: { ease: 'power3.out' },
+                scrollTrigger: { trigger: headerRef.current, start: 'top 85%', toggleActions: 'play none none none' },
             });
-        }, observerOptions);
 
-        const timelineItems = document.querySelectorAll('.timeline-item');
-        timelineItems.forEach(item => revealOnScroll.observe(item));
+            headerTl
+                .to(subtitleEl, { opacity: 1, y: 0, duration: 0.4 })
+                .to(titleEl, { opacity: 1, y: 0, duration: 0.5 }, '-=0.15')
+                .to(descEl, { opacity: 1, y: 0, duration: 0.4 }, '-=0.15');
 
-        window.addEventListener('scroll', handleScroll);
-        handleScroll();
+            // Timeline track progress — scrubbed to scroll
+            if (trackProgressRef.current && trackRef.current) {
+                gsap.fromTo(
+                    trackProgressRef.current,
+                    { height: '0%' },
+                    {
+                        height: '100%',
+                        ease: 'none',
+                        scrollTrigger: { trigger: trackRef.current, start: 'top 80%', end: 'bottom 20%', scrub: 0.5 },
+                    },
+                );
+            }
 
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-            revealOnScroll.disconnect();
-        };
-    }, []);
+            // Timeline nodes — glow on scroll
+            const nodes = sectionRef.current?.querySelectorAll('.timeline-node');
+            if (nodes?.length) {
+                nodes.forEach((node) => {
+                    gsap.to(node, {
+                        backgroundColor: 'var(--clr-accent)',
+                        boxShadow: '0 0 20px var(--clr-accent)',
+                        scale: 1.25,
+                        duration: 0.3,
+                        ease: 'power2.out',
+                        scrollTrigger: { trigger: node, start: 'top 75%', toggleActions: 'play none none none' },
+                    });
+                });
+            }
+
+            // Timeline cards — alternating slide-in
+            const items = sectionRef.current?.querySelectorAll('.timeline-item');
+            if (items?.length) {
+                items.forEach((item, idx) => {
+                    const cardWrapper = item.querySelector('.timeline-card-wrapper');
+                    const isLeft = idx % 2 === 0;
+
+                    gsap.from(cardWrapper, {
+                        opacity: 0,
+                        x: isLeft ? -40 : 40,
+                        y: 15,
+                        duration: 0.6,
+                        ease: 'power3.out',
+                        scrollTrigger: { trigger: item, start: 'top 80%', toggleActions: 'play none none none' },
+                    });
+
+                    const tags = item.querySelectorAll('.tag');
+                    if (tags.length) {
+                        gsap.from(tags, {
+                            opacity: 0, scale: 0.8, duration: 0.3, stagger: 0.04, ease: 'back.out(1.7)',
+                            scrollTrigger: { trigger: item, start: 'top 75%', toggleActions: 'play none none none' },
+                        });
+                    }
+                });
+            }
+        },
+        { scope: sectionRef, dependencies: [] },
+    );
 
     return (
         <section id="journey" className="section bg-transparent" ref={sectionRef}>
             <div className="container mx-auto px-4 sm:px-8">
-                <div className="section-header animate-up text-center mb-20">
+                <div ref={headerRef} className="section-header text-center mb-20">
                     <span className="section-subtitle text-[var(--clr-accent)] font-mono uppercase tracking-widest text-sm mb-2 block">{subtitle}</span>
                     <h2 className="section-title text-2xl sm:text-3xl md:text-5xl font-black mb-4">{title}</h2>
                     <p className="text-[var(--clr-text-dim)] max-w-xl mx-auto">{description}</p>
                 </div>
 
-                <div className="timeline relative max-w-5xl mx-auto px-0 sm:px-4">
+                <div ref={trackRef} className="timeline relative max-w-5xl mx-auto px-0 sm:px-4">
                     <div className="timeline-track absolute left-[20px] md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-[2px] bg-[rgba(255,255,255,0.05)]">
                         <div
-                            className="timeline-track-progress absolute top-0 left-0 w-full bg-gradient-to-b from-[var(--clr-accent)] to-[var(--clr-accent-2)] shadow-[0_0_15px_var(--clr-accent)] transition-all duration-300 ease-out"
-                            style={{ height: `${scrollProgress * 100}%` }}
+                            ref={trackProgressRef}
+                            className="timeline-track-progress absolute top-0 left-0 w-full bg-gradient-to-b from-[var(--clr-accent)] to-[var(--clr-accent-2)] shadow-[0_0_15px_var(--clr-accent)]"
+                            style={{ height: '0%' }}
                         ></div>
                     </div>
 
                     <div className="timeline-items space-y-24 md:space-y-32">
                         {phases.map((phase, idx) => (
                             <div key={idx} className={`timeline-item relative flex items-start md:items-center gap-12 md:gap-0 ${idx % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
-                                <div className={`timeline-node absolute left-[20px] md:left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 w-5 h-5 rounded-full z-10 transition-all duration-700 ${scrollProgress * 100 > (idx * 16) ? 'bg-[var(--clr-accent)] shadow-[0_0_20px_var(--clr-accent)] scale-125' : 'bg-[#1a1c23] border-2 border-[rgba(255,255,255,0.1)]'}`}>
-                                    {scrollProgress * 100 > (idx * 16) && <div className="absolute inset-0 rounded-full animate-ping bg-[var(--clr-accent)] opacity-40"></div>}
-                                </div>
+                                <div className="timeline-node absolute left-[20px] md:left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 w-5 h-5 rounded-full z-10 bg-[#1a1c23] border-2 border-[rgba(255,255,255,0.1)]"></div>
 
-                                <div className={`timeline-card-wrapper w-full md:w-[45%] pl-10 md:pl-0 ${idx % 2 === 0 ? 'timeline-reveal-left' : 'timeline-reveal-right'}`}>
+                                <div className={`timeline-card-wrapper w-full md:w-[45%] pl-10 md:pl-0`}>
                                     <div className="timeline-card card p-6 sm:p-8 border border-[var(--clr-card-border)] bg-[var(--clr-card-bg)] hover:border-[var(--clr-accent)] transition-all duration-500 rounded-3xl group relative overflow-hidden h-full">
                                         <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--clr-accent)] opacity-[0.02] rounded-full -translate-y-1/2 translate-x-1/2 group-hover:opacity-10 transition-opacity"></div>
 
@@ -97,20 +135,6 @@ const Journey = () => {
             </div>
 
             <style dangerouslySetInnerHTML={{ __html: `
-                .timeline-reveal-left, .timeline-reveal-right {
-                    opacity: 0;
-                    transform: translateY(20px);
-                    transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
-                }
-                @media (min-width: 768px) {
-                    .timeline-reveal-left { transform: translateX(-60px); }
-                    .timeline-reveal-right { transform: translateX(60px); }
-                }
-                .timeline-item.animate-in .timeline-reveal-left,
-                .timeline-item.animate-in .timeline-reveal-right {
-                    opacity: 1;
-                    transform: translate(0, 0);
-                }
                 .timeline-card {
                     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
                 }

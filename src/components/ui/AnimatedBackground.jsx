@@ -28,7 +28,7 @@ const AnimatedBackground = () => {
 
     // ─── Generate star data (stable across renders) ────────────────
     const starData = useMemo(() => {
-        const count = isTouchDevice ? 20 : 40;
+        const count = isTouchDevice ? 30 : 60; // Increased star count
         const stars = [];
         for (let i = 0; i < count; i++) {
             stars.push({

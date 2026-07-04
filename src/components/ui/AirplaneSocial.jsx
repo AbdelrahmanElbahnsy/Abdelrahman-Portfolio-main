@@ -64,7 +64,7 @@ const AirplaneSocial = () => {
                 ref={triggerRef}
                 onClick={toggleMenu}
                 className={`group relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 overflow-hidden shadow-2xl ${
-                    isActive ? 'bg-[var(--clr-accent)] rotate-45 shadow-[0_0_30px_rgba(0,210,255,0.4)]' : 'bg-[var(--clr-accent)] hover:bg-[var(--clr-accent-2)]'
+                    isActive ? 'bg-[var(--clr-accent)] rotate-45 shadow-[0_0_30px_rgba(200,162,110,0.4)]' : 'bg-[var(--clr-accent)] hover:bg-[var(--clr-accent-2)]'
                 }`}
                 aria-label={isActive ? "Close Menu" : "Open Social Menu"}
             >

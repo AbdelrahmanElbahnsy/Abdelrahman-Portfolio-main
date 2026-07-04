@@ -45,16 +45,16 @@ const Certifications = () => {
                     <div className="relative group/carousel">
                         {/* Navigation Arrows */}
                         <button 
-                            className="certs-swiper-prev absolute left-2 md:-left-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(0,210,255,0.4)] bg-[rgba(10,15,30,0.75)] backdrop-blur-md text-[rgba(0,210,255,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(0,210,255,0.25)] hover:shadow-[0_0_20px_rgba(0,210,255,0.55)] focus:outline-none cursor-pointer"
+                            className="certs-swiper-prev absolute left-2 md:-left-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(200,162,110,0.4)] bg-[rgba(10,15,30,0.75)] backdrop-blur-md text-[rgba(200,162,110,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(200,162,110,0.25)] hover:shadow-[0_0_20px_rgba(200,162,110,0.55)] focus:outline-none cursor-pointer"
                             aria-label="Previous slide"
                         >
-                            <i className="fas fa-chevron-left text-xl md:text-2xl drop-shadow-[0_0_3px_rgba(0,210,255,0.4)]"></i>
+                            <i className="fas fa-chevron-left text-xl md:text-2xl drop-shadow-[0_0_3px_rgba(200,162,110,0.4)]"></i>
                         </button>
                         <button 
-                            className="certs-swiper-next absolute right-2 md:-right-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(0,210,255,0.4)] bg-[rgba(10,15,30,0.75)] backdrop-blur-md text-[rgba(0,210,255,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(0,210,255,0.25)] hover:shadow-[0_0_20px_rgba(0,210,255,0.55)] focus:outline-none cursor-pointer"
+                            className="certs-swiper-next absolute right-2 md:-right-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(200,162,110,0.4)] bg-[rgba(10,15,30,0.75)] backdrop-blur-md text-[rgba(200,162,110,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(200,162,110,0.25)] hover:shadow-[0_0_20px_rgba(200,162,110,0.55)] focus:outline-none cursor-pointer"
                             aria-label="Next slide"
                         >
-                            <i className="fas fa-chevron-right text-xl md:text-2xl drop-shadow-[0_0_3px_rgba(0,210,255,0.4)]"></i>
+                            <i className="fas fa-chevron-right text-xl md:text-2xl drop-shadow-[0_0_3px_rgba(200,162,110,0.4)]"></i>
                         </button>
 
                         <Swiper

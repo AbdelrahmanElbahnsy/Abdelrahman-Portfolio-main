@@ -132,7 +132,7 @@ const Navbar = () => {
         <>
             <header ref={headerRef} className={`fixed top-0 left-0 w-full z-[1000] transition-all duration-700 ${isScrolled ? 'pt-4' : 'pt-8'}`}>
                 <div className={`mx-auto transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isScrolled ? 'max-w-[1240px] px-8' : 'page-container px-4'}`}>
-                    <nav ref={navRef} className={`flex items-center justify-between px-6 py-2.5 rounded-full border transition-all duration-700 ${isScrolled ? 'bg-[rgba(10,12,16,0.92)] border-[rgba(0,210,255,0.35)] backdrop-blur-2xl shadow-[0_15px_50px_rgba(0,0,0,0.7)]' : 'bg-transparent border-transparent'}`}>
+                    <nav ref={navRef} className={`flex items-center justify-between px-6 py-2.5 rounded-full border transition-all duration-700 ${isScrolled ? 'bg-[rgba(10,14,23,0.92)] border-[rgba(200,162,110,0.35)] backdrop-blur-2xl shadow-[0_15px_50px_rgba(0,0,0,0.7)]' : 'bg-transparent border-transparent'}`}>
                         {/* Logo */}
                         <a href="#" className="logo flex items-center gap-2 group shrink-0" onClick={() => handleNavClick('hero')}>
                             <span className={`font-black tracking-tighter text-white transition-all duration-500 ${isScrolled ? 'text-xl' : 'text-2xl'}`}>
@@ -147,7 +147,7 @@ const Navbar = () => {
                                     <a 
                                         href={link.href} 
                                         onClick={() => handleNavClick(link.id)}
-                                        className={`flex items-center gap-2.5 px-4 py-2 rounded-full text-[11px] font-black uppercase tracking-[0.12em] transition-all duration-300 ${activeSection === link.id ? 'bg-[var(--clr-accent)] text-black shadow-[0_0_20px_rgba(0,210,255,0.5)]' : 'text-[var(--clr-text-dim)] hover:text-white hover:bg-[rgba(255,255,255,0.08)]'}`}
+                                        className={`flex items-center gap-2.5 px-4 py-2 rounded-full text-[11px] font-black uppercase tracking-[0.12em] transition-all duration-300 ${activeSection === link.id ? 'bg-[var(--clr-accent)] text-black shadow-[0_0_20px_rgba(200,162,110,0.5)]' : 'text-[var(--clr-text-dim)] hover:text-white hover:bg-[rgba(255,255,255,0.08)]'}`}
                                     >
                                         <i className={`${link.icon} ${activeSection === link.id ? 'opacity-100 scale-110' : 'opacity-70'}`}></i>
                                         <span>{link.name}</span>

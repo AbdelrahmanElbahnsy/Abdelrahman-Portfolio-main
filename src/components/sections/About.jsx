@@ -94,7 +94,7 @@ const About = () => {
                     </div>
 
                     <div ref={textRef} className="about-text order-1 md:order-2 flex flex-col justify-center gap-6 text-left">
-                        <p ref={leadRef} className="lead text-2xl font-bold text-[var(--clr-text)] border-l-4 border-[var(--clr-accent)] pl-6 py-2 bg-[rgba(0,210,255,0.03)]">{lead}</p>
+                        <p ref={leadRef} className="lead text-2xl font-bold text-[var(--clr-text)] border-l-4 border-[var(--clr-accent)] pl-6 py-2 bg-[rgba(200,162,110,0.03)]">{lead}</p>
                         {paragraphs.map((paragraph, idx) => (
                             <p key={idx} className="about-para text-[var(--clr-text-dim)] leading-relaxed text-lg">
                                 {paragraph.text}
@@ -110,7 +110,7 @@ const About = () => {
 
                         <div ref={badgesRef} className="about-badges flex flex-wrap gap-4 mt-6">
                             {badges.map((badge, idx) => (
-                                <div key={idx} className="badge flex items-center gap-3 px-5 py-3 rounded-xl bg-[rgba(255,255,255,0.04)] border border-[rgba(0,210,255,0.15)] text-sm font-bold hover:border-[var(--clr-accent)] hover:bg-[rgba(0,210,255,0.05)] transition-all duration-300">
+                                <div key={idx} className="badge flex items-center gap-3 px-5 py-3 rounded-xl bg-[rgba(255,255,255,0.04)] border border-[rgba(200,162,110,0.15)] text-sm font-bold hover:border-[var(--clr-accent)] hover:bg-[rgba(200,162,110,0.05)] transition-all duration-300">
                                     <i className={`${badge.icon} text-[var(--clr-accent)] text-lg`}></i> {badge.label}
                                 </div>
                             ))}
@@ -130,7 +130,7 @@ const About = () => {
                 .modern-terminal:hover {
                     border-color: var(--clr-accent);
                     transform: translateY(-10px) scale(1.02);
-                    box-shadow: 0 30px 60px rgba(0,210,255,0.15);
+                    box-shadow: 0 30px 60px rgba(200,162,110,0.15);
                 }
                 .terminal-body {
                     position: relative;

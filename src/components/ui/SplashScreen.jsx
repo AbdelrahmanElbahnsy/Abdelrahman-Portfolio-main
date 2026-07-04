@@ -115,12 +115,12 @@ const SplashScreen = ({ onComplete, contentReady = false }) => {
 
       // Logo text color flash
       .to(logoRef.current.querySelector('.splash-accent'), {
-        color: '#5ffbf1',
+        color: '#dbb88a',
         duration: 0.3,
         ease: 'power2.in',
       })
       .to(logoRef.current.querySelector('.splash-accent'), {
-        color: '#00d2ff',
+        color: '#c8a26e',
         duration: 0.4,
         ease: 'power2.out',
       })
@@ -168,7 +168,7 @@ const SplashScreen = ({ onComplete, contentReady = false }) => {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        background: '#0c1220',
+        background: '#0a0e17',
       }}
     >
       {/* Subtle grid background */}
@@ -177,7 +177,7 @@ const SplashScreen = ({ onComplete, contentReady = false }) => {
           position: 'absolute',
           inset: 0,
           backgroundImage:
-            'linear-gradient(rgba(0,210,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,210,255,0.03) 1px, transparent 1px)',
+            'linear-gradient(rgba(200,162,110,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(200,162,110,0.03) 1px, transparent 1px)',
           backgroundSize: '60px 60px',
           maskImage: 'radial-gradient(ellipse at center, black 20%, transparent 70%)',
           pointerEvents: 'none',
@@ -190,7 +190,7 @@ const SplashScreen = ({ onComplete, contentReady = false }) => {
           position: 'absolute',
           width: '400px',
           height: '400px',
-          background: 'radial-gradient(circle, rgba(0,210,255,0.08) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(200,162,110,0.08) 0%, transparent 70%)',
           filter: 'blur(60px)',
           pointerEvents: 'none',
         }}
@@ -203,7 +203,7 @@ const SplashScreen = ({ onComplete, contentReady = false }) => {
           style={{
             width: '60px',
             height: '1px',
-            background: 'linear-gradient(to left, #00d2ff, transparent)',
+            background: 'linear-gradient(to left, #c8a26e, transparent)',
             transformOrigin: 'right center',
             transform: 'scaleX(0)',
           }}
@@ -220,11 +220,11 @@ const SplashScreen = ({ onComplete, contentReady = false }) => {
               lineHeight: 1,
             }}
           >
-            <span className="splash-accent" style={{ color: '#00d2ff' }}>&lt;</span>
+            <span className="splash-accent" style={{ color: '#c8a26e' }}>&lt;</span>
             AE
-            <span className="splash-accent" style={{ color: '#00d2ff' }}>/</span>
+            <span className="splash-accent" style={{ color: '#c8a26e' }}>/</span>
             B
-            <span className="splash-accent" style={{ color: '#00d2ff' }}>&gt;</span>
+            <span className="splash-accent" style={{ color: '#c8a26e' }}>&gt;</span>
           </h1>
         </div>
 
@@ -233,7 +233,7 @@ const SplashScreen = ({ onComplete, contentReady = false }) => {
           style={{
             width: '60px',
             height: '1px',
-            background: 'linear-gradient(to right, #00d2ff, transparent)',
+            background: 'linear-gradient(to right, #c8a26e, transparent)',
             transformOrigin: 'left center',
             transform: 'scaleX(0)',
           }}
@@ -270,7 +270,7 @@ const SplashScreen = ({ onComplete, contentReady = false }) => {
           style={{
             width: '100%',
             height: '100%',
-            background: 'linear-gradient(90deg, #00d2ff, #5ffbf1)',
+            background: 'linear-gradient(90deg, #c8a26e, #dbb88a)',
             borderRadius: '2px',
             transformOrigin: 'left center',
             transform: 'scaleX(0)',

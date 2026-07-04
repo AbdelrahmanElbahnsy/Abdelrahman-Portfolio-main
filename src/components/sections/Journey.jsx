@@ -120,7 +120,7 @@ const Journey = () => {
 
                                         <div className="timeline-tags flex flex-wrap gap-2">
                                             {phase.tags.map((tag, tidx) => (
-                                                <span key={tidx} className="tag px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.08)] text-[var(--clr-text-dim)] group-hover:border-[rgba(0,210,255,0.2)] group-hover:text-white transition-all">
+                                                <span key={tidx} className="tag px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.08)] text-[var(--clr-text-dim)] group-hover:border-[rgba(200,162,110,0.2)] group-hover:text-white transition-all">
                                                     {tag}
                                                 </span>
                                             ))}
@@ -139,7 +139,7 @@ const Journey = () => {
                     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
                 }
                 .timeline-card:hover {
-                    box-shadow: 0 20px 50px rgba(0,210,255,0.1);
+                    box-shadow: 0 20px 50px rgba(200,162,110,0.1);
                     transform: translateY(-5px);
                 }
             ` }} />

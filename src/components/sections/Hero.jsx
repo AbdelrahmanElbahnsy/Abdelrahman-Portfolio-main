@@ -155,7 +155,7 @@ const Hero = () => {
                             >
                                 {heroTechSlider.map((item, idx) => (
                                     <SwiperSlide key={idx} style={{ width: 'auto' }}>
-                                        <span className="tech-badge flex items-center gap-2 px-5 py-2 rounded-full border border-[rgba(0,210,255,0.1)] bg-[rgba(0,210,255,0.05)] text-[var(--clr-text-dim)] hover:text-[var(--clr-accent)] transition-all duration-300">
+                                        <span className="tech-badge flex items-center gap-2 px-5 py-2 rounded-full border border-[rgba(200,162,110,0.1)] bg-[rgba(200,162,110,0.05)] text-[var(--clr-text-dim)] hover:text-[var(--clr-accent)] transition-all duration-300">
                                             {item.icon === 'SiMicrosoftazure' ? (
                                                 <SiMicrosoftazure />
                                             ) : (

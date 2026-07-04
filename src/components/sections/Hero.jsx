@@ -138,7 +138,7 @@ const Hero = () => {
                         >
                             <SplitText mode="char">{firstName}</SplitText>{' '}
                             <span className="highlight-surname text-[var(--clr-accent)]">
-                                <SplitText mode="char">{lastName}</SplitText>
+                                {lastName}
                             </span>
                         </h1>
                         <h2

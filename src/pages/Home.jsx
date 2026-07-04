@@ -21,7 +21,8 @@ function Home() {
   const mainRef = useRef(null);
 
   // Cinematic scroll blur on fast scroll
-  useScrollVelocityBlur(mainRef, { maxBlur: 2, threshold: 1000 });
+  // Disabled: CSS filter: blur() breaks position: fixed, causing pinned sections to disappear
+  // useScrollVelocityBlur(mainRef, { maxBlur: 2, threshold: 1000 });
 
   useEffect(() => {
     if (!hasTrackedVisitRef.current) {

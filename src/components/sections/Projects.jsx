@@ -77,41 +77,37 @@ const Projects = () => {
       const section = sectionRef.current;
       if (!track || !section) return;
 
-      requestAnimationFrame(() => {
-        const totalWidth = track.scrollWidth;
-        const viewportWidth = window.innerWidth;
-        const scrollAmount = totalWidth - viewportWidth;
+      const getScrollAmount = () => Math.max(0, track.scrollWidth - window.innerWidth);
+      const getPinDuration = () => Math.max(getScrollAmount() * 1.5, window.innerHeight);
 
-        if (scrollAmount <= 0) return;
+      const cards = track.querySelectorAll('.project-card-wrapper');
 
-        const cards = track.querySelectorAll('.project-card-wrapper');
-
-        gsap.to(track, {
-          x: -scrollAmount,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: section,
-            start: 'top top',
-            end: () => `+=${scrollAmount * 1.5}`,
-            pin: true,
-            scrub: 0.5,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-            onUpdate: () => {
-              cards.forEach((card) => {
-                const rect = card.getBoundingClientRect();
-                const centerX = rect.left + rect.width / 2;
-                const inView = centerX > 0 && centerX < viewportWidth;
-                gsap.to(card, {
-                  opacity: inView ? 1 : 0.4,
-                  scale: inView ? 1 : 0.93,
-                  duration: 0.4,
-                  overwrite: 'auto',
-                });
+      gsap.to(track, {
+        x: () => -getScrollAmount(),
+        ease: 'none',
+        scrollTrigger: {
+          trigger: section,
+          start: 'top top',
+          end: () => `+=${getPinDuration()}`,
+          pin: true,
+          scrub: 0.5,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+          onUpdate: () => {
+            const viewportWidth = window.innerWidth;
+            cards.forEach((card) => {
+              const rect = card.getBoundingClientRect();
+              const centerX = rect.left + rect.width / 2;
+              const inView = centerX > 0 && centerX < viewportWidth;
+              gsap.to(card, {
+                opacity: inView ? 1 : 0.4,
+                scale: inView ? 1 : 0.93,
+                duration: 0.4,
+                overwrite: 'auto',
               });
-            },
+            });
           },
-        });
+        },
       });
     },
     { scope: sectionRef, dependencies: [] },
@@ -122,28 +118,25 @@ const Projects = () => {
       <section
         id="projects"
         ref={sectionRef}
-        className="relative bg-transparent text-white"
-        style={{ overflow: 'hidden' }}
+        className="relative bg-transparent text-white min-h-screen flex flex-col justify-center py-12 overflow-hidden"
       >
-        {/* Header + Cards in one pinned container */}
-        <div className="flex flex-col justify-center min-h-screen py-8">
-          {/* Header */}
-          <div ref={headerRef} className="section-header text-center px-8 mb-8 flex-shrink-0">
-            <span className="section-subtitle mb-2 block font-mono text-sm font-bold uppercase tracking-widest text-[var(--clr-accent)]">
-              [ Projects_Database ]
-            </span>
-            <h2 className="section-title text-4xl font-black tracking-tight text-white drop-shadow-md md:text-5xl">
-              Featured Systems
-            </h2>
-          </div>
+        {/* Header */}
+        <div ref={headerRef} className="section-header text-center px-8 mb-8 flex-shrink-0">
+          <span className="section-subtitle mb-2 block font-mono text-sm font-bold uppercase tracking-widest text-[var(--clr-accent)]">
+            [ Projects_Database ]
+          </span>
+          <h2 className="section-title text-4xl font-black tracking-tight text-white drop-shadow-md md:text-5xl">
+            Featured Systems
+          </h2>
+        </div>
 
-          {/* Horizontal scrolling track */}
-          <div className="flex-1 flex items-center overflow-visible">
-            <div
-              ref={trackRef}
-              className="flex items-stretch gap-8 pl-8"
-              style={{ width: 'max-content', paddingRight: '10vw' }}
-            >
+        {/* Horizontal scrolling track */}
+        <div className="flex-1 flex items-center">
+          <div
+            ref={trackRef}
+            className="flex items-stretch gap-8 pl-8"
+            style={{ width: 'max-content', paddingRight: '15vw' }}
+          >
               {visibleProjects.length === 0 ? (
                 <div className="flex items-center justify-center w-screen">
                   <p className="font-mono text-sm uppercase tracking-widest text-[var(--clr-accent)]">
@@ -166,7 +159,6 @@ const Projects = () => {
               )}
             </div>
           </div>
-        </div>
       </section>
 
       <ProjectModal project={activeProject} onClose={handleCloseProject} />

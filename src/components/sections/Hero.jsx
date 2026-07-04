@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, FreeMode } from 'swiper/modules';
 import 'swiper/css';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { heroTechSlider, personalInfo } from '../../data/portfolioData';
 import { SiMicrosoftazure } from 'react-icons/si';
 
@@ -9,6 +11,18 @@ const Hero = () => {
     const [typedText, setTypedText] = useState('');
     const { roles, badge, firstName, lastName, description, portrait, fullName, cvUrl } = personalInfo;
 
+    // Refs for GSAP targets
+    const sectionRef = useRef(null);
+    const badgeRef = useRef(null);
+    const nameRef = useRef(null);
+    const subtitleRef = useRef(null);
+    const descRef = useRef(null);
+    const sliderRef = useRef(null);
+    const ctaRef = useRef(null);
+    const portraitRef = useRef(null);
+    const scrollIndicatorRef = useRef(null);
+
+    // Typing effect
     useEffect(() => {
         let roleIndex = 0;
         let charIndex = 0;
@@ -44,29 +58,87 @@ const Hero = () => {
         return () => clearTimeout(timeout);
     }, [roles]);
 
+    // GSAP entrance timeline
+    useGSAP(
+        () => {
+            const targets = [
+                badgeRef.current,
+                nameRef.current,
+                subtitleRef.current,
+                descRef.current,
+                sliderRef.current,
+                ctaRef.current,
+                portraitRef.current,
+                scrollIndicatorRef.current,
+            ].filter(Boolean);
+
+            gsap.set(targets, { opacity: 0, y: 30 });
+            gsap.set(portraitRef.current, { opacity: 0, scale: 0.9, clipPath: 'circle(0% at 50% 50%)', y: 0 });
+            gsap.set(ctaRef.current, { opacity: 0, y: 25, scale: 0.92 });
+
+            const tl = gsap.timeline({
+                defaults: { ease: 'power3.out' },
+                delay: 0.15,
+            });
+
+            tl.to(badgeRef.current, { opacity: 1, y: 0, duration: 0.4, ease: 'back.out(1.4)' })
+              .to(nameRef.current, { opacity: 1, y: 0, duration: 0.6 }, '-=0.1')
+              .to(subtitleRef.current, { opacity: 1, y: 0, duration: 0.5 }, '-=0.2')
+              .to(portraitRef.current, { opacity: 1, scale: 1, clipPath: 'circle(75% at 50% 50%)', duration: 0.9, ease: 'power3.out' }, '-=0.3')
+              .to(descRef.current, { opacity: 1, y: 0, duration: 0.5 }, '-=0.6')
+              .to(sliderRef.current, { opacity: 1, y: 0, duration: 0.5 }, '-=0.2')
+              .to(ctaRef.current, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'back.out(1.7)' }, '-=0.2')
+              .to(scrollIndicatorRef.current, { opacity: 1, y: 0, duration: 0.4 }, '-=0.1');
+
+            // Continuous float for portrait
+            tl.then(() => {
+                gsap.to(portraitRef.current, { y: -10, duration: 3, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+            });
+        },
+        { scope: sectionRef, dependencies: [] },
+    );
+
     return (
-        <section id="hero" className="relative flex items-center min-h-screen overflow-hidden bg-transparent">
+        <section
+            id="hero"
+            ref={sectionRef}
+            className="relative flex items-center min-h-screen overflow-hidden bg-transparent"
+        >
             <div className="container px-8 mx-auto">
                 <div className="grid items-center grid-cols-1 gap-16 pt-20 hero-grid md:grid-cols-2">
-
-                    <div className="hero-left animate-up">
-                        <div className="hero-badge-wrapper mb-3 pt-10">
+                    <div className="hero-left">
+                        <div ref={badgeRef} className="hero-badge-wrapper mb-3 pt-10">
                             <div className="hero-badge">
                                 <i className="fas fa-wand-magic-sparkles sparkle-icon"></i>
                                 <span>{badge}</span>
                             </div>
                         </div>
-                        <h1 className="hero-name text-5xl md:text-6xl font-black mb-6 leading-[1.1] tracking-[-2px] whitespace-nowrap">
-                            {firstName} <span className="highlight-surname text-[var(--clr-accent)]">{lastName}</span>
+                        <h1
+                            ref={nameRef}
+                            className="hero-name text-5xl md:text-6xl font-black mb-6 leading-[1.1] tracking-[-2px] whitespace-nowrap"
+                        >
+                            {firstName}{' '}
+                            <span className="highlight-surname text-[var(--clr-accent)]">
+                                {lastName}
+                            </span>
                         </h1>
-                        <h2 className="hero-subtitle text-xl font-semibold mb-6 h-10 text-[var(--clr-accent-3)] whitespace-nowrap">
-                            <span>{typedText}</span><span className="typing-cursor ml-1 animate-[blink-cursor_0.8s_infinite]">|</span>
+                        <h2
+                            ref={subtitleRef}
+                            className="hero-subtitle text-xl font-semibold mb-6 h-10 text-[var(--clr-accent-3)] whitespace-nowrap"
+                        >
+                            <span>{typedText}</span>
+                            <span className="typing-cursor ml-1 animate-[blink-cursor_0.8s_infinite]">
+                                |
+                            </span>
                         </h2>
-                        <p className="hero-description text-[var(--clr-text-dim)] text-lg leading-relaxed max-w-[600px] mb-10 line-clamp-5">
+                        <p
+                            ref={descRef}
+                            className="hero-description text-[var(--clr-text-dim)] text-lg leading-relaxed max-w-[600px] mb-10 line-clamp-5"
+                        >
                             {description}
                         </p>
 
-                        <div className="mb-8 overflow-hidden tech-slider-container">
+                        <div ref={sliderRef} className="mb-8 overflow-hidden tech-slider-container">
                             <Swiper
                                 dir="ltr"
                                 modules={[Autoplay, FreeMode]}
@@ -96,16 +168,22 @@ const Hero = () => {
                             </Swiper>
                         </div>
 
-                        <div className="flex gap-6 hero-cta-group">
-                            <a id="hero-btn-cv" href={cvUrl} target="_blank" rel="noopener noreferrer" className="btn-cv">
+                        <div ref={ctaRef} className="flex gap-6 hero-cta-group">
+                            <a
+                                id="hero-btn-cv"
+                                href={cvUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="btn-cv"
+                            >
                                 <i className="fas fa-file-download"></i>
                                 <span>Download CV</span>
                             </a>
                         </div>
                     </div>
 
-                    <div className="hero-right animate-up delay-1 md:ml-6">
-                        <div className="relative w-full hero-portrait group md:translate-x-8">
+                    <div className="hero-right md:ml-6">
+                        <div ref={portraitRef} className="relative w-full hero-portrait group md:translate-x-8">
                             <div className="portrait-frame relative aspect-[4/5] rounded-[30px] overflow-hidden">
                                 <img
                                     src={portrait}
@@ -120,7 +198,10 @@ const Hero = () => {
                 </div>
             </div>
 
-            <div className="absolute flex flex-col items-center gap-2 -translate-x-1/2 scroll-indicator bottom-8 left-1/2">
+            <div
+                ref={scrollIndicatorRef}
+                className="absolute flex flex-col items-center gap-2 -translate-x-1/2 scroll-indicator bottom-8 left-1/2"
+            >
                 <a href="#about" className="flex flex-col items-center scroll-link">
                     <span className="mouse w-6 h-10 border-2 border-[var(--clr-text-dim)] rounded-full relative">
                         <span className="wheel w-1 h-2 bg-[var(--clr-accent)] rounded-full absolute top-2 left-1/2 -translate-x-1/2 animate-[scroll-wheel_1s_infinite]"></span>

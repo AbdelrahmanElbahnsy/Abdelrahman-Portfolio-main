@@ -134,7 +134,7 @@ const Hero = () => {
                         </div>
                         <h1
                             ref={nameRef}
-                            className="hero-name text-5xl md:text-6xl font-black mb-6 leading-[1.1] tracking-[-2px] whitespace-nowrap"
+                            className="hero-name text-4xl sm:text-5xl lg:text-6xl font-black mb-4 leading-[1.1] tracking-[-2px]"
                         >
                             <SplitText mode="char">{firstName}</SplitText>{' '}
                             <span className="highlight-surname text-[var(--clr-accent)]">
@@ -143,7 +143,7 @@ const Hero = () => {
                         </h1>
                         <h2
                             ref={subtitleRef}
-                            className="hero-subtitle text-xl font-semibold mb-6 h-10 text-[var(--clr-accent-3)] whitespace-nowrap"
+                            className="hero-subtitle text-lg sm:text-xl font-semibold mb-6 min-h-[40px] text-[var(--clr-accent-3)]"
                         >
                             <span>{typedText}</span>
                             <span className="typing-cursor ml-1 animate-[blink-cursor_0.8s_infinite]">

@@ -1,18 +1,19 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, lazy, Suspense } from 'react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import Hero from '../components/sections/Hero';
-import About from '../components/sections/About';
-import Skills from '../components/sections/Skills';
-import Toolchain from '../components/sections/Toolchain';
-import Projects from '../components/sections/Projects';
-import Journey from '../components/sections/Journey';
-import Certifications from '../components/sections/Certifications';
-import Contact from '../components/sections/Contact';
 import ScrollToTop from '../components/ui/ScrollToTop';
 import AirplaneSocial from '../components/ui/AirplaneSocial';
 import AnimatedBackground from '../components/ui/AnimatedBackground';
 import WaveDivider from '../components/ui/WaveDivider';
+
+const About = lazy(() => import('../components/sections/About'));
+const Skills = lazy(() => import('../components/sections/Skills'));
+const Toolchain = lazy(() => import('../components/sections/Toolchain'));
+const Projects = lazy(() => import('../components/sections/Projects'));
+const Journey = lazy(() => import('../components/sections/Journey'));
+const Certifications = lazy(() => import('../components/sections/Certifications'));
+const Contact = lazy(() => import('../components/sections/Contact'));
 import { useScrollVelocityBlur } from '../hooks/useScrollVelocityBlur';
 import { trackVisit } from '../services/analytics';
 
@@ -42,22 +43,29 @@ function Home() {
       <main ref={mainRef} className="flex-grow">
         <div className="page-container">
           <Hero />
-          <WaveDivider position="bottom" />
-          <About />
-          <WaveDivider position="bottom" flip />
-          <Toolchain />
-          <Skills />
-          <WaveDivider position="bottom" />
+          
+          <Suspense fallback={<div className="min-h-[50vh]"></div>}>
+            <WaveDivider position="bottom" />
+            <About />
+            <WaveDivider position="bottom" flip />
+            <Toolchain />
+            <Skills />
+            <WaveDivider position="bottom" />
+          </Suspense>
         </div>
 
-        <Projects />
+        <Suspense fallback={<div className="min-h-[50vh]"></div>}>
+          <Projects />
+        </Suspense>
 
-        <div className="page-container">
-          <Certifications />
-          <WaveDivider position="bottom" flip />
-          <Journey />
-          <Contact />
-        </div>
+        <Suspense fallback={<div className="min-h-[50vh]"></div>}>
+          <div className="page-container">
+            <Certifications />
+            <WaveDivider position="bottom" flip />
+            <Journey />
+            <Contact />
+          </div>
+        </Suspense>
       </main>
       
       <Footer />

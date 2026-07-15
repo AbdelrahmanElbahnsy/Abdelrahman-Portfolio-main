@@ -46,6 +46,8 @@ const ProjectCard = ({ project, onClickDetails }) => {
           decoding="async"
           referrerPolicy="no-referrer"
           onError={handleImageError}
+          width="600"
+          height="400"
           className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e17] via-[#0a0e17]/30 to-transparent" />

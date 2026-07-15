@@ -28,90 +28,21 @@ const AnimatedBackground = () => {
 
     // ─── Generate star data (stable across renders) ────────────────
     const starData = useMemo(() => {
-        const count = isTouchDevice ? 30 : 60; // Increased star count
+        const count = 30; // Reduced star count for performance
         const stars = [];
         for (let i = 0; i < count; i++) {
             stars.push({
                 id: i,
                 x: Math.random() * 100,
                 y: Math.random() * 100,
-                size: Math.random() * 2.5 + 1,
-                depth: Math.random(), // 0 = far (slow), 1 = near (fast)
+                size: Math.random() * 2 + 1,
+                depth: Math.random(),
                 baseOpacity: Math.random() * 0.4 + 0.15,
                 twinkleDuration: Math.random() * 3 + 2,
             });
         }
         return stars;
-    }, [isTouchDevice]);
-
-    // ─── Mouse proximity effect on stars ───────────────────────────
-    useEffect(() => {
-        if (prefersReducedMotion || isTouchDevice) return;
-
-        const handleMouseMove = (e) => {
-            const mouseX = e.clientX;
-            const mouseY = e.clientY;
-            const radius = 150; // Influence radius in px
-
-            starsRef.current.forEach((starEl) => {
-                if (!starEl) return;
-                const rect = starEl.getBoundingClientRect();
-                const starCX = rect.left + rect.width / 2;
-                const starCY = rect.top + rect.height / 2;
-                const dx = mouseX - starCX;
-                const dy = mouseY - starCY;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-
-                if (dist < radius) {
-                    const intensity = 1 - dist / radius;
-                    // Push star away from cursor
-                    const pushX = -(dx / dist) * intensity * 20;
-                    const pushY = -(dy / dist) * intensity * 20;
-
-                    gsap.to(starEl, {
-                        x: pushX,
-                        y: pushY,
-                        scale: 1 + intensity * 1.5,
-                        opacity: Math.min(1, parseFloat(starEl.dataset.baseOpacity) + intensity * 0.6),
-                        boxShadow: `0 0 ${6 + intensity * 12}px var(--clr-accent)`,
-                        duration: 0.3,
-                        ease: 'power2.out',
-                        overwrite: 'auto',
-                    });
-                } else {
-                    gsap.to(starEl, {
-                        x: 0,
-                        y: 0,
-                        scale: 1,
-                        opacity: parseFloat(starEl.dataset.baseOpacity),
-                        boxShadow: `0 0 4px var(--clr-accent)`,
-                        duration: 0.8,
-                        ease: 'power2.out',
-                        overwrite: 'auto',
-                    });
-                }
-            });
-        };
-
-        window.addEventListener('mousemove', handleMouseMove, { passive: true });
-        return () => window.removeEventListener('mousemove', handleMouseMove);
-    }, [prefersReducedMotion, isTouchDevice]);
-
-    // ─── Mouse aurora tracking ─────────────────────────────────────
-    useEffect(() => {
-        if (prefersReducedMotion || isTouchDevice || !auroraRef.current) return;
-
-        const xTo = gsap.quickTo(auroraRef.current, 'x', { duration: 0.6, ease: 'power3.out' });
-        const yTo = gsap.quickTo(auroraRef.current, 'y', { duration: 0.6, ease: 'power3.out' });
-
-        const handleMouseMove = (e) => {
-            xTo(e.clientX - window.innerWidth / 2);
-            yTo(e.clientY - window.innerHeight / 2);
-        };
-
-        window.addEventListener('mousemove', handleMouseMove, { passive: true });
-        return () => window.removeEventListener('mousemove', handleMouseMove);
-    }, [prefersReducedMotion, isTouchDevice]);
+    }, []);
 
     // ─── GSAP: Star twinkle + scroll parallax + grid glow ──────────
     useGSAP(
@@ -132,23 +63,7 @@ const AnimatedBackground = () => {
                 });
             });
 
-            // Scroll parallax for stars
-            starsRef.current.forEach((starEl) => {
-                if (!starEl) return;
-                const depth = parseFloat(starEl.dataset.depth || '0.5');
-                const moveAmount = (depth - 0.5) * 200; // -100 to +100
-
-                gsap.to(starEl, {
-                    yPercent: moveAmount,
-                    ease: 'none',
-                    scrollTrigger: {
-                        trigger: document.body,
-                        start: 'top top',
-                        end: 'bottom bottom',
-                        scrub: 0.5,
-                    },
-                });
-            });
+            // Removed scroll parallax to fix layout thrashing and scroll lag
 
             // Grid glow dots pulsing
             const glowDots = containerRef.current?.querySelectorAll('.grid-glow-dot');
@@ -211,27 +126,7 @@ const AnimatedBackground = () => {
                 pointerEvents: 'none',
             }}
         >
-            {/* ─── SVG Noise Filter ──────────────────────────────────── */}
-            <svg style={{ position: 'absolute', width: 0, height: 0 }} aria-hidden="true">
-                <defs>
-                    <filter id="noise-filter">
-                        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
-                        <feColorMatrix type="saturate" values="0" />
-                    </filter>
-                </defs>
-            </svg>
 
-            {/* ─── Noise Overlay ─────────────────────────────────────── */}
-            <div
-                style={{
-                    position: 'absolute',
-                    inset: 0,
-                    filter: 'url(#noise-filter)',
-                    opacity: 0.025,
-                    mixBlendMode: 'overlay',
-                    pointerEvents: 'none',
-                }}
-            />
 
             {/* ─── Blob 1: Warm Copper / Amber (عكس السماوي) ─────────── */}
             <div
@@ -245,11 +140,8 @@ const AnimatedBackground = () => {
                     borderRadius: '50%',
                     background:
                         'radial-gradient(circle, rgba(200, 120, 60, 0.35) 0%, rgba(200, 120, 60, 0.1) 45%, transparent 70%)',
-                    filter: 'blur(60px)',
                     willChange: 'transform',
-                    animation: prefersReducedMotion
-                        ? 'none'
-                        : 'blob-orbit-1 14s ease-in-out infinite alternate',
+                    animation: 'none',
                 }}
             />
 
@@ -265,11 +157,8 @@ const AnimatedBackground = () => {
                     borderRadius: '50%',
                     background:
                         'radial-gradient(circle, rgba(15, 75, 150, 0.45) 0%, rgba(15, 75, 150, 0.1) 45%, transparent 70%)',
-                    filter: 'blur(70px)',
                     willChange: 'transform',
-                    animation: prefersReducedMotion
-                        ? 'none'
-                        : 'blob-orbit-2 18s ease-in-out infinite alternate',
+                    animation: 'none',
                 }}
             />
 
@@ -285,11 +174,8 @@ const AnimatedBackground = () => {
                     borderRadius: '50%',
                     background:
                         'radial-gradient(circle, rgba(139, 90, 43, 0.35) 0%, rgba(139, 90, 43, 0.08) 40%, transparent 65%)',
-                    filter: 'blur(60px)',
                     willChange: 'transform',
-                    animation: prefersReducedMotion
-                        ? 'none'
-                        : 'blob-orbit-3 20s ease-in-out infinite alternate',
+                    animation: 'none',
                 }}
             />
 
@@ -317,26 +203,7 @@ const AnimatedBackground = () => {
                 />
             ))}
 
-            {/* ─── Mouse Aurora Glow ────────────────────────────────── */}
-            {!isTouchDevice && (
-                <div
-                    ref={auroraRef}
-                    style={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        width: '400px',
-                        height: '400px',
-                        borderRadius: '50%',
-                        background:
-                            'radial-gradient(circle, rgba(var(--accent-rgb), 0.1) 0%, rgba(var(--accent-rgb), 0.03) 40%, transparent 65%)',
-                        filter: 'blur(30px)',
-                        willChange: 'transform',
-                        transform: 'translate(-50%, -50%) translateZ(0)',
-                        pointerEvents: 'none',
-                    }}
-                />
-            )}
+
 
             {/* ─── Grid Overlay ──────────────────────────────────────── */}
             <div
@@ -407,7 +274,6 @@ const AnimatedBackground = () => {
 
                 @media (max-width: 768px) {
                     .bg-blob-1, .bg-blob-2, .bg-blob-3 {
-                        filter: blur(80px) !important;
                         opacity: 0.7;
                     }
                 }

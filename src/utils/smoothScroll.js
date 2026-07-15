@@ -1,4 +1,5 @@
 import Lenis from 'lenis';
+import gsap from 'gsap';
 
 let lenisInstance = null;
 
@@ -21,13 +22,12 @@ export function initLenis() {
     infinite: false,
   });
 
-  // Own rAF loop — independent from GSAP ticker
-  function raf(time) {
-    lenisInstance.raf(time);
-    requestAnimationFrame(raf);
-  }
-
-  requestAnimationFrame(raf);
+  // Integrate Lenis with GSAP's ticker to prevent layout thrashing from dual rAF loops
+  gsap.ticker.add((time) => {
+    lenisInstance.raf(time * 1000);
+  });
+  
+  gsap.ticker.lagSmoothing(0);
 
   return lenisInstance;
 }

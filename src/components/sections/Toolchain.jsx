@@ -88,8 +88,8 @@ const Toolchain = () => {
             <div className="toolchain-wrapper flex flex-col gap-8">
                 <div className="scroll-container overflow-hidden whitespace-nowrap mask-edges py-2">
                     <div ref={row1Ref} className="flex gap-6 w-max">
-                        {[...row1, ...row1, ...row1].map((tool, idx) => (
-                            <div key={`r1-${idx}`} className="tool-card flex items-center gap-3 px-6 py-3 rounded-2xl bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.05)] backdrop-blur-sm hover:border-[var(--clr-accent)] hover:bg-[rgba(200,162,110,0.05)] transition-all duration-300 group">
+                        {[...row1, ...row1].map((tool, idx) => (
+                            <div key={`r1-${idx}`} className="tool-card flex items-center gap-3 px-6 py-3 rounded-2xl bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.05)] hover:border-[var(--clr-accent)] hover:bg-[rgba(200,162,110,0.05)] transition-all duration-300 group">
                                 <i className={`${tool.icon} text-xl text-[var(--clr-accent)] group-hover:scale-110 transition-transform`}></i>
                                 <span className="text-sm font-medium tracking-tight whitespace-nowrap">{tool.name}</span>
                             </div>
@@ -99,8 +99,8 @@ const Toolchain = () => {
 
                 <div className="scroll-container overflow-hidden whitespace-nowrap mask-edges py-2">
                     <div ref={row2Ref} className="flex gap-6 w-max">
-                        {[...row2, ...row2, ...row2].map((tool, idx) => (
-                            <div key={`r2-${idx}`} className="tool-card flex items-center gap-3 px-6 py-3 rounded-2xl bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.05)] backdrop-blur-sm hover:border-[var(--clr-accent)] hover:bg-[rgba(200,162,110,0.05)] transition-all duration-300 group">
+                        {[...row2, ...row2].map((tool, idx) => (
+                            <div key={`r2-${idx}`} className="tool-card flex items-center gap-3 px-6 py-3 rounded-2xl bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.05)] hover:border-[var(--clr-accent)] hover:bg-[rgba(200,162,110,0.05)] transition-all duration-300 group">
                                 <i className={`${tool.icon} text-xl text-[var(--clr-accent)] group-hover:scale-110 transition-transform`}></i>
                                 <span className="text-sm font-medium tracking-tight whitespace-nowrap">{tool.name}</span>
                             </div>

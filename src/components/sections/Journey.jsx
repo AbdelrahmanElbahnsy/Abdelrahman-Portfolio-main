@@ -32,11 +32,12 @@ const Journey = () => {
 
             // Timeline track progress — scrubbed to scroll
             if (trackProgressRef.current && trackRef.current) {
+                gsap.set(trackProgressRef.current, { transformOrigin: 'top center' });
                 gsap.fromTo(
                     trackProgressRef.current,
-                    { height: '0%' },
+                    { scaleY: 0 },
                     {
-                        height: '100%',
+                        scaleY: 1,
                         ease: 'none',
                         scrollTrigger: { trigger: trackRef.current, start: 'top 80%', end: 'bottom 20%', scrub: 0.5 },
                     },
@@ -100,8 +101,8 @@ const Journey = () => {
                     <div className="timeline-track absolute left-[20px] md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-[2px] bg-[rgba(255,255,255,0.05)]">
                         <div
                             ref={trackProgressRef}
-                            className="timeline-track-progress absolute top-0 left-0 w-full bg-gradient-to-b from-[var(--clr-accent)] to-[var(--clr-accent-2)] shadow-[0_0_15px_var(--clr-accent)]"
-                            style={{ height: '0%' }}
+                            className="timeline-track-progress absolute top-0 left-0 w-full h-full bg-gradient-to-b from-[var(--clr-accent)] to-[var(--clr-accent-2)] shadow-[0_0_15px_var(--clr-accent)]"
+                            style={{ transform: 'scaleY(0)', willChange: 'transform' }}
                         ></div>
                     </div>
 

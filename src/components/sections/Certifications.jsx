@@ -41,18 +41,18 @@ const Certifications = () => {
                     <h2 className="section-title text-4xl md:text-5xl font-black mb-4">Professional Certifications</h2>
                 </div>
 
-                <div ref={swiperContainerRef} className="certs-swiper-container pb-12 pt-4">
+                <div ref={swiperContainerRef} className="certs-swiper-container pb-12 pt-4 px-2 md:px-16">
                     <div className="relative group/carousel">
                         {/* Navigation Arrows */}
                         <button 
-                            className="certs-swiper-prev absolute left-2 md:-left-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(200,162,110,0.4)] bg-[rgba(10,15,30,0.75)] backdrop-blur-md text-[rgba(200,162,110,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(200,162,110,0.25)] hover:shadow-[0_0_20px_rgba(200,162,110,0.55)] focus:outline-none cursor-pointer"
-                            aria-label="Previous slide"
+                            className="certs-swiper-prev absolute left-0 md:-left-16 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(200,162,110,0.4)] bg-[rgba(10,15,30,0.95)] text-[rgba(200,162,110,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(200,162,110,0.25)] hover:shadow-[0_0_20px_rgba(200,162,110,0.55)] focus:outline-none cursor-pointer"
+                            aria-label="Previous certification"
                         >
                             <i className="fas fa-chevron-left text-xl md:text-2xl drop-shadow-[0_0_3px_rgba(200,162,110,0.4)]"></i>
                         </button>
                         <button 
-                            className="certs-swiper-next absolute right-2 md:-right-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(200,162,110,0.4)] bg-[rgba(10,15,30,0.75)] backdrop-blur-md text-[rgba(200,162,110,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(200,162,110,0.25)] hover:shadow-[0_0_20px_rgba(200,162,110,0.55)] focus:outline-none cursor-pointer"
-                            aria-label="Next slide"
+                            className="certs-swiper-next absolute right-0 md:-right-16 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(200,162,110,0.4)] bg-[rgba(10,15,30,0.95)] text-[rgba(200,162,110,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(200,162,110,0.25)] hover:shadow-[0_0_20px_rgba(200,162,110,0.55)] focus:outline-none cursor-pointer"
+                            aria-label="Next certification"
                         >
                             <i className="fas fa-chevron-right text-xl md:text-2xl drop-shadow-[0_0_3px_rgba(200,162,110,0.4)]"></i>
                         </button>
@@ -73,7 +73,7 @@ const Certifications = () => {
                                 768: { slidesPerView: 2, spaceBetween: 30 },
                                 1024: { slidesPerView: 3, spaceBetween: 40 }
                             }}
-                            className="certs-swiper !overflow-visible px-14 md:px-0"
+                            className="certs-swiper overflow-hidden py-8 px-12 md:px-0"
                         >
                             {certifications.map((cert, idx) => (
                                 <SwiperSlide key={idx} className="!h-auto">

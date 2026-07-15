@@ -132,7 +132,7 @@ const Navbar = () => {
         <>
             <header ref={headerRef} className={`fixed top-0 left-0 w-full z-[1000] transition-all duration-700 ${isScrolled ? 'pt-4' : 'pt-8'}`}>
                 <div className={`mx-auto transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isScrolled ? 'max-w-[1240px] px-8' : 'page-container px-4'}`}>
-                    <nav ref={navRef} className={`flex items-center justify-between px-6 py-2.5 rounded-full border transition-all duration-700 ${isScrolled ? 'bg-[rgba(10,14,23,0.92)] border-[rgba(200,162,110,0.35)] backdrop-blur-2xl shadow-[0_15px_50px_rgba(0,0,0,0.7)]' : 'bg-transparent border-transparent'}`}>
+                    <nav ref={navRef} className={`flex items-center justify-between px-6 py-2.5 rounded-full border transition-all duration-700 ${isScrolled ? 'bg-[rgba(10,14,23,0.98)] border-[rgba(200,162,110,0.35)] shadow-[0_15px_50px_rgba(0,0,0,0.7)]' : 'bg-transparent border-transparent'}`}>
                         {/* Logo */}
                         <a href="#" className="logo flex items-center gap-2 group shrink-0" onClick={() => handleNavClick('hero')}>
                             <span className={`font-black tracking-tighter text-white transition-all duration-500 ${isScrolled ? 'text-xl' : 'text-2xl'}`}>

@@ -109,13 +109,13 @@ const Skills = () => {
                     <div className="relative group/carousel">
                         {/* Navigation Arrows */}
                         <button 
-                            className="skills-swiper-prev absolute left-2 md:-left-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(200,162,110,0.4)] bg-[rgba(10,15,30,0.75)] backdrop-blur-md text-[rgba(200,162,110,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(200,162,110,0.25)] hover:shadow-[0_0_20px_rgba(200,162,110,0.55)] focus:outline-none cursor-pointer"
+                            className="skills-swiper-prev absolute left-2 md:-left-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(200,162,110,0.4)] bg-[rgba(10,15,30,0.95)] text-[rgba(200,162,110,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(200,162,110,0.25)] hover:shadow-[0_0_20px_rgba(200,162,110,0.55)] focus:outline-none cursor-pointer"
                             aria-label="Previous slide"
                         >
                             <i className="fas fa-chevron-left text-xl md:text-2xl drop-shadow-[0_0_3px_rgba(200,162,110,0.4)]"></i>
                         </button>
                         <button 
-                            className="skills-swiper-next absolute right-2 md:-right-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(200,162,110,0.4)] bg-[rgba(10,15,30,0.75)] backdrop-blur-md text-[rgba(200,162,110,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(200,162,110,0.25)] hover:shadow-[0_0_20px_rgba(200,162,110,0.55)] focus:outline-none cursor-pointer"
+                            className="skills-swiper-next absolute right-2 md:-right-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(200,162,110,0.4)] bg-[rgba(10,15,30,0.95)] text-[rgba(200,162,110,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(200,162,110,0.25)] hover:shadow-[0_0_20px_rgba(200,162,110,0.55)] focus:outline-none cursor-pointer"
                             aria-label="Next slide"
                         >
                             <i className="fas fa-chevron-right text-xl md:text-2xl drop-shadow-[0_0_3px_rgba(200,162,110,0.4)]"></i>
@@ -141,7 +141,7 @@ const Skills = () => {
                         >
                             {categories.map((card, idx) => (
                                 <SwiperSlide key={idx} className="!h-auto">
-                                    <div className="skill-card card h-full border border-[var(--clr-card-border)] bg-[var(--clr-card-bg)] backdrop-blur-md p-8 rounded-xl hover:border-[var(--clr-accent)] transition-all duration-300">
+                                    <div className="skill-card card h-full border border-[var(--clr-card-border)] bg-[var(--clr-card-bg)] p-8 rounded-xl hover:border-[var(--clr-accent)] transition-all duration-300">
                                         <div className="skill-card-header flex items-center gap-4 mb-6">
                                             <div className="skill-card-icon w-12 h-12 flex items-center justify-center bg-[rgba(200,162,110,0.1)] rounded-lg text-2xl text-[var(--clr-accent)]">
                                                 <i className={card.icon}></i>

@@ -209,6 +209,9 @@ const Hero = () => {
                                     alt={fullName}
                                     className="w-full h-full object-cover object-[center_20%] transition-transform duration-500 group-hover:scale-105"
                                     loading="eager"
+                                    fetchpriority="high"
+                                    width="800"
+                                    height="1000"
                                 />
                                 <div className="absolute inset-0 bg-transparent portrait-overlay"></div>
                             </div>

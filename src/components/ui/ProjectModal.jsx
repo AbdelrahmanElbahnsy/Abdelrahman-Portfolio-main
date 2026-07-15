@@ -93,6 +93,8 @@ const ProjectModal = ({ project, onClose }) => {
             decoding="async"
             referrerPolicy="no-referrer"
             onError={handleImageError}
+            width="800"
+            height="500"
             className="h-full w-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e17]/95 via-[#0a0e17]/60 to-transparent" />

@@ -209,7 +209,7 @@ const Hero = () => {
                                     alt={fullName}
                                     className="w-full h-full object-cover object-[center_20%] transition-transform duration-500 group-hover:scale-105"
                                     loading="eager"
-                                    fetchpriority="high"
+                                    fetchPriority="high"
                                     width="800"
                                     height="1000"
                                 />

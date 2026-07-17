@@ -159,12 +159,12 @@ const Certifications = () => {
             <style dangerouslySetInnerHTML={{ __html: `
                 .cert-slide {
                     width: 340px !important;
-                    height: 420px !important;
+                    height: 380px !important;
                 }
                 @media (min-width: 768px) {
                     .cert-slide {
                         width: 450px !important;
-                        height: 480px !important;
+                        height: 400px !important;
                     }
                 }
                 .certs-3d-swiper .swiper-slide {

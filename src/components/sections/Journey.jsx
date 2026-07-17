@@ -132,7 +132,7 @@ const Journey = () => {
                                         <div className={`journey-card card h-full p-8 sm:p-10 border bg-[var(--clr-card-bg)] transition-all duration-700 rounded-3xl group relative overflow-hidden backdrop-blur-md 
                                             ${isActive 
                                                 ? 'border-[var(--clr-accent)] shadow-[0_20px_50px_rgba(200,162,110,0.15)] scale-100 opacity-100' 
-                                                : 'border-[var(--clr-card-border)] scale-[0.88] opacity-60 cursor-pointer hover:opacity-100 hover:scale-95'}`}
+                                                : 'border-[var(--clr-card-border)] scale-[0.9] opacity-60 cursor-pointer hover:opacity-100 hover:scale-95'}`}
                                             onClick={() => {
                                                 if (!isActive && swiperInstance) {
                                                     swiperInstance.slideTo(idx);
@@ -151,7 +151,7 @@ const Journey = () => {
                                                 {phase.title}
                                             </h3>
                                             
-                                            <p className="text-base sm:text-lg text-[var(--clr-text-dim)] leading-relaxed mb-10">
+                                            <p className="text-base sm:text-lg text-[var(--clr-text-dim)] leading-relaxed mb-8">
                                                 {phase.description}
                                             </p>
 

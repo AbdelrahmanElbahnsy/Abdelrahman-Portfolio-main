@@ -85,7 +85,7 @@ const Certifications = () => {
                         modules={[EffectCoverflow, Pagination, Autoplay, Navigation]}
                         className="certs-3d-swiper w-full pt-10 pb-16 !overflow-visible"
                     >
-                        {certifications.map((cert, idx) => (
+                        {[...certifications, ...certifications].map((cert, idx) => (
                             <SwiperSlide key={idx} className="!w-[320px] md:!w-[380px]">
                                 {({ isActive }) => (
                                     <div className={`relative h-[450px] p-8 rounded-3xl border transition-all duration-700 flex flex-col justify-between overflow-hidden group
@@ -127,7 +127,7 @@ const Certifications = () => {
                                                 rel="noopener noreferrer"
                                                 className={`w-full py-4 rounded-xl flex items-center justify-center gap-3 font-bold text-sm transition-all duration-300
                                                     ${isActive 
-                                                        ? 'bg-[var(--clr-accent)] text-black hover:bg-white hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(200,162,110,0.4)]' 
+                                                        ? 'bg-[var(--clr-accent)] text-black hover:bg-white hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(200,162,110,0.4)] pointer-events-auto' 
                                                         : 'bg-[rgba(255,255,255,0.03)] text-gray-500 border border-[rgba(255,255,255,0.05)] pointer-events-none'
                                                     }`}
                                             >

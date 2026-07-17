@@ -9,7 +9,7 @@ import { SiMicrosoftazure } from 'react-icons/si';
 import { useMagneticEffect } from '../../hooks/useMagneticEffect';
 import SplitText from '../ui/SplitText';
 
-const Hero = () => {
+const Hero = ({ splashDone = true }) => {
     const [typedText, setTypedText] = useState('');
     const { roles, badge, firstName, lastName, description, portrait, fullName, cvUrl } = personalInfo;
 
@@ -29,6 +29,8 @@ const Hero = () => {
 
     // Typing effect
     useEffect(() => {
+        if (!splashDone) return;
+
         let roleIndex = 0;
         let charIndex = 0;
         let isDeleting = false;
@@ -61,7 +63,7 @@ const Hero = () => {
 
         timeout = setTimeout(type, 1500);
         return () => clearTimeout(timeout);
-    }, [roles]);
+    }, [roles, splashDone]);
 
     // GSAP entrance timeline
     useGSAP(
@@ -77,9 +79,14 @@ const Hero = () => {
                 scrollIndicatorRef.current,
             ].filter(Boolean);
 
+            // Set initial state immediately so they don't flash visible
             gsap.set(targets, { opacity: 0, y: 30 });
             gsap.set(portraitRef.current, { opacity: 0, scale: 0.9, clipPath: 'circle(0% at 50% 50%)', y: 0 });
             gsap.set(ctaRef.current, { opacity: 0, y: 25, scale: 0.92 });
+            const nameChars = nameRef.current?.querySelectorAll('.split-unit');
+            if (nameChars?.length) gsap.set(nameChars, { opacity: 0, y: 30, rotateX: -40 });
+
+            if (!splashDone) return;
 
             const tl = gsap.timeline({
                 defaults: { ease: 'power3.out' },
@@ -89,9 +96,7 @@ const Hero = () => {
             tl.to(badgeRef.current, { opacity: 1, y: 0, duration: 0.4, ease: 'back.out(1.4)' });
 
             // Char-by-char name reveal
-            const nameChars = nameRef.current?.querySelectorAll('.split-unit');
             if (nameChars?.length) {
-                gsap.set(nameChars, { opacity: 0, y: 30, rotateX: -40 });
                 tl.to(nameChars, {
                     opacity: 1, y: 0, rotateX: 0,
                     duration: 0.5, stagger: 0.03,
@@ -114,7 +119,7 @@ const Hero = () => {
                 gsap.to(portraitRef.current, { y: -10, duration: 3, ease: 'sine.inOut', yoyo: true, repeat: -1 });
             });
         },
-        { scope: sectionRef, dependencies: [] },
+        { scope: sectionRef, dependencies: [splashDone] },
     );
 
     return (

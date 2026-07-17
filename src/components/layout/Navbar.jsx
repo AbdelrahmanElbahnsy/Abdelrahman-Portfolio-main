@@ -3,7 +3,7 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { personalInfo, socialLinks } from '../../data/portfolioData';
 
-const Navbar = () => {
+const Navbar = ({ splashDone = true }) => {
     const { firstName, lastName } = personalInfo;
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -32,15 +32,20 @@ const Navbar = () => {
         () => {
             if (!headerRef.current) return;
 
-            gsap.from(headerRef.current, {
-                y: -80,
-                opacity: 0,
+            // Immediately set initial state to prevent flash
+            gsap.set(headerRef.current, { y: -80, opacity: 0 });
+
+            if (!splashDone) return;
+
+            gsap.to(headerRef.current, {
+                y: 0,
+                opacity: 1,
                 duration: 0.8,
                 ease: 'power4.out',
                 delay: 0.1,
             });
         },
-        { scope: headerRef, dependencies: [] },
+        { scope: headerRef, dependencies: [splashDone] },
     );
 
     useEffect(() => {

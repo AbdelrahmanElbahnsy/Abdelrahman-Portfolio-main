@@ -25,31 +25,29 @@ function App() {
 
   return (
     <>
-      {/* Splash stays until BOTH animation + chunk load finish */}
+      {/* Mount routes unconditionally so they render behind the splash screen */}
+      <Suspense fallback={null}>
+        <Routes>
+          <Route path="/" element={<Home splashDone={splashDone} />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route
+            path="/admin/*"
+            element={
+              <ProtectedRoute>
+                <Admin />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Suspense>
+
+      {/* Splash stays overlaid on top until BOTH animation + chunk load finish */}
       {!splashDone && (
         <SplashScreen
           contentReady={contentReady}
           onComplete={() => setSplashDone(true)}
         />
-      )}
-
-      {/* Only mount routes after splash is fully done */}
-      {splashDone && (
-        <Suspense fallback={null}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route
-              path="/admin/*"
-              element={
-                <ProtectedRoute>
-                  <Admin />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-        </Suspense>
       )}
     </>
   );

@@ -17,7 +17,7 @@ const Contact = lazy(() => import('../components/sections/Contact'));
 import { useScrollVelocityBlur } from '../hooks/useScrollVelocityBlur';
 import { trackVisit } from '../services/analytics';
 
-function Home() {
+function Home({ splashDone = true }) {
   const hasTrackedVisitRef = useRef(false);
   const mainRef = useRef(null);
 
@@ -38,11 +38,11 @@ function Home() {
       {/* Global Animated Background */}
       <AnimatedBackground />
 
-      <Navbar />
+      <Navbar splashDone={splashDone} />
       
       <main ref={mainRef} className="flex-grow">
         <div className="page-container">
-          <Hero />
+          <Hero splashDone={splashDone} />
           
           <Suspense fallback={<div className="min-h-[50vh]"></div>}>
             <WaveDivider position="bottom" />

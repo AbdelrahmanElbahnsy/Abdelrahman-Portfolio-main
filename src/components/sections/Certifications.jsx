@@ -64,10 +64,10 @@ const Certifications = () => {
                         slidesPerView={'auto'}
                         loop={true}
                         coverflowEffect={{
-                            rotate: 15,
+                            rotate: 0,
                             stretch: 0,
-                            depth: 300,
-                            modifier: 1,
+                            depth: 200,
+                            modifier: 1.5,
                             slideShadows: false,
                         }}
                         autoplay={{
@@ -86,12 +86,12 @@ const Certifications = () => {
                         className="certs-3d-swiper w-full pt-10 pb-16 !overflow-visible"
                     >
                         {[...certifications, ...certifications].map((cert, idx) => (
-                            <SwiperSlide key={idx} className="!w-[320px] md:!w-[380px]">
+                            <SwiperSlide key={idx} className="cert-slide">
                                 {({ isActive }) => (
-                                    <div className={`relative h-[450px] p-8 rounded-3xl border transition-all duration-700 flex flex-col justify-between overflow-hidden group
+                                    <div className={`w-full h-full relative p-8 rounded-3xl border transition-all duration-700 flex flex-col justify-between overflow-hidden group
                                         ${isActive 
-                                            ? 'bg-[rgba(15,20,35,0.85)] border-[var(--clr-accent)] shadow-[0_30px_60px_rgba(0,0,0,0.6),0_0_40px_rgba(200,162,110,0.2)] scale-100 backdrop-blur-xl z-10' 
-                                            : 'bg-[rgba(10,15,25,0.6)] border-[rgba(255,255,255,0.05)] shadow-[0_15px_30px_rgba(0,0,0,0.4)] scale-95 opacity-50 backdrop-blur-md'
+                                            ? 'bg-[rgba(15,20,35,0.85)] border-[var(--clr-accent)] shadow-[0_30px_60px_rgba(0,0,0,0.6),0_0_40px_rgba(200,162,110,0.2)] backdrop-blur-xl z-10' 
+                                            : 'bg-[rgba(10,15,25,0.6)] border-[rgba(255,255,255,0.05)] shadow-[0_15px_30px_rgba(0,0,0,0.4)] opacity-50 backdrop-blur-md'
                                         }`}
                                     >
                                         {/* Background Glow */}
@@ -157,6 +157,16 @@ const Certifications = () => {
             </div>
             
             <style dangerouslySetInnerHTML={{ __html: `
+                .cert-slide {
+                    width: 340px !important;
+                    height: 420px !important;
+                }
+                @media (min-width: 768px) {
+                    .cert-slide {
+                        width: 450px !important;
+                        height: 480px !important;
+                    }
+                }
                 .certs-3d-swiper .swiper-slide {
                     background-position: center;
                     background-size: cover;

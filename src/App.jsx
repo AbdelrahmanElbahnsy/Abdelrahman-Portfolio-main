@@ -28,7 +28,7 @@ function App() {
       {/* Mount routes unconditionally so they render behind the splash screen */}
       <Suspense fallback={null}>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Home splashDone={splashDone} />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route

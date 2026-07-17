@@ -1,147 +1,201 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, EffectCreative, Autoplay } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/effect-creative';
 import { journey } from '../../data/portfolioData';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Journey = () => {
     const sectionRef = useRef(null);
     const headerRef = useRef(null);
-    const trackRef = useRef(null);
-    const trackProgressRef = useRef(null);
+    const [activePhase, setActivePhase] = useState(0);
+    const [swiperInstance, setSwiperInstance] = useState(null);
     const { subtitle, title, description, phases } = journey;
 
+    // Header Animation
     useGSAP(
         () => {
             const subtitleEl = headerRef.current?.querySelector('.section-subtitle');
             const titleEl = headerRef.current?.querySelector('.section-title');
             const descEl = headerRef.current?.querySelector('p');
 
-            // Set initial states for header elements
             gsap.set([subtitleEl, titleEl, descEl].filter(Boolean), { opacity: 0, y: 30 });
 
             const headerTl = gsap.timeline({
                 defaults: { ease: 'power3.out' },
-                scrollTrigger: { trigger: headerRef.current, start: 'top 85%', toggleActions: 'play none none none' },
+                scrollTrigger: { trigger: sectionRef.current, start: 'top 85%', toggleActions: 'play none none none' },
             });
 
             headerTl
                 .to(subtitleEl, { opacity: 1, y: 0, duration: 0.4 })
                 .to(titleEl, { opacity: 1, y: 0, duration: 0.5 }, '-=0.15')
                 .to(descEl, { opacity: 1, y: 0, duration: 0.4 }, '-=0.15');
-
-            // Timeline track progress — scrubbed to scroll
-            if (trackProgressRef.current && trackRef.current) {
-                gsap.set(trackProgressRef.current, { transformOrigin: 'top center' });
-                gsap.fromTo(
-                    trackProgressRef.current,
-                    { scaleY: 0 },
-                    {
-                        scaleY: 1,
-                        ease: 'none',
-                        scrollTrigger: { trigger: trackRef.current, start: 'top 80%', end: 'bottom 20%', scrub: 0.5 },
-                    },
-                );
-            }
-
-            // Timeline nodes — glow on scroll
-            const nodes = sectionRef.current?.querySelectorAll('.timeline-node');
-            if (nodes?.length) {
-                nodes.forEach((node) => {
-                    gsap.to(node, {
-                        backgroundColor: 'var(--clr-accent)',
-                        boxShadow: '0 0 20px var(--clr-accent)',
-                        scale: 1.25,
-                        duration: 0.3,
-                        ease: 'power2.out',
-                        scrollTrigger: { trigger: node, start: 'top 75%', toggleActions: 'play none none none' },
-                    });
-                });
-            }
-
-            // Timeline cards — alternating slide-in
-            const items = sectionRef.current?.querySelectorAll('.timeline-item');
-            if (items?.length) {
-                items.forEach((item, idx) => {
-                    const cardWrapper = item.querySelector('.timeline-card-wrapper');
-                    const isLeft = idx % 2 === 0;
-
-                    gsap.from(cardWrapper, {
-                        opacity: 0,
-                        x: isLeft ? -40 : 40,
-                        y: 15,
-                        duration: 0.6,
-                        ease: 'power3.out',
-                        scrollTrigger: { trigger: item, start: 'top 80%', toggleActions: 'play none none none' },
-                    });
-
-                    const tags = item.querySelectorAll('.tag');
-                    if (tags.length) {
-                        gsap.from(tags, {
-                            opacity: 0, scale: 0.8, duration: 0.3, stagger: 0.04, ease: 'back.out(1.7)',
-                            scrollTrigger: { trigger: item, start: 'top 75%', toggleActions: 'play none none none' },
-                        });
-                    }
-                });
-            }
         },
-        { scope: sectionRef, dependencies: [] },
+        { scope: sectionRef }
     );
 
-    return (
-        <section id="journey" className="section bg-transparent" ref={sectionRef}>
-            <div className="container mx-auto px-4 sm:px-8">
-                <div ref={headerRef} className="section-header text-center mb-20">
-                    <span className="section-subtitle text-[var(--clr-accent)] font-mono uppercase tracking-widest text-sm mb-2 block">{subtitle}</span>
-                    <h2 className="section-title text-2xl sm:text-3xl md:text-5xl font-black mb-4">{title}</h2>
-                    <p className="text-[var(--clr-text-dim)] max-w-xl mx-auto">{description}</p>
-                </div>
+    const handleStepperClick = (idx) => {
+        setActivePhase(idx);
+        if (swiperInstance) {
+            swiperInstance.slideTo(idx);
+        }
+    };
 
-                <div ref={trackRef} className="timeline relative max-w-5xl mx-auto px-0 sm:px-4">
-                    <div className="timeline-track absolute left-[20px] md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-[2px] bg-[rgba(255,255,255,0.05)]">
-                        <div
-                            ref={trackProgressRef}
-                            className="timeline-track-progress absolute top-0 left-0 w-full h-full bg-gradient-to-b from-[var(--clr-accent)] to-[var(--clr-accent-2)] shadow-[0_0_15px_var(--clr-accent)]"
-                            style={{ transform: 'scaleY(0)', willChange: 'transform' }}
-                        ></div>
+    return (
+        <section id="journey" className="section bg-transparent relative overflow-hidden" ref={sectionRef}>
+            <div className="container mx-auto px-4 md:px-8 max-w-[1400px]">
+                <div className="flex flex-col md:flex-row gap-8 md:gap-16 items-center md:items-start">
+                    
+                    {/* Left Column: Header & Interactive Tabs */}
+                    <div className="w-full md:w-[35%] lg:w-[30%] shrink-0">
+                        <div ref={headerRef} className="section-header text-left mb-8 md:mb-12">
+                            <span className="section-subtitle text-[var(--clr-accent)] font-mono uppercase tracking-widest text-sm mb-4 block">
+                                {subtitle}
+                            </span>
+                            <h2 className="section-title text-3xl sm:text-4xl md:text-5xl font-black mb-6 leading-tight tracking-tight drop-shadow-md">
+                                {title}
+                            </h2>
+                            <p className="text-[var(--clr-text-dim)] text-lg leading-relaxed">
+                                {description}
+                            </p>
+                        </div>
+                        
+                        {/* Interactive Tabs / Stepper */}
+                        <div className="relative pl-1 w-full max-w-full">
+                            {/* Vertical Line (Desktop only) */}
+                            <div className="hidden md:block absolute left-[7px] top-3 bottom-3 w-[2px] bg-[rgba(255,255,255,0.05)]"></div>
+                            
+                            <div className="flex overflow-x-auto md:overflow-visible md:flex-col gap-3 md:gap-6 relative z-10 pb-4 md:pb-0 w-full" style={{ scrollbarWidth: 'none' }}>
+                                {phases.map((phase, idx) => {
+                                    const isActive = activePhase === idx;
+                                    return (
+                                        <div 
+                                            key={idx} 
+                                            onClick={() => handleStepperClick(idx)}
+                                            className="stepper-item flex items-center gap-3 md:gap-5 group cursor-pointer shrink-0"
+                                        >
+                                            {/* Dot (Desktop only) */}
+                                            <div className={`hidden md:block step-dot w-2 h-2 rounded-full origin-center transition-all duration-300 ${isActive ? 'bg-[var(--clr-accent)] scale-150 shadow-[0_0_15px_var(--clr-accent)]' : 'bg-[rgba(255,255,255,0.15)] group-hover:bg-[rgba(255,255,255,0.3)]'}`}></div>
+                                            
+                                            {/* Text / Mobile Pill */}
+                                            <div className={`step-text px-5 py-2.5 md:p-0 rounded-full md:rounded-none md:bg-transparent text-sm font-bold origin-left flex items-center transition-all duration-300 border md:border-transparent ${isActive ? 'bg-[var(--clr-accent)] border-[var(--clr-accent)] md:bg-transparent text-[#0a0e17] md:text-white scale-[1.02] md:scale-105 md:translate-x-2 shadow-[0_0_15px_rgba(200,162,110,0.3)] md:shadow-none' : 'bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.1)] md:border-transparent md:bg-transparent text-[var(--clr-text-dim)] group-hover:text-white group-hover:bg-[rgba(255,255,255,0.08)] md:group-hover:bg-transparent'}`}>
+                                                <span className={`text-[10px] uppercase tracking-widest font-mono mr-2 md:mr-3 transition-opacity ${isActive ? 'opacity-80 md:opacity-100' : 'opacity-40'}`}>
+                                                    0{phase.phase}
+                                                </span>
+                                                {phase.title}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="timeline-items space-y-24 md:space-y-32">
-                        {phases.map((phase, idx) => (
-                            <div key={idx} className={`timeline-item relative flex items-start md:items-center gap-12 md:gap-0 ${idx % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
-                                <div className="timeline-node absolute left-[20px] md:left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 w-5 h-5 rounded-full z-10 bg-[#1a1c23] border-2 border-[rgba(255,255,255,0.1)]"></div>
+                    {/* Right Column: Swiper Carousel */}
+                    <div className="w-full md:w-[65%] lg:w-[70%] pt-2 md:pt-10 relative">
+                        <Swiper
+                            modules={[Navigation, EffectCreative, Autoplay]}
+                            onSwiper={setSwiperInstance}
+                            onSlideChange={(swiper) => setActivePhase(swiper.activeIndex)}
+                            centeredSlides={true}
+                            slidesPerView={1.2}
+                            spaceBetween={20}
+                            breakpoints={{
+                                768: {
+                                    slidesPerView: 1.8,
+                                    spaceBetween: 25
+                                },
+                                1024: {
+                                    slidesPerView: 2.2,
+                                    spaceBetween: 30
+                                }
+                            }}
+                            autoplay={{
+                                delay: 3500,
+                                disableOnInteraction: false,
+                            }}
+                            navigation={{
+                                prevEl: '.journey-prev',
+                                nextEl: '.journey-next',
+                            }}
+                            className="journey-swiper w-full !pb-8"
+                        >
+                            {phases.map((phase, idx) => (
+                                <SwiperSlide key={idx} className="h-auto">
+                                    {({ isActive }) => (
+                                        <div className={`journey-card card h-full p-8 sm:p-10 border bg-[var(--clr-card-bg)] transition-all duration-700 rounded-3xl group relative overflow-hidden backdrop-blur-md 
+                                            ${isActive 
+                                                ? 'border-[var(--clr-accent)] shadow-[0_20px_50px_rgba(200,162,110,0.15)] scale-100 opacity-100' 
+                                                : 'border-[var(--clr-card-border)] scale-[0.9] opacity-60 cursor-pointer hover:opacity-100 hover:scale-95'}`}
+                                            onClick={() => {
+                                                if (!isActive && swiperInstance) {
+                                                    swiperInstance.slideTo(idx);
+                                                }
+                                            }}
+                                        >
+                                            
+                                            {/* Accent Glow Effect */}
+                                            <div className={`absolute top-0 right-0 w-64 h-64 bg-[var(--clr-accent)] rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl pointer-events-none transition-opacity duration-700 ${isActive ? 'opacity-[0.05]' : 'opacity-0'}`}></div>
 
-                                <div className={`timeline-card-wrapper w-full md:w-[45%] pl-10 md:pl-0`}>
-                                    <div className="timeline-card card p-6 sm:p-8 border border-[var(--clr-card-border)] bg-[var(--clr-card-bg)] hover:border-[var(--clr-accent)] transition-all duration-500 rounded-3xl group relative overflow-hidden h-full">
-                                        <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--clr-accent)] opacity-[0.02] rounded-full -translate-y-1/2 translate-x-1/2 group-hover:opacity-10 transition-opacity"></div>
+                                            <span className="text-[var(--clr-accent)] font-black text-[11px] uppercase tracking-[0.2em] mb-4 block">
+                                                PHASE {phase.phase}
+                                            </span>
+                                            
+                                            <h3 className={`text-2xl sm:text-3xl font-black mb-5 tracking-tight transition-colors duration-500 ${isActive ? 'text-white' : 'text-gray-400'}`}>
+                                                {phase.title}
+                                            </h3>
+                                            
+                                            <p className="text-base sm:text-lg text-[var(--clr-text-dim)] leading-relaxed mb-8">
+                                                {phase.description}
+                                            </p>
 
-                                        <span className="timeline-phase-label text-[var(--clr-accent)] font-black text-[10px] uppercase tracking-[0.2em] mb-3 block">PHASE {phase.phase}</span>
-                                        <h3 className="timeline-title text-2xl font-black mb-4 group-hover:text-white transition-colors">{phase.title}</h3>
-                                        <p className="timeline-description text-sm text-[var(--clr-text-dim)] leading-relaxed mb-8">{phase.description}</p>
-
-                                        <div className="timeline-tags flex flex-wrap gap-2">
-                                            {phase.tags.map((tag, tidx) => (
-                                                <span key={tidx} className="tag px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.08)] text-[var(--clr-text-dim)] group-hover:border-[rgba(200,162,110,0.2)] group-hover:text-white transition-all">
-                                                    {tag}
-                                                </span>
-                                            ))}
+                                            <div className="flex flex-wrap gap-3">
+                                                {phase.tags.map((tag, tidx) => (
+                                                    <span key={tidx} className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${isActive ? 'bg-[rgba(255,255,255,0.05)] border-[rgba(255,255,255,0.1)] text-gray-300 hover:border-[rgba(200,162,110,0.4)] hover:text-white hover:bg-[rgba(200,162,110,0.1)]' : 'bg-transparent border-[rgba(255,255,255,0.02)] text-gray-500 border'}`}>
+                                                        {tag}
+                                                    </span>
+                                                ))}
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div className="hidden md:block md:w-[45%]"></div>
-                            </div>
-                         ))}
+                                    )}
+                                </SwiperSlide>
+                            ))}
+                        </Swiper>
+
+                        {/* Custom Navigation Arrows (Centered horizontally below carousel) */}
+                        <div className="flex justify-center items-center gap-4 mt-6">
+                            <button className="journey-prev w-12 h-12 rounded-full border border-[rgba(255,255,255,0.15)] bg-transparent flex items-center justify-center text-white hover:bg-[var(--clr-accent)] hover:text-black hover:border-[var(--clr-accent)] shadow-[0_0_20px_rgba(0,0,0,0.2)] transition-all duration-300 disabled:opacity-20 disabled:cursor-not-allowed">
+                                <i className="fas fa-chevron-left text-sm"></i>
+                            </button>
+                            <button className="journey-next w-12 h-12 rounded-full border border-[rgba(255,255,255,0.15)] bg-transparent flex items-center justify-center text-white hover:bg-[var(--clr-accent)] hover:text-black hover:border-[var(--clr-accent)] shadow-[0_0_20px_rgba(0,0,0,0.2)] transition-all duration-300 disabled:opacity-20 disabled:cursor-not-allowed">
+                                <i className="fas fa-chevron-right text-sm"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-
+            
             <style dangerouslySetInnerHTML={{ __html: `
-                .timeline-card {
-                    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                .scrollbar-hide::-webkit-scrollbar {
+                    display: none;
                 }
-                .timeline-card:hover {
-                    box-shadow: 0 20px 50px rgba(200,162,110,0.1);
-                    transform: translateY(-5px);
+                .scrollbar-hide {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
+                }
+                .journey-swiper {
+                    padding-top: 1rem;
+                    padding-bottom: 2rem;
+                }
+                .swiper-slide {
+                    display: flex;
+                    height: auto;
                 }
             ` }} />
         </section>

@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Keyboard } from 'swiper/modules';
+import { Navigation, Pagination, Keyboard, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -107,9 +107,11 @@ const Projects = () => {
             </button>
 
             <Swiper
-                modules={[Navigation, Pagination, Keyboard]}
+                modules={[Navigation, Pagination, Keyboard, Autoplay]}
                 spaceBetween={30}
                 slidesPerView={1}
+                loop={true}
+                autoplay={{ delay: 3500, disableOnInteraction: false, pauseOnMouseEnter: true }}
                 keyboard={{ enabled: true }}
                 pagination={{ clickable: true, el: '.projects-pagination' }}
                 navigation={{

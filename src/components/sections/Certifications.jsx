@@ -1,130 +1,179 @@
 import React, { useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Autoplay, Navigation, Keyboard } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/pagination';
+import { EffectCoverflow, Pagination, Autoplay, Navigation } from 'swiper/modules';
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
+import 'swiper/css';
+import 'swiper/css/effect-coverflow';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
 import { certifications } from '../../data/portfolioData';
 import { SiMicrosoftazure } from 'react-icons/si';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Certifications = () => {
     const sectionRef = useRef(null);
     const headerRef = useRef(null);
-    const swiperContainerRef = useRef(null);
 
     useGSAP(
         () => {
             const subtitleEl = headerRef.current?.querySelector('.section-subtitle');
             const titleEl = headerRef.current?.querySelector('.section-title');
+            const descEl = headerRef.current?.querySelector('p');
 
-            gsap.set([subtitleEl, titleEl].filter(Boolean), { opacity: 0, y: 30 });
-            if (swiperContainerRef.current) gsap.set(swiperContainerRef.current, { opacity: 0, y: 35 });
+            gsap.set([subtitleEl, titleEl, descEl].filter(Boolean), { opacity: 0, y: 30 });
 
-            const tl = gsap.timeline({
+            const headerTl = gsap.timeline({
                 defaults: { ease: 'power3.out' },
-                scrollTrigger: { trigger: sectionRef.current, start: 'top 80%', toggleActions: 'play none none none' },
+                scrollTrigger: { trigger: sectionRef.current, start: 'top 85%', toggleActions: 'play none none none' },
             });
 
-            tl.to(subtitleEl, { opacity: 1, y: 0, duration: 0.4 })
-              .to(titleEl, { opacity: 1, y: 0, duration: 0.5 }, '-=0.15')
-              .to(swiperContainerRef.current, { opacity: 1, y: 0, duration: 0.6 }, '-=0.1');
+            headerTl
+                .to(subtitleEl, { opacity: 1, y: 0, duration: 0.4 })
+                .to(titleEl, { opacity: 1, y: 0, duration: 0.5 }, '-=0.15')
+                .to(descEl, { opacity: 1, y: 0, duration: 0.4 }, '-=0.15');
         },
-        { scope: sectionRef, dependencies: [] },
+        { scope: sectionRef }
     );
 
     return (
-        <section id="certifications" className="section" ref={sectionRef}>
-            <div className="container mx-auto px-8">
-                <div ref={headerRef} className="section-header text-center mb-16">
-                    <span className="section-subtitle text-[var(--clr-accent)] font-mono uppercase tracking-widest text-sm mb-2 block">Validation</span>
-                    <h2 className="section-title text-4xl md:text-5xl font-black mb-4">Professional Certifications</h2>
+        <section id="certifications" className="section bg-transparent relative overflow-hidden" ref={sectionRef}>
+            <div className="container mx-auto px-4 md:px-8">
+                
+                {/* Center Header */}
+                <div ref={headerRef} className="section-header text-center mb-16 max-w-2xl mx-auto">
+                    <span className="section-subtitle text-[var(--clr-accent)] font-mono uppercase tracking-widest text-sm mb-4 block">
+                        Validation
+                    </span>
+                    <h2 className="section-title text-4xl sm:text-5xl font-black mb-6 leading-tight tracking-tight drop-shadow-md">
+                        Professional Certifications
+                    </h2>
+                    <p className="text-[var(--clr-text-dim)] text-lg leading-relaxed">
+                        Recognized industry credentials that validate my expertise in cloud architecture, system administration, and networking.
+                    </p>
                 </div>
 
-                <div ref={swiperContainerRef} className="certs-swiper-container pb-12 pt-4 px-2 md:px-16">
-                    <div className="relative group/carousel">
-                        {/* Navigation Arrows */}
-                        <button 
-                            className="certs-swiper-prev absolute left-0 md:-left-16 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(200,162,110,0.4)] bg-[rgba(10,15,30,0.95)] text-[rgba(200,162,110,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(200,162,110,0.25)] hover:shadow-[0_0_20px_rgba(200,162,110,0.55)] focus:outline-none cursor-pointer"
-                            aria-label="Previous certification"
-                        >
-                            <i className="fas fa-chevron-left text-xl md:text-2xl drop-shadow-[0_0_3px_rgba(200,162,110,0.4)]"></i>
-                        </button>
-                        <button 
-                            className="certs-swiper-next absolute right-0 md:-right-16 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(200,162,110,0.4)] bg-[rgba(10,15,30,0.95)] text-[rgba(200,162,110,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(200,162,110,0.25)] hover:shadow-[0_0_20px_rgba(200,162,110,0.55)] focus:outline-none cursor-pointer"
-                            aria-label="Next certification"
-                        >
-                            <i className="fas fa-chevron-right text-xl md:text-2xl drop-shadow-[0_0_3px_rgba(200,162,110,0.4)]"></i>
-                        </button>
+                {/* 3D Coverflow Swiper */}
+                <div className="w-full relative px-4 sm:px-0">
+                    <Swiper
+                        effect={'coverflow'}
+                        grabCursor={true}
+                        centeredSlides={true}
+                        slidesPerView={'auto'}
+                        loop={true}
+                        coverflowEffect={{
+                            rotate: 15,
+                            stretch: 0,
+                            depth: 300,
+                            modifier: 1,
+                            slideShadows: false,
+                        }}
+                        autoplay={{
+                            delay: 4000,
+                            disableOnInteraction: false,
+                        }}
+                        pagination={{
+                            el: '.certs-pagination',
+                            clickable: true,
+                        }}
+                        navigation={{
+                            prevEl: '.certs-prev',
+                            nextEl: '.certs-next',
+                        }}
+                        modules={[EffectCoverflow, Pagination, Autoplay, Navigation]}
+                        className="certs-3d-swiper w-full pt-10 pb-16 !overflow-visible"
+                    >
+                        {certifications.map((cert, idx) => (
+                            <SwiperSlide key={idx} className="!w-[320px] md:!w-[380px]">
+                                {({ isActive }) => (
+                                    <div className={`relative h-[450px] p-8 rounded-3xl border transition-all duration-700 flex flex-col justify-between overflow-hidden group
+                                        ${isActive 
+                                            ? 'bg-[rgba(15,20,35,0.85)] border-[var(--clr-accent)] shadow-[0_30px_60px_rgba(0,0,0,0.6),0_0_40px_rgba(200,162,110,0.2)] scale-100 backdrop-blur-xl z-10' 
+                                            : 'bg-[rgba(10,15,25,0.6)] border-[rgba(255,255,255,0.05)] shadow-[0_15px_30px_rgba(0,0,0,0.4)] scale-95 opacity-50 backdrop-blur-md'
+                                        }`}
+                                    >
+                                        {/* Background Glow */}
+                                        <div className={`absolute -inset-20 bg-gradient-to-b from-[var(--clr-accent)] to-transparent opacity-[0.03] blur-3xl pointer-events-none transition-opacity duration-700 ${isActive ? 'opacity-[0.08]' : 'opacity-0'}`}></div>
 
-                        <Swiper
-                            modules={[Pagination, Autoplay, Navigation, Keyboard]}
-                            slidesPerView={1}
-                            spaceBetween={20}
-                            loop={true}
-                            pagination={{ clickable: true, el: '.certs-pagination' }}
-                            autoplay={{ delay: 4000, disableOnInteraction: false }}
-                            navigation={{
-                                nextEl: '.certs-swiper-next',
-                                prevEl: '.certs-swiper-prev',
-                            }}
-                            keyboard={{ enabled: true, onlyInViewport: true }}
-                            breakpoints={{
-                                768: { slidesPerView: 2, spaceBetween: 30 },
-                                1024: { slidesPerView: 3, spaceBetween: 40 }
-                            }}
-                            className="certs-swiper overflow-hidden py-8 px-12 md:px-0"
-                        >
-                            {certifications.map((cert, idx) => (
-                                <SwiperSlide key={idx} className="!h-auto">
-                                    <div className="cert-card card h-full bg-[var(--clr-card-bg)] border border-[var(--clr-card-border)] p-8 rounded-2xl group hover:border-[var(--clr-accent)] transition-all duration-300 relative overflow-hidden">
-                                        <div className="cert-badge absolute top-4 right-4 px-3 py-1 bg-[var(--clr-accent)] text-black text-[10px] font-black uppercase tracking-tighter rounded-full shadow-lg">Verify</div>
-                                        <div className="cert-icon text-4xl text-[var(--clr-accent)] mb-6 transition-transform duration-300 group-hover:scale-110">
-                                            {cert.icon === 'SiMicrosoftazure' ? (
-                                                <SiMicrosoftazure />
-                                            ) : (
-                                                <i className={cert.icon}></i>
-                                            )}
+                                        {/* Top Section */}
+                                        <div>
+                                            <div className="flex justify-between items-start mb-8">
+                                                <div className="w-16 h-16 rounded-2xl bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.05)] flex items-center justify-center text-3xl text-[var(--clr-accent)] shadow-inner">
+                                                    {cert.icon === 'SiMicrosoftazure' ? <SiMicrosoftazure /> : <i className={cert.icon}></i>}
+                                                </div>
+                                                <div className="px-3 py-1 bg-[rgba(200,162,110,0.1)] border border-[rgba(200,162,110,0.2)] text-[var(--clr-accent)] text-[9px] font-black uppercase tracking-widest rounded-full">
+                                                    Verified
+                                                </div>
+                                            </div>
+
+                                            <h3 className={`text-2xl font-black mb-3 leading-tight tracking-tight transition-colors duration-500 ${isActive ? 'text-white' : 'text-gray-400'}`}>
+                                                {cert.title}
+                                            </h3>
+                                            
+                                            <p className="text-sm font-medium text-[var(--clr-accent)] opacity-80 mb-6 uppercase tracking-wider">
+                                                {cert.issuer}
+                                            </p>
                                         </div>
-                                        <div className="cert-info">
-                                            <h3 className="cert-title text-xl font-bold mb-2 group-hover:text-[var(--clr-accent)] transition-colors">{cert.title}</h3>
-                                            <p className="cert-issuer text-sm text-[var(--clr-text-dim)] mb-6">{cert.issuer}</p>
+
+                                        {/* Bottom Section */}
+                                        <div className="mt-auto relative z-10">
+                                            <div className={`h-[1px] w-full bg-gradient-to-r from-transparent via-[rgba(255,255,255,0.1)] to-transparent mb-6 transition-opacity duration-500 ${isActive ? 'opacity-100' : 'opacity-0'}`}></div>
+                                            
                                             <a
                                                 href={cert.link}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="cert-link inline-flex items-center gap-2 text-[var(--clr-accent)] font-bold text-sm hover:gap-3 transition-all underline decoration-2 underline-offset-4"
+                                                className={`w-full py-4 rounded-xl flex items-center justify-center gap-3 font-bold text-sm transition-all duration-300
+                                                    ${isActive 
+                                                        ? 'bg-[var(--clr-accent)] text-black hover:bg-white hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(200,162,110,0.4)]' 
+                                                        : 'bg-[rgba(255,255,255,0.03)] text-gray-500 border border-[rgba(255,255,255,0.05)] pointer-events-none'
+                                                    }`}
                                             >
-                                                View Certificate <i className="fas fa-external-link-alt"></i>
+                                                <span>View Credentials</span>
+                                                <i className="fas fa-arrow-right text-xs"></i>
                                             </a>
                                         </div>
                                     </div>
-                                </SwiperSlide>
-                            ))}
-                        </Swiper>
+                                )}
+                            </SwiperSlide>
+                        ))}
+                    </Swiper>
+
+                    {/* Navigation Controls */}
+                    <div className="flex items-center justify-center gap-8 mt-4 relative z-20">
+                        <button className="certs-prev w-12 h-12 rounded-full border border-[rgba(255,255,255,0.1)] bg-[rgba(10,15,25,0.8)] backdrop-blur-md flex items-center justify-center text-white hover:bg-[var(--clr-accent)] hover:text-black hover:border-[var(--clr-accent)] transition-all duration-300 disabled:opacity-30 disabled:pointer-events-none group">
+                            <i className="fas fa-chevron-left text-sm group-hover:-translate-x-0.5 transition-transform"></i>
+                        </button>
+                        
+                        <div className="certs-pagination flex items-center justify-center gap-2 min-w-[100px]"></div>
+                        
+                        <button className="certs-next w-12 h-12 rounded-full border border-[rgba(255,255,255,0.1)] bg-[rgba(10,15,25,0.8)] backdrop-blur-md flex items-center justify-center text-white hover:bg-[var(--clr-accent)] hover:text-black hover:border-[var(--clr-accent)] transition-all duration-300 disabled:opacity-30 disabled:pointer-events-none group">
+                            <i className="fas fa-chevron-right text-sm group-hover:translate-x-0.5 transition-transform"></i>
+                        </button>
                     </div>
-                    <div className="certs-pagination mt-8 flex justify-center"></div>
                 </div>
             </div>
-
+            
             <style dangerouslySetInnerHTML={{ __html: `
+                .certs-3d-swiper .swiper-slide {
+                    background-position: center;
+                    background-size: cover;
+                }
                 .certs-pagination .swiper-pagination-bullet {
-                    background: var(--clr-text-dim);
-                    opacity: 0.3;
+                    background: rgba(255,255,255,0.2);
+                    opacity: 1;
                     transition: all 0.3s ease;
+                    width: 8px;
+                    height: 8px;
+                    margin: 0 4px !important;
                 }
                 .certs-pagination .swiper-pagination-bullet-active {
                     background: var(--clr-accent);
-                    opacity: 1;
-                    width: 25px;
-                    border-radius: 5px;
-                }
-                .cert-card::before {
-                    content: '';
-                    position: absolute;
-                    inset: 0;
-                    background: radial-gradient(circle at top right, rgba(200, 162, 110, 0.05), transparent 70%);
-                    pointer-events: none;
+                    width: 24px;
+                    border-radius: 4px;
+                    box-shadow: 0 0 10px rgba(200,162,110,0.5);
                 }
             ` }} />
         </section>

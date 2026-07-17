@@ -23,16 +23,25 @@ export function useMagneticEffect(ref, { strength = 0.3, radius = 100, disabled 
         const el = ref?.current;
         if (!el || disabled || isTouchDevice) return;
 
+        let isMagnetized = false;
+
         const handleMouseMove = (e) => {
             const rect = el.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
+            
+            // Get current transform to calculate static center without feedback loop
+            const currentX = gsap.getProperty(el, 'x') || 0;
+            const currentY = gsap.getProperty(el, 'y') || 0;
+            
+            const centerX = (rect.left - currentX) + rect.width / 2;
+            const centerY = (rect.top - currentY) + rect.height / 2;
+            
             const dx = e.clientX - centerX;
             const dy = e.clientY - centerY;
             const dist = Math.sqrt(dx * dx + dy * dy);
             const maxDist = Math.max(rect.width, rect.height) / 2 + radius;
 
             if (dist < maxDist) {
+                isMagnetized = true;
                 const pull = (1 - dist / maxDist) * strength;
                 gsap.to(el, {
                     x: dx * pull,
@@ -41,25 +50,22 @@ export function useMagneticEffect(ref, { strength = 0.3, radius = 100, disabled 
                     ease: 'power3.out',
                     overwrite: 'auto',
                 });
+            } else if (isMagnetized) {
+                isMagnetized = false;
+                gsap.to(el, {
+                    x: 0,
+                    y: 0,
+                    duration: 0.6,
+                    ease: 'elastic.out(1, 0.4)',
+                    overwrite: 'auto',
+                });
             }
         };
 
-        const handleMouseLeave = () => {
-            gsap.to(el, {
-                x: 0,
-                y: 0,
-                duration: 0.6,
-                ease: 'elastic.out(1, 0.4)',
-                overwrite: 'auto',
-            });
-        };
-
-        el.addEventListener('mousemove', handleMouseMove, { passive: true });
-        el.addEventListener('mouseleave', handleMouseLeave);
+        window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
         return () => {
-            el.removeEventListener('mousemove', handleMouseMove);
-            el.removeEventListener('mouseleave', handleMouseLeave);
+            window.removeEventListener('mousemove', handleMouseMove);
         };
     }, [ref, strength, radius, disabled, isTouchDevice]);
 }

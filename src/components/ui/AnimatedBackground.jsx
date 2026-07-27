@@ -145,7 +145,7 @@ const AnimatedBackground = () => {
                 }}
             />
 
-            {/* ─── Blob 2: Deep Sky Blue (لون السماوي الغامق) ──────── */}
+            {/* ─── Blob 2: Warm Gold (لون ذهبي متناسق) ──────── */}
             <div
                 className="bg-blob bg-blob-2"
                 style={{
@@ -156,7 +156,7 @@ const AnimatedBackground = () => {
                     height: 'clamp(450px, 55vw, 850px)',
                     borderRadius: '50%',
                     background:
-                        'radial-gradient(circle, rgba(15, 75, 150, 0.45) 0%, rgba(15, 75, 150, 0.1) 45%, transparent 70%)',
+                        'radial-gradient(circle, rgba(93, 76, 28, 0.18) 0%, rgba(110, 86, 47, 0.12) 45%, transparent 70%)',
                     willChange: 'transform',
                     animation: 'none',
                 }}

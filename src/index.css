@@ -6,19 +6,24 @@ html {}
 
 :root {
   /* Theme Variables - Dark Mode (Default) */
-  --clr-bg: #0b1521; /* Lighter, soft sky blue (dark mode) */
+  --clr-bg: #0A1121;
+  /* Extremely dark midnight blue, almost black, very premium */
   --clr-bg-alt: transparent;
-  --clr-card-bg: rgba(14, 30, 48, 0.7);
-  --clr-card-border: rgba(255, 255, 255, 0.08);
-  --clr-text: #e0e6ed;
+  --clr-card-bg: rgba(16, 26, 46, 0.7);
+  /* Deep blue-slate for cards */
+  --clr-card-border: rgba(255, 255, 255, 0.05);
+  --clr-text: #e2e8f0;
+  /* Crisp white-gray for high contrast */
   --clr-text-dim: #94a3b8;
+  /* Muted slate for dim text */
   --clr-accent: #c8a26e;
-  --clr-accent-2: #1e3a5f;
-  --clr-accent-3: #dbb88a;
+  /* Preserving the brown/gold accent */
+  --clr-accent-2: #1e293b;
+  --clr-accent-3: #eacda3;
   --accent-rgb: 200, 162, 110;
-  --clr-nav-bg: rgba(10, 14, 23, 0.95);
-  --clr-terminal-bg: #0d1117;
-  --clr-terminal-header: #161b22;
+  --clr-nav-bg: rgba(10, 17, 33, 0.95);
+  --clr-terminal-bg: #050810;
+  --clr-terminal-header: #0A1121;
   --clr-f-ln: #0077b5;
   --clr-f-gh: #333;
   --clr-f-wa: #25d366;

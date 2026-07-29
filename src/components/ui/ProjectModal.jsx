@@ -83,7 +83,7 @@ const ProjectModal = ({ project, onClose }) => {
     >
       <div
         ref={modalRef}
-        className={`relative w-full max-w-4xl overflow-hidden rounded-2xl border border-[rgba(200,162,110,0.2)] bg-[rgba(10,14,23,0.95)] shadow-[0_30px_100px_-40px_rgba(200,162,110,0.2)] transition-all duration-300 ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
+        className={`relative w-full max-w-4xl overflow-hidden rounded-2xl border border-[rgba(200,162,110,0.2)] bg-[rgba(10,14,23,0.95)] shadow-[0_30px_100px_-40px_rgba(200,162,110,0.2)] transition-all duration-300 ${isVisible ? 'scale-[0.85] opacity-100' : 'scale-[0.80] opacity-0'}`}
       >
         <div className="relative h-64 overflow-hidden bg-slate-950 sm:h-[250px]">
           <img

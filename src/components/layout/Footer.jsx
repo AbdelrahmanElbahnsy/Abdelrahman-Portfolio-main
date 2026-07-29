@@ -10,19 +10,29 @@ const Footer = () => {
     useGSAP(
         () => {
             const columns = footerRef.current?.querySelectorAll('.footer-col');
+            const socials = footerRef.current?.querySelectorAll('.footer-social-icon');
+
+            const tl = gsap.timeline({
+                scrollTrigger: { 
+                    trigger: footerRef.current, 
+                    start: 'top 90%', 
+                    toggleActions: 'play none none none' 
+                }
+            });
+
             if (columns?.length) {
-                gsap.from(columns, {
-                    opacity: 0, y: 25, duration: 0.5, stagger: 0.08, ease: 'power3.out',
-                    scrollTrigger: { trigger: footerRef.current, start: 'top 90%', toggleActions: 'play none none none' },
-                });
+                tl.fromTo(columns, 
+                    { opacity: 0, y: 25 },
+                    { opacity: 1, y: 0, duration: 0.5, stagger: 0.08, ease: 'power3.out' }
+                );
             }
 
-            const socials = footerRef.current?.querySelectorAll('.footer-social-icon');
             if (socials?.length) {
-                gsap.from(socials, {
-                    opacity: 0, scale: 0.3, duration: 0.3, stagger: 0.05, ease: 'back.out(2)',
-                    scrollTrigger: { trigger: footerRef.current, start: 'top 90%', toggleActions: 'play none none none' },
-                });
+                tl.fromTo(socials, 
+                    { opacity: 0, scale: 0.3 },
+                    { opacity: 1, scale: 1, duration: 0.3, stagger: 0.05, ease: 'back.out(2)' },
+                    "<0.3" // Start slightly after columns begin
+                );
             }
         },
         { scope: footerRef, dependencies: [] },

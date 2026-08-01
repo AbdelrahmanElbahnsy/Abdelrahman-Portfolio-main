@@ -179,7 +179,7 @@ html {}
 @layer utilities {
 
   .section {
-    @apply py-24 relative overflow-hidden bg-transparent;
+    @apply py-7 md:py-8 lg:py-10 relative overflow-hidden bg-transparent;
   }
 
   .section-alt {
@@ -270,5 +270,64 @@ html {}
     opacity: 0;
     transform: translateY(10px);
     animation: line-fade-in 0.4s forwards;
+  }
+
+  /* WebKit autofill styling fix */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus,
+  select:-webkit-autofill,
+  select:-webkit-autofill:hover,
+  select:-webkit-autofill:focus {
+      -webkit-box-shadow: 0 0 0 1000px #0b1220 inset !important;
+      -webkit-text-fill-color: white !important;
+      transition: background-color 5000s ease-in-out 0s;
+  }
+
+  /* Skills Mobile Grid Optimization */
+  @media (max-width: 640px) {
+    .skills-circular-row {
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 2rem 0.5rem !important;
+      margin-bottom: 4rem !important;
+      padding-left: 0.5rem !important;
+      padding-right: 0.5rem !important;
+    }
+    
+    .skills-circular-row > .circular-skill-item {
+      width: 100% !important;
+    }
+  
+    .skills-circular-row .relative {
+      width: 120px !important;
+      height: 120px !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
+    
+    .skills-circular-row .text-3xl {
+      font-size: 28px !important;
+    }
+    
+    .skills-circular-row .mt-6 {
+      margin-top: 1rem !important;
+      padding-left: 0.25rem !important;
+      padding-right: 0.25rem !important;
+    }
+    
+    .skills-circular-row h4 {
+      font-size: 15px !important;
+      line-height: 1.25 !important;
+    }
+    
+    .skills-circular-row p {
+      font-size: 11px !important;
+      line-height: 1.25 !important;
+    }
   }
 }

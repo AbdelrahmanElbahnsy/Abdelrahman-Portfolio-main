@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { personalInfo, socialLinks } from '../../data/portfolioData';
+import { SiMicrosoftazure } from 'react-icons/si';
 
 const Footer = () => {
     const { firstName, lastName, footerTagline, availabilityStatus, copyrightYear } = personalInfo;
@@ -39,7 +40,7 @@ const Footer = () => {
     );
 
     return (
-        <footer id="footer" className="py-16 bg-transparent border-t border-[var(--clr-card-border)]" ref={footerRef}>
+        <footer id="footer" className="py-7 md:py-8 lg:py-10 bg-transparent border-t border-[var(--clr-card-border)]" ref={footerRef}>
             <div className="page-container">
                 <div className="footer-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 px-8 md:px-0">
                     <div className="footer-col footer-brand space-y-6">
@@ -77,7 +78,7 @@ const Footer = () => {
                             ))}
                         </div>
                         <div className="tech-stack-minimal flex gap-4 text-xl text-[var(--clr-text-dim)] opacity-30">
-                            <span title="AWS"><i className="fab fa-aws"></i></span>
+                            <span title="Azure"><SiMicrosoftazure /></span>
                             <span title="Docker"><i className="fab fa-docker"></i></span>
                             <span title="Kubernetes"><i className="fas fa-dharmachakra"></i></span>
                             <span title="Terraform"><i className="fas fa-code"></i></span>

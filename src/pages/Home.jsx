@@ -14,8 +14,6 @@ const Projects = lazy(() => import('../components/sections/Projects'));
 const Journey = lazy(() => import('../components/sections/Journey'));
 const Certifications = lazy(() => import('../components/sections/Certifications'));
 const Contact = lazy(() => import('../components/sections/Contact'));
-import { useScrollVelocityBlur } from '../hooks/useScrollVelocityBlur';
-import { trackVisit } from '../services/analytics';
 
 function Home({ splashDone = true }) {
   const hasTrackedVisitRef = useRef(false);
@@ -29,7 +27,9 @@ function Home({ splashDone = true }) {
     if (!hasTrackedVisitRef.current) {
       hasTrackedVisitRef.current = true;
       console.log('[analytics] Home useEffect triggered. Attempting single visit track.');
-      trackVisit(window.location.pathname || '/');
+      import('../services/analytics').then(({ trackVisit }) => {
+        trackVisit(window.location.pathname || '/');
+      }).catch(err => console.error('Failed to load analytics', err));
     }
   }, []);
 

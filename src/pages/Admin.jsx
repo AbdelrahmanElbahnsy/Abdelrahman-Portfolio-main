@@ -89,7 +89,7 @@ const Admin = () => {
       await logout();
       toast.success('Logged out securely');
       navigate('/login');
-    } catch (err) {
+    } catch {
       toast.error('Logout failed');
     }
   }, [logout, navigate]);

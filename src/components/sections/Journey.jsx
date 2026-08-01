@@ -129,7 +129,7 @@ const Journey = () => {
                             {phases.map((phase, idx) => (
                                 <SwiperSlide key={idx} className="h-auto">
                                     {({ isActive }) => (
-                                        <div className={`journey-card card h-full p-8 sm:p-10 border bg-[var(--clr-card-bg)] transition-all duration-700 rounded-3xl group relative overflow-hidden backdrop-blur-md 
+                                        <div className={`journey-card card h-fit md:h-full p-6 sm:p-10 border bg-[var(--clr-card-bg)] transition-all duration-700 rounded-3xl group relative overflow-hidden backdrop-blur-md 
                                             ${isActive 
                                                 ? 'border-[var(--clr-accent)] shadow-[0_20px_50px_rgba(200,162,110,0.15)] scale-100 opacity-100' 
                                                 : 'border-[var(--clr-card-border)] scale-[0.9] opacity-60 cursor-pointer hover:opacity-100 hover:scale-95'}`}
@@ -143,21 +143,21 @@ const Journey = () => {
                                             {/* Accent Glow Effect */}
                                             <div className={`absolute top-0 right-0 w-64 h-64 bg-[var(--clr-accent)] rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl pointer-events-none transition-opacity duration-700 ${isActive ? 'opacity-[0.05]' : 'opacity-0'}`}></div>
 
-                                            <span className="text-[var(--clr-accent)] font-black text-[11px] uppercase tracking-[0.2em] mb-4 block">
+                                            <span className="text-[var(--clr-accent)] font-black text-[11px] uppercase tracking-[0.2em] mb-2 md:mb-4 block">
                                                 PHASE {phase.phase}
                                             </span>
                                             
-                                            <h3 className={`text-2xl sm:text-3xl font-black mb-5 tracking-tight transition-colors duration-500 ${isActive ? 'text-white' : 'text-gray-400'}`}>
+                                            <h3 className={`text-2xl sm:text-3xl font-black mb-3 md:mb-5 tracking-tight transition-colors duration-500 ${isActive ? 'text-white' : 'text-gray-400'}`}>
                                                 {phase.title}
                                             </h3>
                                             
-                                            <p className="text-base sm:text-lg text-[var(--clr-text-dim)] leading-relaxed mb-8">
+                                            <p className="text-base sm:text-lg text-[var(--clr-text-dim)] leading-relaxed mb-5 md:mb-8 line-clamp-4 md:line-clamp-none">
                                                 {phase.description}
                                             </p>
 
-                                            <div className="flex flex-wrap gap-3">
+                                            <div className="grid grid-cols-2 md:flex md:flex-wrap gap-2 md:gap-3">
                                                 {phase.tags.map((tag, tidx) => (
-                                                    <span key={tidx} className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${isActive ? 'bg-[rgba(255,255,255,0.05)] border-[rgba(255,255,255,0.1)] text-gray-300 hover:border-[rgba(200,162,110,0.4)] hover:text-white hover:bg-[rgba(200,162,110,0.1)]' : 'bg-transparent border-[rgba(255,255,255,0.02)] text-gray-500 border'}`}>
+                                                    <span key={tidx} className={`flex items-center justify-center text-center w-full md:w-auto px-2 py-1.5 md:px-4 md:py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${isActive ? 'bg-[rgba(255,255,255,0.05)] border-[rgba(255,255,255,0.1)] text-gray-300 hover:border-[rgba(200,162,110,0.4)] hover:text-white hover:bg-[rgba(200,162,110,0.1)]' : 'bg-transparent border-[rgba(255,255,255,0.02)] text-gray-500 border'}`}>
                                                         {tag}
                                                     </span>
                                                 ))}

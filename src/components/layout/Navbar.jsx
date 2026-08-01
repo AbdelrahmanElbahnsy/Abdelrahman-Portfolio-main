@@ -52,7 +52,7 @@ const Navbar = ({ splashDone = true }) => {
         const handleScroll = () => {
             if (window.scrollY % 2 === 0) { // Throttled check
                 setIsScrolled(window.scrollY > 50);
-                
+
                 // Fallback for Home if scrolled to Top
                 if (window.scrollY < 100) {
                     setActiveSection('hero');
@@ -149,8 +149,8 @@ const Navbar = ({ splashDone = true }) => {
                         <ul className="hidden lg:flex items-center gap-1 xl:gap-2">
                             {navLinks.map((link, idx) => (
                                 <li key={idx}>
-                                    <a 
-                                        href={link.href} 
+                                    <a
+                                        href={link.href}
                                         onClick={() => handleNavClick(link.id)}
                                         className={`flex items-center gap-2.5 px-4 py-2 rounded-full text-[11px] font-black uppercase tracking-[0.12em] transition-all duration-300 ${activeSection === link.id ? 'bg-[var(--clr-accent)] text-black shadow-[0_0_20px_rgba(200,162,110,0.5)]' : 'text-[var(--clr-text-dim)] hover:text-white hover:bg-[rgba(255,255,255,0.08)]'}`}
                                     >
@@ -163,7 +163,7 @@ const Navbar = ({ splashDone = true }) => {
 
                         {/* Action Buttons */}
                         <div className="flex items-center gap-3 shrink-0">
-                            <button 
+                            <button
                                 onClick={toggleMenu}
                                 className="lg:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 focus:outline-none z-[1001] bg-[rgba(255,255,255,0.05)] rounded-full hover:bg-[rgba(255,255,255,0.12)] transition-all"
                                 aria-label="Toggle Menu"
@@ -172,9 +172,9 @@ const Navbar = ({ splashDone = true }) => {
                                 <span className={`w-5 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? 'opacity-0' : ''}`}></span>
                                 <span className={`w-5 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}></span>
                             </button>
-                            
-                            <a 
-                                href="#contact" 
+
+                            <a
+                                href="#contact"
                                 onClick={() => handleNavClick('contact')}
                                 className={`hidden md:flex items-center gap-2.5 px-4 md:px-6 py-2.5 text-[11px] font-black uppercase tracking-widest rounded-full transition-all duration-500 ${activeSection === 'contact' ? 'bg-white text-black ring-2 ring-white' : 'bg-[var(--clr-accent)] text-black'}`}
                             >
@@ -193,26 +193,26 @@ const Navbar = ({ splashDone = true }) => {
                 style={{ opacity: 0, transform: 'translateY(-100%)', pointerEvents: 'none' }}
             >
                 <div ref={menuItemsRef} className="mobile-menu-content h-full flex flex-col justify-between p-12 py-32 relative z-10">
-                    <ul className="flex flex-col gap-6">
+                    <ul className="flex flex-col gap-5 md:gap-6">
                         {[...navLinks, { name: 'Contact', href: '#contact', id: 'contact', icon: 'fas fa-paper-plane' }].map((link, idx) => (
                             <li key={idx} className="mobile-nav-item">
-                                <a 
+                                <a
                                     href={link.href}
                                     onClick={() => handleNavClick(link.id)}
-                                    className={`flex items-center gap-5 text-3xl font-black uppercase tracking-tighter transition-all duration-500 ${activeSection === link.id ? 'text-[var(--clr-accent)]' : 'text-white'}`}
+                                    className={`flex items-center gap-3.5 md:gap-5 text-[26px] md:text-3xl font-black uppercase tracking-tighter transition-all duration-500 ${activeSection === link.id ? 'text-[var(--clr-accent)]' : 'text-white'}`}
                                 >
-                                    <i className={`${link.icon} text-2xl opacity-70`}></i>
+                                    <i className={`${link.icon} text-[22px] md:text-2xl opacity-70`}></i>
                                     {link.name}
                                 </a>
                             </li>
                         ))}
                     </ul>
-                    
+
                     <div className="mobile-menu-footer border-t border-[rgba(255,255,255,0.1)] pt-12">
                         <p className="text-[var(--clr-text-dim)] uppercase text-[10px] font-black tracking-[0.2em] mb-6">Let's Connect</p>
                         <div className="flex gap-8">
                             {socialLinks.navbarMobile.map((social, idx) => (
-                                <a key={idx} href={social.link} target="_blank" rel="noreferrer" className="text-3xl text-white hover:text-[var(--clr-accent)] transition-all">
+                                <a key={idx} href={social.link} target="_blank" rel="noopener noreferrer" className="text-[35px] md:text-3xl text-white hover:text-[var(--clr-accent)] transition-all relative z-50">
                                     <i className={social.icon}></i>
                                 </a>
                             ))}

@@ -16,6 +16,10 @@ const SplashScreen = ({ onComplete, contentReady = false }) => {
   const taglineRef = useRef(null);
   const progressRef = useRef(null);
   const progressBarRef = useRef(null);
+  const charLessRef = useRef(null);
+  const charARef = useRef(null);
+  const charDotRef = useRef(null);
+  const charGreaterRef = useRef(null);
   const [isVisible, setIsVisible] = useState(true);
 
   // Track internal state
@@ -88,9 +92,19 @@ const SplashScreen = ({ onComplete, contentReady = false }) => {
 
     introTl
       .set(
-        [logoRef.current, lineLeftRef.current, lineRightRef.current, taglineRef.current, progressRef.current],
+        [
+          lineLeftRef.current, 
+          lineRightRef.current, 
+          taglineRef.current, 
+          progressRef.current,
+          charLessRef.current,
+          charARef.current,
+          charDotRef.current,
+          charGreaterRef.current
+        ],
         { opacity: 0 },
       )
+      .set(logoRef.current.querySelectorAll('.letter'), { opacity: 0 })
 
       // Decorative lines expand outward
       .to(lineLeftRef.current, {
@@ -105,41 +119,52 @@ const SplashScreen = ({ onComplete, contentReady = false }) => {
         '<',
       )
 
-      // Logo fades up and scales
-      .fromTo(
-        logoRef.current,
-        { opacity: 0, y: 20, scale: 0.9 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'power4.out' },
-        '-=0.3',
-      )
-
-      // Logo text color flash
-      .to(logoRef.current.querySelector('.splash-accent'), {
-        color: '#dbb88a',
-        duration: 0.3,
-        ease: 'power2.in',
-      })
-      .to(logoRef.current.querySelector('.splash-accent'), {
-        color: '#c8a26e',
-        duration: 0.4,
-        ease: 'power2.out',
-      })
+      // Step 1: Show `<`
+      .to(charLessRef.current, { opacity: 1, duration: 0.3, ease: 'power2.out' }, '-=0.2')
+      
+      // Step 2: Fade in `A`
+      .to(charARef.current, { opacity: 1, duration: 0.3, ease: 'power2.out' }, '+=0.1')
+      
+      // Step 3: Reveal `.`
+      .to(charDotRef.current, { opacity: 1, duration: 0.3, ease: 'power2.out' }, '-=0.1')
+      
+      // Step 4: Type `El-bahnsy` letter by letter
+      .to(logoRef.current.querySelectorAll('.letter'), { 
+        opacity: 1, 
+        duration: 0.05, 
+        stagger: 0.06, 
+        ease: 'none' 
+      }, '-=0.1')
+      
+      // Step 5: Reveal `>`
+      .to(charGreaterRef.current, { opacity: 1, duration: 0.3, ease: 'power2.out' })
+      
+      // Soft gold glow
+      .to([charLessRef.current, charDotRef.current, charGreaterRef.current], {
+        textShadow: '0 0 15px rgba(200,162,110,0.6)',
+        duration: 0.5,
+        ease: 'power2.out'
+      }, '-=0.2')
 
       // Tagline fades in
       .fromTo(
         taglineRef.current,
         { opacity: 0, y: 10 },
         { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' },
-        '-=0.3',
+        '-=0.6',
       )
 
       // Progress bar fills
-      .to(progressRef.current, { opacity: 1, duration: 0.3 }, '-=0.2')
+      .to(progressRef.current, { opacity: 1, duration: 0.3 }, '-=0.4')
       .fromTo(
         progressBarRef.current,
         { scaleX: 0, transformOrigin: 'left center' },
         { scaleX: 1, duration: 1.2, ease: 'power2.inOut' },
-      );
+        '-=0.3'
+      )
+      
+      // Pause 400-500ms
+      .to({}, { duration: 0.4 });
 
     return () => {
       introTl.kill();
@@ -220,11 +245,13 @@ const SplashScreen = ({ onComplete, contentReady = false }) => {
               lineHeight: 1,
             }}
           >
-            <span className="splash-accent" style={{ color: '#c8a26e' }}>&lt;</span>
-            AE
-            <span className="splash-accent" style={{ color: '#c8a26e' }}>/</span>
-            B
-            <span className="splash-accent" style={{ color: '#c8a26e' }}>&gt;</span>
+            <span ref={charLessRef} style={{ color: '#c8a26e' }}>&lt;</span>
+            <span ref={charARef}>A</span>
+            <span ref={charDotRef} style={{ color: '#c8a26e' }}>.</span>
+            {"El-bahnsy".split('').map((char, i) => (
+              <span key={i} className="letter">{char}</span>
+            ))}
+            <span ref={charGreaterRef} style={{ color: '#c8a26e' }}>&gt;</span>
           </h1>
         </div>
 

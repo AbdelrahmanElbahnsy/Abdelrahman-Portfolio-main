@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { sendPasswordResetEmail, createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../services/firebase';
 import { Mail, ArrowLeft, Loader2 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import toast, { Toaster } from 'react-hot-toast';
 
 const ForgotPassword = () => {

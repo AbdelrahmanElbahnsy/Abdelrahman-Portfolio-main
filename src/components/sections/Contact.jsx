@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import emailjs from "@emailjs/browser";
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -8,6 +8,35 @@ const Contact = () => {
     const [status, setStatus] = useState("READY");
     const [logLines, setLogLines] = useState([]);
     const [finalSuccess, setFinalSuccess] = useState(false);
+    const [selectedSubject, setSelectedSubject] = useState("");
+    const [customSubject, setCustomSubject] = useState("");
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dropdownRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsDropdownOpen(false);
+            }
+        };
+
+        const handleEscape = (event) => {
+            if (event.key === 'Escape') {
+                setIsDropdownOpen(false);
+            }
+        };
+
+        if (isDropdownOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+            document.addEventListener('keydown', handleEscape);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('keydown', handleEscape);
+        };
+    }, [isDropdownOpen]);
+    
     const formRef = useRef();
     const sectionRef = useRef(null);
     const headerRef = useRef(null);
@@ -159,25 +188,74 @@ const Contact = () => {
                             <div className="terminal-body p-6 sm:p-8 min-h-[400px] relative">
                                 {!finalSuccess ? (
                                     status === "READY" ? (
-                                        <form className="devops-form space-y-6" ref={formRef} onSubmit={handleSubmit}>
+                                        <form className="devops-form space-y-6" ref={formRef} onSubmit={handleSubmit} autoComplete="off">
                                             <div className="form-row grid grid-cols-1 md:grid-cols-2 gap-6">
                                                 <div className="form-group">
                                                     <label className="block text-xs font-mono text-[var(--clr-text-dim)] mb-2"><span className="text-[var(--clr-accent)] mr-2">$</span> Name</label>
-                                                    <input type="text" name="from_name" className="w-full bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.1)] rounded-lg p-3 text-sm focus:border-[var(--clr-accent)] outline-none" placeholder="Your full name" required />
+                                                    <input type="text" name="contact_name_field" autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} className="w-full bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.1)] rounded-lg p-3 text-sm focus:border-[var(--clr-accent)] outline-none" placeholder="Your full name" required />
                                                 </div>
                                                 <div className="form-group">
                                                     <label className="block text-xs font-mono text-[var(--clr-text-dim)] mb-2"><span className="text-[var(--clr-accent)] mr-2">$</span> Email</label>
-                                                    <input type="email" name="from_email" className="w-full bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.1)] rounded-lg p-3 text-sm focus:border-[var(--clr-accent)] outline-none" placeholder="your@email.com" required />
+                                                    <input type="email" name="contact_email_field" autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} className="w-full bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.1)] rounded-lg p-3 text-sm focus:border-[var(--clr-accent)] outline-none" placeholder="your@email.com" required />
                                                 </div>
                                             </div>
                                             <div className="form-group">
                                                 <label className="block text-xs font-mono text-[var(--clr-text-dim)] mb-2"><span className="text-[var(--clr-accent)] mr-2">$</span> Subject</label>
-                                                <select name="subject" className="w-full bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.1)] rounded-lg p-3 text-sm focus:border-[var(--clr-accent)] outline-none" required>
-                                                    <option value="" disabled>Select an option</option>
-                                                    {formSubjects.map((subject) => (
-                                                        <option key={subject} value={subject}>{subject}</option>
-                                                    ))}
-                                                </select>
+                                                <div className="relative" ref={dropdownRef}>
+                                                    {/* Visually hidden text input so HTML5 validation works */}
+                                                    {selectedSubject !== 'Other (Specify)' && (
+                                                        <input type="text" name="subject" value={selectedSubject} onChange={() => {}} required className="absolute opacity-0 w-0 h-0 p-0 m-0 border-0 pointer-events-none" tabIndex="-1" />
+                                                    )}
+                                                    
+                                                    {/* Custom Select Button */}
+                                                    <div
+                                                        className={`w-full bg-[rgba(255,255,255,0.03)] border rounded-lg p-3 text-sm flex justify-between items-center cursor-pointer outline-none transition-colors ${
+                                                            isDropdownOpen ? 'border-[var(--clr-accent)]' : 'border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)]'
+                                                        }`}
+                                                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                                    >
+                                                        <span className={selectedSubject ? 'text-white' : 'text-gray-400'}>
+                                                            {selectedSubject || 'Select an option'}
+                                                        </span>
+                                                        <i className={`fas fa-chevron-down text-[var(--clr-text-dim)] transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`}></i>
+                                                    </div>
+                                                    
+                                                    {/* Dropdown Options */}
+                                                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isDropdownOpen ? 'max-h-64 mt-2 opacity-100' : 'max-h-0 opacity-0'}`}>
+                                                        <ul className="bg-[#0b1220] border border-[var(--clr-accent)] rounded-lg overflow-hidden shadow-2xl">
+                                                            {formSubjects.map((subject) => (
+                                                                <li
+                                                                    key={subject}
+                                                                    className={`px-4 py-3 text-sm cursor-pointer transition-colors ${
+                                                                        selectedSubject === subject
+                                                                            ? 'bg-[var(--clr-accent)] text-black font-bold'
+                                                                            : 'text-white hover:bg-[rgba(200,162,110,0.15)]'
+                                                                    }`}
+                                                                    onClick={() => {
+                                                                        setSelectedSubject(subject);
+                                                                        setIsDropdownOpen(false);
+                                                                    }}
+                                                                >
+                                                                    {subject}
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                
+                                                {/* Custom Subject Input */}
+                                                <div className={`overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${selectedSubject === 'Other (Specify)' ? 'max-h-32 opacity-100 mt-6' : 'max-h-0 opacity-0 mt-0'}`}>
+                                                    <label className="block text-xs font-mono text-[var(--clr-text-dim)] mb-2"><span className="text-[var(--clr-accent)] mr-2">$</span> Specify your subject</label>
+                                                    <input 
+                                                        type="text" 
+                                                        name={selectedSubject === 'Other (Specify)' ? "subject" : ""} 
+                                                        value={customSubject} 
+                                                        onChange={(e) => setCustomSubject(e.target.value)} 
+                                                        required={selectedSubject === 'Other (Specify)'} 
+                                                        className="w-full bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.1)] rounded-lg p-3 text-sm focus:border-[var(--clr-accent)] outline-none" 
+                                                        placeholder="Please describe your request..." 
+                                                    />
+                                                </div>
                                             </div>
                                             <div className="form-group">
                                                 <label className="block text-xs font-mono text-[var(--clr-text-dim)] mb-2"><span className="text-[var(--clr-accent)] mr-2">$</span> Message</label>
@@ -210,11 +288,11 @@ const Contact = () => {
                     </div>
                 </div>
 
-                <div ref={oppsRef} className="opportunity-section-full mt-24 pt-24 border-t border-[rgba(255,255,255,0.05)] text-center">
-                    <h3 className="contact-sub-title text-[var(--clr-accent)] font-bold flex items-center justify-center gap-3 mb-12">
+                <div ref={oppsRef} className="opportunity-section-full mt-12 md:mt-16 pt-12 md:pt-16 border-t border-[rgba(255,255,255,0.05)] text-center">
+                    <h3 className="contact-sub-title text-[var(--clr-accent)] font-bold flex items-center justify-center gap-3 mb-8">
                         <i className="fas fa-briefcase"></i> Available For
                     </h3>
-                    <div className="opp-cards-full grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="opp-cards-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
                         {opportunities.map((opp, i) => (
                             <div key={i} className="opp-card p-6 sm:p-8 bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.05)] rounded-2xl hover:border-[var(--clr-accent)] transition-all group">
                                 <div className="opp-icon text-3xl text-[var(--clr-accent)] mb-4 group-hover:scale-110 transition-transform">

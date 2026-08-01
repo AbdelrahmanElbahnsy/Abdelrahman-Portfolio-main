@@ -82,7 +82,7 @@ export const skills = {
   categories: [
     {
       title: 'Cloud Platform',
-      icon: 'fab fa-aws',
+      icon: 'SiMicrosoftazure',
       skills: [
         { name: 'VM & VNet', percent: 90 },
         { name: 'Microsoft Entra ID & Security', percent: 85 },
@@ -338,11 +338,11 @@ export const contact = {
       link: null,
     },
   ],
-  formSubjects: ['Job Opportunity', 'Collaboration', 'Internship', 'General Inquiry'],
+  formSubjects: ['Job Opportunity', 'Internship', 'Freelance Project', 'Collaboration', 'Technical Question', 'Other (Specify)'],
   opportunities: [
     { icon: 'fas fa-graduation-cap', title: 'Internships', desc: 'Cloud & DevOps programs' },
     { icon: 'fas fa-user-gear', title: 'Junior DevOps Roles', desc: 'Entry-level engineering' },
-    { icon: 'fab fa-aws', title: 'Cloud Engineering', desc: 'AWS infrastructure roles' },
+    { icon: 'SiMicrosoftazure', title: 'Cloud Engineering', desc: 'AWS infrastructure roles' },
   ],
   emailjs: {
     SERVICE_ID: 'service_1usyuli',

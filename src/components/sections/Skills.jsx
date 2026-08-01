@@ -64,10 +64,10 @@ const Skills = () => {
     );
 
     return (
-        <section id="skills" className="section relative overflow-hidden" ref={sectionRef}>
+        <section id="skills" className="section relative !overflow-visible" ref={sectionRef}>
             <div className="container mx-auto px-4 md:px-8">
                 {/* Header */}
-                <div ref={headerRef} className="section-header text-center mb-20">
+                <div ref={headerRef} className="section-header text-center mb-12 md:mb-16">
                     <span className="section-subtitle text-[var(--clr-accent)] font-mono uppercase tracking-widest text-sm mb-3 block">
                         {subtitle}
                     </span>
@@ -109,17 +109,17 @@ const Skills = () => {
                 </div>
 
                 {/* Swiper Cards Section */}
-                <div className="skills-swiper-container pb-12 pt-4 px-2 md:px-16">
+                <div className="skills-swiper-container pt-4 px-2 md:px-16">
                     <div className="relative group/carousel">
                         {/* Custom Navigation Arrows for Better UX */}
                         <button 
-                            className="skills-swiper-prev absolute left-0 md:-left-16 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full border border-[rgba(200,162,110,0.2)] bg-[rgba(15,20,30,0.95)] text-[var(--clr-accent)] hover:bg-[var(--clr-accent)] hover:text-black flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg focus:outline-none cursor-pointer backdrop-blur-md"
+                            className="skills-swiper-prev absolute top-auto -bottom-[68px] left-1/2 -translate-x-[120px] translate-y-0 md:top-1/2 md:bottom-auto md:-left-16 md:translate-x-0 md:-translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full border border-[rgba(200,162,110,0.2)] bg-[rgba(15,20,30,0.95)] text-[var(--clr-accent)] hover:bg-[var(--clr-accent)] hover:text-black flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg focus:outline-none cursor-pointer backdrop-blur-md"
                             aria-label="Previous slide"
                         >
                             <i className="fas fa-chevron-left text-xl"></i>
                         </button>
                         <button 
-                            className="skills-swiper-next absolute right-0 md:-right-16 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full border border-[rgba(200,162,110,0.2)] bg-[rgba(15,20,30,0.95)] text-[var(--clr-accent)] hover:bg-[var(--clr-accent)] hover:text-black flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg focus:outline-none cursor-pointer backdrop-blur-md"
+                            className="skills-swiper-next absolute top-auto -bottom-[68px] right-1/2 translate-x-[120px] translate-y-0 md:top-1/2 md:bottom-auto md:-right-16 md:translate-x-0 md:-translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full border border-[rgba(200,162,110,0.2)] bg-[rgba(15,20,30,0.95)] text-[var(--clr-accent)] hover:bg-[var(--clr-accent)] hover:text-black flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg focus:outline-none cursor-pointer backdrop-blur-md"
                             aria-label="Next slide"
                         >
                             <i className="fas fa-chevron-right text-xl"></i>

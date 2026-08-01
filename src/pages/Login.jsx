@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Lock, Mail, Loader2, Eye, EyeOff } from 'lucide-react';
-import { motion } from 'framer-motion';
 import toast, { Toaster } from 'react-hot-toast';
 
 const Login = () => {

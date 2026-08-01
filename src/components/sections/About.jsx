@@ -67,8 +67,8 @@ const About = () => {
                 </div>
 
                 <div className="about-grid grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-stretch">
-                    <div className="about-image order-2 md:order-1 h-full">
-                        <div ref={terminalRef} className="modern-terminal terminal-mini group h-full flex flex-col">
+                    <div className="about-image order-2 md:order-1 h-fit">
+                        <div ref={terminalRef} className="modern-terminal terminal-mini group h-fit flex flex-col justify-start">
                             <div className="terminal-header bg-[var(--clr-terminal-header)] p-4 flex items-center gap-4 border-b border-[var(--clr-card-border)] shrink-0">
                                 <div className="terminal-controls flex gap-2">
                                     <span className="dot red w-3.5 h-3.5 rounded-full bg-[#ff5f56]"></span>
@@ -77,16 +77,17 @@ const About = () => {
                                 </div>
                                 <span className="terminal-title font-mono text-xs text-[var(--clr-text-dim)] uppercase tracking-wider">{personalInfo.terminalTitle}</span>
                             </div>
-                            <div className="terminal-body bg-[var(--clr-terminal-bg)] p-6 md:p-8 flex-grow flex items-center overflow-x-hidden">
-                                <ul className="terminal-list space-y-4 font-mono text-xs md:text-base w-full">
+                            <div className="terminal-body bg-[var(--clr-terminal-bg)] pt-4 pb-6 px-4 md:pt-5 md:pb-8 md:px-8 flex-col overflow-x-hidden">
+                                <ul className="terminal-list space-y-3 md:space-y-5 font-mono text-xs md:text-base w-full">
                                     {terminalItems.map((item, idx) => (
-                                        <li key={idx} className="term-line flex gap-3 items-start">
+                                        <li key={idx} className="term-line flex gap-2 md:gap-3 items-start">
                                             <span className="term-key text-[var(--clr-accent)] shrink-0">{item.key}:</span>
-                                            <span className="term-value text-[var(--clr-text)] break-words">{item.value}</span>
+                                            <span className="term-value text-[var(--clr-text)] break-words leading-[1.35] md:leading-normal">{item.value}</span>
                                         </li>
                                     ))}
-                                    <li className="pt-2">
-                                        <span className="text-[var(--clr-accent)] animate-pulse">_</span>
+                                    <li className="pt-1 flex gap-2 md:gap-3 items-center mt-1 md:mt-2">
+                                        <span className="term-key text-[var(--clr-accent)] shrink-0">~</span>
+                                        <span className="text-[var(--clr-accent)] text-sm md:text-lg" style={{ animation: 'blink-cursor 0.9s infinite' }}>█</span>
                                     </li>
                                 </ul>
                             </div>

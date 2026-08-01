@@ -30,7 +30,7 @@ const AirplaneSocial = () => {
     }, []);
 
     return (
-        <div className="airplane-social-wrapper fixed left-[30px] bottom-[30px] z-[2000]">
+        <div className="airplane-social-wrapper fixed left-[30px] bottom-[30px] z-50">
             <div
                 ref={menuRef}
                 className={`flex flex-col gap-4 mb-4 transition-all duration-500 ease-[cubic-bezier(0.68,-0.55,0.265,1.55)] ${

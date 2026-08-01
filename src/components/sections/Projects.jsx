@@ -76,7 +76,7 @@ const Projects = () => {
       <section
         id="projects"
         ref={sectionRef}
-        className="relative bg-transparent text-white py-24 overflow-hidden w-full"
+        className="relative bg-transparent text-white py-7 md:py-8 lg:py-10 overflow-hidden w-full"
       >
         {/* Header */}
         <div ref={headerRef} className="section-header text-center px-8 mb-16 flex-shrink-0 z-10 relative">
@@ -90,7 +90,7 @@ const Projects = () => {
 
         {/* Standard Swiper Container */}
         <div className="container mx-auto px-4 md:px-8 w-full max-w-[1400px]">
-          <div className="relative group/projects-slider projects-swiper-container pb-12 pt-4 px-2 md:px-16">
+          <div className="relative group/projects-slider projects-swiper-container pt-4 px-2 md:px-16">
             
             {/* Custom Navigation Arrows */}
             <button 

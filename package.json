@@ -15,7 +15,6 @@
     "@tsparticles/engine": "^4.3.2",
     "@tsparticles/react": "^4.3.2",
     "browser-image-compression": "^2.0.2",
-    "emailjs-com": "^3.2.0",
     "firebase": "^12.11.0",
     "framer-motion": "^12.38.0",
     "gsap": "^3.15.0",

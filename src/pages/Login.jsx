@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
 import { Lock, Mail, Loader2, Eye, EyeOff } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
@@ -18,11 +19,35 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      await login(email, password);
+      await login(email.trim(), password);
       toast.success("Welcome back, Admin!");
       navigate('/admin');
     } catch (err) {
-      toast.error(err.message || 'Failed to login');
+      console.error('[AUTH ERROR]', err.code, err.message);
+      
+      let errorMessage = 'Failed to login. Please try again.';
+      
+      switch (err.code) {
+        case 'auth/invalid-credential':
+        case 'auth/user-not-found':
+        case 'auth/wrong-password':
+          errorMessage = 'Invalid email or password. Please check your credentials.';
+          break;
+        case 'auth/invalid-email':
+          errorMessage = 'Please enter a valid email address.';
+          break;
+        case 'auth/too-many-requests':
+          errorMessage = 'Too many failed login attempts. Please try again later or reset your password.';
+          break;
+        case 'auth/user-disabled':
+          errorMessage = 'This account has been disabled. Please contact support.';
+          break;
+        case 'auth/network-request-failed':
+          errorMessage = 'Network error. Please check your internet connection.';
+          break;
+      }
+      
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, memo } from 'react';
-import { collection, getDocs, addDoc, deleteDoc, doc, serverTimestamp, updateDoc } from 'firebase/firestore';
-import { db } from '../../services/firebase';
+import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
 import AddProject from './AddProject';
 import toast from 'react-hot-toast';
 import { Loader2, Trash2, ExternalLink, Pencil } from 'lucide-react';
@@ -8,37 +7,17 @@ import { normalizeProjectTechnologies } from '../../utils/projectTechnologies';
 import TechTags from '../ui/TechTags';
 
 const ProjectsManager = () => {
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
-
-  const fetchProjects = useCallback(async () => {
-    try {
-      const snapshot = await getDocs(collection(db, 'projects'));
-      const projectsData = snapshot.docs
-        .map((projectDoc) => ({
-          id: projectDoc.id,
-          ...projectDoc.data(),
-        }))
-        .sort((a, b) => {
-          const aSeconds = a?.createdAt?.seconds ?? 0;
-          const bSeconds = b?.createdAt?.seconds ?? 0;
-          return bSeconds - aSeconds;
-        });
-
-      setProjects(projectsData);
-    } catch (error) {
-      console.error('Error fetching projects:', error);
-      toast.error('Failed to load projects.');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const { data: projects, loading, fetchAll, create, update, remove } = useFirestoreCrud('projects', {
+    orderByField: 'createdAt',
+    orderDirection: 'desc'
+  });
 
   useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects]);
+    fetchAll();
+  }, [fetchAll]);
+
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   const resetEditingState = useCallback(() => {
     setSelectedProject(null);
@@ -48,27 +27,21 @@ const ProjectsManager = () => {
   const handleSaveProject = useCallback(async (projectData) => {
     try {
       if (isEditing && selectedProject?.id) {
-        await updateDoc(doc(db, 'projects', selectedProject.id), {
-          ...projectData,
-          updatedAt: serverTimestamp(),
-        });
+        await update(selectedProject.id, projectData);
         toast.success('Project updated successfully!');
       } else {
-        await addDoc(collection(db, 'projects'), {
-          ...projectData,
-          createdAt: serverTimestamp(),
-        });
+        await create(projectData);
         toast.success('Project published successfully!');
       }
 
-      await fetchProjects();
+      await fetchAll();
       resetEditingState();
     } catch (err) {
       console.error('Error saving project:', err);
       toast.error('Could not save project to database.');
       throw err;
     }
-  }, [fetchProjects, isEditing, resetEditingState, selectedProject]);
+  }, [fetchAll, isEditing, resetEditingState, selectedProject, update, create]);
 
   const handleEditProject = useCallback((project) => {
     setSelectedProject(project);
@@ -78,8 +51,8 @@ const ProjectsManager = () => {
   const handleDelete = useCallback(async (id) => {
     if (window.confirm('Are you sure you want to permanently delete this project?')) {
       try {
-        await deleteDoc(doc(db, 'projects', id));
-        await fetchProjects();
+        await remove(id);
+        await fetchAll();
         if (selectedProject?.id === id) {
           resetEditingState();
         }
@@ -88,7 +61,7 @@ const ProjectsManager = () => {
         toast.error(`Deletion failed: ${err.message}`);
       }
     }
-  }, [fetchProjects, resetEditingState, selectedProject]);
+  }, [fetchAll, resetEditingState, selectedProject, remove]);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">

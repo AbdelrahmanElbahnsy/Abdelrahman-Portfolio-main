@@ -1,40 +1,70 @@
 import React, { useState, useEffect, useCallback, memo } from 'react';
-import { setSingleDocument, subscribeToDocument } from '../../services/firestore';
+import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
+import { useImageUpload } from '../../cms/hooks/useImageUpload';
+import { validateSchema } from '../../cms/validators/schemaValidator';
+import ImageUploader from '../../cms/components/ImageUploader';
 import { Loader2, Save } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const SingleDocManager = ({ title, collection, docId, fields }) => {
-  const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({});
+  const [imageFiles, setImageFiles] = useState({});
+
+  const { loading, setDocData, subscribe } = useFirestoreSingleDoc(collection, docId);
+  const { uploadImage, isUploading, uploadProgress, resetUploadState } = useImageUpload();
 
   useEffect(() => {
     const defaultState = {};
     fields.forEach(f => { defaultState[f.name] = ''; });
     setFormData(defaultState);
 
-    const unsubscribe = subscribeToDocument(collection, docId, (data) => {
-      if (data) {
-        setFormData(prev => ({ ...prev, ...data }));
-      }
-      setLoading(false);
-    });
+    const unsubscribe = subscribe();
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [collection, docId, fields, subscribe]);
 
-    return () => unsubscribe();
-  }, [collection, docId, fields]);
+  const handleFileChange = useCallback((fieldName, e) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFiles(prev => ({ ...prev, [fieldName]: e.target.files[0] }));
+    }
+  }, []);
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
+
+    const validation = validateSchema(formData, { fields });
+    if (!validation.isValid) {
+      const firstError = Object.values(validation.errors)[0];
+      toast.error(firstError);
+      return;
+    }
+
     setIsSaving(true);
     try {
-      await setSingleDocument(collection, docId, formData);
+      const payloadToSave = { ...formData };
+
+      // Process all image fields
+      for (const field of fields) {
+        if ((field.type === 'image' || field.type === 'file') && imageFiles[field.name]) {
+          const uploadedUrl = await uploadImage(imageFiles[field.name]);
+          if (uploadedUrl) {
+            payloadToSave[field.name] = uploadedUrl;
+          }
+        }
+      }
+
+      await setDocData(payloadToSave);
+      setImageFiles({});
+      resetUploadState();
       toast.success(`${title} Updated`);
     } catch (err) {
       toast.error(`Error saving ${title}: ${err.message}`);
     } finally {
       setIsSaving(false);
     }
-  }, [formData, collection, docId, title]);
+  }, [formData, imageFiles, fields, title, setDocData, uploadImage, resetUploadState]);
 
   const handleChange = useCallback((e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -60,7 +90,15 @@ const SingleDocManager = ({ title, collection, docId, fields }) => {
                   value={formData[field.name] || ''}
                   onChange={handleChange}
                   className="w-full p-3 bg-[#0a0f1c] border border-[#1e293b] rounded-lg focus:border-[#14f195] text-white outline-none transition-colors"
-                  required={field.required !== false}
+                  required={field.required !== false && !imageFiles[field.name] && !formData[field.name]}
+                />
+              ) : field.type === 'image' || field.type === 'file' ? (
+                <ImageUploader
+                  imageFile={imageFiles[field.name]}
+                  existingImage={formData[field.name]}
+                  onFileChange={(e) => handleFileChange(field.name, e)}
+                  isUploading={isUploading}
+                  uploadProgress={uploadProgress}
                 />
               ) : (
                 <input
@@ -69,15 +107,15 @@ const SingleDocManager = ({ title, collection, docId, fields }) => {
                   value={formData[field.name] || ''}
                   onChange={handleChange}
                   className="w-full p-3 bg-[#0a0f1c] border border-[#1e293b] rounded-lg focus:border-[#14f195] text-white outline-none transition-colors"
-                  required={field.required !== false}
+                  required={field.required !== false && !imageFiles[field.name] && !formData[field.name]}
                 />
               )}
             </div>
           ))}
 
           <div className="pt-6 border-t border-[#1e293b] flex justify-end">
-            <button type="submit" disabled={isSaving} className="bg-[#14f195] text-[#0a0f1c] px-8 py-3 rounded-lg font-bold flex items-center gap-2 hover:bg-[#10d482] transition-colors disabled:opacity-50">
-              {isSaving ? <Loader2 className="w-5 h-5 animate-spin"/> : <><Save className="w-5 h-5" /> Save {title}</>}
+            <button type="submit" disabled={isSaving || isUploading} className="bg-[#14f195] text-[#0a0f1c] px-8 py-3 rounded-lg font-bold flex items-center gap-2 hover:bg-[#10d482] transition-colors disabled:opacity-50">
+              {isSaving || isUploading ? <Loader2 className="w-5 h-5 animate-spin"/> : <><Save className="w-5 h-5" /> Save {title}</>}
             </button>
           </div>
         </form>

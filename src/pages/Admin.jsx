@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Toaster, toast } from 'react-hot-toast';
 import Sidebar from '../components/Dashboard/Sidebar';
+import { skillsSchema, heroSchema, journeySchema, aboutSchema } from '../cms/schemas';
 
 // Lazy loaded dashboard sections for bundle optimization
 const AnalyticsDashboard = lazy(() => import('../components/Dashboard/AnalyticsDashboard'));
@@ -24,15 +25,11 @@ const TABS_CONFIG = {
   analytics: { component: AnalyticsDashboard },
   home: { 
     component: SingleDocManager, 
-    props: { title: "Hero Header", collection: "content", docId: "home", fields: [
-      {name: 'title', label: 'Main Title'}, {name: 'subtitle', label: 'Subtitle / Role'}, {name: 'description', label: 'Hero Description', type: 'textarea'}
-    ]}
+    props: { title: "Hero Header", collection: "hero", docId: "main", fields: heroSchema.fields }
   },
   about: { 
     component: SingleDocManager, 
-    props: { title: "About Section", collection: "content", docId: "about", fields: [
-      {name: 'title', label: 'Section Title'}, {name: 'bio', label: 'About me text (Bio)', type: 'textarea'}
-    ]}
+    props: { title: "About Section", collection: "about", docId: "main", fields: aboutSchema.fields }
   },
   contact: { 
     component: SingleDocManager, 
@@ -49,9 +46,11 @@ const TABS_CONFIG = {
   },
   skills: { 
     component: GenericListManager, 
-    props: { title: "Skills & Tools", collectionName: "skills", fields: [
-      {name: 'name', label: 'Skill Name'}, {name: 'category', label: 'Category'}, {name: 'level', label: 'Level'}
-    ]}
+    props: { title: "Skills & Tools", collectionName: "skills", fields: skillsSchema.fields }
+  },
+  journey: {
+    component: GenericListManager,
+    props: { title: "Journey / Experience", collectionName: "journey", fields: journeySchema.fields }
   },
   certifications: { 
     component: GenericListManager, 

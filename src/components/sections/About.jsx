@@ -1,11 +1,37 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
-import { about, personalInfo } from '../../data/portfolioData';
+import { about as defaultAbout, personalInfo } from '../../data/portfolioData';
+import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
 
 const About = () => {
-    const { subtitle, title, lead, paragraphs, badges, terminalItems } = about;
+    const { data: firestoreData, subscribe, loading } = useFirestoreSingleDoc('about', 'main');
+
+    // Subscribe to realtime updates
+    useEffect(() => {
+        const unsubscribe = subscribe();
+        return () => {
+            if (unsubscribe) unsubscribe();
+        };
+    }, [subscribe]);
+
+    let subtitle = defaultAbout.subtitle;
+    let title = defaultAbout.title;
+    let lead = defaultAbout.lead;
+    let paragraphs = defaultAbout.paragraphs;
+    let badges = defaultAbout.badges;
+    let terminalItems = defaultAbout.terminalItems;
+
+    if (firestoreData) {
+        subtitle = firestoreData.subtitle || subtitle;
+        title = firestoreData.title || title;
+        lead = firestoreData.lead || lead;
+        try { paragraphs = firestoreData.paragraphsJson ? JSON.parse(firestoreData.paragraphsJson) : paragraphs; } catch(e) {}
+        try { badges = firestoreData.badgesJson ? JSON.parse(firestoreData.badgesJson) : badges; } catch(e) {}
+        try { terminalItems = firestoreData.terminalItemsJson ? JSON.parse(firestoreData.terminalItemsJson) : terminalItems; } catch(e) {}
+    }
+
     const sectionRef = useRef(null);
     const headerRef = useRef(null);
     const terminalRef = useRef(null);
@@ -55,7 +81,7 @@ const About = () => {
                 tl.to(badgeEls, { opacity: 1, scale: 1, y: 0, duration: 0.4, stagger: 0.05, ease: 'back.out(1.7)' }, '-=0.1');
             }
         },
-        { scope: sectionRef, dependencies: [] },
+        { scope: sectionRef, dependencies: [loading, firestoreData] },
     );
 
     return (

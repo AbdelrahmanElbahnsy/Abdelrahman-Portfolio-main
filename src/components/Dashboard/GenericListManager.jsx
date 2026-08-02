@@ -1,27 +1,31 @@
 import React, { useState, useEffect, useCallback, memo } from 'react';
-import { addDocument, updateDocument, deleteDocument, subscribeToCollection } from '../../services/firestore';
+import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
+import { validateSchema } from '../../cms/validators/schemaValidator';
 import { Plus, Edit2, Trash2, X, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const GenericListManager = ({ title, collectionName, fields }) => {
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
+
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({});
+
+  const { data: items, loading, create, update, remove, subscribe } = useFirestoreCrud(collectionName, {
+    orderByField: 'order',
+    orderDirection: 'asc'
+  });
 
   useEffect(() => {
     const defaultState = {};
     fields.forEach(f => { defaultState[f.name] = ''; });
     setFormData(defaultState);
 
-    const unsubscribe = subscribeToCollection(collectionName, (data) => {
-      setItems(data);
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, [collectionName, fields]);
+    const unsubscribe = subscribe();
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [collectionName, fields, subscribe]);
 
   const resetForm = useCallback(() => {
     const defaultState = {};
@@ -45,13 +49,21 @@ const GenericListManager = ({ title, collectionName, fields }) => {
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
+
+    const validation = validateSchema(formData, { fields });
+    if (!validation.isValid) {
+      const firstError = Object.values(validation.errors)[0];
+      toast.error(firstError);
+      return;
+    }
+
     setIsSaving(true);
     try {
       if (editingId) {
-        await updateDocument(collectionName, editingId, formData);
+        await update(editingId, formData);
         toast.success(`${title} Updated!`);
       } else {
-        await addDocument(collectionName, formData);
+        await create(formData);
         toast.success(`${title} Added!`);
       }
       resetForm();
@@ -60,18 +72,18 @@ const GenericListManager = ({ title, collectionName, fields }) => {
     } finally {
       setIsSaving(false);
     }
-  }, [editingId, collectionName, formData, title, resetForm]);
+  }, [editingId, formData, title, resetForm, update, create, fields]);
 
   const handleDelete = useCallback(async (id) => {
     if (window.confirm(`Delete this ${title} item forever?`)) {
       try {
-        await deleteDocument(collectionName, id);
+        await remove(id);
         toast.success('Item Deleted');
       } catch (err) {
         toast.error('Failed to delete');
       }
     }
-  }, [collectionName, title]);
+  }, [title, remove]);
 
   const toggleForm = useCallback(() => setIsFormOpen(p => !p), []);
 
@@ -100,8 +112,13 @@ const GenericListManager = ({ title, collectionName, fields }) => {
                 <label className="block text-sm text-gray-400 mb-1">{field.label}</label>
                 {field.type === 'textarea' ? (
                    <textarea rows="3" name={field.name} value={formData[field.name] || ''} onChange={handleChange} className="w-full p-3 bg-[#0a0f1c] border border-[#1e293b] rounded-lg focus:border-[#14f195] text-white outline-none" required={field.required !== false}/>
+                ) : field.type === 'boolean' ? (
+                   <label className="flex items-center gap-2 cursor-pointer text-white">
+                     <input type="checkbox" name={field.name} checked={!!formData[field.name]} onChange={(e) => setFormData(prev => ({ ...prev, [field.name]: e.target.checked }))} className="w-4 h-4 rounded border-[#1e293b] bg-[#0a0f1c] text-[#14f195]" />
+                     Enabled
+                   </label>
                 ) : (
-                   <input type={field.type || 'text'} name={field.name} value={formData[field.name] || ''} onChange={handleChange} className="w-full p-3 bg-[#0a0f1c] border border-[#1e293b] rounded-lg focus:border-[#14f195] text-white outline-none" required={field.required !== false}/>
+                   <input type={field.type === 'number' ? 'number' : field.type || 'text'} name={field.name} value={formData[field.name] || ''} onChange={handleChange} className="w-full p-3 bg-[#0a0f1c] border border-[#1e293b] rounded-lg focus:border-[#14f195] text-white outline-none" required={field.required !== false}/>
                 )}
               </div>
             ))}

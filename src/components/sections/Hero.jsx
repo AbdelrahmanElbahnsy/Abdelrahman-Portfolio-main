@@ -8,10 +8,33 @@ import { heroTechSlider, personalInfo } from '../../data/portfolioData';
 import { SiMicrosoftazure } from 'react-icons/si';
 import { useMagneticEffect } from '../../hooks/useMagneticEffect';
 import SplitText from '../ui/SplitText';
+import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
 
 const Hero = ({ splashDone = true }) => {
     const [typedText, setTypedText] = useState('');
-    const { roles, badge, firstName, lastName, description, portrait, fullName, cvUrl } = personalInfo;
+    const { data: firestoreData, subscribe, loading } = useFirestoreSingleDoc('hero', 'main');
+
+    // Subscribe to realtime updates on mount
+    useEffect(() => {
+        const unsubscribe = subscribe();
+        return () => {
+            if (unsubscribe) unsubscribe();
+        };
+    }, [subscribe]);
+
+    const dataSource = firestoreData || personalInfo;
+
+    const roles = firestoreData ? (dataSource.roles ? dataSource.roles.split(',').map(r => r.trim()) : []) : personalInfo.roles;
+    const badge = dataSource.badge;
+    const firstName = dataSource.firstName;
+    const lastName = dataSource.lastName;
+    const fullName = `${firstName} ${lastName}`;
+    const description = dataSource.description;
+    const portrait = dataSource.portrait;
+    const cvUrl = dataSource.cvUrl;
+    const cta1 = dataSource.cta1 || 'Download CV';
+    const cta2 = dataSource.cta2 || '';
+    const availabilityStatus = dataSource.availabilityStatus || '';
 
     // Refs for GSAP targets
     const sectionRef = useRef(null);
@@ -63,7 +86,7 @@ const Hero = ({ splashDone = true }) => {
 
         timeout = setTimeout(type, 1500);
         return () => clearTimeout(timeout);
-    }, [roles, splashDone]);
+    }, [roles, splashDone, loading]);
 
     // GSAP entrance timeline
     useGSAP(
@@ -119,7 +142,7 @@ const Hero = ({ splashDone = true }) => {
                 gsap.to(portraitRef.current, { y: -10, duration: 3, ease: 'sine.inOut', yoyo: true, repeat: -1 });
             });
         },
-        { scope: sectionRef, dependencies: [splashDone] },
+        { scope: sectionRef, dependencies: [splashDone, loading, firestoreData] },
     );
 
     return (
@@ -192,17 +215,24 @@ const Hero = ({ splashDone = true }) => {
                             </Swiper>
                         </div>
 
-                        <div ref={ctaRef} className="flex gap-6 hero-cta-group">
-                            <a
-                                id="hero-btn-cv"
-                                href={cvUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="btn-cv"
-                            >
-                                <i className="fas fa-file-download"></i>
-                                <span>Download CV</span>
-                            </a>
+                        <div ref={ctaRef} className="flex gap-6 hero-cta-group items-center">
+                            {cvUrl && (
+                                <a
+                                    id="hero-btn-cv"
+                                    href={cvUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="btn-cv"
+                                >
+                                    <i className="fas fa-file-download"></i>
+                                    <span>{cta1}</span>
+                                </a>
+                            )}
+                            {cta2 && (
+                                <span className="text-gray-400 text-sm italic border-b border-dashed border-gray-600 pb-1 cursor-pointer hover:text-[var(--clr-accent)] transition-colors">
+                                    {cta2}
+                                </span>
+                            )}
                         </div>
                     </div>
 

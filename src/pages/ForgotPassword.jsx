@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { sendPasswordResetEmail, createUserWithEmailAndPassword } from 'firebase/auth';
+import { motion } from 'framer-motion';
+import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../services/firebase';
 import { Mail, ArrowLeft, Loader2 } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
@@ -15,18 +16,15 @@ const ForgotPassword = () => {
 
     try {
       await sendPasswordResetEmail(auth, email);
-      toast.success('Password reset link sent! Check your email.', { duration: 5000 });
+      toast.success('If this email is registered, a reset link has been sent.', { duration: 5000 });
     } catch (err) {
-      if (err.code === 'auth/user-not-found') {
-        try {
-          await createUserWithEmailAndPassword(auth, email, 'Temp@123456');
-          await sendPasswordResetEmail(auth, email);
-          toast.success('Account auto-created. Check email for reset link.', { duration: 5000 });
-        } catch (createErr) {
-          toast.error(`Creation Error: ${createErr.message}`);
-        }
+      // Don't reveal whether the email exists — show generic message for most errors
+      if (err.code === 'auth/invalid-email') {
+        toast.error('Please enter a valid email address.');
+      } else if (err.code === 'auth/too-many-requests') {
+        toast.error('Too many attempts. Please try again later.');
       } else {
-        toast.error(`Error: ${err.message}`);
+        toast.success('If this email is registered, a reset link has been sent.', { duration: 5000 });
       }
     } finally {
       setIsLoading(false);

@@ -4,13 +4,21 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD0aa1ZNToX2NJRaM7lSNjIiSs5JVlZX3A",
-  authDomain: "my-portfolio-4a24d.firebaseapp.com",
-  projectId: "my-portfolio-4a24d",
-  storageBucket: "my-portfolio-4a24d.firebasestorage.app",
-  messagingSenderId: "827847446337",
-  appId: "1:827847446337:web:8ef3c45696610c38e0dbc0"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
+
+// Fail fast if any variable is missing
+const requiredVars = ['apiKey', 'authDomain', 'projectId', 'storageBucket', 'messagingSenderId', 'appId'];
+const missingVars = requiredVars.filter(key => !firebaseConfig[key]);
+
+if (missingVars.length > 0) {
+  throw new Error(`[FIREBASE INIT ERROR] Missing required environment variables: ${missingVars.join(', ')}. Please check your .env file.`);
+}
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);

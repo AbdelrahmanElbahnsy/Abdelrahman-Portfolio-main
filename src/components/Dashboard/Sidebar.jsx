@@ -9,6 +9,7 @@ const TABS = [
   { id: 'home', label: 'Hero Section', icon: <Home className="w-5 h-5" /> },
   { id: 'about', label: 'About Section', icon: <Info className="w-5 h-5" /> },
   { id: 'skills', label: 'Skills', icon: <Code className="w-5 h-5" /> },
+  { id: 'journey', label: 'Journey', icon: <Terminal className="w-5 h-5" /> },
   { id: 'projects', label: 'Projects', icon: <Briefcase className="w-5 h-5" /> },
   { id: 'certifications', label: 'Certifications', icon: <Award className="w-5 h-5" /> },
   { id: 'socials', label: 'Social Links', icon: <LinkIcon className="w-5 h-5" /> },

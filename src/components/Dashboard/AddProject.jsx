@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Loader2, Plus, Save, UploadCloud, Image as ImageIcon, X } from 'lucide-react';
-import { uploadImage } from '../../services/storage';
+import { useImageUpload } from '../../cms/hooks/useImageUpload';
 import toast from 'react-hot-toast';
 import { normalizeProjectTechnologies, parseTechnologiesInput } from '../../utils/projectTechnologies';
 
@@ -35,8 +35,8 @@ const AddProject = ({
   const [formData, setFormData] = useState(() => buildInitialFormData(projectToEdit));
   const [imageFile, setImageFile] = useState(null);
   const [techInput, setTechInput] = useState('');
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { uploadImage, uploadProgress, resetUploadState } = useImageUpload();
 
   const technologies = parseTechnologiesInput(formData.technologies);
   const existingImage = projectToEdit?.image || '';
@@ -109,7 +109,7 @@ const AddProject = ({
     setFormData(buildInitialFormData(projectToEdit));
     setImageFile(null);
     setTechInput('');
-    setUploadProgress(0);
+    resetUploadState();
 
     const fileInput = document.getElementById('project-image-input');
     if (fileInput) {
@@ -125,12 +125,11 @@ const AddProject = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (isUploading) {
+    if (isSubmitting) {
       return;
     }
 
-    setIsUploading(true);
-    setUploadProgress(0);
+    setIsSubmitting(true);
 
     try {
       const normalizedTitle = formData.title.trim();
@@ -151,9 +150,7 @@ const AddProject = ({
       if (imageFile) {
         toast.loading('Uploading project image...', { id: 'upload-toast' });
 
-        imageUrl = await uploadImage(imageFile, (progress) => {
-          setUploadProgress(progress);
-        });
+        imageUrl = await uploadImage(imageFile);
 
         toast.success('Image uploaded successfully!', { id: 'upload-toast' });
       }
@@ -174,7 +171,7 @@ const AddProject = ({
     } catch (error) {
       toast.error(`Error: ${error.message}`, { id: 'upload-toast' });
     } finally {
-      setIsUploading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -183,7 +180,7 @@ const AddProject = ({
       onSubmit={handleSubmit}
       className="relative mb-8 overflow-hidden rounded-xl border border-[#1e293b] bg-[#131b2c] p-6 shadow-xl"
     >
-      {isUploading && (
+      {isSubmitting && (
         <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-[#0a0f1c]/50 backdrop-blur-sm">
           <Loader2 className="mb-4 h-10 w-10 animate-spin text-[#14f195]" />
           <p className="text-sm font-bold uppercase tracking-widest text-white">
@@ -207,7 +204,7 @@ const AddProject = ({
             onChange={handleChange}
             className="w-full rounded-lg border border-[#1e293b] bg-[#0a0f1c] p-2.5 text-white transition-colors focus:border-[#14f195] focus:outline-none"
             placeholder="Project Name"
-            disabled={isUploading}
+            disabled={isSubmitting}
           />
         </div>
 
@@ -245,7 +242,7 @@ const AddProject = ({
                 accept="image/jpeg, image/png, image/webp"
                 className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0 disabled:cursor-not-allowed"
                 onChange={handleFileChange}
-                disabled={isUploading}
+                disabled={isSubmitting}
               />
 
               {uploadProgress > 0 && uploadProgress < 100 && (
@@ -276,7 +273,7 @@ const AddProject = ({
           onChange={handleChange}
           className="w-full rounded-lg border border-[#1e293b] bg-[#0a0f1c] p-2.5 text-white transition-colors focus:border-[#14f195] focus:outline-none"
           placeholder="Project description..."
-          disabled={isUploading}
+          disabled={isSubmitting}
         />
       </div>
 
@@ -295,7 +292,7 @@ const AddProject = ({
                   onClick={() => handleRemoveTechnology(technology)}
                   className="text-cyan-200 transition-colors hover:text-white"
                   aria-label={`Remove ${technology}`}
-                  disabled={isUploading}
+                  disabled={isSubmitting}
                 >
                   x
                 </button>
@@ -310,7 +307,7 @@ const AddProject = ({
               onBlur={handleTechnologyBlur}
               className="min-w-[180px] flex-1 bg-transparent text-sm text-white outline-none placeholder:text-gray-500"
               placeholder="AWS, Docker, Kubernetes, Terraform"
-              disabled={isUploading}
+              disabled={isSubmitting}
             />
           </div>
         </div>
@@ -329,7 +326,7 @@ const AddProject = ({
             onChange={handleChange}
             className="w-full rounded-lg border border-[#1e293b] bg-[#0a0f1c] p-2.5 text-white transition-colors focus:border-[#14f195] focus:outline-none"
             placeholder="https://github.com/..."
-            disabled={isUploading}
+            disabled={isSubmitting}
           />
         </div>
         <div>
@@ -341,7 +338,7 @@ const AddProject = ({
             onChange={handleChange}
             className="w-full rounded-lg border border-[#1e293b] bg-[#0a0f1c] p-2.5 text-white transition-colors focus:border-[#14f195] focus:outline-none"
             placeholder="https://..."
-            disabled={isUploading}
+            disabled={isSubmitting}
           />
         </div>
       </div>
@@ -351,7 +348,7 @@ const AddProject = ({
           <button
             type="button"
             onClick={handleCancel}
-            disabled={isUploading}
+            disabled={isSubmitting}
             className="flex items-center gap-2 rounded-lg border border-[#1e293b] px-5 py-2.5 font-semibold text-white transition-colors hover:bg-[#1e293b] disabled:cursor-not-allowed disabled:opacity-50"
           >
             <X className="h-4 w-4" /> Cancel Edit
@@ -359,10 +356,10 @@ const AddProject = ({
         ) : null}
         <button
           type="submit"
-          disabled={isUploading}
+          disabled={isSubmitting}
           className="flex items-center gap-2 rounded-lg bg-[#14f195] px-6 py-2.5 font-bold text-[#0a0f1c] transition-colors hover:bg-[#10d482] disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {isUploading ? (
+          {isSubmitting ? (
             <>
               <Loader2 className="h-5 w-5 animate-spin" /> Processing...
             </>

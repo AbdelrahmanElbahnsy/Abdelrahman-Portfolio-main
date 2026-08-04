@@ -1,139 +1,93 @@
-import React, { useState, lazy, Suspense, useCallback, memo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-import { Toaster, toast } from 'react-hot-toast';
-import Sidebar from '../components/Dashboard/Sidebar';
+import React, { lazy, Suspense, memo } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import AdminLayout from '../components/Dashboard/Layout/AdminLayout';
 import { skillsSchema, heroSchema, journeySchema, aboutSchema } from '../cms/schemas';
 
 // Lazy loaded dashboard sections for bundle optimization
+const OverviewDashboard = lazy(() => import('../components/Dashboard/OverviewDashboard'));
 const AnalyticsDashboard = lazy(() => import('../components/Dashboard/AnalyticsDashboard'));
 const ProjectsManager = lazy(() => import('../components/Dashboard/ProjectsManager'));
-const ProfileManager = lazy(() => import('../components/Dashboard/ProfileManager'));
+const AccountCenter = lazy(() => import('../components/Dashboard/AccountCenter'));
 const GenericListManager = lazy(() => import('../components/Dashboard/GenericListManager'));
 const SingleDocManager = lazy(() => import('../components/Dashboard/SingleDocManager'));
+const DeveloperTools = lazy(() => import('../components/Dashboard/DeveloperTools'));
+const FeatureUnavailable = lazy(() => import('../components/Dashboard/FeatureUnavailable'));
 
 const SectionSkeleton = () => (
-  <div className="w-full space-y-6 animate-pulse p-6">
-    <div className="h-10 w-48 bg-[#1e293b] rounded-lg"></div>
-    <div className="h-64 bg-[#131b2c] border border-[#1e293b] rounded-2xl"></div>
-    <div className="h-64 bg-[#131b2c] border border-[#1e293b] rounded-2xl"></div>
+  <div className="w-full space-y-6 animate-pulse">
+    <div className="h-10 w-48 bg-white/5 rounded-lg"></div>
+    <div className="h-64 bg-cms-cards border border-white/5 rounded-2xl"></div>
+    <div className="h-64 bg-cms-cards border border-white/5 rounded-2xl"></div>
   </div>
 );
 
-// Map definitions completely outside render to prevent recreation overhead
-const TABS_CONFIG = {
-  analytics: { component: AnalyticsDashboard },
-  home: { 
-    component: SingleDocManager, 
-    props: { title: "Hero Header", collection: "hero", docId: "main", fields: heroSchema.fields }
-  },
-  about: { 
-    component: SingleDocManager, 
-    props: { title: "About Section", collection: "about", docId: "main", fields: aboutSchema.fields }
-  },
-  contact: { 
-    component: SingleDocManager, 
-    props: { title: "Contact Info", collection: "content", docId: "contact", fields: [
-      {name: 'email', label: 'Contact Email', type: 'email'}, {name: 'phone', label: 'Phone Number'}, {name: 'location', label: 'Location / Address'}
-    ]}
-  },
-  projects: { component: ProjectsManager },
-  navbar: { 
-    component: GenericListManager, 
-    props: { title: "Navbar Links", collectionName: "navbarItems", fields: [
-      {name: 'label', label: 'Link Text'}, {name: 'href', label: 'Path / URL'}, {name: 'order', label: 'Display Order', type: 'number'}
-    ]}
-  },
-  skills: { 
-    component: GenericListManager, 
-    props: { title: "Skills & Tools", collectionName: "skills", fields: skillsSchema.fields }
-  },
-  journey: {
-    component: GenericListManager,
-    props: { title: "Journey / Experience", collectionName: "journey", fields: journeySchema.fields }
-  },
-  certifications: { 
-    component: GenericListManager, 
-    props: { title: "Certifications", collectionName: "certifications", fields: [
-      {name: 'title', label: 'Certificate Title'}, {name: 'issuer', label: 'Issuing Organization'}, {name: 'link', label: 'Credential URL', type: 'url'}
-    ]}
-  },
-  socials: { 
-    component: GenericListManager, 
-    props: { title: "Social Accounts", collectionName: "socials", fields: [
-      {name: 'platform', label: 'Platform (GitHub, LinkedIn)'}, {name: 'url', label: 'Profile URL', type: 'url'}, {name: 'icon', label: 'Icon Name'}
-    ]}
-  },
-  profile: { component: ProfileManager }
-};
-
 const Admin = () => {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
-  
-  const [activeTab, setActiveTab] = useState('analytics');
-  // TAB CACHING MECHANISM: Store which tabs have been rendered to prevent unmount/remount
-  const [mountedTabs, setMountedTabs] = useState(['analytics']);
-
-  const handleTabChange = useCallback((tabId) => {
-    setActiveTab(tabId);
-    setMountedTabs(prev => {
-      if (!prev.includes(tabId)) return [...prev, tabId];
-      return prev;
-    });
-  }, []);
-
-  const handleLogout = useCallback(async () => {
-    try {
-      await logout();
-      toast.success('Logged out securely');
-      navigate('/login');
-    } catch {
-      toast.error('Logout failed');
-    }
-  }, [logout, navigate]);
-
   return (
-    <div className="min-h-screen bg-[#0a0f1c] text-white flex overflow-hidden">
-      <Toaster position="top-right" toastOptions={{ style: { background: '#131b2c', color: '#fff', border: '1px solid #1e293b' } }} />
-      
-      <Sidebar activeTab={activeTab} setActiveTab={handleTabChange} handleLogout={handleLogout} />
+    <Suspense fallback={<SectionSkeleton />}>
+      <Routes>
+        <Route element={<AdminLayout />}>
+          <Route index element={<Navigate to="/admin/overview" replace />} />
+          <Route path="overview" element={<OverviewDashboard />} />
+          <Route path="analytics" element={<AnalyticsDashboard />} />
+          <Route path="projects" element={<ProjectsManager />} />
+          <Route 
+            path="skills" 
+            element={<GenericListManager title="Skills & Tools" collectionName="skills" fields={skillsSchema.fields} />} 
+          />
+          <Route 
+            path="certifications" 
+            element={<GenericListManager title="Certifications" collectionName="certifications" fields={[
+              {name: 'title', label: 'Certificate Title'}, {name: 'issuer', label: 'Issuing Organization'}, {name: 'link', label: 'Credential URL', type: 'url'}, {name: 'order', label: 'Display Order', type: 'number', required: false}
+            ]} />} 
+          />
+          <Route 
+            path="socials" 
+            element={<GenericListManager title="Social Accounts" collectionName="socials" fields={[
+              {name: 'platform', label: 'Platform (GitHub, LinkedIn)'}, {name: 'url', label: 'Profile URL', type: 'url'}, {name: 'icon', label: 'Icon Name'}, {name: 'order', label: 'Display Order', type: 'number', required: false}
+            ]} />} 
+          />
+          <Route 
+            path="navbar" 
+            element={<GenericListManager title="Navbar Links" collectionName="navbarItems" fields={[
+              {name: 'label', label: 'Link Text'}, {name: 'href', label: 'Path / URL'}, {name: 'order', label: 'Display Order', type: 'number'}
+            ]} />} 
+          />
+          <Route 
+            path="journey" 
+            element={<GenericListManager title="Journey / Experience" collectionName="journey" fields={journeySchema.fields} />} 
+          />
+          
+          <Route 
+            path="home" 
+            element={<SingleDocManager title="Hero Header" collection="hero" docId="main" fields={heroSchema.fields} />} 
+          />
+          <Route 
+            path="about" 
+            element={<SingleDocManager title="About Section" collection="about" docId="main" fields={aboutSchema.fields} />} 
+          />
+          <Route 
+            path="contact" 
+            element={<SingleDocManager title="Contact Info" collection="content" docId="contact" fields={[
+              {name: 'email', label: 'Contact Email', type: 'email'}, {name: 'phone', label: 'Phone Number'}, {name: 'location', label: 'Location / Address'}
+            ]} />} 
+          />
 
-      <main className="flex-1 ml-64 flex flex-col h-screen relative">
-        <header className="flex-shrink-0 flex justify-between items-center px-8 py-6 border-b border-[#1e293b] bg-[#0a0f1c] z-10 sticky top-0">
-          <div>
-             <h1 className="text-gray-400 text-xs font-bold uppercase tracking-widest">Dashboard System</h1>
-             <p className="text-2xl font-black mt-1 text-white flex items-center gap-2">Live Control <span className="w-2 h-2 rounded-full bg-[#14f195] animate-pulse"/></p>
-          </div>
-          <div className="bg-[#1e293b]/50 border border-[#1e293b] px-4 py-2 rounded-xl text-sm font-semibold shadow-sm flex items-center gap-2">
-            <div className="w-2 h-2 bg-[#14f195] rounded-full"></div>
-            {user?.email || 'Admin'}
-          </div>
-        </header>
-
-        {/* Caching Viewport */}
-        <div className="flex-1 overflow-y-auto w-full p-8 pb-32">
-          {mountedTabs.map((tabId) => {
-            const TabConfig = TABS_CONFIG[tabId];
-            if (!TabConfig) return null;
-            
-            const Component = TabConfig.component;
-            
-            return (
-              <div 
-                key={tabId} 
-                className={activeTab === tabId ? 'block animate-in fade-in duration-300' : 'hidden'} 
-                aria-hidden={activeTab !== tabId}
-              >
-                <Suspense fallback={<SectionSkeleton />}>
-                   <Component {...(TabConfig.props || {})} />
-                </Suspense>
-              </div>
-            );
-          })}
-        </div>
-      </main>
-    </div>
+          <Route path="profile" element={<AccountCenter />} />
+          <Route path="account" element={<AccountCenter />} />
+          <Route path="appearance" element={<FeatureUnavailable featureName="Appearance" />} />
+          <Route path="activity" element={<FeatureUnavailable featureName="Activity Log" />} />
+          <Route path="apikeys" element={<FeatureUnavailable featureName="API Keys" />} />
+          <Route path="settings" element={<FeatureUnavailable featureName="Settings" />} />
+          <Route path="shortcuts" element={<FeatureUnavailable featureName="Keyboard Shortcuts" />} />
+          
+          {import.meta.env.DEV && (
+            <Route path="devtools" element={<DeveloperTools />} />
+          )}
+          
+          <Route path="*" element={<Navigate to="/admin/overview" replace />} />
+        </Route>
+      </Routes>
+    </Suspense>
   );
 };
 

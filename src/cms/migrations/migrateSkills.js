@@ -1,29 +1,48 @@
-import { collection, getDocs, addDoc } from "firebase/firestore";
+import { collection, getDocs, addDoc, doc, setDoc, getCountFromServer } from 'firebase/firestore';
 import { skills } from "../../data/portfolioData.js";
 import { db } from "../../services/firebase.js";
 
+
+async function loggedSetDoc(docRef, data, options) {
+  try {
+    const res = await (options ? setDoc(docRef, data, options) : setDoc(docRef, data));
+    console.log(`Collection path: ${docRef.parent.path}, Document ID: ${docRef.id}, Write result: SUCCESS, Returned ID: ${docRef.id}`);
+    return res;
+  } catch(e) {
+    console.log(`Collection path: ${docRef.parent.path}, Document ID: ${docRef.id}, Write result: FAILED, Exception: ${e}`);
+    throw e;
+  }
+}
+async function loggedAddDoc(colRef, data) {
+  try {
+    const res = await addDoc(colRef, data);
+    console.log(`Collection path: ${colRef.path}, Document ID: ${res.id}, Write result: SUCCESS, Returned ID: ${res.id}`);
+    return res;
+  } catch(e) {
+    console.log(`Collection path: ${colRef.path}, Write result: FAILED, Exception: ${e}`);
+    throw e;
+  }
+}
+
 export async function migrateSkills() {
+  const result = { created: 0, updated: 0, skipped: 0, failed: 0 };
   console.log("Starting Skills migration...");
-  
-  const skillsCollection = collection(db, "skills");
-  
-  // 1. Fetch existing skills to prevent duplicates
-  const existingSnapshot = await getDocs(skillsCollection);
-  const existingNames = new Set();
-  existingSnapshot.forEach(doc => {
-    existingNames.add(doc.data().name);
-  });
-  
-  console.log(`Found ${existingNames.size} existing skills in Firestore.`);
+  try {
+    const skillsCollection = collection(db, "skills");
+    
+    const existingSnapshot = await getDocs(skillsCollection);
+    const existingSkillsMap = {};
+    existingSnapshot.forEach(docSnap => {
+      existingSkillsMap[docSnap.data().name] = docSnap.id;
+    });
+    
+    console.log(`Found ${Object.keys(existingSkillsMap).length} existing skills in Firestore.`);
 
-  let addedCount = 0;
-  let orderIndex = 0;
+    let orderIndex = 0;
 
-  // 2. Migrate categories
-  for (const category of skills.categories) {
-    for (const skill of category.skills) {
-      if (!existingNames.has(skill.name)) {
-        await addDoc(skillsCollection, {
+    for (const category of skills.categories) {
+      for (const skill of category.skills) {
+        const skillData = {
           name: skill.name,
           category: category.title,
           categoryIcon: category.icon,
@@ -31,41 +50,47 @@ export async function migrateSkills() {
           isCircular: false,
           circularSub: "",
           order: orderIndex++
-        });
-        existingNames.add(skill.name);
-        addedCount++;
-        console.log(`Added regular skill: ${skill.name}`);
-      } else {
-        console.log(`Skipped existing skill: ${skill.name}`);
+        };
+        
+        if (existingSkillsMap[skill.name]) {
+          await loggedSetDoc(doc(db, "skills", existingSkillsMap[skill.name]), skillData, { merge: true });
+          result.updated++;
+          console.log(`Updated regular skill: ${skill.name}`);
+        } else {
+          await loggedAddDoc(skillsCollection, skillData);
+          result.created++;
+          console.log(`Added regular skill: ${skill.name}`);
+        }
       }
     }
-  }
 
-  // 3. Migrate circular skills
-  for (const skill of skills.circularSkills) {
-    // If the skill already exists in regular categories, we can just update it, 
-    // but the prompt implies separating them or adding if not exists. 
-    // Wait, circular skills in portfolioData have `label` as name. 
-    const skillName = skill.label;
-    
-    if (!existingNames.has(skillName)) {
-      await addDoc(skillsCollection, {
+    for (const skill of skills.circularSkills) {
+      const skillName = skill.label;
+      const skillData = {
         name: skillName,
-        category: "Top Skills", // Default category for circular if not present
+        category: "Top Skills",
         categoryIcon: skill.icon,
         percent: skill.percent,
         isCircular: true,
         circularSub: skill.sub,
         order: orderIndex++
-      });
-      existingNames.add(skillName);
-      addedCount++;
-      console.log(`Added circular skill: ${skillName}`);
-    } else {
-      console.log(`Skipped existing circular skill: ${skillName}`);
-      // Ideally we would update the existing one to be isCircular = true, but let's keep it simple.
-    }
-  }
+      };
 
-  console.log(`Migration complete. Added ${addedCount} new skills.`);
+      if (existingSkillsMap[skillName]) {
+        await loggedSetDoc(doc(db, "skills", existingSkillsMap[skillName]), skillData, { merge: true });
+        result.updated++;
+        console.log(`Updated circular skill: ${skillName}`);
+      } else {
+        await loggedAddDoc(skillsCollection, skillData);
+        result.created++;
+        console.log(`Added circular skill: ${skillName}`);
+      }
+    }
+
+    console.log(`Migration complete. Created ${result.created}, Updated ${result.updated} skills.`);
+  } catch (error) {
+    console.error('Skills Migration Failed:', error);
+    result.failed++; result.error = error;
+  }
+  return result;
 }

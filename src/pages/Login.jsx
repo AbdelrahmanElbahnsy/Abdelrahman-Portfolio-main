@@ -23,8 +23,6 @@ const Login = () => {
       toast.success("Welcome back, Admin!");
       navigate('/admin');
     } catch (err) {
-      console.error('[AUTH ERROR]', err.code, err.message);
-      
       let errorMessage = 'Failed to login. Please try again.';
       
       switch (err.code) {

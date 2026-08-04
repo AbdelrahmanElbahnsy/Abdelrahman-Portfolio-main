@@ -4,11 +4,19 @@ import { Autoplay, FreeMode } from 'swiper/modules';
 import 'swiper/css';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { heroTechSlider, personalInfo } from '../../data/portfolioData';
 import { SiMicrosoftazure } from 'react-icons/si';
 import { useMagneticEffect } from '../../hooks/useMagneticEffect';
 import SplitText from '../ui/SplitText';
 import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
+
+const heroTechSlider = [
+  { icon: 'SiMicrosoftazure', label: 'Azure (Cloud)' },
+  { icon: 'fab fa-docker', label: 'Kubernetes' },
+  { icon: 'fas fa-rocket', label: 'CI/CD' },
+  { icon: 'fas fa-code', label: 'Terraform' },
+  { icon: 'fab fa-linux', label: 'Linux Admin' },
+  { icon: 'fas fa-network-wired', label: 'Networking' },
+];
 
 const Hero = ({ splashDone = true }) => {
     const [typedText, setTypedText] = useState('');
@@ -22,19 +30,17 @@ const Hero = ({ splashDone = true }) => {
         };
     }, [subscribe]);
 
-    const dataSource = firestoreData || personalInfo;
-
-    const roles = firestoreData ? (dataSource.roles ? dataSource.roles.split(',').map(r => r.trim()) : []) : personalInfo.roles;
-    const badge = dataSource.badge;
-    const firstName = dataSource.firstName;
-    const lastName = dataSource.lastName;
-    const fullName = `${firstName} ${lastName}`;
-    const description = dataSource.description;
-    const portrait = dataSource.portrait;
-    const cvUrl = dataSource.cvUrl;
-    const cta1 = dataSource.cta1 || 'Download CV';
-    const cta2 = dataSource.cta2 || '';
-    const availabilityStatus = dataSource.availabilityStatus || '';
+    const roles = firestoreData?.roles ? firestoreData.roles.split(',').map(r => r.trim()) : [];
+    const badge = firestoreData?.badge || '';
+    const firstName = firestoreData?.firstName || '';
+    const lastName = firestoreData?.lastName || '';
+    const fullName = `${firstName} ${lastName}`.trim();
+    const description = firestoreData?.description || '';
+    const portrait = firestoreData?.portrait || '';
+    const cvUrl = firestoreData?.cvUrl || '';
+    const cta1 = firestoreData?.cta1 || 'Download CV';
+    const cta2 = firestoreData?.cta2 || '';
+    const availabilityStatus = firestoreData?.availabilityStatus || '';
 
     // Refs for GSAP targets
     const sectionRef = useRef(null);

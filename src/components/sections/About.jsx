@@ -2,7 +2,6 @@ import React, { useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
-import { about as defaultAbout, personalInfo } from '../../data/portfolioData';
 import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
 
 const About = () => {
@@ -16,20 +15,17 @@ const About = () => {
         };
     }, [subscribe]);
 
-    let subtitle = defaultAbout.subtitle;
-    let title = defaultAbout.title;
-    let lead = defaultAbout.lead;
-    let paragraphs = defaultAbout.paragraphs;
-    let badges = defaultAbout.badges;
-    let terminalItems = defaultAbout.terminalItems;
+    const subtitle = firestoreData?.subtitle || '';
+    const title = firestoreData?.title || '';
+    const lead = firestoreData?.lead || '';
+    let paragraphs = [];
+    let badges = [];
+    let terminalItems = [];
 
     if (firestoreData) {
-        subtitle = firestoreData.subtitle || subtitle;
-        title = firestoreData.title || title;
-        lead = firestoreData.lead || lead;
-        try { paragraphs = firestoreData.paragraphsJson ? JSON.parse(firestoreData.paragraphsJson) : paragraphs; } catch(e) {}
-        try { badges = firestoreData.badgesJson ? JSON.parse(firestoreData.badgesJson) : badges; } catch(e) {}
-        try { terminalItems = firestoreData.terminalItemsJson ? JSON.parse(firestoreData.terminalItemsJson) : terminalItems; } catch(e) {}
+        try { paragraphs = firestoreData.paragraphsJson ? JSON.parse(firestoreData.paragraphsJson) : []; } catch(e) {}
+        try { badges = firestoreData.badgesJson ? JSON.parse(firestoreData.badgesJson) : []; } catch(e) {}
+        try { terminalItems = firestoreData.terminalItemsJson ? JSON.parse(firestoreData.terminalItemsJson) : []; } catch(e) {}
     }
 
     const sectionRef = useRef(null);
@@ -101,7 +97,7 @@ const About = () => {
                                     <span className="dot yellow w-3.5 h-3.5 rounded-full bg-[#ffbd2e]"></span>
                                     <span className="dot green w-3.5 h-3.5 rounded-full bg-[#27c93f]"></span>
                                 </div>
-                                <span className="terminal-title font-mono text-xs text-[var(--clr-text-dim)] uppercase tracking-wider">{personalInfo.terminalTitle}</span>
+                                <span className="terminal-title font-mono text-xs text-[var(--clr-text-dim)] uppercase tracking-wider">~/Abdelrahman El-bahnsy — devops-bash</span>
                             </div>
                             <div className="terminal-body bg-[var(--clr-terminal-bg)] pt-4 pb-6 px-4 md:pt-5 md:pb-8 md:px-8 flex-col overflow-x-hidden">
                                 <ul className="terminal-list space-y-3 md:space-y-5 font-mono text-xs md:text-base w-full">

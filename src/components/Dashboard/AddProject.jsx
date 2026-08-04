@@ -1,8 +1,11 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Loader2, Plus, Save, UploadCloud, Image as ImageIcon, X } from 'lucide-react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { Loader2, Save, X } from 'lucide-react';
 import { useImageUpload } from '../../cms/hooks/useImageUpload';
 import toast from 'react-hot-toast';
 import { normalizeProjectTechnologies, parseTechnologiesInput } from '../../utils/projectTechnologies';
+
+import { EnterpriseInput, EnterpriseTextarea, EnterpriseFormGroup } from './UI/Enterprise/Form/EnterpriseForm';
+import EnterpriseUploader from './UI/Enterprise/Form/EnterpriseUploader';
 
 const INITIAL_FORM_DATA = {
   title: '',
@@ -13,10 +16,7 @@ const INITIAL_FORM_DATA = {
 };
 
 const buildInitialFormData = (projectToEdit) => {
-  if (!projectToEdit) {
-    return INITIAL_FORM_DATA;
-  }
-
+  if (!projectToEdit) return INITIAL_FORM_DATA;
   return {
     title: projectToEdit.title || '',
     description: projectToEdit.description || '',
@@ -40,28 +40,13 @@ const AddProject = ({
 
   const technologies = parseTechnologiesInput(formData.technologies);
   const existingImage = projectToEdit?.image || '';
-  const imagePreview = useMemo(() => {
-    if (imageFile) {
-      return URL.createObjectURL(imageFile);
-    }
-
-    return existingImage;
-  }, [existingImage, imageFile]);
-
-  useEffect(() => {
-    return () => {
-      if (imagePreview && imageFile) {
-        URL.revokeObjectURL(imagePreview);
-      }
-    };
-  }, [imageFile, imagePreview]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const commitTechnologyInput = () => {
+  const commitTechnologyInput = useCallback(() => {
     const combinedValue = [formData.technologies, techInput]
       .filter((value) => typeof value === 'string' && value.trim().length > 0)
       .join(',');
@@ -70,7 +55,7 @@ const AddProject = ({
 
     setTechInput('');
     setFormData((prev) => ({ ...prev, technologies: normalizedValue }));
-  };
+  }, [formData.technologies, techInput]);
 
   const handleTechnologyKeyDown = (e) => {
     if (e.key === 'Enter' || e.key === ',') {
@@ -92,7 +77,6 @@ const AddProject = ({
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-
     if (file) {
       if (file.size > 2 * 1024 * 1024) {
         toast.error('File is too large! Maximum allowed is 2MB.');
@@ -100,22 +84,16 @@ const AddProject = ({
         setImageFile(null);
         return;
       }
-
       setImageFile(file);
     }
   };
 
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setFormData(buildInitialFormData(projectToEdit));
     setImageFile(null);
     setTechInput('');
     resetUploadState();
-
-    const fileInput = document.getElementById('project-image-input');
-    if (fileInput) {
-      fileInput.value = '';
-    }
-  };
+  }, [projectToEdit, resetUploadState]);
 
   const handleCancel = () => {
     resetForm();
@@ -124,10 +102,7 @@ const AddProject = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (isSubmitting) {
-      return;
-    }
+    if (isSubmitting) return;
 
     setIsSubmitting(true);
 
@@ -141,7 +116,8 @@ const AddProject = ({
       );
 
       if (!normalizedTitle || !normalizedDescription || normalizedTechnologies.length === 0) {
-        toast.error('Please complete all required fields before saving.');
+        toast.error('Please complete all required fields (Title, Description, Technologies).');
+        setIsSubmitting(false);
         return;
       }
 
@@ -149,9 +125,7 @@ const AddProject = ({
 
       if (imageFile) {
         toast.loading('Uploading project image...', { id: 'upload-toast' });
-
         imageUrl = await uploadImage(imageFile);
-
         toast.success('Image uploaded successfully!', { id: 'upload-toast' });
       }
 
@@ -166,7 +140,6 @@ const AddProject = ({
 
       await onProjectSave(projectData);
       resetForm();
-
       toast.dismiss('upload-toast');
     } catch (error) {
       toast.error(`Error: ${error.message}`, { id: 'upload-toast' });
@@ -176,201 +149,125 @@ const AddProject = ({
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="relative mb-8 overflow-hidden rounded-xl border border-[#1e293b] bg-[#131b2c] p-6 shadow-xl"
-    >
+    <form onSubmit={handleSubmit} className="relative flex flex-col h-full animate-in fade-in">
+      
       {isSubmitting && (
-        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-[#0a0f1c]/50 backdrop-blur-sm">
-          <Loader2 className="mb-4 h-10 w-10 animate-spin text-[#14f195]" />
+        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[#0a0f1c]/80 backdrop-blur-md rounded-xl">
+          <Loader2 className="mb-4 h-12 w-12 animate-spin text-cms-primary shadow-[0_0_15px_rgba(20,241,149,0.5)] rounded-full" />
           <p className="text-sm font-bold uppercase tracking-widest text-white">
-            Processing {uploadProgress > 0 ? `${uploadProgress}%` : ''}
+            Saving Project {uploadProgress > 0 ? `${uploadProgress}%` : ''}
           </p>
         </div>
       )}
 
-      <h3 className="mb-6 flex items-center gap-2 text-xl font-bold">
-        {isEditing ? 'Edit Project' : 'Add New Project'}
-      </h3>
-
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <div>
-          <label className="mb-1 block text-sm text-gray-400">Title</label>
-          <input
-            required
-            type="text"
+      <div className="space-y-6 flex-1 pb-6">
+        <EnterpriseFormGroup>
+          <EnterpriseInput
+            label="Project Title"
             name="title"
             value={formData.title}
             onChange={handleChange}
-            className="w-full rounded-lg border border-[#1e293b] bg-[#0a0f1c] p-2.5 text-white transition-colors focus:border-[#14f195] focus:outline-none"
-            placeholder="Project Name"
+            placeholder="e.g., Enterprise E-Commerce"
+            required
             disabled={isSubmitting}
           />
-        </div>
+          <EnterpriseUploader
+            file={imageFile}
+            existingImageUrl={existingImage}
+            onFileChange={handleFileChange}
+            progress={uploadProgress}
+            disabled={isSubmitting}
+            hint={isEditing ? "Leave unchanged to keep current image." : ""}
+          />
+        </EnterpriseFormGroup>
 
-        <div>
-          <label className="mb-1 block text-sm text-gray-400">Project Image (Max 2MB)</label>
-          <div className="space-y-3">
-            {imagePreview ? (
-              <div className="overflow-hidden rounded-xl border border-[#1e293b] bg-[#0a0f1c]">
-                <img
-                  src={imagePreview}
-                  alt={formData.title || 'Project preview'}
-                  className="h-36 w-full object-cover"
-                />
-              </div>
-            ) : null}
-
-            <div className="group relative flex h-[46px] cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed border-[#1e293b] bg-[#0a0f1c] transition-colors hover:border-[#14f195]">
-              {imageFile ? (
-                <span className="flex items-center gap-2 truncate px-4 text-sm font-medium text-[#14f195]">
-                  <ImageIcon className="h-4 w-4 shrink-0" /> {imageFile.name}
-                </span>
-              ) : existingImage ? (
-                <span className="flex items-center gap-2 truncate px-4 text-sm font-medium text-cyan-300">
-                  <ImageIcon className="h-4 w-4 shrink-0" /> Current image selected
-                </span>
-              ) : (
-                <span className="flex items-center gap-2 text-sm text-gray-400">
-                  <UploadCloud className="h-5 w-5" /> Choose an Image
-                </span>
-              )}
-
-              <input
-                id="project-image-input"
-                type="file"
-                accept="image/jpeg, image/png, image/webp"
-                className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0 disabled:cursor-not-allowed"
-                onChange={handleFileChange}
-                disabled={isSubmitting}
-              />
-
-              {uploadProgress > 0 && uploadProgress < 100 && (
-                <div className="absolute inset-x-0 bottom-0 z-20 h-1 bg-[#1e293b]">
-                  <div
-                    className="h-full bg-[#14f195] transition-all duration-300 ease-out"
-                    style={{ width: `${uploadProgress}%` }}
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-          {isEditing ? (
-            <p className="mt-2 text-xs text-gray-500">
-              Leave the image unchanged to keep the current one, or upload a new file to replace it.
-            </p>
-          ) : null}
-        </div>
-      </div>
-
-      <div className="mt-4">
-        <label className="mb-1 block text-sm text-gray-400">Description</label>
-        <textarea
-          required
-          rows="3"
+        <EnterpriseTextarea
+          label="Project Description"
           name="description"
           value={formData.description}
           onChange={handleChange}
-          className="w-full rounded-lg border border-[#1e293b] bg-[#0a0f1c] p-2.5 text-white transition-colors focus:border-[#14f195] focus:outline-none"
-          placeholder="Project description..."
+          placeholder="Detailed explanation of the project's goals and technical challenges..."
+          rows={4}
+          required
           disabled={isSubmitting}
         />
-      </div>
 
-      <div className="mt-4">
-        <label className="mb-1 block text-sm text-gray-400">Technologies</label>
-        <div className="rounded-xl border border-[#1e293b] bg-[#0a0f1c] p-3 transition-colors focus-within:border-[#14f195]">
-          <div className="flex flex-wrap gap-2">
-            {technologies.map((technology) => (
-              <span
-                key={technology}
-                className="inline-flex items-center gap-2 rounded-full border border-cyan-400/35 bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-cyan-300 shadow-[0_0_20px_-12px_rgba(20,241,149,0.6)]"
-              >
-                {technology}
-                <button
-                  type="button"
-                  onClick={() => handleRemoveTechnology(technology)}
-                  className="text-cyan-200 transition-colors hover:text-white"
-                  aria-label={`Remove ${technology}`}
-                  disabled={isSubmitting}
+        <div className="flex flex-col">
+          <label className="mb-1.5 text-sm font-bold text-gray-300">Technologies</label>
+          <div className="rounded-lg border border-white/10 bg-black/40 p-3 focus-within:border-cms-primary transition-colors">
+            <div className="flex flex-wrap gap-2">
+              {technologies.map((tech) => (
+                <span
+                  key={tech}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-cyan-500/20 bg-cyan-500/10 px-2.5 py-1 text-[11px] font-bold text-cyan-400"
                 >
-                  x
-                </button>
-              </span>
-            ))}
-
-            <input
-              type="text"
-              value={techInput}
-              onChange={(e) => setTechInput(e.target.value)}
-              onKeyDown={handleTechnologyKeyDown}
-              onBlur={handleTechnologyBlur}
-              className="min-w-[180px] flex-1 bg-transparent text-sm text-white outline-none placeholder:text-gray-500"
-              placeholder="AWS, Docker, Kubernetes, Terraform"
-              disabled={isSubmitting}
-            />
+                  {tech}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveTechnology(tech)}
+                    className="text-cyan-600 hover:text-cyan-300 transition-colors"
+                    disabled={isSubmitting}
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              ))}
+              <input
+                type="text"
+                value={techInput}
+                onChange={(e) => setTechInput(e.target.value)}
+                onKeyDown={handleTechnologyKeyDown}
+                onBlur={handleTechnologyBlur}
+                className="min-w-[150px] flex-1 bg-transparent text-sm text-white focus:outline-none placeholder:text-gray-600"
+                placeholder="Type and press Enter..."
+                disabled={isSubmitting}
+              />
+            </div>
           </div>
+          <span className="mt-1.5 text-xs text-gray-500">Press Enter or Comma to add tags.</span>
         </div>
-        <p className="mt-2 text-xs text-gray-500">
-          Add technologies with commas or press Enter. Duplicate and empty values are ignored.
-        </p>
-      </div>
 
-      <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-        <div>
-          <label className="mb-1 block text-sm text-gray-400">GitHub URL</label>
-          <input
-            type="url"
+        <EnterpriseFormGroup>
+          <EnterpriseInput
+            label="GitHub Repository URL"
             name="github"
+            type="url"
             value={formData.github}
             onChange={handleChange}
-            className="w-full rounded-lg border border-[#1e293b] bg-[#0a0f1c] p-2.5 text-white transition-colors focus:border-[#14f195] focus:outline-none"
-            placeholder="https://github.com/..."
+            placeholder="https://github.com/username/repo"
             disabled={isSubmitting}
           />
-        </div>
-        <div>
-          <label className="mb-1 block text-sm text-gray-400">Live URL</label>
-          <input
-            type="url"
+          <EnterpriseInput
+            label="Live Demo URL"
             name="live"
+            type="url"
             value={formData.live}
             onChange={handleChange}
-            className="w-full rounded-lg border border-[#1e293b] bg-[#0a0f1c] p-2.5 text-white transition-colors focus:border-[#14f195] focus:outline-none"
-            placeholder="https://..."
+            placeholder="https://project.com"
             disabled={isSubmitting}
           />
-        </div>
+        </EnterpriseFormGroup>
       </div>
 
-      <div className="mt-6 flex justify-end gap-3 border-t border-[#1e293b] pt-6">
-        {isEditing ? (
-          <button
-            type="button"
-            onClick={handleCancel}
-            disabled={isSubmitting}
-            className="flex items-center gap-2 rounded-lg border border-[#1e293b] px-5 py-2.5 font-semibold text-white transition-colors hover:bg-[#1e293b] disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <X className="h-4 w-4" /> Cancel Edit
-          </button>
-        ) : null}
+      <div className="sticky bottom-0 bg-[#0a0f1c] pt-4 pb-2 border-t border-white/10 flex justify-end gap-3 mt-auto">
+        <button
+          type="button"
+          onClick={handleCancel}
+          disabled={isSubmitting}
+          className="px-5 py-2.5 rounded-lg font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50"
+        >
+          Cancel
+        </button>
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex items-center gap-2 rounded-lg bg-[#14f195] px-6 py-2.5 font-bold text-[#0a0f1c] transition-colors hover:bg-[#10d482] disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex items-center gap-2 px-6 py-2.5 bg-cms-primary text-black font-bold rounded-lg hover:bg-[#12d684] transition-colors shadow-[0_0_20px_rgba(20,241,149,0.2)] disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? (
-            <>
-              <Loader2 className="h-5 w-5 animate-spin" /> Processing...
-            </>
-          ) : (
-            <>
-              {isEditing ? <Save className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
-              {isEditing ? 'Update Project' : 'Add Project'}
-            </>
-          )}
+          <Save className="w-4 h-4" />
+          {isEditing ? 'Save Changes' : 'Create Project'}
         </button>
       </div>
+
     </form>
   );
 };

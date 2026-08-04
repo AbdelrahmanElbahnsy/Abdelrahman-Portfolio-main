@@ -59,11 +59,30 @@ const GenericListManager = ({ title, collectionName, fields }) => {
 
     setIsSaving(true);
     try {
+      const payload = { ...formData };
+      const hasOrderField = fields.some(f => f.name === 'order');
+      if (hasOrderField) {
+        if (!editingId && (payload.order === '' || payload.order === undefined || payload.order === null)) {
+           let maxOrder = -1;
+           if (items && items.length > 0) {
+              items.forEach(item => {
+                 const currentOrder = Number(item.order);
+                 if (!isNaN(currentOrder) && currentOrder > maxOrder) {
+                    maxOrder = currentOrder;
+                 }
+              });
+           }
+           payload.order = maxOrder + 1;
+        } else if (payload.order !== '' && payload.order !== undefined && payload.order !== null) {
+           payload.order = Number(payload.order);
+        }
+      }
+
       if (editingId) {
-        await update(editingId, formData);
+        await update(editingId, payload);
         toast.success(`${title} Updated!`);
       } else {
-        await create(formData);
+        await create(payload);
         toast.success(`${title} Added!`);
       }
       resetForm();
@@ -72,7 +91,7 @@ const GenericListManager = ({ title, collectionName, fields }) => {
     } finally {
       setIsSaving(false);
     }
-  }, [editingId, formData, title, resetForm, update, create, fields]);
+  }, [editingId, formData, title, resetForm, update, create, fields, items]);
 
   const handleDelete = useCallback(async (id) => {
     if (window.confirm(`Delete this ${title} item forever?`)) {

@@ -1,11 +1,7 @@
-import { contact } from '../data/portfolioData';
-
-const emailjsConfig = contact.emailjs;
-
 export const EMAILJS_CONFIG = {
-  SERVICE_ID: import.meta.env.VITE_EMAILJS_SERVICE_ID || emailjsConfig.SERVICE_ID,
-  TEMPLATE_ID: import.meta.env.VITE_EMAILJS_TEMPLATE_ID || emailjsConfig.TEMPLATE_ID,
-  PUBLIC_KEY: import.meta.env.VITE_EMAILJS_PUBLIC_KEY || emailjsConfig.PUBLIC_KEY,
+  SERVICE_ID: import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_1usyuli',
+  TEMPLATE_ID: import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_wsel53o',
+  PUBLIC_KEY: import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'YIdyZMhc7wuVseZat',
 };
 
 export const sendEmail = async (formData) => {

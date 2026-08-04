@@ -1,12 +1,5 @@
 import React from 'react';
-
-const socialLinks = {
-    floating: [
-        { icon: 'fab fa-github', link: 'https://github.com/AbdelrahmanElbahnsy', label: 'GitHub' },
-        { icon: 'fab fa-linkedin-in', link: 'https://www.linkedin.com/in/abdelrahmanelbahnsy/?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base%3BfPxex%2FALS7qj1yrt9OK5kw%3D%3D', label: 'LinkedIn' },
-        { icon: 'fas fa-envelope', link: 'mailto:abdelrahmanelbahnsy3@gmail.com', label: 'Email' }
-    ]
-};
+import { socialLinks } from '../../data/portfolioData';
 
 const FloatingSocial = () => {
   return (

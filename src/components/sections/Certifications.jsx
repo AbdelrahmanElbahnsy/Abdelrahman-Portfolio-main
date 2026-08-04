@@ -8,25 +8,35 @@ import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
+import { certifications as fallbackCertifications } from '../../data/portfolioData';
 import { SiMicrosoftazure } from 'react-icons/si';
 import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
-import { useEffect } from 'react';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Certifications = () => {
-    const sectionRef = useRef(null);
-    const headerRef = useRef(null);
     const { data: firestoreData, subscribe } = useFirestoreCrud('certifications', { orderByField: 'order', orderDirection: 'asc' });
 
-    useEffect(() => {
+    React.useEffect(() => {
         const unsubscribe = subscribe();
         return () => {
             if (unsubscribe) unsubscribe();
         };
     }, [subscribe]);
 
-    const certifications = firestoreData || [];
+    const certifications = React.useMemo(() => {
+        if (!firestoreData || firestoreData.length === 0) return fallbackCertifications;
+        return firestoreData.map(cert => {
+            const fallbackMatch = fallbackCertifications.find(c => c.title === cert.title);
+            return {
+                ...cert,
+                icon: fallbackMatch ? fallbackMatch.icon : 'fas fa-certificate'
+            };
+        });
+    }, [firestoreData]);
+
+    const sectionRef = useRef(null);
+    const headerRef = useRef(null);
 
     useGSAP(
         () => {

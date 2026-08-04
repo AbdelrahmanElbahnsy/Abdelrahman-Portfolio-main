@@ -9,10 +9,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import ProjectModal from '../ui/ProjectModal';
 import ProjectCard from '../ui/ProjectCard';
-import { projects as localProjects } from '../../data/portfolioData';
 import { normalizeProjectTechnologies } from '../../utils/projectTechnologies';
-import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
-import { db } from '../../services/firebase';
+import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -36,33 +34,20 @@ const normalizeProject = (project, index) => ({
 
 const Projects = () => {
   const [selectedProject, setSelectedProject] = useState(null);
-  const [projectsData, setProjectsData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { data: projectsData, loading, subscribe } = useFirestoreCrud('projects', { orderBy: { field: 'order', direction: 'asc' } });
   const sectionRef = useRef(null);
   const headerRef = useRef(null);
 
   useEffect(() => {
-    const q = query(collection(db, 'projects'), orderBy('order', 'asc'));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      if (!snapshot.empty) {
-        const liveProjects = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setProjectsData(liveProjects);
-      } else {
-        setProjectsData(localProjects);
-      }
-      setLoading(false);
-    }, (error) => {
-      console.error('Firestore Error:', error);
-      setProjectsData(localProjects);
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
+    const unsubscribe = subscribe();
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [subscribe]);
 
   const visibleProjects = useMemo(() => {
-    // If we have live data, use it; otherwise local Projects wait until load finishes
-    const dataToUse = loading ? localProjects : projectsData;
-    return dataToUse.map(normalizeProject);
+    if (loading) return [];
+    return (projectsData || []).map(normalizeProject);
   }, [projectsData, loading]);
 
   const handleOpenProject = useCallback((project) => setSelectedProject(project), []);

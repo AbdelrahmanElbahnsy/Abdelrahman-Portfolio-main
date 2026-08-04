@@ -7,7 +7,6 @@ import { Navigation, EffectCreative, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/effect-creative';
-import { journey } from '../../data/portfolioData';
 import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -17,7 +16,6 @@ const Journey = () => {
     const headerRef = useRef(null);
     const [activePhase, setActivePhase] = useState(0);
     const [swiperInstance, setSwiperInstance] = useState(null);
-    const { subtitle, title, description, phases: defaultPhases } = journey;
     const { data: firestoreData, subscribe } = useFirestoreCrud('journey', { orderByField: 'order', orderDirection: 'asc' });
 
     // Subscribe to realtime updates
@@ -27,6 +25,9 @@ const Journey = () => {
             if (unsubscribe) unsubscribe();
         };
     }, [subscribe]);
+    const subtitle = 'Roadmap';
+    const title = 'DevOps Engineering Journey';
+    const description = 'Tracing the evolution from network packets to automated cloud ecosystems.';
 
     // Map firestore data to match the UI's expected shape if it exists
     const phases = firestoreData && firestoreData.length > 0
@@ -36,7 +37,7 @@ const Journey = () => {
             description: doc.description,
             tags: doc.technologies ? doc.technologies.split(',').map(t => t.trim()) : []
           }))
-        : defaultPhases;
+        : [];
 
     // Header Animation
     useGSAP(

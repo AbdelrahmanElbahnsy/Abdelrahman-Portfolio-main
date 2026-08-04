@@ -8,14 +8,25 @@ import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
-import { certifications } from '../../data/portfolioData';
 import { SiMicrosoftazure } from 'react-icons/si';
+import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
+import { useEffect } from 'react';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Certifications = () => {
     const sectionRef = useRef(null);
     const headerRef = useRef(null);
+    const { data: firestoreData, subscribe } = useFirestoreCrud('certifications', { orderByField: 'order', orderDirection: 'asc' });
+
+    useEffect(() => {
+        const unsubscribe = subscribe();
+        return () => {
+            if (unsubscribe) unsubscribe();
+        };
+    }, [subscribe]);
+
+    const certifications = firestoreData || [];
 
     useGSAP(
         () => {

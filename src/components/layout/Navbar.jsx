@@ -1,10 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { personalInfo, socialLinks } from '../../data/portfolioData';
+import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
+import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
 
 const Navbar = ({ splashDone = true }) => {
-    const { firstName, lastName } = personalInfo;
+    const { data: profileData, subscribe: subscribeProfile } = useFirestoreSingleDoc('profile', 'main');
+    const { data: navbarItemsData, subscribe: subscribeNavbar } = useFirestoreCrud('navbarItems', { orderByField: 'order', orderDirection: 'asc' });
+
+    useEffect(() => {
+        const unsubscribeProfile = subscribeProfile();
+        const unsubscribeNavbar = subscribeNavbar();
+        return () => {
+            if (unsubscribeProfile) unsubscribeProfile();
+            if (unsubscribeNavbar) unsubscribeNavbar();
+        };
+    }, [subscribeProfile, subscribeNavbar]);
+
+    const fullName = profileData?.fullName || 'Abdelrahman El-bahnsy';
+    const nameParts = fullName.split(' ');
+    const firstName = nameParts[0];
+    const lastName = nameParts.slice(1).join(' ') || 'El-bahnsy';
+
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [activeSection, setActiveSection] = useState('hero');
@@ -14,13 +31,23 @@ const Navbar = ({ splashDone = true }) => {
     const menuOverlayRef = useRef(null);
     const menuItemsRef = useRef(null);
 
-    const navLinks = [
-        { name: 'Home', href: '#hero', id: 'hero', icon: 'fas fa-home' },
-        { name: 'About', href: '#about', id: 'about', icon: 'fas fa-user' },
-        { name: 'Skills', href: '#skills', id: 'skills', icon: 'fas fa-tools' },
-        { name: 'Projects', href: '#projects', id: 'projects', icon: 'fas fa-project-diagram' },
-        { name: 'Certifications', href: '#certifications', id: 'certifications', icon: 'fas fa-certificate' },
-    ];
+    const navLinks = navbarItemsData && navbarItemsData.length > 0
+        ? navbarItemsData.map(item => ({ name: item.name, href: item.href, id: item.sectionId, icon: item.icon }))
+        : [
+            { name: 'Home', href: '#hero', id: 'hero', icon: 'fas fa-home' },
+            { name: 'About', href: '#about', id: 'about', icon: 'fas fa-user' },
+            { name: 'Skills', href: '#skills', id: 'skills', icon: 'fas fa-tools' },
+            { name: 'Projects', href: '#projects', id: 'projects', icon: 'fas fa-project-diagram' },
+            { name: 'Certifications', href: '#certifications', id: 'certifications', icon: 'fas fa-certificate' },
+        ];
+
+    const socialLinks = {
+        navbarMobile: [
+            { icon: 'fab fa-github', link: 'https://github.com/AbdelrahmanElbahnsy' },
+            { icon: 'fab fa-linkedin-in', link: 'https://www.linkedin.com/in/abdelrahmanelbahnsy/?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base%3BfPxex%2FALS7qj1yrt9OK5kw%3D%3D' },
+            { icon: 'fas fa-envelope', link: 'mailto:abdelrahmanelbahnsy3@gmail.com' }
+        ]
+    };
 
     const handleNavClick = (id) => {
         setActiveSection(id);

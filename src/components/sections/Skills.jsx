@@ -6,7 +6,6 @@ import 'swiper/css/pagination';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
-import { skills as fallbackSkills } from '../../data/portfolioData';
 import { SiMicrosoftazure } from 'react-icons/si';
 import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
 import { transformSkills } from '../../cms/utils/transformSkills';
@@ -27,12 +26,14 @@ const Skills = () => {
         };
     }, [subscribe]);
 
-    const { subtitle, title, description } = fallbackSkills;
+    const subtitle = 'Expertise';
+    const title = 'Skills & Technologies';
+    const description = 'A comprehensive toolkit for building and managing modern cloud infrastructure.';
 
-    // Use Firestore data if available, otherwise fallback to static data
+    // Use Firestore data if available, otherwise empty state
     const { circularSkills, categories } = firestoreData && firestoreData.length > 0
         ? transformSkills(firestoreData)
-        : fallbackSkills;
+        : { circularSkills: [], categories: [] };
 
     useGSAP(
         () => {

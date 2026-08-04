@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -37,7 +39,7 @@ html {}
   --clr-glass-overlay: rgba(255, 255, 255, 0.05);
 
   /* Typography */
-  --ff-primary: 'Outfit', 'Inter', sans-serif;
+  --ff-primary: 'Inter', sans-serif;
   --ff-mono: 'Fira Code', monospace;
 
   /* Spacing */

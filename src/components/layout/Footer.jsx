@@ -1,9 +1,10 @@
 import { useRef } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
+import { personalInfo, socialLinks } from '../../data/portfolioData';
+import { SiMicrosoftazure } from 'react-icons/si';
 import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
 import { useEffect } from 'react';
-import { SiMicrosoftazure } from 'react-icons/si';
 
 const Footer = () => {
     const { data: profileData, subscribe: subscribeProfile } = useFirestoreSingleDoc('profile', 'main');
@@ -18,22 +19,22 @@ const Footer = () => {
         };
     }, [subscribeProfile, subscribeHero]);
 
-    const fullName = profileData?.fullName || 'Abdelrahman El-bahnsy';
-    const nameParts = fullName.split(' ');
-    const firstName = nameParts[0];
-    const lastName = nameParts.slice(1).join(' ') || 'El-bahnsy';
-    const availabilityStatus = heroData?.availabilityStatus || 'Available for Work';
-    const footerTagline = 'Architecting reliable, scalable, and secure cloud ecosystems with a DevOps mindset.';
+    const fallbackFirstName = personalInfo.firstName;
+    const fallbackLastName = personalInfo.lastName;
+
+    const fullName = profileData?.fullName;
+    let firstName = fallbackFirstName;
+    let lastName = fallbackLastName;
+    
+    if (fullName) {
+        const nameParts = fullName.split(' ');
+        firstName = nameParts[0] || fallbackFirstName;
+        lastName = nameParts.slice(1).join(' ') || fallbackLastName;
+    }
+    
+    const footerTagline = profileData?.footerTagline || personalInfo.footerTagline;
+    const availabilityStatus = heroData?.availabilityStatus || personalInfo.availabilityStatus;
     const copyrightYear = new Date().getFullYear();
-
-    const socialLinks = {
-        footer: [
-            { icon: 'fab fa-github', link: 'https://github.com/AbdelrahmanElbahnsy', title: 'GitHub' },
-            { icon: 'fab fa-linkedin-in', link: 'https://www.linkedin.com/in/abdelrahmanelbahnsy/?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base%3BfPxex%2FALS7qj1yrt9OK5kw%3D%3D', title: 'LinkedIn' },
-            { icon: 'fas fa-envelope', link: 'mailto:abdelrahmanelbahnsy3@gmail.com', title: 'Email' }
-        ]
-    };
-
     const footerRef = useRef(null);
 
     useGSAP(
@@ -116,7 +117,7 @@ const Footer = () => {
                 </div>
 
                 <div className="footer-bottom mt-16 pt-8 border-t border-[rgba(255,255,255,0.05)] text-center text-[var(--clr-text-dim)] text-xs font-mono">
-                    <p>Designed & Built by {fullName} &copy; {copyrightYear}</p>
+                    <p>Designed & Built by {personalInfo.fullName} &copy; {copyrightYear}</p>
                 </div>
             </div>
         </footer>

@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
@@ -7,6 +7,7 @@ import { Navigation, EffectCreative, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/effect-creative';
+import { journey as defaultJourney } from '../../data/portfolioData';
 import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -16,28 +17,28 @@ const Journey = () => {
     const headerRef = useRef(null);
     const [activePhase, setActivePhase] = useState(0);
     const [swiperInstance, setSwiperInstance] = useState(null);
+    
     const { data: firestoreData, subscribe } = useFirestoreCrud('journey', { orderByField: 'order', orderDirection: 'asc' });
 
-    // Subscribe to realtime updates
-    useEffect(() => {
+    React.useEffect(() => {
         const unsubscribe = subscribe();
         return () => {
             if (unsubscribe) unsubscribe();
         };
     }, [subscribe]);
+
     const subtitle = 'Roadmap';
     const title = 'DevOps Engineering Journey';
     const description = 'Tracing the evolution from network packets to automated cloud ecosystems.';
 
-    // Map firestore data to match the UI's expected shape if it exists
     const phases = firestoreData && firestoreData.length > 0
         ? firestoreData.map(doc => ({
-            phase: doc.order,
+            phase: doc.phase,
             title: doc.title,
             description: doc.description,
             tags: doc.technologies ? doc.technologies.split(',').map(t => t.trim()) : []
           }))
-        : [];
+        : defaultJourney.phases;
 
     // Header Animation
     useGSAP(

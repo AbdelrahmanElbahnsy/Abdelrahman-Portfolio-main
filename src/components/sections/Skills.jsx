@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay, Navigation, Keyboard } from 'swiper/modules';
 import 'swiper/css';
@@ -6,6 +6,7 @@ import 'swiper/css/pagination';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
+import { skills as fallbackSkills } from '../../data/portfolioData';
 import { SiMicrosoftazure } from 'react-icons/si';
 import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
 import { transformSkills } from '../../cms/utils/transformSkills';
@@ -13,32 +14,31 @@ import { transformSkills } from '../../cms/utils/transformSkills';
 gsap.registerPlugin(ScrollTrigger);
 
 const Skills = () => {
-    const sectionRef = useRef(null);
-    const headerRef = useRef(null);
-    const circularRef = useRef(null);
-    const { data: firestoreData, loading, subscribe } = useFirestoreCrud('skills');
+    const { data: firestoreData, subscribe } = useFirestoreCrud('skills');
     
-    // Subscribe to realtime updates on mount
-    useEffect(() => {
+    React.useEffect(() => {
         const unsubscribe = subscribe();
         return () => {
             if (unsubscribe) unsubscribe();
         };
     }, [subscribe]);
 
-    const subtitle = 'Expertise';
-    const title = 'Skills & Technologies';
-    const description = 'A comprehensive toolkit for building and managing modern cloud infrastructure.';
+    const skillsData = firestoreData && firestoreData.length > 0
+        ? {
+            subtitle: fallbackSkills.subtitle,
+            title: fallbackSkills.title,
+            description: fallbackSkills.description,
+            ...transformSkills(firestoreData)
+          }
+        : fallbackSkills;
 
-    // Use Firestore data if available, otherwise empty state
-    const { circularSkills, categories } = firestoreData && firestoreData.length > 0
-        ? transformSkills(firestoreData)
-        : { circularSkills: [], categories: [] };
+    const { subtitle, title, description, circularSkills, categories } = skillsData;
+    const sectionRef = useRef(null);
+    const headerRef = useRef(null);
+    const circularRef = useRef(null);
 
     useGSAP(
         () => {
-            if (loading) return; // Wait until loading is done
-            
             const subtitleEl = headerRef.current?.querySelector('.section-subtitle');
             const titleEl = headerRef.current?.querySelector('.section-title');
             const descEl = headerRef.current?.querySelector('.section-desc');
@@ -80,7 +80,7 @@ const Skills = () => {
                 }, '-=0.1');
             }
         },
-        { scope: sectionRef, dependencies: [circularSkills, categories, loading] }
+        { scope: sectionRef }
     );
 
     return (

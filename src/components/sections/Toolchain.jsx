@@ -5,27 +5,7 @@ import 'swiper/css';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
-
-const toolchain = {
-    row1: [
-        { name: 'Docker', icon: 'fab fa-docker' },
-        { name: 'Kubernetes', icon: 'fas fa-dharmachakra' },
-        { name: 'Terraform', icon: 'fas fa-code' },
-        { name: 'Jenkins', icon: 'fab fa-jenkins' },
-        { name: 'GitHub Actions', icon: 'fab fa-github' },
-        { name: 'GitLab CI', icon: 'fab fa-gitlab' },
-        { name: 'ArgoCD', icon: 'fas fa-ship' },
-    ],
-    row2: [
-        { name: 'AWS', icon: 'fab fa-aws' },
-        { name: 'Azure', icon: 'fab fa-microsoft' },
-        { name: 'Linux', icon: 'fab fa-linux' },
-        { name: 'Ansible', icon: 'fas fa-cogs' },
-        { name: 'Prometheus', icon: 'fas fa-chart-line' },
-        { name: 'Grafana', icon: 'fas fa-chart-pie' },
-        { name: 'ELK Stack', icon: 'fas fa-database' },
-    ]
-};
+import { toolchain } from '../../data/portfolioData';
 
 gsap.registerPlugin(ScrollTrigger);
 

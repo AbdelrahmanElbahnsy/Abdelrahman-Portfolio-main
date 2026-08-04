@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import emailjs from "@emailjs/browser";
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
+import { contact } from "../../data/portfolioData";
 import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
 
 const Contact = () => {
@@ -43,34 +44,35 @@ const Contact = () => {
     const leftRef = useRef(null);
     const rightRef = useRef(null);
     const oppsRef = useRef(null);
+    const { data: firestoreData, subscribe } = useFirestoreSingleDoc('contact', 'main');
     
-    const { data: firestoreData, subscribe } = useFirestoreSingleDoc('content', 'contact');
     useEffect(() => {
         const unsubscribe = subscribe();
-        return () => { if (unsubscribe) unsubscribe(); };
+        return () => {
+            if (unsubscribe) unsubscribe();
+        };
     }, [subscribe]);
 
-    const subtitle = 'Get In Touch';
-    const title = 'Deployment Request';
-    const formSubjects = ['Job Opportunity', 'Internship', 'Freelance Project', 'Collaboration', 'Technical Question', 'Other (Specify)'];
-    const opportunities = [
-        { icon: 'fas fa-graduation-cap', title: 'Internships', desc: 'Cloud & DevOps programs' },
-        { icon: 'fas fa-user-gear', title: 'Junior DevOps Roles', desc: 'Entry-level engineering' },
-        { icon: 'SiMicrosoftazure', title: 'Cloud Engineering', desc: 'AWS infrastructure roles' },
-    ];
-    const emailjsConfig = {
-        SERVICE_ID: 'service_1usyuli',
-        TEMPLATE_ID: 'template_wsel53o',
-        PUBLIC_KEY: 'YIdyZMhc7wuVseZat',
-    };
-    const channels = [
-        { icon: 'fas fa-envelope', label: 'Email', value: firestoreData?.email || '', link: firestoreData?.email ? `mailto:${firestoreData.email}` : '' },
-        { icon: 'fas fa-phone', label: 'Phone', value: firestoreData?.phone || '', link: firestoreData?.phone ? `tel:${firestoreData.phone}` : '' },
-        { icon: 'fab fa-github', label: 'GitHub', value: 'https://github.com/AbdelrahmanElbahnsy', link: 'https://github.com/AbdelrahmanElbahnsy' },
-        { icon: 'fab fa-linkedin', label: 'LinkedIn', value: 'LinkedIn Profile', link: 'https://www.linkedin.com/in/abdelrahmanelbahnsy/?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base%3BfPxex%2FALS7qj1yrt9OK5kw%3D%3D' },
-        { icon: 'fas fa-map-marker-alt', label: 'Location', value: firestoreData?.location || '', link: null },
-    ];
+    const contactData = React.useMemo(() => {
+        if (!firestoreData) return contact;
+        
+        const mergedChannels = contact.channels.map(ch => {
+            if (ch.label === 'Email' && firestoreData.email) return { ...ch, value: firestoreData.email, link: `mailto:${firestoreData.email}` };
+            if (ch.label === 'Phone' && firestoreData.phone) return { ...ch, value: firestoreData.phone, link: `tel:${firestoreData.phone.replace(/[^0-9+]/g, '')}` };
+            if (ch.label === 'Location' && firestoreData.location) return { ...ch, value: firestoreData.location };
+            return ch;
+        });
 
+        return {
+            ...contact,
+            ...firestoreData,
+            channels: mergedChannels,
+            opportunities: firestoreData.opportunities || contact.opportunities,
+            formSubjects: firestoreData.formSubjects || contact.formSubjects,
+            emailjs: contact.emailjs // Always fallback to local config for API keys
+        };
+    }, [firestoreData]);
+    const { subtitle, title, channels, formSubjects, opportunities, emailjs: emailjsConfig } = contactData;
     const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || emailjsConfig.SERVICE_ID;
     const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || emailjsConfig.TEMPLATE_ID;
     const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || emailjsConfig.PUBLIC_KEY;

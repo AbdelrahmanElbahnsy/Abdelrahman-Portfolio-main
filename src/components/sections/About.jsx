@@ -1,33 +1,34 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
+import { about as fallbackAbout, personalInfo } from '../../data/portfolioData';
 import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
 
 const About = () => {
-    const { data: firestoreData, subscribe, loading } = useFirestoreSingleDoc('about', 'main');
+    const { data: firestoreData } = useFirestoreSingleDoc('about', 'main');
+    
+    const about = React.useMemo(() => {
+        if (!firestoreData || !firestoreData.title) return fallbackAbout;
+        
+        let paragraphs = fallbackAbout.paragraphs;
+        let badges = fallbackAbout.badges;
+        let terminalItems = fallbackAbout.terminalItems;
+        
+        try { if (firestoreData.paragraphsJson) paragraphs = JSON.parse(firestoreData.paragraphsJson); } catch(e) {}
+        try { if (firestoreData.badgesJson) badges = JSON.parse(firestoreData.badgesJson); } catch(e) {}
+        try { if (firestoreData.terminalItemsJson) terminalItems = JSON.parse(firestoreData.terminalItemsJson); } catch(e) {}
 
-    // Subscribe to realtime updates
-    useEffect(() => {
-        const unsubscribe = subscribe();
-        return () => {
-            if (unsubscribe) unsubscribe();
+        return {
+            ...fallbackAbout,
+            ...firestoreData,
+            paragraphs,
+            badges,
+            terminalItems
         };
-    }, [subscribe]);
-
-    const subtitle = firestoreData?.subtitle || '';
-    const title = firestoreData?.title || '';
-    const lead = firestoreData?.lead || '';
-    let paragraphs = [];
-    let badges = [];
-    let terminalItems = [];
-
-    if (firestoreData) {
-        try { paragraphs = firestoreData.paragraphsJson ? JSON.parse(firestoreData.paragraphsJson) : []; } catch(e) {}
-        try { badges = firestoreData.badgesJson ? JSON.parse(firestoreData.badgesJson) : []; } catch(e) {}
-        try { terminalItems = firestoreData.terminalItemsJson ? JSON.parse(firestoreData.terminalItemsJson) : []; } catch(e) {}
-    }
-
+    }, [firestoreData]);
+    
+    const { subtitle, title, lead, paragraphs, badges, terminalItems } = about;
     const sectionRef = useRef(null);
     const headerRef = useRef(null);
     const terminalRef = useRef(null);
@@ -77,7 +78,7 @@ const About = () => {
                 tl.to(badgeEls, { opacity: 1, scale: 1, y: 0, duration: 0.4, stagger: 0.05, ease: 'back.out(1.7)' }, '-=0.1');
             }
         },
-        { scope: sectionRef, dependencies: [loading, firestoreData] },
+        { scope: sectionRef, dependencies: [] },
     );
 
     return (
@@ -97,7 +98,7 @@ const About = () => {
                                     <span className="dot yellow w-3.5 h-3.5 rounded-full bg-[#ffbd2e]"></span>
                                     <span className="dot green w-3.5 h-3.5 rounded-full bg-[#27c93f]"></span>
                                 </div>
-                                <span className="terminal-title font-mono text-xs text-[var(--clr-text-dim)] uppercase tracking-wider">~/Abdelrahman El-bahnsy — devops-bash</span>
+                                <span className="terminal-title font-mono text-xs text-[var(--clr-text-dim)] uppercase tracking-wider">{personalInfo.terminalTitle}</span>
                             </div>
                             <div className="terminal-body bg-[var(--clr-terminal-bg)] pt-4 pb-6 px-4 md:pt-5 md:pb-8 md:px-8 flex-col overflow-x-hidden">
                                 <ul className="terminal-list space-y-3 md:space-y-5 font-mono text-xs md:text-base w-full">

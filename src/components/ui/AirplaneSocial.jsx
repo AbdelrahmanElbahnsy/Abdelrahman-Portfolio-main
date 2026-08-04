@@ -1,14 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { socialLinks } from '../../data/portfolioData';
 import { useMagneticEffect } from '../../hooks/useMagneticEffect';
-
-const socialLinks = {
-    airplane: [
-        { icon: 'fab fa-github', href: 'https://github.com/AbdelrahmanElbahnsy', label: 'GitHub', color: '#333' },
-        { icon: 'fab fa-linkedin-in', href: 'https://www.linkedin.com/in/abdelrahmanelbahnsy/?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base%3BfPxex%2FALS7qj1yrt9OK5kw%3D%3D', label: 'LinkedIn', color: '#0077b5' },
-        { icon: 'fas fa-envelope', href: 'mailto:abdelrahmanelbahnsy3@gmail.com', label: 'Email', color: '#d44638' },
-        { icon: 'fas fa-file-pdf', href: '/cv.pdf', label: 'Resume', color: '#1a1a1a' }
-    ]
-};
 
 const AirplaneSocial = () => {
     const [isActive, setIsActive] = useState(false);

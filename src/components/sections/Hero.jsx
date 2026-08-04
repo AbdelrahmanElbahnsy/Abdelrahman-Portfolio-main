@@ -4,25 +4,16 @@ import { Autoplay, FreeMode } from 'swiper/modules';
 import 'swiper/css';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
+import { heroTechSlider, personalInfo } from '../../data/portfolioData';
 import { SiMicrosoftazure } from 'react-icons/si';
 import { useMagneticEffect } from '../../hooks/useMagneticEffect';
 import SplitText from '../ui/SplitText';
 import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
 
-const heroTechSlider = [
-  { icon: 'SiMicrosoftazure', label: 'Azure (Cloud)' },
-  { icon: 'fab fa-docker', label: 'Kubernetes' },
-  { icon: 'fas fa-rocket', label: 'CI/CD' },
-  { icon: 'fas fa-code', label: 'Terraform' },
-  { icon: 'fab fa-linux', label: 'Linux Admin' },
-  { icon: 'fas fa-network-wired', label: 'Networking' },
-];
-
 const Hero = ({ splashDone = true }) => {
     const [typedText, setTypedText] = useState('');
     const { data: firestoreData, subscribe, loading } = useFirestoreSingleDoc('hero', 'main');
 
-    // Subscribe to realtime updates on mount
     useEffect(() => {
         const unsubscribe = subscribe();
         return () => {
@@ -30,17 +21,10 @@ const Hero = ({ splashDone = true }) => {
         };
     }, [subscribe]);
 
-    const roles = firestoreData?.roles ? firestoreData.roles.split(',').map(r => r.trim()) : [];
-    const badge = firestoreData?.badge || '';
-    const firstName = firestoreData?.firstName || '';
-    const lastName = firestoreData?.lastName || '';
-    const fullName = `${firstName} ${lastName}`.trim();
-    const description = firestoreData?.description || '';
-    const portrait = firestoreData?.portrait || '';
-    const cvUrl = firestoreData?.cvUrl || '';
-    const cta1 = firestoreData?.cta1 || 'Download CV';
-    const cta2 = firestoreData?.cta2 || '';
-    const availabilityStatus = firestoreData?.availabilityStatus || '';
+    const dataSource = firestoreData || personalInfo;
+    const roles = firestoreData ? (dataSource.roles ? dataSource.roles.split(',').map(r => r.trim()) : []) : personalInfo.roles;
+    
+    const { badge, firstName, lastName, description, portrait, fullName, cvUrl } = dataSource;
 
     // Refs for GSAP targets
     const sectionRef = useRef(null);
@@ -92,7 +76,7 @@ const Hero = ({ splashDone = true }) => {
 
         timeout = setTimeout(type, 1500);
         return () => clearTimeout(timeout);
-    }, [roles, splashDone, loading]);
+    }, [roles, splashDone]);
 
     // GSAP entrance timeline
     useGSAP(
@@ -148,7 +132,7 @@ const Hero = ({ splashDone = true }) => {
                 gsap.to(portraitRef.current, { y: -10, duration: 3, ease: 'sine.inOut', yoyo: true, repeat: -1 });
             });
         },
-        { scope: sectionRef, dependencies: [splashDone, loading, firestoreData] },
+        { scope: sectionRef, dependencies: [splashDone] },
     );
 
     return (
@@ -221,24 +205,17 @@ const Hero = ({ splashDone = true }) => {
                             </Swiper>
                         </div>
 
-                        <div ref={ctaRef} className="flex gap-6 hero-cta-group items-center">
-                            {cvUrl && (
-                                <a
-                                    id="hero-btn-cv"
-                                    href={cvUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="btn-cv"
-                                >
-                                    <i className="fas fa-file-download"></i>
-                                    <span>{cta1}</span>
-                                </a>
-                            )}
-                            {cta2 && (
-                                <span className="text-gray-400 text-sm italic border-b border-dashed border-gray-600 pb-1 cursor-pointer hover:text-[var(--clr-accent)] transition-colors">
-                                    {cta2}
-                                </span>
-                            )}
+                        <div ref={ctaRef} className="flex gap-6 hero-cta-group">
+                            <a
+                                id="hero-btn-cv"
+                                href={cvUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="btn-cv"
+                            >
+                                <i className="fas fa-file-download"></i>
+                                <span>Download CV</span>
+                            </a>
                         </div>
                     </div>
 

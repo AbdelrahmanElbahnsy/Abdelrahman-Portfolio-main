@@ -1,34 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { personalInfo, socialLinks } from '../../data/portfolioData';
-import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
-import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
 
 const Navbar = ({ splashDone = true }) => {
-    const { data: profileData, subscribe: subscribeProfile } = useFirestoreSingleDoc('profile', 'main');
-    const { data: navbarItemsData, subscribe: subscribeNavbar } = useFirestoreCrud('navbarItems', { orderByField: 'order', orderDirection: 'asc' });
-
-    useEffect(() => {
-        const unsubscribeProfile = subscribeProfile();
-        const unsubscribeNavbar = subscribeNavbar();
-        return () => {
-            if (unsubscribeProfile) unsubscribeProfile();
-            if (unsubscribeNavbar) unsubscribeNavbar();
-        };
-    }, [subscribeProfile, subscribeNavbar]);
-
-    const fallbackFirstName = personalInfo.firstName || 'Abdelrahman';
-    const fallbackLastName = personalInfo.lastName || 'El-bahnsy';
-
-    let firstName = fallbackFirstName;
-    let lastName = fallbackLastName;
-    
-    if (profileData?.fullName) {
-        const nameParts = profileData.fullName.split(' ');
-        firstName = nameParts[0] || fallbackFirstName;
-        lastName = nameParts.slice(1).join(' ') || fallbackLastName;
-    }
+    const { firstName, lastName } = personalInfo;
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [activeSection, setActiveSection] = useState('hero');
@@ -38,30 +14,13 @@ const Navbar = ({ splashDone = true }) => {
     const menuOverlayRef = useRef(null);
     const menuItemsRef = useRef(null);
 
-    const defaultNavLinks = [
+    const navLinks = [
         { name: 'Home', href: '#hero', id: 'hero', icon: 'fas fa-home' },
         { name: 'About', href: '#about', id: 'about', icon: 'fas fa-user' },
         { name: 'Skills', href: '#skills', id: 'skills', icon: 'fas fa-tools' },
-        { name: 'Journey', href: '#journey', id: 'journey', icon: 'fas fa-route' },
         { name: 'Projects', href: '#projects', id: 'projects', icon: 'fas fa-project-diagram' },
         { name: 'Certifications', href: '#certifications', id: 'certifications', icon: 'fas fa-certificate' },
     ];
-
-    const navLinks = React.useMemo(() => {
-        if (!navbarItemsData || navbarItemsData.length === 0) return defaultNavLinks.filter(l => l.id !== 'journey');
-        
-        return navbarItemsData
-            .filter(item => item.href !== '#contact') // Rendered natively
-            .map(item => {
-                const fallbackLink = defaultNavLinks.find(link => link.href === item.href) || {};
-                return {
-                    name: item.label || item.name || fallbackLink.name || 'Untitled',
-                    href: item.href || fallbackLink.href || '#',
-                    id: (item.href ? item.href.replace('#', '') : '') || fallbackLink.id || '',
-                    icon: item.icon || fallbackLink.icon || 'fas fa-circle'
-                };
-            });
-    }, [navbarItemsData]);
 
     const handleNavClick = (id) => {
         setActiveSection(id);

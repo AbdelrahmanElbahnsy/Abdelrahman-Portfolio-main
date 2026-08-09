@@ -173,7 +173,11 @@ const Skills = () => {
                                         {/* Card Header */}
                                         <div className="flex items-center gap-4 mb-8 relative z-10">
                                             <div className="w-16 h-16 flex items-center justify-center bg-[rgba(200,162,110,0.05)] border border-[rgba(200,162,110,0.1)] rounded-2xl text-2xl text-[var(--clr-accent)] group-hover:scale-110 group-hover:bg-[var(--clr-accent)] group-hover:text-black group-hover:shadow-[0_0_20px_rgba(200,162,110,0.4)] transition-all duration-500 flex-shrink-0">
-                                                <i className={card.icon}></i>
+                                                {card.icon === 'SiMicrosoftazure' ? (
+                                                    <SiMicrosoftazure />
+                                                ) : (
+                                                    <i className={card.icon}></i>
+                                                )}
                                             </div>
                                             <div>
                                                 <h3 className="text-xl md:text-2xl font-bold text-white mb-1 tracking-tight leading-tight">{card.title}</h3>

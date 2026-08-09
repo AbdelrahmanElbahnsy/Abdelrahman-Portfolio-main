@@ -188,6 +188,25 @@ html {}
     @apply bg-transparent;
   }
 
+  .hide-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    background: transparent;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar-thumb {
+    background: transparent;
+    border: none;
+  }
+
   .animate-up {
     opacity: 0;
     transform: translateY(30px);

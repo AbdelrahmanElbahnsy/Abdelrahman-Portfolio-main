@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -39,7 +39,9 @@ const MENU_GROUPS = [
     label: 'Settings',
     items: [
       { id: 'profile', label: 'Account Center', icon: User, path: '/admin/profile' },
-      ...(import.meta.env.DEV ? [{ id: 'devtools', label: 'Developer Tools', icon: Database, path: '/admin/devtools', dev: true }] : [])
+      { id: 'settings', label: 'Settings', icon: Settings, path: '/admin/settings' },
+      { id: 'media', label: 'Media Library', icon: Database, path: '/admin/media' },
+      ...(import.meta.env.DEV ? [{ id: 'devtools', label: 'Developer Tools', icon: Code, path: '/admin/devtools', dev: true }] : [])
     ]
   }
 ];
@@ -49,13 +51,12 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
   const { counts, pendingTasks } = useDashboard();
 
   return (
-    <motion.aside 
-      initial={false}
-      animate={{ width: isCollapsed ? '80px' : '280px' }}
-      className="bg-cms-sidebar border-r border-white/5 min-h-screen fixed left-0 top-0 flex flex-col z-50 shadow-2xl transition-all duration-300"
+    <aside
+      style={{ width: isCollapsed ? '80px' : '280px' }}
+      className="bg-cms-sidebar border-r border-white/5 h-screen fixed left-0 top-0 flex flex-col z-50 shadow-2xl duration-300 transition-[width]"
     >
       {/* Logo Area */}
-      <div className="h-20 flex items-center justify-between px-6 border-b border-white/5 bg-cms-background/30 backdrop-blur-md">
+      <div className="h-20 flex items-center justify-between px-6 border-b border-white/5 bg-cms-background/30 backdrop-blur-md shrink-0">
         <AnimatePresence mode="wait">
           {!isCollapsed ? (
             <motion.div 
@@ -93,7 +94,10 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
       </button>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto custom-scrollbar py-6 px-3">
+      <nav
+        className="flex-1 overflow-y-auto overscroll-contain hide-scrollbar min-h-0 py-6 px-3"
+        style={{ overscrollBehavior: 'contain' }}
+      >
         {MENU_GROUPS.map((group, groupIdx) => (
           <div key={groupIdx} className="mb-6 last:mb-0">
             <AnimatePresence>
@@ -178,7 +182,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
       </nav>
 
       {/* Footer System Info */}
-      <div className="p-4 border-t border-white/5 bg-cms-background/30">
+      <div className="p-4 border-t border-white/5 bg-cms-background/30 shrink-0">
         <AnimatePresence>
           {!isCollapsed ? (
             <motion.div 
@@ -205,7 +209,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
           )}
         </AnimatePresence>
       </div>
-    </motion.aside>
+    </aside>
   );
 };
 

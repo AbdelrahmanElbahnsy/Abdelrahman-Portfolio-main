@@ -94,7 +94,7 @@ const AnalyticsDashboard = () => {
 
       {error ? (
         <p className="text-sm text-red-400">
-          Unable to load live analytics right now. Showing the latest safe fallback values.
+          Unable to load live analytics right now.
         </p>
       ) : null}
 

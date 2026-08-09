@@ -7,7 +7,7 @@ import UserDropdown from './UserDropdown';
 
 const Topbar = ({ title, onLogout, onSearchClick }) => {
   return (
-    <header className="sticky top-0 z-40 w-full h-20 bg-cms-background/80 backdrop-blur-xl border-b border-white/5 flex items-center justify-between px-8">
+    <header className="shrink-0 sticky top-0 z-40 w-full h-20 bg-cms-background/80 backdrop-blur-xl border-b border-white/5 flex items-center justify-between px-8">
       {/* Left section: Breadcrumbs */}
       <div className="flex-1 flex items-center">
         <Breadcrumbs title={title} />

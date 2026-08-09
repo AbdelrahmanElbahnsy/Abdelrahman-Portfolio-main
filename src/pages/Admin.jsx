@@ -79,6 +79,7 @@ const Admin = () => {
           <Route path="apikeys" element={<FeatureUnavailable featureName="API Keys" />} />
           <Route path="settings" element={<FeatureUnavailable featureName="Settings" />} />
           <Route path="shortcuts" element={<FeatureUnavailable featureName="Keyboard Shortcuts" />} />
+          <Route path="media" element={<FeatureUnavailable featureName="Media Library" />} />
           
           {import.meta.env.DEV && (
             <Route path="devtools" element={<DeveloperTools />} />

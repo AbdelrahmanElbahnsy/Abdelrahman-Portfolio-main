@@ -103,7 +103,7 @@ const OverviewDashboard = () => {
   }
 
   const allSystemsOnline = systemHealth && Object.values(systemHealth).every(s => s.status === 'online');
-  const activeWarnings = notifications.filter(n => !dismissedWarnings.has(n.id) && (n.type === 'warning' || n.type === 'error'));
+  const activeWarnings = (notifications ?? []).filter(n => !dismissedWarnings.has(n.id) && (n.type === 'warning' || n.type === 'error'));
 
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="show" className="w-full space-y-6 pb-20">
@@ -228,10 +228,10 @@ const OverviewDashboard = () => {
                 { label: 'Edit About', icon: Info, path: '/admin/about' },
                 { label: 'Edit Contact', icon: Phone, path: '/admin/contact' },
                 { label: 'Social Links', icon: LinkIcon, path: '/admin/socials' },
-                { label: 'Upload Image', icon: ImageIcon, path: '/admin/media', disabled: true },
+                { label: 'Upload Image', icon: ImageIcon, path: '/admin/media' },
                 { label: 'Settings', icon: Settings, path: '/admin/profile' },
                 { label: 'View Portfolio', icon: ExternalLink, path: '/', external: true },
-                { label: 'Deploy Updates', icon: Cloud, path: '/admin/account', disabled: true },
+                { label: 'Deploy Updates', icon: Cloud, path: '/admin/account' },
               ].map(action => (
                 <button 
                   key={action.label} 
@@ -255,8 +255,8 @@ const OverviewDashboard = () => {
               </h3>
             </div>
             <div className="divide-y divide-white/5">
-              {latestUpdates?.length > 0 ? latestUpdates.map(item => (
-                <div key={item.id} className="flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors group cursor-pointer" onClick={() => navigate(getManagerRoute(item._collection, item.id))}>
+              {(latestUpdates ?? []).length > 0 ? (latestUpdates ?? []).map((item, index) => (
+                <div key={item.id || index} className="flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors group cursor-pointer" onClick={() => navigate(getManagerRoute(item._collection, item.id))}>
                   <div className="flex items-center gap-4 min-w-0">
                     <div className="w-9 h-9 rounded-md bg-black/40 flex items-center justify-center border border-white/5 text-gray-500 shrink-0 overflow-hidden">
                       {item.image ? <img src={item.image} alt="" className="w-full h-full object-cover" /> : getCollectionIcon(item._collection)}
@@ -264,7 +264,9 @@ const OverviewDashboard = () => {
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 mb-0.5">
                         <span className="text-[10px] font-bold text-white bg-white/10 px-1.5 py-0.5 rounded shadow-sm">{item._collection}</span>
-                        <p className="text-sm font-bold text-gray-200 truncate group-hover:text-white transition-colors">{item.title || item.name || item.label || 'Untitled Document'}</p>
+                        <p className="text-sm font-bold text-gray-200 truncate group-hover:text-white transition-colors">
+                          {item.title || item.name || item.label || item.firstName || `[${item._collection}/${item.id}]`}
+                        </p>
                       </div>
                       <p className="text-[11px] font-medium text-gray-500">
                         Updated {item.updatedAt ? formatDistanceToNow(item.updatedAt?.toDate ? item.updatedAt.toDate() : new Date(item.updatedAt)) + ' ago' : 'recently'}
@@ -318,22 +320,18 @@ const OverviewDashboard = () => {
         <div className="space-y-6">
           
           {/* Action Required */}
-          {activeWarnings?.length > 0 && (
+          {activeWarnings?.length > 0 ? (
             <motion.div variants={itemVariants} className="bg-red-500/5 border border-red-500/20 rounded-xl flex flex-col overflow-hidden">
               <div className="p-4 border-b border-red-500/10 flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-red-400" />
                 <h3 className="font-bold text-red-400">Action Required</h3>
               </div>
               <div className="divide-y divide-red-500/10">
-                {activeWarnings.map(n => {
-                  // Determine resolution path based on notification type
-                  let fixPath = '/admin/overview';
-                  if (n.id.includes('hero')) fixPath = '/admin/home';
-                  if (n.id.includes('proj')) fixPath = '/admin/projects';
-                  if (n.id.includes('sys')) fixPath = '/admin/account';
+                {activeWarnings.map((n, index) => {
+                  let fixPath = n.link || '/admin/overview';
 
                   return (
-                    <div key={n.id} className="p-4 flex flex-col gap-3">
+                    <div key={n.id || index} className="p-4 flex flex-col gap-3">
                       <p className="text-sm text-gray-200 leading-snug font-medium">{n.message}</p>
                       <div className="flex items-center gap-2">
                         <button 
@@ -359,12 +357,22 @@ const OverviewDashboard = () => {
                           }}
                           className="px-3 py-1.5 hover:bg-white/5 text-gray-500 hover:text-gray-300 text-xs font-bold rounded-lg transition-colors ml-auto flex items-center gap-1"
                         >
-                          <X className="w-3 h-3" /> Dismiss
+                          <X className="w-3 h-3" /> Ignore
                         </button>
                       </div>
                     </div>
                   );
                 })}
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div variants={itemVariants} className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-6 flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400 shrink-0">
+                <ShieldCheck className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="font-bold text-emerald-400 mb-1">System Healthy</h3>
+                <p className="text-sm text-gray-400">No active warnings or infrastructure issues detected.</p>
               </div>
             </motion.div>
           )}
@@ -378,8 +386,8 @@ const OverviewDashboard = () => {
               <span className="bg-white/10 px-2 py-0.5 rounded text-xs font-bold text-white">{pendingTasks?.length || 0}</span>
             </div>
             <div className="divide-y divide-white/5">
-              {pendingTasks?.length > 0 ? pendingTasks.map(task => (
-                <div key={task.id} className="p-4 flex gap-3 hover:bg-white/[0.02] transition-colors cursor-pointer group" onClick={() => navigate(task.link)}>
+              {(pendingTasks ?? []).length > 0 ? (pendingTasks ?? []).map((task, index) => (
+                <div key={task.id || index} className="p-4 flex gap-3 hover:bg-white/[0.02] transition-colors cursor-pointer group" onClick={() => navigate(task.link)}>
                   <div className="mt-0.5 w-4 h-4 rounded-full border-2 border-gray-600 shrink-0 group-hover:border-emerald-500 transition-colors"></div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-300 leading-snug mb-2 group-hover:text-white transition-colors">{task.title}</p>

@@ -55,11 +55,15 @@ export const GlobalSearch = ({ isOpen, onClose }) => {
     const dynamicDocs = searchableDocs.map(item => {
       let routePath = `/admin/${item._collection}`;
       if (item._collection === 'hero') routePath = '/admin/home';
-      if (item._collection === 'navbarItems') routePath = '/admin/navbar';
-      
+      else if (item._collection === 'about') routePath = '/admin/about';
+      else if (item._collection === 'navbarItems') routePath = `/admin/navbar${item.id ? `?edit=${item.id}` : ''}`;
+      else if (item.id) routePath = `/admin/${item._collection}?edit=${item.id}`;
+
+      const displayName = item.title || item.name || item.label || item.firstName || `[${item._collection}/${item.id}]`;
+
       return {
         type: item._collection,
-        title: item.title || item.name || item.label || 'Untitled',
+        title: displayName,
         icon: FileText,
         link: routePath
       };
@@ -146,7 +150,7 @@ export const GlobalSearch = ({ isOpen, onClose }) => {
                 const isSelected = idx === selectedIndex;
                 return (
                   <div 
-                    key={idx}
+                    key={`${result.type}-${result.title}-${idx}`}
                     onMouseEnter={() => setSelectedIndex(idx)}
                     onClick={() => handleSelect(result.link)}
                     className={`flex items-center justify-between p-3 rounded-xl cursor-pointer transition-colors ${isSelected ? 'bg-cms-primary text-white' : 'text-gray-300 hover:bg-white/5'}`}

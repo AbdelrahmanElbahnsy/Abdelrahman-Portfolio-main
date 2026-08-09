@@ -12,6 +12,10 @@ export const DashboardProvider = ({ children }) => {
     latestUpdates: [],
     recentActivity: [],
     pendingTasks: [],
+    notifications: [],
+    healthDiagnostics: [],
+    healthScore: null,
+    storageStats: null,
     systemHealth: null,
     isLoading: true,
     isRefetching: false,
@@ -35,22 +39,33 @@ export const DashboardProvider = ({ children }) => {
       const counts = await crudService.getCollectionCounts(COLLECTIONS);
 
       // 2. Fetch Latest Updates (Mixed Content)
-      // Since Firestore doesn't support global sorting across collections, 
-      // we fetch the top 2 from each major editable collection, merge, and sort locally.
-      const editableCollections = ['projects', 'skills', 'certifications', 'journey', 'hero', 'about', 'navbarItems', 'socials'];
+      const editableCollections = ['projects', 'skills', 'certifications', 'journey', 'hero', 'about', 'navbarItems', 'socials', 'content'];
       
-      const latestPromises = editableCollections.map(col => 
-        crudService.getAll(col, { orderByField: 'updatedAt', orderDirection: 'desc', limitCount: 2 })
+      const latestPromises = editableCollections.map(col =>
+        crudService.getAll(col, { orderByField: 'updatedAt', orderDirection: 'desc' })
           .then(docs => docs.map(d => ({ ...d, _collection: col })))
           .catch(() => []) // Ignore missing collections gracefully
       );
       
       const allUpdates = await Promise.all(latestPromises);
-      const mergedUpdates = allUpdates.flat().filter(d => d.updatedAt).sort((a, b) => {
-        const timeA = a.updatedAt?.toMillis ? a.updatedAt.toMillis() : new Date(a.updatedAt).getTime();
-        const timeB = b.updatedAt?.toMillis ? b.updatedAt.toMillis() : new Date(b.updatedAt).getTime();
-        return timeB - timeA;
-      }).slice(0, 5); // Take top 5 newest globally
+
+      // Helper: get all docs for a specific collection from allUpdates
+      const byCollection = (col) => allUpdates.find(arr => arr[0]?._collection === col) || [];
+
+      const getTimestamp = (d) => {
+        const ts = d.updatedAt || d.createdAt;
+        if (!ts) return 0;
+        return ts?.toMillis ? ts.toMillis() : new Date(ts).getTime();
+      };
+
+      const mergedUpdates = allUpdates.flat()
+        .filter(d => {
+          // Must have at least one timestamp
+          if (!d.updatedAt && !d.createdAt) return false;
+          return true;
+        })
+        .sort((a, b) => getTimestamp(b) - getTimestamp(a))
+        .slice(0, 5);
 
       // 3. Fetch Recent Activity
       const recentActivity = await crudService.getAll('activityLog', {
@@ -64,52 +79,200 @@ export const DashboardProvider = ({ children }) => {
       const notifications = [];
       const healthDiagnostics = [];
       let healthScore = 100;
-      
-      const hero = allUpdates.find(colArray => colArray[0]?._collection === 'hero')?.[0];
-      if (!hero || !hero.title || !hero.image) {
-        pendingTasks.push({ id: 'hero-incomplete', title: 'Complete Hero section (Title/Image missing)', urgent: true, link: '/admin/home', type: 'hero' });
-        healthDiagnostics.push({ label: 'Hero section incomplete', penalty: 10, link: '/admin/home' });
-        healthScore -= 10;
-      }
-      
-      let cloudinaryImages = hero?.image ? 1 : 0;
-      const about = allUpdates.find(colArray => colArray[0]?._collection === 'about')?.[0];
-      if (!about || !about.description) {
-        healthDiagnostics.push({ label: 'About description missing', penalty: 10, link: '/admin/about' });
-        healthScore -= 10;
-      }
-      if (about?.image) cloudinaryImages += 1;
-      
-      const projs = allUpdates.find(colArray => colArray[0]?._collection === 'projects') || [];
-      cloudinaryImages += projs.filter(p => p.image).length;
+      let cloudinaryImages = 0;
 
-      if (counts.projects === 0) {
-        pendingTasks.push({ id: 'no-projects', title: 'Publish your first project', urgent: true, link: '/admin/projects', type: 'projects' });
-        healthDiagnostics.push({ label: 'No projects published', penalty: 20, link: '/admin/projects' });
-        healthScore -= 20;
+      const addIssue = (id, title, msg, link, penalty, type, urgent = false) => {
+        // Prevent duplicates
+        if (pendingTasks.some(t => t.id === id)) return;
+        pendingTasks.push({ id, title, urgent, link, type });
+        healthDiagnostics.push({ label: msg, penalty, link });
+        notifications.push({ id: `notif-${id}`, type: 'warning', message: msg, time: Date.now() });
+        healthScore -= penalty;
+      };
+
+      // ----------------------------------------------------
+      // SCHEMA-AWARE VALIDATION
+      // ----------------------------------------------------
+
+      // 4.1 Hero Validation (Schema: firstName, lastName, badge, portrait)
+      const heroList = byCollection('hero');
+      const hero = heroList[0] || null;
+      if (!hero) {
+        addIssue('hero-missing', 'Create Hero Section', 'Hero section is missing.', '/admin/home', 10, 'hero', true);
       } else {
-        const missingLink = projs.find(p => !p.liveLink && !p.githubLink);
-        if (missingLink) {
-          pendingTasks.push({ id: `proj-${missingLink.id}`, title: `Project "${missingLink.title}" is missing links`, urgent: false, link: '/admin/projects', type: 'projects' });
-          notifications.push({ id: `notif-proj-${missingLink.id}`, type: 'warning', message: `Project "${missingLink.title}" missing demo link.`, time: Date.now() });
-          healthDiagnostics.push({ label: `Project "${missingLink.title}" missing links`, penalty: 5, link: '/admin/projects' });
-          healthScore -= 5;
-        }
+        const hasName = (hero.firstName && hero.lastName) || hero.title;
+        const hasBadge = hero.badge || hero.role || hero.subtitle;
+        const hasImage = hero.portrait || hero.image || hero.avatar;
+
+        if (!hasName) addIssue('hero-name', 'Add Hero Name', 'Hero name (firstName/lastName) is missing.', '/admin/home', 5, 'hero');
+        if (!hasBadge) addIssue('hero-badge', 'Add Hero Badge', 'Hero professional title (badge) is missing.', '/admin/home', 5, 'hero');
+        if (!hasImage) addIssue('hero-image', 'Upload Hero Image', 'Hero portrait image is missing.', '/admin/home', 5, 'hero');
+        if (hasImage) cloudinaryImages++;
       }
 
+      // 4.2 About Validation (Schema: subtitle, title, lead, paragraphsJson)
+      const aboutList = byCollection('about');
+      const about = aboutList[0] || null;
+      if (!about) {
+        addIssue('about-missing', 'Complete About Section', 'About document is missing.', '/admin/about', 10, 'about', true);
+      } else {
+        const hasTitle = about.title || about.header;
+        const hasContent = about.lead || about.description || (about.paragraphsJson && about.paragraphsJson.length > 5) || (about.paragraphs && about.paragraphs.length > 0);
+        
+        if (!hasTitle) addIssue('about-title', 'Add About Title', 'About section title is missing.', '/admin/about', 5, 'about');
+        if (!hasContent) addIssue('about-content', 'Add About Content', 'About description or lead text is missing.', '/admin/about', 10, 'about', true);
+        if (about.image || about.portrait) cloudinaryImages++;
+      }
+
+      // 4.3 Projects Validation (Schema: title, description, image, github, live)
+      const projs = byCollection('projects');
+      if (counts.projects === 0) {
+        addIssue('no-projects', 'Publish First Project', 'No projects published.', '/admin/projects', 20, 'projects', true);
+      } else {
+        projs.forEach(p => {
+          const hasImage = p.image || p.thumbnail || p.cover;
+          const hasGithub = p.github || p.githubUrl || p.githubLink || p.repo || p.repository;
+          const hasLive = p.live || p.liveUrl || p.liveLink || p.demo || p.demoUrl || p.website || p.link;
+          const displayName = p.title || p.id;
+
+          if (hasImage) cloudinaryImages++;
+          else addIssue(
+            `proj-img-${p.id}`,
+            `Add Thumbnail: "${displayName}" (${p.id})`,
+            `projects/${p.id} — "${displayName}" is missing a thumbnail image.`,
+            `/admin/projects?edit=${p.id}`, 5, 'projects'
+          );
+          
+          if (!hasGithub && !hasLive) {
+            addIssue(
+              `proj-links-${p.id}`,
+              `Add Links: "${displayName}" (${p.id})`,
+              `projects/${p.id} — "${displayName}" is missing both GitHub and Live links.`,
+              `/admin/projects?edit=${p.id}`, 5, 'projects'
+            );
+          }
+        });
+      }
+
+      // 4.4 Skills Validation (Schema: name, percent)
+      const skills = byCollection('skills');
       if (counts.skills === 0) {
-        pendingTasks.push({ id: 'no-skills', title: 'Add your technical skills', urgent: false, link: '/admin/skills', type: 'skills' });
-        healthDiagnostics.push({ label: 'No technical skills added', penalty: 10, link: '/admin/skills' });
-        healthScore -= 10;
+        addIssue('no-skills', 'Add Technical Skills', 'No technical skills added.', '/admin/skills', 10, 'skills');
+      } else {
+        skills.forEach(s => {
+          const missingFields = [];
+          if (!s.name) missingFields.push('name');
+          if (s.percent == null) missingFields.push('percent');
+          if (missingFields.length > 0) {
+            const display = s.name || `[id: ${s.id}]`;
+            addIssue(
+              `skill-inv-${s.id}`,
+              `Fix Skill: "${display}" (${s.id})`,
+              `skills/${s.id} — "${display}" is missing: ${missingFields.join(', ')}.`,
+              `/admin/skills?edit=${s.id}`, 5, 'skills'
+            );
+          }
+        });
       }
-      if (counts.socials === 0) {
-        pendingTasks.push({ id: 'no-socials', title: 'Add your social profiles', urgent: false, link: '/admin/socials', type: 'socials' });
-        healthDiagnostics.push({ label: 'No social links configured', penalty: 5, link: '/admin/socials' });
-        healthScore -= 5;
+
+      // 4.5 Certifications Validation (Schema: title, issuer)
+      const certs = byCollection('certifications');
+      if (counts.certifications === 0) {
+        addIssue('no-certs', 'Add Certifications', 'No certifications added.', '/admin/certifications', 5, 'certifications');
+      } else {
+        certs.forEach(c => {
+          const missingFields = [];
+          if (!c.title) missingFields.push('title');
+          if (!c.issuer) missingFields.push('issuer');
+          if (missingFields.length > 0) {
+            const display = c.title || `[id: ${c.id}]`;
+            addIssue(
+              `cert-inv-${c.id}`,
+              `Fix Certificate: "${display}" (${c.id})`,
+              `certifications/${c.id} — "${display}" is missing: ${missingFields.join(', ')}.`,
+              `/admin/certifications?edit=${c.id}`, 5, 'certifications'
+            );
+          }
+        });
       }
+
+      // 4.6 Journey Validation (Schema: title, order)
+      const journeys = byCollection('journey');
       if (counts.journey === 0) {
-        healthDiagnostics.push({ label: 'Journey timeline empty', penalty: 10, link: '/admin/journey' });
-        healthScore -= 10;
+        addIssue('no-journey', 'Add Journey Timeline', 'Journey timeline is empty.', '/admin/journey', 10, 'journey');
+      } else {
+        journeys.forEach(j => {
+          const missingFields = [];
+          if (!j.title) missingFields.push('title');
+          if (j.order == null) missingFields.push('order');
+          if (missingFields.length > 0) {
+            const display = j.title || `[id: ${j.id}]`;
+            addIssue(
+              `journey-inv-${j.id}`,
+              `Fix Journey: "${display}" (${j.id})`,
+              `journey/${j.id} — "${display}" is missing: ${missingFields.join(', ')}.`,
+              `/admin/journey?edit=${j.id}`, 5, 'journey'
+            );
+          }
+        });
+      }
+
+      // 4.7 Socials Validation (Schema: platform, url)
+      const socials = byCollection('socials');
+      if (counts.socials === 0) {
+        addIssue('no-socials', 'Add Social Profiles', 'No social links configured.', '/admin/socials', 5, 'socials');
+      } else {
+        socials.forEach(s => {
+          const url = s.url || s.link || s.href;
+          const platform = s.platform || s.name || `[id: ${s.id}]`;
+          const missingFields = [];
+          if (!s.platform && !s.name) missingFields.push('platform');
+          if (!url) missingFields.push('url');
+          else if (!url.startsWith('http') && !url.startsWith('tel:') && !url.startsWith('mailto:')) missingFields.push('url (invalid format)');
+
+          if (missingFields.length > 0) {
+            addIssue(
+              `soc-url-${s.id}`,
+              `Fix Social: "${platform}" (${s.id})`,
+              `socials/${s.id} — "${platform}" has invalid fields: ${missingFields.join(', ')}.`,
+              `/admin/socials?edit=${s.id}`, 5, 'socials'
+            );
+          }
+        });
+      }
+
+      // 4.8 Navbar Validation (Schema: label, path)
+      const navs = byCollection('navbarItems');
+      if (counts.navbarItems === 0) {
+        addIssue('no-navs', 'Configure Navbar', 'No navbar items exist.', '/admin/navbar', 5, 'navbarItems');
+      } else {
+        navs.forEach(n => {
+          const label = n.label || n.title || n.name;
+          const path = n.path || n.url || n.link || n.href;
+          const missingFields = [];
+          if (!label) missingFields.push('label');
+          if (!path) missingFields.push('path');
+          if (missingFields.length > 0) {
+            const display = label || `[id: ${n.id}]`;
+            addIssue(
+              `nav-inv-${n.id}`,
+              `Fix Navbar: "${display}" (${n.id})`,
+              `navbarItems/${n.id} — "${display}" is missing: ${missingFields.join(', ')}.`,
+              `/admin/navbar?edit=${n.id}`, 5, 'navbarItems'
+            );
+          }
+        });
+      }
+
+      // 4.9 Contact Validation (Schema: email)
+      const contentCol = allUpdates.find(colArray => colArray[0]?._collection === 'content') || [];
+      const contactDoc = contentCol.find(d => d.id === 'contact');
+      if (!contactDoc) {
+        addIssue('contact-missing', 'Configure Contact Settings', 'Contact information is missing.', '/admin/contact', 5, 'content');
+      } else {
+        if (!contactDoc.email || !contactDoc.email.includes('@')) {
+          addIssue('contact-email', 'Fix Contact Email', 'Valid contact email is missing.', '/admin/contact', 5, 'content');
+        }
       }
 
       // 5. System Health

@@ -16,6 +16,11 @@ initLenis()
 import './index.css'
 
 import App from './App.jsx'
+import { crudService } from './cms/services/crudService'
+
+if (import.meta.env.DEV) {
+  window.crudService = crudService;
+}
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

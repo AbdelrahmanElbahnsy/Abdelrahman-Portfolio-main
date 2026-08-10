@@ -112,7 +112,7 @@ const Certifications = () => {
                         {[...certifications, ...certifications].map((cert, idx) => (
                             <SwiperSlide key={idx} className="cert-slide">
                                 {({ isActive }) => (
-                                    <div className={`w-full h-full relative p-8 rounded-3xl border transition-all duration-700 flex flex-col justify-between overflow-hidden group
+                                    <div className={`w-full h-full relative p-5 md:p-8 rounded-3xl border transition-all duration-700 flex flex-col justify-between overflow-hidden group
                                         ${isActive 
                                             ? 'bg-[var(--theme-surface-elevated)] border-[var(--theme-accent)] shadow-[var(--theme-shadow-strong)] backdrop-blur-xl z-10' 
                                             : 'bg-[var(--theme-surface)] border-[var(--theme-border)] shadow-[var(--theme-shadow)] opacity-50 backdrop-blur-md'
@@ -166,14 +166,14 @@ const Certifications = () => {
                     </Swiper>
 
                     {/* Navigation Controls */}
-                    <div className="flex items-center justify-center gap-8 mt-4 relative z-20">
-                        <button className="certs-prev w-12 h-12 rounded-full border border-[var(--theme-border)] bg-[var(--theme-surface-elevated)] backdrop-blur-md flex items-center justify-center text-[var(--theme-text)] hover:bg-[var(--theme-accent)] hover:text-[var(--theme-bg)] hover:border-[var(--theme-accent)] transition-all duration-300 disabled:opacity-30 disabled:pointer-events-none group">
+                    <div className="flex items-center justify-center gap-4 md:gap-8 mt-4 relative z-20">
+                        <button className="certs-prev w-10 h-10 md:w-12 md:h-12 rounded-full border border-[var(--theme-border)] bg-[var(--theme-surface-elevated)] backdrop-blur-md flex items-center justify-center text-[var(--theme-text)] hover:bg-[var(--theme-accent)] hover:text-[var(--theme-bg)] hover:border-[var(--theme-accent)] transition-all duration-300 disabled:opacity-30 disabled:pointer-events-none group shrink-0">
                             <i className="fas fa-chevron-left text-sm group-hover:-translate-x-0.5 rtl:group-hover:translate-x-0.5 transition-transform rtl:rotate-180"></i>
                         </button>
                         
-                        <div className="certs-pagination flex items-center justify-center gap-2 min-w-[100px]"></div>
+                        <div className="certs-pagination flex items-center justify-center gap-1 md:gap-2 min-w-[80px] md:min-w-[100px] flex-wrap"></div>
                         
-                        <button className="certs-next w-12 h-12 rounded-full border border-[var(--theme-border)] bg-[var(--theme-surface-elevated)] backdrop-blur-md flex items-center justify-center text-[var(--theme-text)] hover:bg-[var(--theme-accent)] hover:text-[var(--theme-bg)] hover:border-[var(--theme-accent)] transition-all duration-300 disabled:opacity-30 disabled:pointer-events-none group">
+                        <button className="certs-next w-10 h-10 md:w-12 md:h-12 rounded-full border border-[var(--theme-border)] bg-[var(--theme-surface-elevated)] backdrop-blur-md flex items-center justify-center text-[var(--theme-text)] hover:bg-[var(--theme-accent)] hover:text-[var(--theme-bg)] hover:border-[var(--theme-accent)] transition-all duration-300 disabled:opacity-30 disabled:pointer-events-none group shrink-0">
                             <i className="fas fa-chevron-right text-sm group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 transition-transform rtl:rotate-180"></i>
                         </button>
                     </div>
@@ -182,8 +182,14 @@ const Certifications = () => {
             
             <style dangerouslySetInnerHTML={{ __html: `
                 .cert-slide {
-                    width: 340px !important;
+                    width: 280px !important;
+                    max-width: 90vw !important;
                     height: 380px !important;
+                }
+                @media (min-width: 380px) {
+                    .cert-slide {
+                        width: 320px !important;
+                    }
                 }
                 @media (min-width: 768px) {
                     .cert-slide {

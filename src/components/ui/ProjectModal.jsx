@@ -1,10 +1,12 @@
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { normalizeProjectTechnologies } from '../../utils/projectTechnologies';
 import TechTags from './TechTags';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 const FALLBACK_IMAGE = '/portfolio-preview.png';
 
 const ProjectModal = ({ project, onClose }) => {
+  const { t } = useLanguage();
   const modalRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
   const [imageSrc, setImageSrc] = useState(FALLBACK_IMAGE);
@@ -115,18 +117,18 @@ const ProjectModal = ({ project, onClose }) => {
         </div>
 
         <div className="px-6 pb-6 pt-5 sm:px-8 sm:pb-8">
-          <h2 id="project-modal-title" className="text-3xl font-black tracking-tight text-white sm:text-4xl">
-            {project.title}
+          <h2 id="project-modal-title" className="text-3xl font-black tracking-tight text-[var(--theme-text)] sm:text-4xl text-left rtl:text-right" dir="auto">
+            {t(project.title)}
           </h2>
 
           <TechTags technologies={technologies} className="mt-4" />
 
-          <div className="mt-8 rounded-[28px] border-l-2 border-[rgba(200,162,110,0.7)] bg-[#0a0e17] p-6 shadow-inner shadow-[rgba(200,162,110,0.1)]">
-            <div className="mb-4 font-mono text-xs uppercase tracking-[0.35em] text-[var(--clr-accent-3)] opacity-90">
+          <div className="mt-8 rounded-[28px] border-l-2 rtl:border-l-0 rtl:border-r-2 border-[rgba(200,162,110,0.7)] bg-[var(--theme-surface-elevated)] p-6 shadow-inner shadow-[rgba(200,162,110,0.1)]">
+            <div className="mb-4 font-mono text-xs uppercase tracking-[0.35em] text-[var(--theme-accent)] opacity-90 text-left" dir="ltr">
               $ cat description.txt
             </div>
-            <p className="whitespace-pre-line text-sm leading-7 text-slate-300">
-              {project.description || project.desc || 'No description available.'}
+            <p className="whitespace-pre-line text-sm leading-7 text-[var(--theme-text-secondary)] text-left rtl:text-right" dir="auto">
+              {t(project.description) || t(project.desc) || 'No description available.'}
             </p>
           </div>
 
@@ -136,20 +138,20 @@ const ProjectModal = ({ project, onClose }) => {
                 href={repoLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[var(--clr-accent)] to-[var(--clr-accent-2)] px-5 py-3 text-sm font-semibold text-white shadow-[0_0_30px_-10px_rgba(200,162,110,0.4)] transition hover:shadow-[0_0_30px_0_rgba(200,162,110,0.6)]"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[var(--theme-accent)] to-[var(--theme-accent-hover)] px-5 py-3 text-sm font-semibold text-white shadow-[0_0_30px_-10px_rgba(200,162,110,0.4)] transition hover:shadow-[0_0_30px_0_rgba(200,162,110,0.6)]"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
                 </svg>
-                Repository
+                {t('Repository')}
               </a>
             ) : null}
             <button
               type="button"
               onClick={onClose}
-              className="inline-flex items-center justify-center rounded-xl border border-slate-600 bg-transparent px-5 py-3 text-sm font-semibold text-slate-300 transition hover:border-[var(--clr-accent)] hover:text-white"
+              className="inline-flex items-center justify-center rounded-xl border border-slate-600 bg-transparent px-5 py-3 text-sm font-semibold text-[var(--theme-text-secondary)] transition hover:border-[var(--theme-accent)] hover:text-[var(--theme-text)]"
             >
-              Close
+              {t('Close')}
             </button>
           </div>
         </div>

@@ -18,6 +18,8 @@ import './index.css'
 import App from './App.jsx'
 import { crudService } from './cms/services/crudService'
 
+import { LanguageProvider } from './i18n/LanguageContext'
+
 if (import.meta.env.DEV) {
   window.crudService = crudService;
 }
@@ -25,9 +27,11 @@ if (import.meta.env.DEV) {
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </LanguageProvider>
     </BrowserRouter>
   </React.StrictMode>
 )

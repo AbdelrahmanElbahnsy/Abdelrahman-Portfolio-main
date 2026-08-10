@@ -48,8 +48,32 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" media="print" onload="this.media='all'">
 
 
+    <!-- Theme Initialization to Prevent FOUC -->
+    <script>
+      (function() {
+        try {
+          var theme = localStorage.getItem('portfolio-theme');
+          if (theme === 'light') {
+            document.documentElement.classList.add('light-theme');
+          } else if (theme !== 'dark' && window.matchMedia('(prefers-color-scheme: light)').matches) {
+            document.documentElement.classList.add('light-theme');
+          }
+          
+          var lang = localStorage.getItem('portfolio-language');
+          if (lang === 'ar') {
+            document.documentElement.lang = 'ar';
+            // IMPORTANT: dir MUST remain 'ltr' at all times.
+            // Structural layout depends on LTR. RTL is applied locally to text only.
+            document.documentElement.dir = 'ltr';
+          } else {
+            document.documentElement.lang = 'en';
+            document.documentElement.dir = 'ltr';
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
-  <body class="dark-theme">
+  <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

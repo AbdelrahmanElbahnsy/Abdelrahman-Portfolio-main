@@ -34,7 +34,7 @@ const CircularSkill = ({ icon, percent, title, subtitle, isVisible, delay }) => 
             cy="60"
             r={radius}
             fill="transparent"
-            stroke="var(--clr-accent)"
+            stroke="var(--theme-accent)"
             strokeWidth="8"
             strokeDasharray={circumference}
             style={{ 

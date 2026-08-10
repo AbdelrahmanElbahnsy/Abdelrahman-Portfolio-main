@@ -15,7 +15,7 @@ gsap.registerPlugin(ScrollTrigger);
  */
 const WaveDivider = ({
     position = 'bottom',
-    color = 'var(--clr-bg)',
+    color = 'var(--theme-bg)',
     height = 80,
     flip = false,
 }) => {
@@ -85,7 +85,7 @@ const WaveDivider = ({
                     fill={color}
                     fillOpacity="0.06"
                     style={{
-                        filter: `drop-shadow(0 0 8px ${color === 'var(--clr-bg)' ? 'rgba(200,162,110,0.1)' : color})`,
+                        filter: `drop-shadow(0 0 8px ${color === 'var(--theme-bg)' ? 'var(--theme-accent-soft)' : color})`,
                     }}
                 />
                 {/* Secondary wave for depth */}

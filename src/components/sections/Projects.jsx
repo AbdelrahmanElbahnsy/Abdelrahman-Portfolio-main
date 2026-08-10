@@ -12,6 +12,7 @@ import ProjectCard from '../ui/ProjectCard';
 import { projects as localProjects } from '../../data/portfolioData';
 import { normalizeProjectTechnologies } from '../../utils/projectTechnologies';
 import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -34,6 +35,7 @@ const normalizeProject = (project, index) => ({
 });
 
 const Projects = () => {
+  const { t, language } = useLanguage();
   const [selectedProject, setSelectedProject] = useState(null);
   const { data: projectsData, loading, subscribe } = useFirestoreCrud('projects', { orderBy: { field: 'order', direction: 'asc' } });
   
@@ -89,15 +91,15 @@ const Projects = () => {
       <section
         id="projects"
         ref={sectionRef}
-        className="relative bg-transparent text-white py-7 md:py-8 lg:py-10 overflow-hidden w-full"
+        className="relative bg-transparent text-[var(--theme-text)] py-7 md:py-8 lg:py-10 overflow-hidden w-full"
       >
         {/* Header */}
         <div ref={headerRef} className="section-header text-center px-8 mb-16 flex-shrink-0 z-10 relative">
-          <span className="section-subtitle mb-2 block font-mono text-sm font-bold uppercase tracking-widest text-[var(--clr-accent)]">
-            [ Projects_Database ]
+          <span className="section-subtitle mb-2 block font-mono text-sm font-bold uppercase tracking-widest text-[var(--theme-accent)]">
+            [ {t('Projects Architecture')} ]
           </span>
-          <h2 className="section-title text-4xl font-black tracking-tight text-white drop-shadow-md md:text-5xl">
-            Featured Systems
+          <h2 className="section-title text-4xl font-black tracking-tight text-[var(--theme-text)] drop-shadow-md md:text-5xl">
+            {t('Featured Systems')}
           </h2>
         </div>
 
@@ -107,19 +109,20 @@ const Projects = () => {
             
             {/* Custom Navigation Arrows */}
             <button 
-                className="projects-swiper-prev absolute left-0 md:-left-4 lg:-left-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(200,162,110,0.4)] bg-[rgba(10,15,30,0.95)] text-[rgba(200,162,110,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(200,162,110,0.25)] hover:shadow-[0_0_20px_rgba(200,162,110,0.55)] focus:outline-none cursor-pointer hidden md:flex"
+                className="projects-swiper-prev absolute left-0 md:-left-4 lg:-left-8 rtl:left-auto rtl:right-0 rtl:md:-right-4 rtl:lg:-right-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[var(--theme-border-gold)] bg-[var(--theme-surface-elevated)] text-[var(--theme-accent)] hover:text-[var(--theme-bg)] hover:bg-[var(--theme-accent)] flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--theme-accent)] shadow-[0_0_10px_var(--theme-accent-soft)] hover:shadow-[0_0_20px_var(--theme-accent-soft)] focus:outline-none cursor-pointer hidden md:flex"
                 aria-label="Previous project"
             >
-                <i className="fas fa-chevron-left text-xl md:text-2xl drop-shadow-[0_0_3px_rgba(200,162,110,0.4)]"></i>
+                <i className="fas fa-chevron-left text-xl md:text-2xl drop-shadow-[0_0_3px_var(--theme-accent-soft)] rtl:rotate-180"></i>
             </button>
             <button 
-                className="projects-swiper-next absolute right-0 md:-right-4 lg:-right-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(200,162,110,0.4)] bg-[rgba(10,15,30,0.95)] text-[rgba(200,162,110,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(200,162,110,0.25)] hover:shadow-[0_0_20px_rgba(200,162,110,0.55)] focus:outline-none cursor-pointer hidden md:flex"
+                className="projects-swiper-next absolute right-0 md:-right-4 lg:-right-8 rtl:right-auto rtl:left-0 rtl:md:-left-4 rtl:lg:-left-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[var(--theme-border-gold)] bg-[var(--theme-surface-elevated)] text-[var(--theme-accent)] hover:text-[var(--theme-bg)] hover:bg-[var(--theme-accent)] flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--theme-accent)] shadow-[0_0_10px_var(--theme-accent-soft)] hover:shadow-[0_0_20px_var(--theme-accent-soft)] focus:outline-none cursor-pointer hidden md:flex"
                 aria-label="Next project"
             >
-                <i className="fas fa-chevron-right text-xl md:text-2xl drop-shadow-[0_0_3px_rgba(200,162,110,0.4)]"></i>
+                <i className="fas fa-chevron-right text-xl md:text-2xl drop-shadow-[0_0_3px_var(--theme-accent-soft)] rtl:rotate-180"></i>
             </button>
 
             <Swiper
+                dir="ltr"
                 modules={[Navigation, Pagination, Keyboard, Autoplay]}
                 spaceBetween={30}
                 slidesPerView={1}
@@ -163,12 +166,12 @@ const Projects = () => {
 
       <style dangerouslySetInnerHTML={{ __html: `
           .projects-pagination .swiper-pagination-bullet {
-              background: var(--clr-text-dim);
+              background: var(--theme-text-muted);
               opacity: 0.3;
               transition: all 0.3s ease;
           }
           .projects-pagination .swiper-pagination-bullet-active {
-              background: var(--clr-accent);
+              background: var(--theme-accent);
               opacity: 1;
               width: 25px;
               border-radius: 5px;

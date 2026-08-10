@@ -222,11 +222,11 @@ const SplashScreen = ({ onComplete, contentReady = false }) => {
       />
 
       {/* Content */}
-      <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '16px' }}>
+      <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 'clamp(4px, 2vw, 16px)' }}>
         <div
           ref={lineLeftRef}
           style={{
-            width: '60px',
+            width: 'clamp(20px, 10vw, 60px)',
             height: '1px',
             background: 'linear-gradient(to left, #c8a26e, transparent)',
             transformOrigin: 'right center',
@@ -237,12 +237,13 @@ const SplashScreen = ({ onComplete, contentReady = false }) => {
         <div ref={logoRef} style={{ textAlign: 'center' }}>
           <h1
             style={{
-              fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+              fontSize: 'clamp(1.5rem, 6vw, 3.5rem)',
               fontWeight: 900,
               letterSpacing: '-2px',
               color: '#fff',
               margin: 0,
               lineHeight: 1,
+              whiteSpace: 'nowrap',
             }}
           >
             <span ref={charLessRef} style={{ color: '#c8a26e' }}>&lt;</span>
@@ -258,7 +259,7 @@ const SplashScreen = ({ onComplete, contentReady = false }) => {
         <div
           ref={lineRightRef}
           style={{
-            width: '60px',
+            width: 'clamp(20px, 10vw, 60px)',
             height: '1px',
             background: 'linear-gradient(to right, #c8a26e, transparent)',
             transformOrigin: 'left center',

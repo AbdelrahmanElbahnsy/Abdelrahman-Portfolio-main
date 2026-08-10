@@ -3,7 +3,7 @@ import React from 'react';
 const CloudArchitectureSVG = () => {
     return (
         <svg
-            className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.03] text-[var(--clr-accent)]"
+            className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.03] text-[var(--theme-accent)]"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 1920 1080"
             fill="none"

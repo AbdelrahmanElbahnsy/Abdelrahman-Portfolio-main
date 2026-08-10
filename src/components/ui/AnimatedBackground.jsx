@@ -94,7 +94,7 @@ const AnimatedBackground = () => {
                 zIndex: -1,
                 overflow: 'hidden',
                 pointerEvents: 'none',
-                background: 'var(--clr-bg)' // Inherit the rich dark blue
+                background: 'var(--theme-bg)' // Inherit the dynamic background
             }}
         >
             <div ref={containerRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', willChange: 'transform' }}>

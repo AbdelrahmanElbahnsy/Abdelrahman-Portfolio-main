@@ -56,29 +56,98 @@ html {}
 
   /* Shadows */
   --shadow-accent: 0 4px 20px rgba(200, 162, 110, 0.2);
-  --shadow-card: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+:root {
+  /* Dark Mode Baseline (Matches existing exact values) */
+  --theme-bg: var(--clr-bg);
+  --theme-bg-secondary: rgba(10, 15, 25, 0.8);
+  --theme-surface: rgba(15, 20, 30, 0.5);
+  --theme-surface-elevated: rgba(255, 255, 255, 0.03);
+  --theme-surface-soft: rgba(25, 30, 45, 0.6);
+  
+  --theme-text: #ffffff;
+  --theme-text-secondary: rgba(255, 255, 255, 0.7);
+  --theme-text-muted: rgba(255, 255, 255, 0.5);
+  --theme-btn-text: #fffefe;
+  
+  --theme-border: rgba(255, 255, 255, 0.05);
+  --theme-border-strong: rgba(255, 255, 255, 0.15);
+  --theme-border-gold: rgba(200, 162, 110, 0.35);
+  
+  --theme-accent: var(--clr-accent);
+  --theme-accent-hover: #eacda3;
+  --theme-accent-soft: rgba(200, 162, 110, 0.05);
+  
+  --theme-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  --theme-shadow-strong: 0 20px 50px rgba(0, 0, 0, 0.6);
+  
+  --theme-nav-bg: rgba(10, 14, 23, 0.98);
+  --theme-nav-border: rgba(200, 162, 110, 0.35);
+  --theme-nav-shadow: 0 15px 50px rgba(0, 0, 0, 0.7);
+  --theme-nav-text: #ffffff;
+  --theme-nav-text-dim: #94a3b8;
+  --theme-nav-hover-bg: rgba(255, 255, 255, 0.08);
+  --theme-nav-active-bg: var(--theme-accent);
+  --theme-nav-active-text: #000000;
+  --theme-nav-active-shadow: 0 0 20px rgba(200, 162, 110, 0.5);
+  --theme-nav-btn-bg: rgba(255, 255, 255, 0.05);
+  --theme-nav-btn-hover: rgba(255, 255, 255, 0.12);
+  --theme-nav-contact-active-bg: #ffffff;
+  --theme-nav-contact-active-text: #000000;
+  --theme-nav-contact-active-ring: #ffffff;
 }
 
 .light-theme {
-  --clr-bg: #f8fafc;
-  --clr-bg-alt: #f1f5f9;
-  --clr-card-bg: #ffffff;
-  --clr-card-border: rgba(0, 0, 0, 0.1);
-  --clr-text: #1f2937;
-  --clr-text-dim: #4b5563;
-  --clr-accent: #b08d57;
-  --clr-accent-2: #1e3a5f;
-  --clr-accent-3: #c8a26e;
-  --accent-rgb: 176, 141, 87;
-  --clr-nav-bg: rgba(248, 250, 252, 0.95);
-  --clr-terminal-bg: #ffffff;
-  --clr-terminal-header: #f1f5f9;
-  --shadow-card: 0 10px 40px rgba(0, 0, 0, 0.05);
+  /* Premium Light Theme */
+  --theme-bg: #F3F0E8;
+  --theme-bg-secondary: #E9E5DA;
+  --theme-surface: #FAF8F3;
+  --theme-surface-elevated: #FFFFFF;
+  --theme-surface-soft: rgba(255, 255, 255, 0.58);
+  
+  --theme-text: #172231;
+  --theme-text-secondary: #596779;
+  --theme-text-muted: #7A8695;
+  --theme-btn-text: #172231;
+  
+  --theme-border: rgba(23, 34, 49, 0.11);
+  --theme-border-strong: rgba(23, 34, 49, 0.20);
+  --theme-border-gold: rgba(201, 161, 90, 0.35);
+  
+  --theme-accent: #C9A15A;
+  --theme-accent-hover: #B78B48;
+  --theme-accent-soft: rgba(201, 161, 90, 0.12);
+  
+  --theme-shadow: 0 12px 35px rgba(23, 34, 49, 0.08);
+  --theme-shadow-strong: 0 20px 50px rgba(23, 34, 49, 0.13);
+  
+  --theme-nav-bg: rgba(250, 248, 243, 0.88);
+  --theme-nav-border: rgba(23, 34, 49, 0.12);
+  --theme-nav-shadow: 0 8px 25px rgba(23, 34, 49, 0.06);
+  --theme-nav-text: #172231;
+  --theme-nav-text-dim: #596779;
+  --theme-nav-hover-bg: rgba(23, 34, 49, 0.05);
+  --theme-nav-active-bg: #C9A15A;
+  --theme-nav-active-text: #172231;
+  --theme-nav-active-shadow: 0 4px 15px rgba(201, 161, 90, 0.2);
+  --theme-nav-btn-bg: #E9E5DA;
+  --theme-nav-btn-hover: #D9D5CA;
+  --theme-nav-contact-active-bg: #172231;
+  --theme-nav-contact-active-text: #ffffff;
+  --theme-nav-contact-active-ring: #172231;
+  /* Subtle atmospheric background */
+  background-color: var(--theme-bg);
+  background-image: 
+    radial-gradient(circle at 10% 0%, rgba(201,161,90,0.07) 0%, transparent 50%),
+    radial-gradient(circle at 90% 100%, rgba(73,142,155,0.045) 0%, transparent 50%);
 }
+
+/* Exceptions - things that should remain white even in light mode */
 
 @layer base {
   body {
-    @apply bg-[var(--clr-bg)] text-[var(--clr-text)] font-sans antialiased transition-colors duration-500;
+    @apply bg-[var(--theme-bg)] text-[var(--theme-text)] font-sans antialiased transition-colors duration-500;
   }
 
   /* Custom Scrollbar */
@@ -105,6 +174,16 @@ html {}
   * {
     scrollbar-width: thin;
     scrollbar-color: var(--clr-accent-2) var(--clr-bg);
+  }
+
+  /* Global Responsive Foundations */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  
+  img, video, svg, canvas {
+    max-width: 100%;
+    height: auto;
   }
 }
 
@@ -181,7 +260,9 @@ html {}
 @layer utilities {
 
   .section {
-    @apply py-7 md:py-8 lg:py-10 relative overflow-hidden bg-transparent;
+    @apply py-7 md:py-8 lg:py-10 relative bg-transparent;
+    overflow: clip; /* 'clip' does NOT break position:sticky (unlike 'hidden') */
+    scroll-margin-top: 100px;
   }
 
   .section-alt {
@@ -221,22 +302,15 @@ html {}
   /* Mobile Adjustments */
   @media (max-width: 768px) {
     h2 {
-      font-size: 2.25rem !important;
-      text-align: left !important;
+      font-size: clamp(1.75rem, 6vw, 2.5rem) !important;
     }
 
     h3 {
-      font-size: 1.5rem !important;
+      font-size: clamp(1.25rem, 4vw, 1.5rem) !important;
     }
 
     .section-header {
-      text-align: left !important;
-      margin-bottom: 3rem !important;
-    }
-
-    .container {
-      padding-left: 1.5rem !important;
-      padding-right: 1.5rem !important;
+      margin-bottom: 2.5rem !important;
     }
 
     .floating-social-container,
@@ -352,3 +426,213 @@ html {}
     }
   }
 }
+
+/* ============================================================
+   GLOBAL OVERFLOW SAFETY
+   IMPORTANT: DO NOT set overflow-x:hidden on html or body.
+   That breaks position:sticky on the Navbar.
+   Instead use clip on the .page-wrapper only.
+   ============================================================ */
+.page-wrapper {
+  overflow-x: clip; /* clip does NOT create a scroll container, preserves sticky */
+  max-width: 100%;
+}
+
+/* Swiper containers must never exceed their parent */
+.swiper {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.swiper-wrapper {
+  min-width: 0;
+}
+
+/* ============================================================
+   HERO NAME — prevent word-break on desktop, allow wrap on mobile.
+   Critical: 'El-bahnsy' must NEVER hyphenate/break at the hyphen.
+   ============================================================ */
+.hero-name {
+  word-break: keep-all;
+  overflow-wrap: normal;
+  hyphens: none !important;
+  -webkit-hyphens: none !important;
+  -ms-hyphens: none !important;
+}
+
+/* The English name span — always LTR, never breaks */
+.hero-name-en {
+  display: inline-block;
+  direction: ltr;
+  unicode-bidi: isolate;
+  white-space: nowrap;
+  hyphens: none !important;
+  -webkit-hyphens: none !important;
+  word-break: keep-all;
+}
+
+/* The Arabic name span — always RTL, never breaks */
+.hero-name-ar {
+  display: inline-block;
+  direction: rtl;
+  unicode-bidi: isolate;
+  white-space: nowrap;
+  hyphens: none !important;
+  -webkit-hyphens: none !important;
+}
+
+/* On very narrow mobile, allow the full name to wrap but only between words */
+@media (max-width: 480px) {
+  .hero-name {
+    white-space: normal !important;
+    font-size: clamp(1.5rem, 8vw, 2.4rem) !important;
+    word-break: keep-all !important;
+    hyphens: none !important;
+    -webkit-hyphens: none !important;
+    overflow-wrap: normal !important; /* Break between words only */
+  }
+  .hero-name-en {
+    white-space: normal;
+    word-break: keep-all;
+  }
+}
+
+/* ============================================================
+   ARABIC TYPOGRAPHY — proper line-height, no aggressive tracking
+   CRITICAL: Only apply Arabic font to actual text elements.
+   NEVER apply it to icon elements (i, [class*="fa-"], svg, etc.)
+   Icon libraries (Font Awesome, Simple Icons, Lucide) require
+   their own font-family to render glyphs. Overwriting it turns
+   icons into empty boxes (tofu squares).
+   ============================================================ */
+:lang(ar) p,
+:lang(ar) span:not([class*="fa"]):not([class*="icon"]),
+:lang(ar) h1,
+:lang(ar) h2,
+:lang(ar) h3,
+:lang(ar) h4,
+:lang(ar) h5,
+:lang(ar) h6,
+:lang(ar) a:not([class*="fa"]):not([class*="icon"]),
+:lang(ar) label,
+:lang(ar) li,
+:lang(ar) div:not(.swiper-wrapper):not(.swiper-slide):not([class*="fa"]):not([class*="icon"]) {
+  font-family: 'Segoe UI', 'Cairo', 'Noto Sans Arabic', 'Inter', sans-serif;
+  line-height: 1.8;
+}
+
+/* ============================================================
+   ICON FONT PROTECTION
+   Ensure FontAwesome works flawlessly by not overriding its
+   native font definitions.
+   ============================================================ */
+
+[dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3 {
+  letter-spacing: 0 !important;
+}
+
+
+/* ============================================================
+   NAVBAR — prevent overflow at all sizes
+   ============================================================ */
+header nav {
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* Contact button must never overflow the navbar */
+header nav > div:last-child {
+  min-width: 0;
+  flex-shrink: 1;
+}
+
+/* ============================================================
+   FOOTER — stack cleanly on mobile
+   ============================================================ */
+@media (max-width: 640px) {
+  .footer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2.5rem !important;
+    text-align: center !important;
+  }
+
+  .footer-brand {
+    align-items: center !important;
+  }
+
+  .footer-col .logo {
+    justify-content: center !important;
+  }
+
+  .footer-bottom {
+    margin-top: 2rem !important;
+  }
+}
+
+/* ============================================================
+   SKILLS CARDS — prevent any card from overflowing its slide
+   ============================================================ */
+.skill-card {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* ============================================================
+   PROJECTS — images must not overflow card bounds
+   ============================================================ */
+.project-card img {
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* ============================================================
+   ABOUT TERMINAL — always LTR, prevent text bleed
+   ============================================================ */
+.modern-terminal {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.terminal-list {
+  overflow-x: hidden;
+}
+
+.term-value {
+  min-width: 0;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* ============================================================
+   CONTACT — form must not exceed container
+   ============================================================ */
+.devops-form input,
+.devops-form textarea {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* ============================================================
+   SECTION TYPOGRAPHY — fluid headings using clamp
+   ============================================================ */
+.section-title {
+  font-size: clamp(1.75rem, 5vw, 3.5rem);
+}
+
+/* ============================================================
+   LARGE SCREEN — cap content width for readability
+   ============================================================ */
+@media (min-width: 1920px) {
+  .page-container {
+    max-width: 1600px !important;
+  }
+}
+
+@media (min-width: 2560px) {
+  .page-container {
+    max-width: 1800px !important;
+  }
+}
+

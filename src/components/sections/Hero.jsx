@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, FreeMode } from 'swiper/modules';
 import 'swiper/css';
@@ -9,8 +9,10 @@ import { SiMicrosoftazure } from 'react-icons/si';
 import { useMagneticEffect } from '../../hooks/useMagneticEffect';
 import SplitText from '../ui/SplitText';
 import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 const Hero = ({ splashDone = true }) => {
+    const { t, language } = useLanguage();
     const [typedText, setTypedText] = useState('');
     const { data: firestoreData, subscribe, loading } = useFirestoreSingleDoc('hero', 'main');
 
@@ -22,9 +24,31 @@ const Hero = ({ splashDone = true }) => {
     }, [subscribe]);
 
     const dataSource = firestoreData || personalInfo;
-    const roles = firestoreData ? (dataSource.roles ? dataSource.roles.split(',').map(r => r.trim()) : []) : personalInfo.roles;
     
-    const { badge, firstName, lastName, description, portrait, fullName, cvUrl } = dataSource;
+    const badge = language === 'ar' ? (dataSource.badgeAr || personalInfo.badgeAr || t(dataSource.badge || personalInfo.badge)) : (dataSource.badge || personalInfo.badge);
+    const firstName = dataSource.firstName || personalInfo.firstName;
+    const lastName = dataSource.lastName || personalInfo.lastName;
+    const fullNameAr = dataSource.fullNameAr || personalInfo.fullNameAr;
+    const description = language === 'ar' ? (dataSource.descriptionAr || personalInfo.descriptionAr || t(dataSource.description || personalInfo.description)) : (dataSource.description || personalInfo.description);
+
+    const { portrait, fullName, cvUrl } = dataSource;
+
+    const translatedRolesStr = useMemo(() => {
+        if (language === 'ar') {
+            const arRoles = dataSource.rolesAr || personalInfo.rolesAr;
+            if (arRoles && Array.isArray(arRoles) && arRoles.length > 0) {
+                return JSON.stringify(arRoles);
+            }
+        }
+        const rolesRaw = dataSource.roles || personalInfo.roles;
+        const parsedRoles = Array.isArray(rolesRaw) && rolesRaw.length > 0
+            ? rolesRaw 
+            : (typeof rolesRaw === 'string' && rolesRaw.trim() !== '' ? rolesRaw.split(',').map(r => r.trim()) : personalInfo.roles);
+        
+        return JSON.stringify(parsedRoles.map(r => language === 'ar' ? t(r) : r));
+    }, [dataSource.roles, dataSource.rolesAr, language, t]);
+
+    const rolesMemo = useMemo(() => JSON.parse(translatedRolesStr), [translatedRolesStr]);
 
     // Refs for GSAP targets
     const sectionRef = useRef(null);
@@ -42,7 +66,7 @@ const Hero = ({ splashDone = true }) => {
 
     // Typing effect
     useEffect(() => {
-        if (!splashDone) return;
+        if (!splashDone || !rolesMemo || rolesMemo.length === 0) return;
 
         let roleIndex = 0;
         let charIndex = 0;
@@ -50,7 +74,7 @@ const Hero = ({ splashDone = true }) => {
         let timeout;
 
         const type = () => {
-            const currentRole = roles[roleIndex];
+            const currentRole = rolesMemo[roleIndex] || '';
 
             if (isDeleting) {
                 setTypedText(currentRole.substring(0, charIndex - 1));
@@ -67,7 +91,7 @@ const Hero = ({ splashDone = true }) => {
                 isDeleting = true;
             } else if (isDeleting && charIndex === 0) {
                 isDeleting = false;
-                roleIndex = (roleIndex + 1) % roles.length;
+                roleIndex = (roleIndex + 1) % rolesMemo.length;
                 typeSpeed = 500;
             }
 
@@ -76,7 +100,7 @@ const Hero = ({ splashDone = true }) => {
 
         timeout = setTimeout(type, 1500);
         return () => clearTimeout(timeout);
-    }, [roles, splashDone]);
+    }, [rolesMemo, splashDone]);
 
     // GSAP entrance timeline
     useGSAP(
@@ -92,12 +116,10 @@ const Hero = ({ splashDone = true }) => {
                 scrollIndicatorRef.current,
             ].filter(Boolean);
 
-            // Set initial state immediately so they don't flash visible
             gsap.set(targets, { opacity: 0, y: 30 });
-            gsap.set(portraitRef.current, { opacity: 0, scale: 0.9, clipPath: 'circle(0% at 50% 50%)', y: 0 });
+            gsap.set(portraitRef.current, { opacity: 0, scale: 0.9, y: 0 });
             gsap.set(ctaRef.current, { opacity: 0, y: 25, scale: 0.92 });
-            const nameChars = nameRef.current?.querySelectorAll('.split-unit');
-            if (nameChars?.length) gsap.set(nameChars, { opacity: 0, y: 30, rotateX: -40 });
+            if (nameRef.current) gsap.set(nameRef.current, { opacity: 0, y: 30 });
 
             if (!splashDone) return;
 
@@ -108,20 +130,11 @@ const Hero = ({ splashDone = true }) => {
 
             tl.to(badgeRef.current, { opacity: 1, y: 0, duration: 0.4, ease: 'back.out(1.4)' });
 
-            // Char-by-char name reveal
-            if (nameChars?.length) {
-                tl.to(nameChars, {
-                    opacity: 1, y: 0, rotateX: 0,
-                    duration: 0.5, stagger: 0.03,
-                    ease: 'back.out(1.2)',
-                }, '-=0.1');
-                tl.to(nameRef.current, { opacity: 1, y: 0, duration: 0.01 }, '<');
-            } else {
-                tl.to(nameRef.current, { opacity: 1, y: 0, duration: 0.6 }, '-=0.1');
-            }
+            // Block name reveal (safer for responsive layouts)
+            tl.to(nameRef.current, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, '-=0.1');
 
             tl.to(subtitleRef.current, { opacity: 1, y: 0, duration: 0.5 }, '-=0.2');
-            tl.to(portraitRef.current, { opacity: 1, scale: 1, clipPath: 'circle(75% at 50% 50%)', duration: 0.9, ease: 'power3.out' }, '-=0.3');
+            tl.to(portraitRef.current, { opacity: 1, scale: 1, duration: 0.9, ease: 'power3.out' }, '-=0.3');
             tl.to(descRef.current, { opacity: 1, y: 0, duration: 0.5 }, '-=0.6');
             tl.to(sliderRef.current, { opacity: 1, y: 0, duration: 0.5 }, '-=0.2');
             tl.to(ctaRef.current, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'back.out(1.7)' }, '-=0.2');
@@ -139,43 +152,51 @@ const Hero = ({ splashDone = true }) => {
         <section
             id="hero"
             ref={sectionRef}
-            className="relative flex items-center min-h-screen overflow-hidden bg-transparent"
+            className="relative flex items-start lg:items-center min-h-[100vh] lg:min-h-[95vh] pt-[120px] md:pt-[140px] pb-24 overflow-hidden bg-transparent"
         >
-            <div className="container px-8 mx-auto">
-                <div className="grid items-center grid-cols-1 gap-16 pt-20 hero-grid md:grid-cols-2">
-                    <div className="hero-left">
-                        <div ref={badgeRef} className="hero-badge-wrapper mb-3 pt-10">
-                            <div className="hero-badge">
+            <div className="container px-6 sm:px-8 mx-auto h-full flex flex-col justify-start lg:justify-center">
+                <div className="grid items-center grid-cols-1 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)] gap-8 md:gap-12 lg:gap-[clamp(2rem,5vw,5rem)] hero-grid w-full max-w-full min-w-0" dir="ltr">
+                    <div className="hero-left flex flex-col justify-center min-w-0 w-full" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                        <div ref={badgeRef} className="hero-badge-wrapper mb-4 text-left rtl:text-right" dir="auto">
+                            <div className="hero-badge" dir="auto">
                                 <i className="fas fa-wand-magic-sparkles sparkle-icon"></i>
                                 <span>{badge}</span>
                             </div>
                         </div>
                         <h1
                             ref={nameRef}
-                            className="hero-name text-4xl sm:text-5xl lg:text-6xl font-black mb-4 leading-[1.1] tracking-[-2px]"
+                            className="hero-name text-[clamp(2rem,8vw,3.5rem)] font-black mb-3 md:mb-5 leading-[1.05] tracking-tight"
+                            dir="ltr"
                         >
-                            <SplitText mode="char">{firstName}</SplitText>{' '}
-                            <span className="highlight-surname text-[var(--clr-accent)]">
-                                {lastName}
-                            </span>
+                            {language === 'ar' ? (
+                                <span className="hero-name-ar highlight-surname text-[var(--theme-accent)]" dir="rtl" style={{ unicodeBidi: 'isolate' }}>
+                                    {fullNameAr}
+                                </span>
+                            ) : (
+                                <span className="hero-name-en highlight-surname text-[var(--theme-accent)]" dir="ltr">
+                                    {(dataSource.fullName || personalInfo.fullName || `${firstName} ${lastName}`)}
+                                </span>
+                            )}
                         </h1>
                         <h2
                             ref={subtitleRef}
-                            className="hero-subtitle text-lg sm:text-xl font-semibold mb-6 min-h-[40px] text-[var(--clr-accent-3)]"
+                            className="hero-subtitle text-[clamp(1.1rem,2.5vw,1.5rem)] font-bold mb-4 md:mb-6 min-h-[40px] text-[var(--theme-accent)]"
+                            dir="ltr"
                         >
-                            <span>{typedText}</span>
+                            <span className="inline-block" dir="auto">{typedText}</span>
                             <span className="typing-cursor ml-1 animate-[blink-cursor_0.8s_infinite]">
                                 |
                             </span>
                         </h2>
                         <p
                             ref={descRef}
-                            className="hero-description text-[var(--clr-text-dim)] text-lg leading-relaxed max-w-[600px] mb-10 line-clamp-5"
+                            className="hero-description text-[var(--theme-text-secondary)] text-[clamp(1rem,2vw,1.15rem)] leading-relaxed max-w-[700px] w-full mb-8 md:mb-12 text-left rtl:text-right break-words overflow-visible"
+                            dir={language === 'ar' ? 'rtl' : 'ltr'}
                         >
                             {description}
                         </p>
 
-                        <div ref={sliderRef} className="mb-8 overflow-hidden tech-slider-container">
+                        <div ref={sliderRef} className="mb-8 tech-badges-container w-full max-w-full min-w-0 overflow-hidden">
                             <Swiper
                                 dir="ltr"
                                 modules={[Autoplay, FreeMode]}
@@ -192,7 +213,7 @@ const Hero = ({ splashDone = true }) => {
                             >
                                 {heroTechSlider.map((item, idx) => (
                                     <SwiperSlide key={idx} style={{ width: 'auto' }}>
-                                        <span className="tech-badge flex items-center gap-2 px-5 py-2 rounded-full border border-[rgba(200,162,110,0.1)] bg-[rgba(200,162,110,0.05)] text-[var(--clr-text-dim)] hover:text-[var(--clr-accent)] transition-all duration-300">
+                                        <span className="tech-badge flex items-center gap-2 px-4 md:px-5 py-2 rounded-full border border-[var(--theme-border-gold)] bg-[var(--theme-surface-soft)] text-[var(--theme-text-secondary)] hover:text-[var(--theme-accent)] transition-all duration-300 text-[0.85rem] md:text-base whitespace-nowrap">
                                             {item.icon === 'SiMicrosoftazure' ? (
                                                 <SiMicrosoftazure />
                                             ) : (
@@ -211,27 +232,27 @@ const Hero = ({ splashDone = true }) => {
                                 href={cvUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="btn-cv"
+                                className="btn-cv flex items-center gap-2 px-6 py-3 rounded-full bg-[var(--theme-accent)] text-black font-bold hover:scale-105 transition-transform shadow-[var(--theme-shadow-strong)]"
                             >
                                 <i className="fas fa-file-download"></i>
-                                <span>Download CV</span>
+                                <span>{t('Download CV')}</span>
                             </a>
                         </div>
                     </div>
 
-                    <div className="hero-right md:ml-6">
-                        <div ref={portraitRef} className="relative w-full hero-portrait group md:translate-x-8">
-                            <div className="portrait-frame relative aspect-[4/5] rounded-[30px] overflow-hidden">
+                    <div className="hero-right flex justify-start lg:justify-center items-start lg:items-center w-full min-w-0 mt-4 lg:mt-0">
+                        <div ref={portraitRef} className="relative w-[min(92vw,420px)] lg:w-[min(100%,520px)] mx-auto lg:mx-0 lg:ml-auto hero-portrait group">
+                            <div className="portrait-frame relative w-full h-auto rounded-[30px] overflow-hidden border border-[var(--theme-border-strong)] shadow-[var(--theme-shadow-strong)] bg-gradient-to-b from-[var(--theme-surface)] to-[var(--theme-surface-soft)] flex justify-center">
                                 <img
                                     src={portrait}
                                     alt={fullName}
-                                    className="w-full h-full object-cover object-[center_20%] transition-transform duration-500 group-hover:scale-105"
+                                    className="block w-full h-auto object-contain transition-transform duration-500 group-hover:scale-[1.02]"
                                     loading="eager"
                                     fetchPriority="high"
                                     width="800"
                                     height="1000"
                                 />
-                                <div className="absolute inset-0 bg-transparent portrait-overlay"></div>
+                                <div className="absolute inset-0 bg-transparent portrait-overlay pointer-events-none"></div>
                             </div>
                         </div>
                     </div>
@@ -240,32 +261,23 @@ const Hero = ({ splashDone = true }) => {
 
             <div
                 ref={scrollIndicatorRef}
-                className="absolute flex flex-col items-center gap-2 -translate-x-1/2 scroll-indicator bottom-8 left-1/2"
+                className="hidden lg:flex absolute flex-col items-center gap-2 -translate-x-1/2 scroll-indicator bottom-8 left-1/2"
             >
                 <a href="#about" className="flex flex-col items-center scroll-link">
-                    <span className="mouse w-6 h-10 border-2 border-[var(--clr-text-dim)] rounded-full relative">
-                        <span className="wheel w-1 h-2 bg-[var(--clr-accent)] rounded-full absolute top-2 left-1/2 -translate-x-1/2 animate-[scroll-wheel_1s_infinite]"></span>
+                    <span className="mouse w-6 h-10 border-2 border-[var(--theme-text-secondary)] rounded-full relative">
+                        <span className="wheel w-1 h-2 bg-[var(--theme-accent)] rounded-full absolute top-2 left-1/2 -translate-x-1/2 animate-[scroll-wheel_1s_infinite]"></span>
                     </span>
                 </a>
             </div>
 
             <style dangerouslySetInnerHTML={{ __html: `
-                .portrait-frame {
-                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%),
-                                        linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
-                    mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%),
-                                linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
-                    mask-composite: intersect;
-                    -webkit-mask-composite: source-in;
-                }
-
                 @keyframes scroll-wheel {
                     0% { transform: translate(-50%, 0); opacity: 1; }
                     100% { transform: translate(-50%, 15px); opacity: 0; }
                 }
 
                 .highlight-surname {
-                    background: linear-gradient(to right, var(--clr-accent), var(--clr-accent-3));
+                    background: linear-gradient(to right, var(--theme-accent), var(--theme-accent-hover));
                     -webkit-background-clip: text;
                     background-clip: text;
                     -webkit-text-fill-color: transparent;
@@ -281,9 +293,9 @@ const Hero = ({ splashDone = true }) => {
                     gap: 10px;
                     padding: 6px 16px;
                     border-radius: 9999px;
-                    background: rgba(200, 162, 110, 0.05);
-                    border: 1px solid rgba(200, 162, 110, 0.2);
-                    color: var(--clr-accent);
+                    background: var(--theme-accent-soft);
+                    border: 1px solid var(--theme-border-gold);
+                    color: var(--theme-accent);
                     font-size: 0.9rem;
                     font-weight: 500;
                     font-style: italic;
@@ -293,14 +305,15 @@ const Hero = ({ splashDone = true }) => {
                 }
 
                 .hero-badge:hover {
-                    background: rgba(200, 162, 110, 0.1);
-                    border-color: var(--clr-accent);
+                    background: var(--theme-accent-hover);
+                    border-color: var(--theme-accent);
                     transform: translateY(-2px);
                     box-shadow: 0 0 20px rgba(200, 162, 110, 0.15);
+                    color: var(--theme-bg);
                 }
 
                 .sparkle-icon {
-                    color: var(--clr-accent-3);
+                    color: var(--theme-accent);
                     filter: drop-shadow(0 0 5px rgba(200, 162, 110, 0.3));
                     font-size: 0.8rem;
                 }

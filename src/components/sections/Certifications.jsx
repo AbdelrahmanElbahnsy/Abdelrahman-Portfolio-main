@@ -11,10 +11,12 @@ import 'swiper/css/navigation';
 import { certifications as fallbackCertifications } from '../../data/portfolioData';
 import { SiMicrosoftazure } from 'react-icons/si';
 import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Certifications = () => {
+    const { t, language } = useLanguage();
     const { data: firestoreData, subscribe } = useFirestoreCrud('certifications', { orderByField: 'order', orderDirection: 'asc' });
 
     React.useEffect(() => {
@@ -65,20 +67,21 @@ const Certifications = () => {
                 
                 {/* Center Header */}
                 <div ref={headerRef} className="section-header text-center mb-16 max-w-2xl mx-auto">
-                    <span className="section-subtitle text-[var(--clr-accent)] font-mono uppercase tracking-widest text-sm mb-4 block">
-                        Validation
+                    <span className="section-subtitle text-[var(--theme-accent)] font-mono uppercase tracking-widest text-sm mb-4 block">
+                        {t('Validation')}
                     </span>
-                    <h2 className="section-title text-4xl sm:text-5xl font-black mb-6 leading-tight tracking-tight drop-shadow-md">
-                        Professional Certifications
+                    <h2 className="section-title text-4xl sm:text-5xl font-black mb-6 leading-tight tracking-tight drop-shadow-md text-[var(--theme-text)]">
+                        {t('Professional Certifications')}
                     </h2>
-                    <p className="text-[var(--clr-text-dim)] text-lg leading-relaxed">
-                        Recognized industry credentials that validate my expertise in cloud architecture, system administration, and networking.
+                    <p className="text-[var(--theme-text-secondary)] text-lg leading-relaxed">
+                        {t('Recognized industry credentials that validate my expertise in cloud architecture, system administration, and networking.')}
                     </p>
                 </div>
 
                 {/* 3D Coverflow Swiper */}
                 <div className="w-full relative px-4 sm:px-0">
                     <Swiper
+                        dir="ltr"
                         effect={'coverflow'}
                         grabCursor={true}
                         centeredSlides={true}
@@ -111,36 +114,36 @@ const Certifications = () => {
                                 {({ isActive }) => (
                                     <div className={`w-full h-full relative p-8 rounded-3xl border transition-all duration-700 flex flex-col justify-between overflow-hidden group
                                         ${isActive 
-                                            ? 'bg-[rgba(15,20,35,0.85)] border-[var(--clr-accent)] shadow-[0_30px_60px_rgba(0,0,0,0.6),0_0_40px_rgba(200,162,110,0.2)] backdrop-blur-xl z-10' 
-                                            : 'bg-[rgba(10,15,25,0.6)] border-[rgba(255,255,255,0.05)] shadow-[0_15px_30px_rgba(0,0,0,0.4)] opacity-50 backdrop-blur-md'
+                                            ? 'bg-[var(--theme-surface-elevated)] border-[var(--theme-accent)] shadow-[var(--theme-shadow-strong)] backdrop-blur-xl z-10' 
+                                            : 'bg-[var(--theme-surface)] border-[var(--theme-border)] shadow-[var(--theme-shadow)] opacity-50 backdrop-blur-md'
                                         }`}
                                     >
                                         {/* Background Glow */}
-                                        <div className={`absolute -inset-20 bg-gradient-to-b from-[var(--clr-accent)] to-transparent opacity-[0.03] blur-3xl pointer-events-none transition-opacity duration-700 ${isActive ? 'opacity-[0.08]' : 'opacity-0'}`}></div>
+                                        <div className={`absolute -inset-20 bg-gradient-to-b from-[var(--theme-accent)] to-transparent opacity-[0.03] blur-3xl pointer-events-none transition-opacity duration-700 ${isActive ? 'opacity-[0.08]' : 'opacity-0'}`}></div>
 
                                         {/* Top Section */}
                                         <div>
                                             <div className="flex justify-between items-start mb-8">
-                                                <div className="w-16 h-16 rounded-2xl bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.05)] flex items-center justify-center text-3xl text-[var(--clr-accent)] shadow-inner">
+                                                <div className="w-16 h-16 rounded-2xl bg-[var(--theme-accent-soft)] border border-[var(--theme-border-gold)] flex items-center justify-center text-3xl text-[var(--theme-accent)] shadow-inner">
                                                     {cert.icon === 'SiMicrosoftazure' ? <SiMicrosoftazure /> : <i className={cert.icon}></i>}
                                                 </div>
-                                                <div className="px-3 py-1 bg-[rgba(200,162,110,0.1)] border border-[rgba(200,162,110,0.2)] text-[var(--clr-accent)] text-[9px] font-black uppercase tracking-widest rounded-full">
-                                                    Verified
+                                                <div className="px-3 py-1 bg-[var(--theme-accent-soft)] border border-[var(--theme-border-gold)] text-[var(--theme-accent)] text-[9px] font-black uppercase tracking-widest rounded-full">
+                                                    {t('Verified')}
                                                 </div>
                                             </div>
 
-                                            <h3 className={`text-2xl font-black mb-3 leading-tight tracking-tight transition-colors duration-500 ${isActive ? 'text-white' : 'text-gray-400'}`}>
-                                                {cert.title}
+                                            <h3 className={`text-2xl font-black mb-3 leading-tight tracking-tight transition-colors duration-500 ${isActive ? 'text-[var(--theme-text)]' : 'text-[var(--theme-text-secondary)]'}`} dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                                                {language === 'ar' ? (cert.titleAr || t(cert.title)) : cert.title}
                                             </h3>
                                             
-                                            <p className="text-sm font-medium text-[var(--clr-accent)] opacity-80 mb-6 uppercase tracking-wider">
-                                                {cert.issuer}
+                                            <p className="text-sm font-medium text-[var(--theme-accent)] opacity-80 mb-6 uppercase tracking-wider" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                                                {language === 'ar' ? (cert.issuerAr || t(cert.issuer)) : cert.issuer}
                                             </p>
                                         </div>
 
                                         {/* Bottom Section */}
                                         <div className="mt-auto relative z-10">
-                                            <div className={`h-[1px] w-full bg-gradient-to-r from-transparent via-[rgba(255,255,255,0.1)] to-transparent mb-6 transition-opacity duration-500 ${isActive ? 'opacity-100' : 'opacity-0'}`}></div>
+                                            <div className={`h-[1px] w-full bg-gradient-to-r from-transparent via-[var(--theme-border-strong)] to-transparent mb-6 transition-opacity duration-500 ${isActive ? 'opacity-100' : 'opacity-0'}`}></div>
                                             
                                             <a
                                                 href={cert.link}
@@ -148,12 +151,12 @@ const Certifications = () => {
                                                 rel="noopener noreferrer"
                                                 className={`w-full py-4 rounded-xl flex items-center justify-center gap-3 font-bold text-sm transition-all duration-300
                                                     ${isActive 
-                                                        ? 'bg-[var(--clr-accent)] text-black hover:bg-white hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(200,162,110,0.4)] pointer-events-auto' 
-                                                        : 'bg-[rgba(255,255,255,0.03)] text-gray-500 border border-[rgba(255,255,255,0.05)] pointer-events-none'
+                                                        ? 'bg-[var(--theme-accent)] text-[var(--theme-btn-text)] hover:brightness-110 hover:scale-[1.02] hover:shadow-[0_0_20px_var(--theme-accent-soft)] pointer-events-auto' 
+                                                        : 'bg-transparent text-[var(--theme-text-muted)] border border-[var(--theme-border)] pointer-events-none'
                                                     }`}
                                             >
-                                                <span>View Credentials</span>
-                                                <i className="fas fa-arrow-right text-xs"></i>
+                                                <span>{t('View Credentials')}</span>
+                                                <i className="fas fa-arrow-right text-xs rtl:rotate-180"></i>
                                             </a>
                                         </div>
                                     </div>
@@ -164,14 +167,14 @@ const Certifications = () => {
 
                     {/* Navigation Controls */}
                     <div className="flex items-center justify-center gap-8 mt-4 relative z-20">
-                        <button className="certs-prev w-12 h-12 rounded-full border border-[rgba(255,255,255,0.1)] bg-[rgba(10,15,25,0.8)] backdrop-blur-md flex items-center justify-center text-white hover:bg-[var(--clr-accent)] hover:text-black hover:border-[var(--clr-accent)] transition-all duration-300 disabled:opacity-30 disabled:pointer-events-none group">
-                            <i className="fas fa-chevron-left text-sm group-hover:-translate-x-0.5 transition-transform"></i>
+                        <button className="certs-prev w-12 h-12 rounded-full border border-[var(--theme-border)] bg-[var(--theme-surface-elevated)] backdrop-blur-md flex items-center justify-center text-[var(--theme-text)] hover:bg-[var(--theme-accent)] hover:text-[var(--theme-bg)] hover:border-[var(--theme-accent)] transition-all duration-300 disabled:opacity-30 disabled:pointer-events-none group">
+                            <i className="fas fa-chevron-left text-sm group-hover:-translate-x-0.5 rtl:group-hover:translate-x-0.5 transition-transform rtl:rotate-180"></i>
                         </button>
                         
                         <div className="certs-pagination flex items-center justify-center gap-2 min-w-[100px]"></div>
                         
-                        <button className="certs-next w-12 h-12 rounded-full border border-[rgba(255,255,255,0.1)] bg-[rgba(10,15,25,0.8)] backdrop-blur-md flex items-center justify-center text-white hover:bg-[var(--clr-accent)] hover:text-black hover:border-[var(--clr-accent)] transition-all duration-300 disabled:opacity-30 disabled:pointer-events-none group">
-                            <i className="fas fa-chevron-right text-sm group-hover:translate-x-0.5 transition-transform"></i>
+                        <button className="certs-next w-12 h-12 rounded-full border border-[var(--theme-border)] bg-[var(--theme-surface-elevated)] backdrop-blur-md flex items-center justify-center text-[var(--theme-text)] hover:bg-[var(--theme-accent)] hover:text-[var(--theme-bg)] hover:border-[var(--theme-accent)] transition-all duration-300 disabled:opacity-30 disabled:pointer-events-none group">
+                            <i className="fas fa-chevron-right text-sm group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 transition-transform rtl:rotate-180"></i>
                         </button>
                     </div>
                 </div>
@@ -193,7 +196,7 @@ const Certifications = () => {
                     background-size: cover;
                 }
                 .certs-pagination .swiper-pagination-bullet {
-                    background: rgba(255,255,255,0.2);
+                    background: var(--theme-border-strong);
                     opacity: 1;
                     transition: all 0.3s ease;
                     width: 8px;
@@ -201,10 +204,10 @@ const Certifications = () => {
                     margin: 0 4px !important;
                 }
                 .certs-pagination .swiper-pagination-bullet-active {
-                    background: var(--clr-accent);
+                    background: var(--theme-accent);
                     width: 24px;
                     border-radius: 4px;
-                    box-shadow: 0 0 10px rgba(200,162,110,0.5);
+                    box-shadow: 0 0 10px var(--theme-accent-soft);
                 }
             ` }} />
         </section>

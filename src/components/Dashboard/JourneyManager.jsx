@@ -13,8 +13,16 @@ const JourneyManager = () => {
 
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editingExperience, setEditingExperience] = useState(null);
+  const [activePhaseId, setActivePhaseId] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Update active phase to the latest item by default if none selected
+  useEffect(() => {
+    if (items && items.length > 0 && !activePhaseId) {
+      setActivePhaseId(items[items.length - 1].id);
+    }
+  }, [items, activePhaseId]);
 
   // Subscribe to real-time updates
   useEffect(() => {
@@ -31,6 +39,7 @@ const JourneyManager = () => {
 
   const handleEdit = (experience) => {
     setEditingExperience(experience);
+    setActivePhaseId(experience.id);
     setIsEditorOpen(true);
   };
 
@@ -144,32 +153,48 @@ const JourneyManager = () => {
           
           {!loading && items && items.length > 0 && (
             <div className="mt-8 bg-[#131b2c] border border-[#1e293b] rounded-[14px] p-5 md:p-6 w-full overflow-hidden">
-              <div className="mb-6">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-gray-500 block">
-                  JOURNEY PROGRESSION
-                </span>
-                <div className="text-xl font-bold text-white mt-1">
-                  <span className="text-[#14f195] mr-1.5">{items.length}</span> 
-                  PHASES
+              <div className="mb-6 flex justify-between items-end">
+                <div>
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-gray-500 block">
+                    JOURNEY PROGRESSION
+                  </span>
+                  <div className="text-xl font-bold text-white mt-1">
+                    <span className="text-[#14f195] mr-1.5">{items.length}</span> 
+                    PHASES
+                  </div>
                 </div>
+                <span className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">
+                  Click a phase to edit
+                </span>
               </div>
               
               <div className="overflow-x-auto scrollbar-none pb-2 -mx-2 px-2">
                 <div className="flex items-start min-w-max">
                   {items.map((item, idx) => {
-                    const isActive = idx === items.length - 1;
+                    const isActive = activePhaseId === item.id;
                     return (
-                      <div key={item.id} className="flex items-center group cursor-default">
-                        <div className="flex flex-col items-center relative">
+                      <div key={item.id} className="flex items-center group">
+                        <div 
+                          onClick={() => handleEdit(item)}
+                          className="flex flex-col items-center relative cursor-pointer"
+                          title={item.title}
+                        >
                           {/* Node */}
-                          <div className={`w-3 h-3 rounded-full z-10 transition-colors duration-200 ${isActive ? 'bg-[#14f195] shadow-[0_0_10px_rgba(20,241,149,0.3)]' : 'bg-[#1e293b] border-2 border-[#334155] group-hover:border-[#475569]'}`}></div>
+                          <div className={`w-3 h-3 rounded-full z-10 transition-all duration-200 group-hover:scale-125 ${isActive ? 'bg-[#14f195] shadow-[0_0_10px_rgba(20,241,149,0.3)]' : 'bg-[#1e293b] border-2 border-[#334155] group-hover:border-[#14f195]/50 group-hover:bg-[#14f195]/10'}`}></div>
+                          
+                          {/* Hover Edit Affordance */}
+                          <div className="absolute -top-6 opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-[#14f195]">
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                          </div>
                           
                           {/* Labels */}
-                          <div className="absolute top-6 flex flex-col items-center w-28 text-center transition-colors duration-200">
-                            <span className={`text-[10px] font-mono mb-1 ${isActive ? 'text-[#14f195]' : 'text-gray-500 group-hover:text-gray-400'}`}>
+                          <div className="absolute top-6 flex flex-col items-center w-36 md:w-44 text-center transition-colors duration-200">
+                            <span className={`text-[10px] font-mono mb-1 ${isActive ? 'text-[#14f195]' : 'text-gray-500 group-hover:text-[#14f195]/70'}`}>
                               {String(item.order).padStart(2, '0')}
                             </span>
-                            <span className={`text-xs font-medium truncate w-full px-1 ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-gray-300'}`}>
+                            <span className={`text-[13px] font-medium truncate w-full px-1 ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-gray-200'}`}>
                               {item.title}
                             </span>
                           </div>
@@ -177,14 +202,14 @@ const JourneyManager = () => {
                         
                         {/* Connecting Line */}
                         {idx < items.length - 1 && (
-                          <div className={`h-[2px] w-16 sm:w-20 md:w-24 lg:w-32 -mx-1 transition-colors duration-200 ${idx === items.length - 2 ? 'bg-gradient-to-r from-[#334155] to-[#14f195]/40' : 'bg-[#334155] group-hover:bg-[#475569]'}`}></div>
+                          <div className={`h-[2px] w-24 sm:w-28 md:w-36 lg:w-44 -mx-1 transition-colors duration-200 ${isActive ? 'bg-gradient-to-r from-[#14f195]/40 to-[#334155]' : (activePhaseId === items[idx + 1].id ? 'bg-gradient-to-r from-[#334155] to-[#14f195]/40' : 'bg-[#334155]')}`}></div>
                         )}
                       </div>
                     );
                   })}
                 </div>
                 {/* Spacer for absolute positioned labels */}
-                <div className="h-14"></div>
+                <div className="h-16"></div>
               </div>
             </div>
           )}

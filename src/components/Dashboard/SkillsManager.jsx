@@ -336,7 +336,7 @@ export default function SkillsManager() {
   }
 
   return (
-    <div className="max-w-[1280px] mx-auto pb-16 animate-in fade-in duration-300">
+    <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-8 pb-16 animate-in fade-in duration-300">
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-5">
           <div>
@@ -416,7 +416,7 @@ export default function SkillsManager() {
           <button onClick={() => {setSearchQuery(''); setFilterCategory('ALL');}} className="text-[#14f195] text-sm hover:underline">Clear Filters</button>
         </div>
       ) : viewMode === 'GRID' ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filteredSkills.map(skill => {
             const Icon = CATEGORY_ICONS[skill.category] || CATEGORY_ICONS['default'];
             const accentColor = CATEGORY_COLORS[skill.category] || CATEGORY_COLORS['default'];

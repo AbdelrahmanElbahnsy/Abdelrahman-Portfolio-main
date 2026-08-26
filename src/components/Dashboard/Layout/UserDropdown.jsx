@@ -107,15 +107,21 @@ const UserDropdown = ({ onLogout }) => {
         onClick={() => setIsOpen(!isOpen)}
         className={`flex items-center gap-3 p-1.5 pr-3 rounded-full transition-colors border outline-none focus-visible:ring-2 focus-visible:ring-cms-primary ${isOpen ? 'bg-white/5 border-white/10' : 'hover:bg-white/5 border-transparent hover:border-white/10'}`}
       >
-        <div className="w-8 h-8 rounded-full bg-cms-secondary flex items-center justify-center text-cms-primary font-bold text-sm border border-cms-border">
-          {user?.email?.[0].toUpperCase() || 'A'}
+        <div className="relative">
+          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-cms-primary/40 to-blue-500/40 blur-[2px] opacity-70"></div>
+          <div className="relative w-8 h-8 rounded-full bg-cms-cards flex items-center justify-center text-white font-black text-sm border border-white/20 shadow-inner">
+            {user?.email?.[0].toUpperCase() || 'A'}
+          </div>
         </div>
         <div className="hidden md:flex flex-col items-start">
-          <span className="text-sm font-semibold text-cms-text leading-none mb-1">
+          <span className="text-sm font-bold text-cms-text leading-none mb-0.5">
             {user?.email?.split('@')[0] || 'Admin'}
           </span>
+          <span className="text-[10px] font-medium text-cms-muted leading-none">
+            Workspace Owner
+          </span>
         </div>
-        <ChevronDown className={`w-4 h-4 text-cms-muted transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-4 h-4 text-cms-muted ml-1 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       <AnimatePresence>

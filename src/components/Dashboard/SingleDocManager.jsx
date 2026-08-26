@@ -11,19 +11,29 @@ const SingleDocManager = ({ title, collection, docId, fields }) => {
   const [formData, setFormData] = useState({});
   const [imageFiles, setImageFiles] = useState({});
 
-  const { loading, setDocData, subscribe } = useFirestoreSingleDoc(collection, docId);
+  const { data, loading, setDocData, subscribe } = useFirestoreSingleDoc(collection, docId);
   const { uploadImage, isUploading, uploadProgress, resetUploadState } = useImageUpload();
 
   useEffect(() => {
     const defaultState = {};
     fields.forEach(f => { defaultState[f.name] = ''; });
+    
+    // If we have data from Firestore, overlay it onto the default state
+    if (data) {
+      fields.forEach(f => {
+        if (data[f.name] !== undefined) {
+          defaultState[f.name] = data[f.name];
+        }
+      });
+    }
+    
     setFormData(defaultState);
 
     const unsubscribe = subscribe();
     return () => {
       if (unsubscribe) unsubscribe();
     };
-  }, [collection, docId, fields, subscribe]);
+  }, [collection, docId, fields, subscribe, data]);
 
   const handleFileChange = useCallback((fieldName, e) => {
     if (e.target.files && e.target.files[0]) {

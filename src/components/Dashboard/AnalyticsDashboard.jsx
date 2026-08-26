@@ -101,8 +101,12 @@ const AnalyticsDashboard = () => {
 
   const hasVisits = stats?.totalVisits > 0;
 
+  const todayDate = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const start7 = new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const start30 = new Date(Date.now() - 29 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
   return (
-    <motion.div variants={containerVariants} initial="hidden" animate="show" className="w-full space-y-6 pb-20">
+    <motion.div variants={containerVariants} initial="hidden" animate="show" className="w-full space-y-6 pb-20 pt-4 md:pt-8">
       
       {/* HEADER */}
       <motion.div variants={itemVariants} className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-white/5 pb-6">
@@ -128,8 +132,9 @@ const AnalyticsDashboard = () => {
                 <div>
                   <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 group-hover:text-gray-400 transition-colors">Lifetime Visits</p>
                   <h3 className="text-3xl font-black text-white tracking-tight">{stats.totalVisits}</h3>
+                  <p className="text-[10px] text-gray-600 font-medium mt-2">All time</p>
                 </div>
-                <div className="p-2 rounded-lg bg-[#14f195]/10 text-[#14f195] transition-transform group-hover:scale-110">
+                <div className="p-2 rounded-lg bg-white/5 text-gray-400 transition-transform group-hover:scale-110">
                   <Users className="w-5 h-5" />
                 </div>
               </div>
@@ -140,8 +145,9 @@ const AnalyticsDashboard = () => {
                 <div>
                   <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 group-hover:text-gray-400 transition-colors">Visits Today</p>
                   <h3 className="text-3xl font-black text-white tracking-tight">{stats.visitsToday}</h3>
+                  <p className="text-[10px] text-gray-600 font-medium mt-2">{todayDate}</p>
                 </div>
-                <div className="p-2 rounded-lg bg-blue-500/10 text-blue-400 transition-transform group-hover:scale-110">
+                <div className="p-2 rounded-lg bg-white/5 text-gray-400 transition-transform group-hover:scale-110">
                   <Activity className="w-5 h-5" />
                 </div>
               </div>
@@ -152,8 +158,9 @@ const AnalyticsDashboard = () => {
                 <div>
                   <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 group-hover:text-gray-400 transition-colors">Last 7 Days</p>
                   <h3 className="text-3xl font-black text-white tracking-tight">{stats.visitsLast7Days}</h3>
+                  <p className="text-[10px] text-gray-600 font-medium mt-2">{start7} - {todayDate}</p>
                 </div>
-                <div className="p-2 rounded-lg bg-purple-500/10 text-purple-400 transition-transform group-hover:scale-110">
+                <div className="p-2 rounded-lg bg-white/5 text-gray-400 transition-transform group-hover:scale-110">
                   <TrendingUp className="w-5 h-5" />
                 </div>
               </div>
@@ -164,8 +171,9 @@ const AnalyticsDashboard = () => {
                 <div>
                   <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 group-hover:text-gray-400 transition-colors">Last 30 Days</p>
                   <h3 className="text-3xl font-black text-white tracking-tight">{stats.visitsLast30Days}</h3>
+                  <p className="text-[10px] text-gray-600 font-medium mt-2">{start30} - {todayDate}</p>
                 </div>
-                <div className="p-2 rounded-lg bg-orange-500/10 text-orange-400 transition-transform group-hover:scale-110">
+                <div className="p-2 rounded-lg bg-white/5 text-gray-400 transition-transform group-hover:scale-110">
                   <Calendar className="w-5 h-5" />
                 </div>
               </div>
@@ -178,10 +186,10 @@ const AnalyticsDashboard = () => {
               <h3 className="font-bold text-white flex items-center gap-2">
                 <BarChart3 className="w-4 h-4 text-[#14f195]" /> 7-Day Traffic Breakdown
               </h3>
-              <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">Unique Daily Views</p>
+              <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">Daily Visits</p>
             </div>
             
-            <div className="h-[300px] w-full">
+            <div className="h-[220px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <RechartsBarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <XAxis 

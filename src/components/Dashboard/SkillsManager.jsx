@@ -1,23 +1,26 @@
-import React, { useState, useEffect, useMemo, useCallback, memo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
-import { Search, Grid, List as ListIcon, Plus, Edit2, Trash2, X, Loader2, Check, AlertTriangle, LayoutGrid, Server, Code, Settings, Cloud, Database } from 'lucide-react';
+import { Search, Plus, Edit2, Trash2, X, Loader2, Check, AlertTriangle, LayoutGrid, Server, Code, Settings, Cloud, Database } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const CATEGORY_COLORS = {
   'Cloud Platform': 'text-blue-400',
-  'DevOps': 'text-green-400',
-  'Containers': 'text-purple-400',
+  'DevOps & CI/CD': 'text-green-400',
+  'Containers & Orchestration': 'text-purple-400',
+  'Infrastructure as Code': 'text-cyan-400',
   'Networking': 'text-amber-400',
-  'Automation': 'text-[#14f195]',
+  'Programming & Scripting': 'text-yellow-400',
+  'Operating Systems': 'text-orange-400',
+  'Monitoring & Observability': 'text-pink-400',
   'default': 'text-gray-400'
 };
 
 const CATEGORY_ICONS = {
   'Cloud Platform': Cloud,
-  'DevOps': Settings,
-  'Containers': LayoutGrid,
+  'DevOps & CI/CD': Settings,
+  'Containers & Orchestration': LayoutGrid,
+  'Infrastructure as Code': Code,
   'Networking': Server,
-  'Automation': Code,
   'default': Database
 };
 
@@ -54,40 +57,70 @@ const DeleteDialog = ({ item, onCancel, onConfirm }) => {
   );
 };
 
-const EditorDrawer = ({ isOpen, item, skillCount, onClose, onSave }) => {
+const EditorDrawer = ({ isOpen, item, initialCategory, initialIsCircular, availableCategories, skillCount, onClose, onSave }) => {
   if (!isOpen) return null;
 
   const isEditing = !!item;
-  const initialData = item || {};
+  const [name, setName] = useState('');
+  const [category, setCategory] = useState('');
+  const [categoryIcon, setCategoryIcon] = useState('');
+  const [percent, setPercent] = useState(0);
+  const [isCircular, setIsCircular] = useState(false);
+  const [circularSub, setCircularSub] = useState('');
+  const [order, setOrder] = useState(0);
 
-  const [name, setName] = useState(initialData.name || '');
-  const [category, setCategory] = useState(initialData.category || '');
-  const [categoryIcon, setCategoryIcon] = useState(initialData.categoryIcon || '');
-  const [percent, setPercent] = useState(initialData.percent ?? 0);
-  const [isCircular, setIsCircular] = useState(initialData.isCircular || false);
-  const [circularSub, setCircularSub] = useState(initialData.circularSub || '');
-  const [order, setOrder] = useState(initialData.order ?? (skillCount + 1));
   const [isSaving, setIsSaving] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [showNewCategory, setShowNewCategory] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      if (item) {
+        setName(item.name || '');
+        setCategory(item.category || '');
+        setCategoryIcon(item.categoryIcon || '');
+        setPercent(item.percent ?? 0);
+        setIsCircular(item.isCircular || false);
+        setCircularSub(item.circularSub || '');
+        setOrder(item.order ?? 0);
+        setShowNewCategory(false);
+      } else {
+        setName('');
+        setCategory(initialCategory || '');
+        setCategoryIcon('');
+        setPercent(0);
+        setIsCircular(initialIsCircular || false);
+        setCircularSub('');
+        setOrder(skillCount + 1);
+        setShowNewCategory(!initialCategory);
+      }
+      setIsSaving(false);
+      setIsSuccess(false);
+    }
+  }, [isOpen, item, initialCategory, initialIsCircular, skillCount]);
 
   const isDirty = useMemo(() => {
     if (!isEditing) {
       return !!(name || category || categoryIcon || percent > 0 || isCircular || circularSub);
     }
     return (
-      name !== (initialData.name || '') ||
-      category !== (initialData.category || '') ||
-      categoryIcon !== (initialData.categoryIcon || '') ||
-      Number(percent) !== Number(initialData.percent || 0) ||
-      isCircular !== (initialData.isCircular || false) ||
-      circularSub !== (initialData.circularSub || '') ||
-      Number(order) !== Number(initialData.order || 0)
+      name !== (item.name || '') ||
+      category !== (item.category || '') ||
+      categoryIcon !== (item.categoryIcon || '') ||
+      Number(percent) !== Number(item.percent || 0) ||
+      isCircular !== (item.isCircular || false) ||
+      circularSub !== (item.circularSub || '') ||
+      Number(order) !== Number(item.order || 0)
     );
-  }, [isEditing, name, category, categoryIcon, percent, isCircular, circularSub, order, initialData]);
+  }, [isEditing, item, name, category, categoryIcon, percent, isCircular, circularSub, order]);
 
   const handleSave = async () => {
-    if (!name.trim() || !category.trim()) {
-      toast.error('Name and Category are required.');
+    if (!name.trim()) {
+      toast.error('Skill Name is required.');
+      return;
+    }
+    if (!isCircular && !category.trim()) {
+      toast.error('Category is required for standard skills.');
       return;
     }
     if (percent < 0 || percent > 100) {
@@ -107,7 +140,7 @@ const EditorDrawer = ({ isOpen, item, skillCount, onClose, onSave }) => {
         order: Number(order)
       };
 
-      await onSave(isEditing ? initialData.id : null, payload);
+      await onSave(isEditing ? item.id : null, payload);
       setIsSuccess(true);
       toast.success(isEditing ? 'Skill updated.' : 'Skill created.');
       setTimeout(() => { onClose(); setIsSuccess(false); }, 900);
@@ -120,9 +153,9 @@ const EditorDrawer = ({ isOpen, item, skillCount, onClose, onSave }) => {
   const iCls = "w-full h-11 bg-[#090e17] border border-[#1e2d42] rounded-lg px-3 text-[13px] text-white placeholder:text-[#4b6385] focus:border-[#14f195] focus:ring-1 focus:ring-[#14f195] outline-none transition-all duration-200";
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end" aria-modal="true" role="dialog">
-      <div className="absolute inset-0 bg-[#030712]/70" onClick={() => !isSaving && onClose()} />
-      <div className="relative w-full sm:w-[560px] md:w-[620px] h-full flex flex-col bg-[#050914] border-l border-[#1e2d42] shadow-2xl overflow-hidden" style={{ animation: 'drawerSlideIn 250ms cubic-bezier(0.16, 1, 0.3, 1) both' }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6" aria-modal="true" role="dialog">
+      <div className="absolute inset-0 bg-[#030814]/70" onClick={() => !isSaving && onClose()} />
+      <div className="relative w-full max-w-[780px] max-h-[92vh] sm:max-h-[90vh] flex flex-col bg-[#050914] border border-[#1e2d42] rounded-2xl shadow-2xl overflow-hidden" style={{ animation: 'modalZoomIn 200ms cubic-bezier(0.16, 1, 0.3, 1) both' }}>
         <div className="shrink-0 px-6 pt-5 pb-4 border-b border-[#1e2d42] bg-[#050914]">
           <div className="flex items-start justify-between">
             <div>
@@ -131,11 +164,11 @@ const EditorDrawer = ({ isOpen, item, skillCount, onClose, onSave }) => {
                   {isEditing ? '[ EDIT SKILL ]' : '[ NEW SKILL ]'}
                 </span>
                 <span className="text-[#4b6385] font-mono text-[10px] uppercase tracking-wider">
-                  SKILL {String(isEditing ? initialData.order || '00' : skillCount + 1).padStart(2, '0')}
+                  SKILL {String(isEditing ? item.order || '00' : skillCount + 1).padStart(2, '0')}
                 </span>
               </div>
               <h2 className="text-white font-semibold text-lg leading-tight truncate">
-                {name || (isEditing ? (initialData.name || 'Untitled') : 'Untitled Skill')}
+                {name || (isEditing ? (item.name || 'Untitled') : 'Untitled Skill')}
               </h2>
             </div>
             <button onClick={() => !isSaving && onClose()} disabled={isSaving} className="w-8 h-8 flex items-center justify-center rounded-md transition-all hover:bg-[#1e2d42] text-[#8b9bb4] hover:text-white disabled:opacity-30">
@@ -152,15 +185,65 @@ const EditorDrawer = ({ isOpen, item, skillCount, onClose, onSave }) => {
                 <span className="font-mono text-[11px] font-semibold uppercase tracking-widest text-[#8b9bb4]">IDENTITY</span>
                 <span className="flex-1 h-[1px] bg-[#1e2d42]" />
               </div>
-              <div className="space-y-4">
+              <div className="space-y-5">
                 <div>
                   <label className="block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5">Skill Name <span className="text-[#14f195]">*</span></label>
                   <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. VM & VNet" className={iCls} />
                 </div>
+                
                 <div>
-                  <label className="block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5">Category <span className="text-[#14f195]">*</span></label>
-                  <input type="text" value={category} onChange={e => setCategory(e.target.value)} placeholder="e.g. Cloud Platform" className={iCls} />
+                  <label className="block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-2.5">Placement</label>
+                  <div className="flex gap-4">
+                    <label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-xl border transition-colors cursor-pointer ${isCircular ? 'border-[#14f195] bg-[#14f195]/5' : 'border-[#1e2d42] bg-[#090e17] hover:border-gray-500'}`}>
+                      <input type="radio" name="placement" checked={isCircular} onChange={() => setIsCircular(true)} className="hidden" />
+                      <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${isCircular ? 'border-[#14f195]' : 'border-gray-500'}`}>
+                        {isCircular && <div className="w-1.5 h-1.5 rounded-full bg-[#14f195]" />}
+                      </div>
+                      <span className={`text-[12px] font-bold ${isCircular ? 'text-[#14f195]' : 'text-gray-400'}`}>TOP CIRCULAR</span>
+                    </label>
+                    <label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-xl border transition-colors cursor-pointer ${!isCircular ? 'border-[#14f195] bg-[#14f195]/5' : 'border-[#1e2d42] bg-[#090e17] hover:border-gray-500'}`}>
+                      <input type="radio" name="placement" checked={!isCircular} onChange={() => setIsCircular(false)} className="hidden" />
+                      <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${!isCircular ? 'border-[#14f195]' : 'border-gray-500'}`}>
+                        {!isCircular && <div className="w-1.5 h-1.5 rounded-full bg-[#14f195]" />}
+                      </div>
+                      <span className={`text-[12px] font-bold ${!isCircular ? 'text-[#14f195]' : 'text-gray-400'}`}>CATEGORY</span>
+                    </label>
+                  </div>
                 </div>
+
+                {!isCircular ? (
+                  <div>
+                    <label className="block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5">Category <span className="text-[#14f195]">*</span></label>
+                    {!showNewCategory ? (
+                      <div className="flex gap-2">
+                        <select value={category} onChange={e => {
+                          if (e.target.value === 'ADD_NEW') {
+                            setShowNewCategory(true);
+                            setCategory('');
+                          } else {
+                            setCategory(e.target.value);
+                          }
+                        }} className={`${iCls} appearance-none cursor-pointer`}>
+                          <option value="" disabled>Select a Category...</option>
+                          {availableCategories.map(cat => (
+                            <option key={cat} value={cat}>{cat}</option>
+                          ))}
+                          <option value="ADD_NEW">+ Create New Category</option>
+                        </select>
+                      </div>
+                    ) : (
+                      <div className="flex gap-2">
+                        <input type="text" value={category} onChange={e => setCategory(e.target.value)} placeholder="e.g. Cloud Platform" className={iCls} />
+                        <button onClick={() => setShowNewCategory(false)} className="px-4 bg-[#1e2d42] text-white rounded-lg text-xs font-bold hover:bg-gray-600">Back</button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div>
+                    <label className="block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5">Circular Subtitle</label>
+                    <input type="text" value={circularSub} onChange={e => setCircularSub(e.target.value)} placeholder="e.g. Azure Expert" className={iCls} />
+                  </div>
+                )}
               </div>
             </section>
 
@@ -172,11 +255,17 @@ const EditorDrawer = ({ isOpen, item, skillCount, onClose, onSave }) => {
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5">Proficiency (%)</label>
-                  <div className="flex items-center gap-4">
-                    <input type="number" min="0" max="100" value={percent} onChange={e => setPercent(e.target.value)} className={`${iCls} w-24 text-center font-mono`} />
-                    <div className="flex-1 h-2 bg-[#090e17] rounded-full border border-[#1e2d42] overflow-hidden">
-                      <div className="h-full bg-[#14f195] rounded-full transition-all duration-300" style={{ width: `${Math.min(100, Math.max(0, percent || 0))}%` }} />
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                    <input 
+                      type="range" 
+                      min="0" max="100" 
+                      value={percent} 
+                      onChange={e => setPercent(e.target.value)} 
+                      className="flex-1 h-2 bg-[#090e17] rounded-full appearance-none accent-[#14f195] cursor-pointer" 
+                    />
+                    <div className="flex items-center gap-3 w-28 shrink-0">
+                      <input type="number" min="0" max="100" value={percent} onChange={e => setPercent(e.target.value)} className={`${iCls} text-center font-mono`} />
+                      <span className="text-gray-400 font-bold">%</span>
                     </div>
                   </div>
                 </div>
@@ -194,18 +283,6 @@ const EditorDrawer = ({ isOpen, item, skillCount, onClose, onSave }) => {
                   <label className="block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5">Icon Name (React Icons / FontAwesome)</label>
                   <input type="text" value={categoryIcon} onChange={e => setCategoryIcon(e.target.value)} placeholder="e.g. SiMicrosoftazure or fas fa-server" className={iCls} />
                 </div>
-                <div className="flex items-center gap-3 mt-4">
-                  <label className="flex items-center gap-3 cursor-pointer text-white">
-                    <input type="checkbox" checked={isCircular} onChange={(e) => setIsCircular(e.target.checked)} className="w-4 h-4 rounded border-[#1e2d42] bg-[#090e17] text-[#14f195]" />
-                    <span className="text-[12px] font-semibold text-[#8b9bb4]">Show in Top Circular Section?</span>
-                  </label>
-                </div>
-                {isCircular && (
-                  <div className="mt-4">
-                    <label className="block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5">Circular Subtitle</label>
-                    <input type="text" value={circularSub} onChange={e => setCircularSub(e.target.value)} placeholder="Subtitle displayed below the circular skill" className={iCls} />
-                  </div>
-                )}
                 <div>
                   <label className="block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5">Display Order</label>
                   <input type="number" value={order} onChange={e => setOrder(e.target.value)} className={`${iCls} w-32`} />
@@ -220,23 +297,35 @@ const EditorDrawer = ({ isOpen, item, skillCount, onClose, onSave }) => {
                 <span className="flex-1 h-[1px] bg-[#1e2d42]" />
               </div>
               
-              <div className="w-full bg-[#080d19] border border-[#1e2d42] rounded-lg p-5">
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <span className="font-mono text-[9px] uppercase tracking-widest text-[#4b6385]">{category || 'Category'}</span>
-                    <h3 className="text-white font-bold text-[15px] mt-0.5">{name || 'Skill Name'}</h3>
+              <div className="w-full max-w-[340px] bg-[#080d19] border border-[#1e2d42] rounded-xl p-5 mx-auto">
+                {isCircular ? (
+                  <div className="flex flex-col items-center justify-center text-center">
+                    <div className="w-12 h-12 rounded-full border-2 border-[#14f195] flex items-center justify-center text-[#14f195] mb-3">
+                      <span className="font-mono text-[10px]">{percent}%</span>
+                    </div>
+                    <h3 className="text-white font-bold text-[14px]">{name || 'Skill Name'}</h3>
+                    <span className="text-[#8b9bb4] text-[11px]">{circularSub || 'Circular Subtitle'}</span>
                   </div>
-                  <div className="w-8 h-8 rounded-md bg-[#0b1320] border border-[#1e2d42] flex items-center justify-center text-[#14f195]">
-                     <LayoutGrid className="w-4 h-4" />
-                  </div>
-                </div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#8b9bb4]">PROFICIENCY</span>
-                  <span className="text-[10px] font-mono font-bold text-[#14f195]">{percent || 0}%</span>
-                </div>
-                <div className="h-1.5 w-full bg-[#0b1320] rounded-full overflow-hidden">
-                  <div className="h-full bg-[#14f195] rounded-full" style={{ width: `${Math.min(100, Math.max(0, percent || 0))}%` }} />
-                </div>
+                ) : (
+                  <>
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <span className="font-mono text-[9px] uppercase tracking-widest text-[#4b6385]">{category || 'Category'}</span>
+                        <h3 className="text-white font-bold text-[15px] mt-0.5">{name || 'Skill Name'}</h3>
+                      </div>
+                      <div className="w-8 h-8 rounded-md bg-[#0b1320] border border-[#1e2d42] flex items-center justify-center text-[#14f195]">
+                         <LayoutGrid className="w-4 h-4" />
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#8b9bb4]">PROFICIENCY</span>
+                      <span className="text-[10px] font-mono font-bold text-[#14f195]">{percent || 0}%</span>
+                    </div>
+                    <div className="h-1.5 w-full bg-[#0b1320] rounded-full overflow-hidden">
+                      <div className="h-full bg-[#14f195] rounded-full" style={{ width: `${Math.min(100, Math.max(0, percent || 0))}%` }} />
+                    </div>
+                  </>
+                )}
               </div>
             </section>
           </div>
@@ -257,7 +346,7 @@ const EditorDrawer = ({ isOpen, item, skillCount, onClose, onSave }) => {
           </div>
         </div>
       </div>
-      <style>{`@keyframes drawerSlideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }`}</style>
+      <style>{`@keyframes modalZoomIn { from { opacity: 0; transform: scale(0.96) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }`}</style>
     </div>
   );
 };
@@ -268,39 +357,69 @@ export default function SkillsManager() {
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterCategory, setFilterCategory] = useState('ALL');
-  const [viewMode, setViewMode] = useState('GRID');
-  const [editorState, setEditorState] = useState({ isOpen: false, item: null });
+  const [editorState, setEditorState] = useState({ isOpen: false, item: null, initialCategory: '', initialIsCircular: false });
   const [deleteTarget, setDeleteTarget] = useState(null);
 
-  const categories = useMemo(() => {
+  const availableCategories = useMemo(() => {
     if (!rawSkills) return [];
-    const cats = rawSkills.map(s => s.category).filter(Boolean);
+    const cats = rawSkills.filter(s => !s.isCircular).map(s => s.category).filter(Boolean);
     return [...new Set(cats)];
   }, [rawSkills]);
 
   const stats = useMemo(() => {
-    if (!rawSkills) return { total: 0, byCat: {} };
-    const byCat = {};
+    if (!rawSkills) return { total: 0, circularCount: 0, catCount: 0 };
+    let circ = 0;
+    const cats = new Set();
     rawSkills.forEach(s => {
-      if (s.category) {
-         byCat[s.category] = (byCat[s.category] || 0) + 1;
-      }
+      if (s.isCircular) circ++;
+      else if (s.category) cats.add(s.category);
     });
-    return { total: rawSkills.length, byCat };
+    return { total: rawSkills.length, circularCount: circ, catCount: cats.size };
   }, [rawSkills]);
 
-  const filteredSkills = useMemo(() => {
-    if (!rawSkills) return [];
-    return rawSkills.filter(s => {
-      if (filterCategory !== 'ALL' && s.category !== filterCategory) return false;
+  const groupedSkills = useMemo(() => {
+    if (!rawSkills) return { circular: [], categories: [] };
+
+    // 1. Filter by search
+    const filtered = rawSkills.filter(s => {
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
-        if (!s.name?.toLowerCase().includes(q) && !s.category?.toLowerCase().includes(q)) return false;
+        if (!s.name?.toLowerCase().includes(q) && !s.category?.toLowerCase().includes(q) && !s.circularSub?.toLowerCase().includes(q)) return false;
       }
       return true;
     });
-  }, [rawSkills, filterCategory, searchQuery]);
+
+    // 2. Group
+    const circular = [];
+    const catMap = new Map();
+
+    filtered.forEach(skill => {
+      if (skill.isCircular) {
+        circular.push(skill);
+      } else {
+        const cat = skill.category || 'Uncategorized';
+        if (!catMap.has(cat)) {
+          catMap.set(cat, []);
+        }
+        catMap.get(cat).push(skill);
+      }
+    });
+
+    circular.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+    const categories = Array.from(catMap.entries()).map(([title, skills]) => {
+      skills.sort((a, b) => (a.order || 0) - (b.order || 0));
+      return { title, skills };
+    });
+
+    categories.sort((a, b) => {
+      const minA = a.skills.length > 0 ? a.skills[0].order : 0;
+      const minB = b.skills.length > 0 ? b.skills[0].order : 0;
+      return minA - minB;
+    });
+
+    return { circular, categories };
+  }, [rawSkills, searchQuery]);
 
   const handleSave = useCallback(async (id, payload) => {
     if (id) await update(id, payload);
@@ -321,8 +440,11 @@ export default function SkillsManager() {
     }
   };
 
-  const openEditor = useCallback((item = null) => setEditorState({ isOpen: true, item }), []);
-  const closeEditor = useCallback(() => setEditorState({ isOpen: false, item: null }), []);
+  const openEditor = useCallback((item = null, initialCategory = '', initialIsCircular = false) => {
+    setEditorState({ isOpen: true, item, initialCategory, initialIsCircular });
+  }, []);
+
+  const closeEditor = useCallback(() => setEditorState({ isOpen: false, item: null, initialCategory: '', initialIsCircular: false }), []);
 
   if (loading && (!rawSkills || rawSkills.length === 0)) {
     return (
@@ -335,172 +457,174 @@ export default function SkillsManager() {
     );
   }
 
+  const SkillCard = ({ skill }) => {
+    const Icon = CATEGORY_ICONS[skill.category] || CATEGORY_ICONS['default'];
+    const accentColor = CATEGORY_COLORS[skill.category] || CATEGORY_COLORS['default'];
+    
+    return (
+      <div className="group relative flex flex-col bg-[#0b1120] border border-[#1a2440] rounded-xl p-5 hover:border-[#14f195]/40 transition-all hover:shadow-[0_4px_25px_rgba(0,0,0,0.3)]">
+        <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#14f195] opacity-0 group-hover:opacity-100 transition-opacity rounded-l-xl" />
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            {skill.isCircular ? (
+              <span className="font-mono text-[9px] uppercase tracking-[0.2em] mb-1 block text-[#14f195]">
+                CIRCULAR
+              </span>
+            ) : (
+              <span className={`font-mono text-[9px] uppercase tracking-[0.2em] mb-1 block ${accentColor}`}>
+                {skill.category || 'Uncategorized'}
+              </span>
+            )}
+            <h3 className="text-white font-bold text-[15px] truncate max-w-[180px]">{skill.name}</h3>
+            {skill.isCircular && skill.circularSub && (
+              <span className="text-gray-500 text-[11px] block mt-1">{skill.circularSub}</span>
+            )}
+          </div>
+          <div className={`w-8 h-8 rounded-md bg-[#050914] border border-[#1a2440] flex items-center justify-center ${skill.isCircular ? 'text-[#14f195]' : accentColor}`}>
+             <Icon className="w-4 h-4" />
+          </div>
+        </div>
+        <div className="mt-auto">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#8b9bb4]">PROFICIENCY</span>
+            <span className="text-[10px] font-mono font-bold text-white">{skill.percent || 0}%</span>
+          </div>
+          <div className="h-1.5 w-full bg-[#050914] rounded-full border border-[#1a2440] overflow-hidden mb-5">
+            <div className="h-full bg-gradient-to-r from-gray-700 to-white group-hover:to-[#14f195] rounded-full transition-all duration-300" style={{ width: `${Math.min(100, Math.max(0, skill.percent || 0))}%` }} />
+          </div>
+          <div className="pt-4 border-t border-[#1a2440] flex justify-between items-center">
+            <span className="text-[9px] font-mono text-gray-600">ORDER: {skill.order}</span>
+            <div className="flex gap-2">
+              <button onClick={() => openEditor(skill)} className="text-gray-500 hover:text-white transition-colors flex items-center gap-1.5 text-[11px] font-semibold">
+                <Edit2 className="w-3.5 h-3.5" /> Edit
+              </button>
+              <span className="text-[#1a2440]">|</span>
+              <button onClick={() => setDeleteTarget(skill)} className="text-gray-500 hover:text-red-400 transition-colors flex items-center gap-1.5 text-[11px] font-semibold">
+                <Trash2 className="w-3.5 h-3.5" /> Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-8 pb-16 animate-in fade-in duration-300">
-      <div className="mb-8">
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-5">
+    <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-8 pb-20 animate-in fade-in duration-300">
+      <div className="mb-10">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
           <div>
             <span className="text-[#14f195] font-mono text-[10px] uppercase tracking-[0.2em] font-bold mb-1.5 block">
-              SKILLS / TECHNOLOGY
+              SKILLS / ENGINEERING CAPABILITIES
             </span>
             <h1 className="text-3xl font-black text-white tracking-tight leading-none mb-2">
-              Skills & Tools
+              Skills Library
             </h1>
-            <p className="text-gray-600 text-sm">
-              Manage the technologies, platforms, tools, and engineering capabilities displayed across your portfolio.
+            <p className="text-gray-500 text-sm max-w-2xl leading-relaxed">
+              Manage technical capabilities, proficiency levels, categories, and portfolio presentation.
             </p>
           </div>
-          <button onClick={() => openEditor(null)} className="self-start sm:self-auto flex items-center gap-2 px-4 py-2.5 bg-[#14f195] text-[#090e1a] text-sm font-bold rounded-lg hover:bg-[#10d482] transition-colors shadow-[0_0_20px_rgba(20,241,149,0.1)] shrink-0">
-            <Plus className="w-4 h-4" /> Add Skill
+          <button onClick={() => openEditor(null)} className="self-start sm:self-auto flex items-center gap-2 px-5 py-2.5 bg-[#14f195] text-[#090e1a] text-sm font-bold rounded-lg hover:bg-[#10d482] transition-colors shadow-[0_0_20px_rgba(20,241,149,0.1)] shrink-0">
+            <Plus className="w-4 h-4" /> Global Add
           </button>
         </div>
 
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 bg-[#0b1120] border border-[#1a2440] rounded-xl px-5 py-3.5">
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 bg-[#0b1120] border border-[#1a2440] rounded-xl px-5 py-3.5 shadow-lg">
           <div className="flex items-center gap-2">
             <span className="text-white font-bold">{stats.total}</span>
-            <span className="text-gray-500 font-mono text-[10px] uppercase tracking-widest">SKILLS</span>
+            <span className="text-gray-500 font-mono text-[10px] uppercase tracking-widest">TOTAL SKILLS</span>
           </div>
-          {Object.entries(stats.byCat).map(([cat, count], idx) => (
-            <React.Fragment key={cat}>
-              <div className="w-px h-4 bg-[#1a2440]" />
-              <div className="flex items-center gap-2">
-                <span className="text-[#14f195] font-bold">{count}</span>
-                <span className="text-gray-500 font-mono text-[10px] uppercase tracking-widest">{cat}</span>
-              </div>
-            </React.Fragment>
-          ))}
-        </div>
-      </div>
-
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-6">
-        <div className="relative flex-1 sm:max-w-[340px]">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-700" />
-          <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search skills..." className="w-full h-10 pl-10 pr-9 bg-[#0b1120] border border-[#1a2440] rounded-lg text-sm text-white placeholder:text-gray-700 focus:border-[#14f195]/40 focus:outline-none transition-colors" />
-          {searchQuery && (
-            <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-white transition-colors">
-              <X className="w-3.5 h-3.5" />
-            </button>
-          )}
-        </div>
-
-        <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2.5 ml-auto">
-          <div className="flex flex-wrap bg-[#0b1120] border border-[#1a2440] rounded-lg p-0.5 gap-0.5">
-            <button onClick={() => setFilterCategory('ALL')} className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-bold uppercase tracking-widest transition-all ${filterCategory === 'ALL' ? 'bg-[#1e293b] text-white' : 'text-gray-500 hover:text-gray-300'}`}>
-              ALL
-            </button>
-            {categories.map(cat => (
-              <button key={cat} onClick={() => setFilterCategory(cat)} className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-bold uppercase tracking-widest transition-all ${filterCategory === cat ? 'bg-[#1e293b] text-white' : 'text-gray-500 hover:text-gray-300'}`}>
-                {cat}
-              </button>
-            ))}
+          <div className="w-px h-4 bg-[#1a2440]" />
+          <div className="flex items-center gap-2">
+            <span className="text-[#14f195] font-bold">{stats.catCount}</span>
+            <span className="text-gray-500 font-mono text-[10px] uppercase tracking-widest">CATEGORIES</span>
           </div>
-
-          <div className="flex bg-[#0b1120] border border-[#1a2440] rounded-lg p-0.5">
-            <button onClick={() => setViewMode('LIST')} className={`p-2 rounded-md transition-colors ${viewMode === 'LIST' ? 'bg-[#1e293b] text-white' : 'text-gray-600 hover:text-gray-300'}`}>
-              <ListIcon className="w-3.5 h-3.5" />
-            </button>
-            <button onClick={() => setViewMode('GRID')} className={`p-2 rounded-md transition-colors ${viewMode === 'GRID' ? 'bg-[#1e293b] text-white' : 'text-gray-600 hover:text-gray-300'}`}>
-              <Grid className="w-3.5 h-3.5" />
-            </button>
+          <div className="w-px h-4 bg-[#1a2440]" />
+          <div className="flex items-center gap-2">
+            <span className="text-purple-400 font-bold">{stats.circularCount}</span>
+            <span className="text-gray-500 font-mono text-[10px] uppercase tracking-widest">CIRCULAR</span>
+          </div>
+          
+          <div className="ml-auto flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+            <div className="relative w-full sm:w-[260px]">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-500" />
+              <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search library..." className="w-full h-8 pl-9 pr-8 bg-[#050914] border border-[#1a2440] rounded-md text-[13px] text-white placeholder:text-gray-600 focus:border-[#14f195]/40 focus:outline-none transition-colors" />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery('')} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      {filteredSkills.length === 0 ? (
-        <div className="flex flex-col items-center justify-center p-16 bg-[#0b1120] border border-[#1a2440] rounded-xl border-dashed">
+      {groupedSkills.circular.length === 0 && groupedSkills.categories.length === 0 ? (
+        <div className="flex flex-col items-center justify-center p-16 bg-[#0b1120] border border-[#1a2440] rounded-2xl border-dashed">
           <div className="w-12 h-12 rounded-full bg-[#1e293b]/50 flex items-center justify-center mb-4">
             <Database className="w-6 h-6 text-gray-500" />
           </div>
           <span className="font-mono text-[11px] uppercase tracking-widest text-gray-500 mb-1">NO SKILLS FOUND</span>
-          <p className="text-gray-400 text-sm mb-4">Try another search or clear the filters.</p>
-          <button onClick={() => {setSearchQuery(''); setFilterCategory('ALL');}} className="text-[#14f195] text-sm hover:underline">Clear Filters</button>
-        </div>
-      ) : viewMode === 'GRID' ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {filteredSkills.map(skill => {
-            const Icon = CATEGORY_ICONS[skill.category] || CATEGORY_ICONS['default'];
-            const accentColor = CATEGORY_COLORS[skill.category] || CATEGORY_COLORS['default'];
-            return (
-              <div key={skill.id} className="group relative flex flex-col bg-[#0b1120] border border-[#1a2440] rounded-xl p-5 hover:border-[#14f195]/30 transition-all hover:shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
-                <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#14f195] opacity-0 group-hover:opacity-100 transition-opacity rounded-l-xl" />
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <span className={`font-mono text-[9px] uppercase tracking-widest mb-1 block ${accentColor}`}>
-                      {skill.category || 'Uncategorized'}
-                    </span>
-                    <h3 className="text-white font-bold text-[15px] truncate max-w-[180px]">{skill.name}</h3>
-                  </div>
-                  <div className={`w-8 h-8 rounded-md bg-[#050914] border border-[#1a2440] flex items-center justify-center ${accentColor}`}>
-                     <Icon className="w-4 h-4" />
-                  </div>
-                </div>
-                <div className="mt-auto">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#8b9bb4]">PROFICIENCY</span>
-                    <span className="text-[10px] font-mono font-bold text-white">{skill.percent || 0}%</span>
-                  </div>
-                  <div className="h-1.5 w-full bg-[#050914] rounded-full border border-[#1a2440] overflow-hidden mb-5">
-                    <div className="h-full bg-gradient-to-r from-gray-700 to-white group-hover:to-[#14f195] rounded-full transition-all duration-300" style={{ width: `${Math.min(100, Math.max(0, skill.percent || 0))}%` }} />
-                  </div>
-                  <div className="pt-4 border-t border-[#1a2440] flex justify-between items-center">
-                    <span className="text-[9px] font-mono text-gray-600">ORDER: {skill.order}</span>
-                    <div className="flex gap-2">
-                      <button onClick={() => openEditor(skill)} className="text-gray-500 hover:text-white transition-colors flex items-center gap-1.5 text-[11px] font-semibold">
-                        <Edit2 className="w-3.5 h-3.5" /> Edit
-                      </button>
-                      <span className="text-[#1a2440]">|</span>
-                      <button onClick={() => setDeleteTarget(skill)} className="text-gray-500 hover:text-red-400 transition-colors flex items-center gap-1.5 text-[11px] font-semibold">
-                        <Trash2 className="w-3.5 h-3.5" /> Delete
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          <p className="text-gray-400 text-sm mb-4">No skills match the current criteria.</p>
+          <button onClick={() => setSearchQuery('')} className="text-[#14f195] text-sm font-semibold hover:underline">Clear Search</button>
         </div>
       ) : (
-        <div className="bg-[#0b1120] border border-[#1a2440] rounded-xl overflow-hidden">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-[#1a2440] bg-[#050914]">
-                <th className="py-3 px-5 text-[10px] font-mono font-bold uppercase tracking-widest text-gray-500">SKILL</th>
-                <th className="py-3 px-5 text-[10px] font-mono font-bold uppercase tracking-widest text-gray-500">CATEGORY</th>
-                <th className="py-3 px-5 text-[10px] font-mono font-bold uppercase tracking-widest text-gray-500">PROFICIENCY</th>
-                <th className="py-3 px-5 text-[10px] font-mono font-bold uppercase tracking-widest text-gray-500 text-right">ACTIONS</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredSkills.map((skill, i) => (
-                <tr key={skill.id} className="border-b border-[#1a2440]/50 hover:bg-[#1a2440]/20 transition-colors group">
-                  <td className="py-3 px-5">
-                    <span className="text-sm font-bold text-white group-hover:text-[#14f195] transition-colors">{skill.name}</span>
-                  </td>
-                  <td className="py-3 px-5">
-                    <span className="text-[11px] font-mono text-gray-400 uppercase tracking-wider">{skill.category}</span>
-                  </td>
-                  <td className="py-3 px-5">
-                    <div className="flex items-center gap-3 w-32">
-                      <span className="text-[11px] font-mono font-bold text-white w-8">{skill.percent}%</span>
-                      <div className="flex-1 h-1.5 bg-[#050914] rounded-full overflow-hidden">
-                        <div className="h-full bg-[#14f195] rounded-full" style={{ width: `${Math.min(100, Math.max(0, skill.percent || 0))}%` }} />
-                      </div>
-                    </div>
-                  </td>
-                  <td className="py-3 px-5 text-right">
-                    <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button onClick={() => openEditor(skill)} className="text-gray-500 hover:text-white transition-colors"><Edit2 className="w-4 h-4" /></button>
-                      <button onClick={() => setDeleteTarget(skill)} className="text-gray-500 hover:text-red-400 transition-colors"><Trash2 className="w-4 h-4" /></button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="space-y-16">
+          {groupedSkills.circular.length > 0 && (
+            <section>
+              <div className="flex items-center justify-between mb-6 pb-2 border-b border-[#1a2440]">
+                <div>
+                  <h2 className="text-lg font-bold text-white uppercase tracking-wide">TOP CIRCULAR SKILLS</h2>
+                  <span className="text-[#8b9bb4] text-[11px] font-mono">{groupedSkills.circular.length} SKILLS</span>
+                </div>
+                <button onClick={() => openEditor(null, '', true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#1a2440]/50 hover:bg-[#1a2440] text-gray-300 text-[11px] font-bold uppercase tracking-wider transition-colors">
+                  <Plus className="w-3 h-3" /> Add Circular Skill
+                </button>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {groupedSkills.circular.map(skill => (
+                  <SkillCard key={skill.id} skill={skill} />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {groupedSkills.categories.map((cat, idx) => (
+            <section key={cat.title}>
+              <div className="flex items-center justify-between mb-6 pb-2 border-b border-[#1a2440]">
+                <div>
+                  <h2 className="text-lg font-bold text-white uppercase tracking-wide flex items-center gap-3">
+                    <span className="text-[#14f195] opacity-50 font-mono text-[13px]">
+                      {String(idx + 1).padStart(2, '0')} /
+                    </span>
+                    {cat.title}
+                  </h2>
+                  <span className="text-[#8b9bb4] text-[11px] font-mono">{cat.skills.length} SKILLS</span>
+                </div>
+                <button onClick={() => openEditor(null, cat.title, false)} className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#1a2440]/50 hover:bg-[#1a2440] text-gray-300 text-[11px] font-bold uppercase tracking-wider transition-colors">
+                  <Plus className="w-3 h-3" /> Add to {cat.title}
+                </button>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {cat.skills.map(skill => (
+                  <SkillCard key={skill.id} skill={skill} />
+                ))}
+              </div>
+            </section>
+          ))}
         </div>
       )}
 
-      <EditorDrawer isOpen={editorState.isOpen} item={editorState.item} skillCount={rawSkills?.length || 0} onClose={closeEditor} onSave={handleSave} />
+      <EditorDrawer 
+        isOpen={editorState.isOpen} 
+        item={editorState.item} 
+        initialCategory={editorState.initialCategory} 
+        initialIsCircular={editorState.initialIsCircular} 
+        availableCategories={availableCategories}
+        skillCount={rawSkills?.length || 0} 
+        onClose={closeEditor} 
+        onSave={handleSave} 
+      />
       <DeleteDialog item={deleteTarget} onCancel={() => setDeleteTarget(null)} onConfirm={handleDeleteConfirm} />
     </div>
   );

@@ -55,10 +55,20 @@ const buildVisitPayload = (page = '/') => ({
   page,
 });
 
+const getStartOfDaysAgo = (days) => {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate() - days);
+};
+
 const normalizeVisitsStats = (snapshot) => {
   const todayStart = getStartOfToday();
+  const startOf7Days = getStartOfDaysAgo(6);
+  const startOf30Days = getStartOfDaysAgo(29);
+
   const dailyVisits = {};
   let visitsToday = 0;
+  let visitsLast7Days = 0;
+  let visitsLast30Days = 0;
 
   // Derive dashboard metrics directly from raw visit documents so the UI stays in sync.
   snapshot.forEach((visitDoc) => {
@@ -72,18 +82,25 @@ const normalizeVisitsStats = (snapshot) => {
     const dateKey = getDateKey(timestamp);
     dailyVisits[dateKey] = (dailyVisits[dateKey] || 0) + 1;
 
-    if (timestamp >= todayStart) {
-      visitsToday += 1;
-    }
+    if (timestamp >= todayStart) visitsToday += 1;
+    if (timestamp >= startOf7Days) visitsLast7Days += 1;
+    if (timestamp >= startOf30Days) visitsLast30Days += 1;
   });
 
-  const recentDailyVisits = Object.entries(dailyVisits)
-    .sort(([dateA], [dateB]) => dateB.localeCompare(dateA))
-    .slice(0, 7);
+  // Create an array for the last 7 calendar days including days with 0 visits
+  // Sort from oldest to newest for a chronological chart
+  const recentDailyVisits = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = getStartOfDaysAgo(i);
+    const key = getDateKey(d);
+    recentDailyVisits.push([key, dailyVisits[key] || 0]);
+  }
 
   return {
     totalVisits: snapshot.size,
     visitsToday,
+    visitsLast7Days,
+    visitsLast30Days,
     dailyVisits,
     recentDailyVisits,
   };

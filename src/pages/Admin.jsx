@@ -9,7 +9,7 @@ const AnalyticsDashboard = lazy(() => import('../components/Dashboard/AnalyticsD
 const ProjectsManager = lazy(() => import('../components/Dashboard/ProjectsManager'));
 const AccountCenter = lazy(() => import('../components/Dashboard/AccountCenter'));
 const GenericListManager = lazy(() => import('../components/Dashboard/GenericListManager'));
-const SingleDocManager = lazy(() => import('../components/Dashboard/SingleDocManager'));
+const ContactManager = lazy(() => import('../components/Dashboard/ContactManager'));
 const DeveloperTools = lazy(() => import('../components/Dashboard/DeveloperTools'));
 const FeatureUnavailable = lazy(() => import('../components/Dashboard/FeatureUnavailable'));
 const HeroManager = lazy(() => import('../components/Dashboard/HeroManager'));
@@ -70,9 +70,7 @@ const Admin = () => {
           />
           <Route 
             path="contact" 
-            element={<SingleDocManager title="Contact Info" collection="contact" docId="main" fields={[
-              {name: 'email', label: 'Contact Email', type: 'email'}, {name: 'phone', label: 'Phone Number'}, {name: 'location', label: 'Location / Address'}
-            ]} />} 
+            element={<ContactManager />} 
           />
 
           <Route path="profile" element={<AccountCenter />} />

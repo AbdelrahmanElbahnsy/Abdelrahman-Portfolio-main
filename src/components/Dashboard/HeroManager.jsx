@@ -147,7 +147,7 @@ const HeroManager = () => {
     return (
       <div className="w-full flex flex-col">
         {/* Browser Frame */}
-        <div className="bg-[#0a0f1c] rounded-xl border border-[#1e293b] shadow-2xl overflow-hidden flex flex-col w-full h-[400px] xl:h-[450px]">
+        <div className="bg-[#0a0f1c] rounded-xl border border-[#1e293b] shadow-2xl overflow-hidden flex flex-col w-full h-[450px] xl:h-[500px]">
           
           {/* Browser Top Strip */}
           <div className="h-8 bg-[#131b2c] border-b border-[#1e293b] flex items-center px-4 gap-2 relative">
@@ -162,21 +162,21 @@ const HeroManager = () => {
           </div>
 
           {/* Hero Viewport */}
-          <div className="flex-grow flex items-center p-6 sm:p-8 relative overflow-hidden">
+          <div className="flex-grow flex items-center px-6 sm:px-8 py-4 relative overflow-hidden">
             {/* Subtle background glow */}
-            <div className="absolute top-1/2 right-0 -translate-y-1/2 w-48 h-48 bg-[#14f195]/5 blur-[80px] rounded-full pointer-events-none"></div>
+            <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-64 h-64 bg-[#14f195]/5 blur-[100px] rounded-full pointer-events-none"></div>
 
-            <div className="flex w-full h-full gap-4 xl:gap-8 items-center z-10">
+            <div className="flex w-full h-full gap-4 xl:gap-6 items-center z-10">
               
-              {/* Left Column: Typography */}
-              <div className="flex-1 flex flex-col justify-center max-w-[65%]">
+              {/* Left Column: Typography (55-60%) */}
+              <div className="w-[55%] xl:w-[60%] flex flex-col justify-center h-full pt-4 pb-4">
                 {formData.badge && (
                   <div className="self-start inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#14f195]/10 border border-[#14f195]/30 text-[#14f195] text-[9px] font-medium italic mb-3">
                     <span>✨</span> {formData.badge}
                   </div>
                 )}
                 
-                <h1 className="text-2xl sm:text-3xl xl:text-4xl font-black text-white leading-[1.05] mb-2 tracking-tight">
+                <h1 className="text-2xl sm:text-3xl xl:text-[34px] font-black text-white leading-[1.1] mb-2 tracking-tight">
                   <span className="bg-gradient-to-r from-[#14f195] to-[#10d482] text-transparent bg-clip-text">
                     {formData.firstName} {formData.lastName}
                   </span>
@@ -189,28 +189,28 @@ const HeroManager = () => {
                 )}
                 
                 {formData.description && (
-                  <p className="text-gray-400 text-[10px] sm:text-[11px] leading-relaxed line-clamp-4 max-w-[95%] mb-5 xl:mb-6">
+                  <p className="text-gray-400 text-[10px] sm:text-[11px] leading-relaxed line-clamp-4 pr-2 mb-5 xl:mb-6">
                     {formData.description}
                   </p>
                 )}
                 
                 {formData.cvUrl && (
-                  <div className="mt-auto">
-                    <div className="px-5 py-2.5 bg-[#14f195] text-[#0a0f1c] rounded-full text-[10px] font-bold inline-flex items-center gap-2 shadow-[0_0_15px_rgba(20,241,149,0.3)]">
+                  <div className="mt-auto self-start">
+                    <div className="px-5 py-2.5 bg-[#14f195] text-[#0a0f1c] rounded-full text-[10px] font-bold inline-flex items-center gap-2 shadow-[0_0_15px_rgba(20,241,149,0.25)]">
                       <FileText className="w-3 h-3" /> Download CV
                     </div>
                   </div>
                 )}
               </div>
               
-              {/* Right Column: Hero Image Area */}
+              {/* Right Column: Hero Image Area (40-45%) */}
               {previewImage && (
-                <div className="flex-1 max-w-[35%] h-full flex items-center justify-center relative">
-                  <div className="w-full h-full max-h-[220px] xl:max-h-[260px] rounded-[16px] overflow-hidden border border-[#1e293b]/50 shadow-lg bg-gradient-to-b from-[#131b2c]/80 to-[#0a0f1c]/80 flex justify-center items-end p-2 relative group">
+                <div className="w-[45%] xl:w-[40%] h-full flex items-center justify-center relative py-4">
+                  <div className="w-full h-full max-h-[300px] xl:max-h-[350px] rounded-2xl overflow-hidden border border-[#1e293b]/50 shadow-2xl bg-gradient-to-b from-[#131b2c]/80 to-[#0a0f1c]/80 flex justify-center items-end p-0">
                     <img 
                       src={previewImage} 
                       alt="Hero Layout Portrait" 
-                      className="w-full h-full object-contain object-bottom drop-shadow-xl" 
+                      className="w-full h-full object-contain object-bottom drop-shadow-2xl" 
                     />
                   </div>
                 </div>
@@ -220,7 +220,7 @@ const HeroManager = () => {
         </div>
         
         {/* Compact Disclaimer */}
-        <p className="text-[10px] text-gray-500 mt-3 text-center">
+        <p className="text-[10px] text-gray-500 mt-2 text-center font-medium">
           Preview reflects current unsaved form values.
         </p>
       </div>
@@ -230,8 +230,8 @@ const HeroManager = () => {
   return (
     <div className="max-w-[1600px] mx-auto pb-16 animate-in fade-in duration-500">
       
-      {/* PAGE HEADER (Properly Z-Indexed and Opaque) */}
-      <div className="bg-[#0f172a] border-b border-[#1e293b] sticky top-0 z-[60] px-6 py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-md">
+      {/* PAGE HEADER (Natural Scroll, No overlapping issue) */}
+      <div className="bg-[#0f172a] border-b border-[#1e293b] rounded-t-xl mb-6 px-6 py-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm relative z-10 mt-2">
         <div>
           <h1 className="text-2xl font-black text-white flex items-center gap-3">
             <LayoutTemplate className="w-6 h-6 text-[#14f195]" /> Hero Section
@@ -244,10 +244,10 @@ const HeroManager = () => {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider">
             {saveStatus === 'saved' && (
-              <span className="text-gray-400 flex items-center gap-1"><CheckCircle2 className="w-4 h-4" /> Live Content</span>
+              <span className="text-gray-500 flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4" /> Live Content</span>
             )}
             {saveStatus === 'unsaved' && (
-              <span className="text-orange-400 bg-orange-400/10 px-3 py-1.5 rounded-full border border-orange-400/20">
+              <span className="text-orange-400 bg-orange-400/10 px-3 py-1.5 rounded-full border border-orange-400/20 shadow-[0_0_10px_rgba(251,146,60,0.1)]">
                 Unsaved Changes
               </span>
             )}
@@ -257,7 +257,7 @@ const HeroManager = () => {
               </span>
             )}
             {saveStatus === 'success' && (
-              <span className="text-[#14f195] flex items-center gap-1"><CheckCircle2 className="w-4 h-4" /> Saved Successfully</span>
+              <span className="text-[#14f195] flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4" /> Saved Successfully</span>
             )}
           </div>
 
@@ -266,7 +266,7 @@ const HeroManager = () => {
               type="button"
               onClick={handleDiscard}
               disabled={!isDirty || isSaving || isUploading}
-              className="px-4 py-2 rounded-lg font-bold text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-colors disabled:opacity-30 disabled:hover:bg-white/5 flex items-center gap-2 text-sm"
+              className="px-4 py-2 rounded-lg font-bold text-white bg-[#1e293b] hover:bg-[#273549] border border-white/5 transition-colors disabled:opacity-30 disabled:hover:bg-[#1e293b] flex items-center gap-2 text-sm shadow-sm"
             >
               <Undo2 className="w-4 h-4" /> Discard
             </button>
@@ -274,7 +274,7 @@ const HeroManager = () => {
               type="button"
               onClick={handleSubmit}
               disabled={!isDirty || isSaving || isUploading}
-              className="bg-[#14f195] text-[#0a0f1c] px-6 py-2 rounded-lg font-bold flex items-center gap-2 hover:bg-[#10d482] transition-colors disabled:opacity-50 disabled:bg-gray-700 disabled:text-gray-500 shadow-lg shadow-[#14f195]/10 text-sm"
+              className="bg-[#14f195] text-[#0a0f1c] px-6 py-2 rounded-lg font-bold flex items-center gap-2 hover:bg-[#10d482] transition-colors disabled:opacity-50 disabled:bg-gray-700 disabled:text-gray-500 shadow-[0_4px_12px_rgba(20,241,149,0.15)] text-sm"
             >
               {isSaving || isUploading ? <Loader2 className="w-4 h-4 animate-spin"/> : <><Save className="w-4 h-4" /> Save</>}
             </button>
@@ -282,20 +282,20 @@ const HeroManager = () => {
         </div>
       </div>
 
-      <div className="p-6">
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-8 items-start">
+      <div className="px-2">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-6 xl:gap-8 items-start">
           
           {/* LEFT COLUMN: Main Editor (60%) */}
-          <div className="space-y-6">
+          <div className="space-y-4 xl:space-y-5">
             
             {/* IDENTITY & POSITIONING */}
-            <div className="bg-[#131b2c] p-6 rounded-2xl border border-[#1e293b] shadow-sm">
-              <h3 className="text-base font-bold text-white mb-5 flex items-center gap-2 border-b border-[#1e293b] pb-3">
+            <div className="bg-[#131b2c] p-5 xl:p-6 rounded-2xl border border-[#1e293b] shadow-sm">
+              <h3 className="text-base font-bold text-white mb-4 flex items-center gap-2 border-b border-[#1e293b] pb-3">
                 <User className="w-4 h-4 text-gray-400" /> Identity & Positioning
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">First Name</label>
+                  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">First Name</label>
                   <input
                     type="text"
                     name="firstName"
@@ -306,7 +306,7 @@ const HeroManager = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Last Name</label>
+                  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Last Name</label>
                   <input
                     type="text"
                     name="lastName"
@@ -317,7 +317,7 @@ const HeroManager = () => {
                   />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Professional Title / Badge</label>
+                  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Professional Title / Badge</label>
                   <input
                     type="text"
                     name="badge"
@@ -328,7 +328,7 @@ const HeroManager = () => {
                   />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Roles / Headlines</label>
+                  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Roles / Headlines</label>
                   <input
                     type="text"
                     name="roles"
@@ -339,15 +339,15 @@ const HeroManager = () => {
                     required
                   />
                   <p className="text-[10px] text-gray-500 mt-1.5 flex gap-1 items-center">
-                    <CheckCircle2 className="w-3 h-3 text-gray-500" /> Values must be comma-separated. Creates the live typing effect.
+                    <CheckCircle2 className="w-3 h-3 text-gray-500" /> Values must be comma-separated.
                   </p>
                 </div>
               </div>
             </div>
 
             {/* HERO DESCRIPTION */}
-            <div className="bg-[#131b2c] p-6 rounded-2xl border border-[#1e293b] shadow-sm">
-              <div className="flex justify-between items-end mb-4 border-b border-[#1e293b] pb-3">
+            <div className="bg-[#131b2c] p-5 xl:p-6 rounded-2xl border border-[#1e293b] shadow-sm">
+              <div className="flex justify-between items-end mb-3 border-b border-[#1e293b] pb-3">
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
                   <FileText className="w-4 h-4 text-gray-400" /> Hero Description
                 </h3>
@@ -366,35 +366,39 @@ const HeroManager = () => {
             </div>
 
             {/* HERO MEDIA */}
-            <div className="bg-[#131b2c] p-6 rounded-2xl border border-[#1e293b] shadow-sm">
-              <h3 className="text-base font-bold text-white mb-5 flex items-center gap-2 border-b border-[#1e293b] pb-3">
+            <div className="bg-[#131b2c] p-5 xl:p-6 rounded-2xl border border-[#1e293b] shadow-sm">
+              <h3 className="text-base font-bold text-white mb-4 flex items-center gap-2 border-b border-[#1e293b] pb-3">
                 <ImageIcon className="w-4 h-4 text-gray-400" /> Hero Media
               </h3>
               
-              <div className="flex flex-col md:flex-row gap-6 items-start">
+              <div className="flex flex-col xl:flex-row gap-5 xl:gap-6 items-start">
                 {/* Current Image Display */}
-                <div className="w-full md:w-1/3 bg-[#0a0f1c] rounded-xl border border-[#1e293b] overflow-hidden flex flex-col justify-center min-h-[220px]">
+                <div className="w-full xl:w-[45%] bg-[#0a0f1c] rounded-xl border border-[#1e293b] overflow-hidden flex flex-col justify-center h-[240px]">
                   {(imageFiles['portrait'] || formData['portrait']) ? (
                     <img 
                       src={imageFiles['portrait'] ? URL.createObjectURL(imageFiles['portrait']) : formData['portrait']} 
                       alt="Hero Media Preview" 
-                      className="w-full h-full max-h-[260px] object-contain object-bottom p-2"
+                      className="w-full h-full object-contain p-2 drop-shadow-md"
                     />
                   ) : (
-                    <div className="text-center text-gray-600 p-6 text-xs">No media available</div>
+                    <div className="text-center text-gray-600 p-6 text-xs flex flex-col items-center gap-2">
+                      <ImageIcon className="w-8 h-8 opacity-20" />
+                      No media available
+                    </div>
                   )}
                 </div>
                 
                 {/* Upload Controls */}
-                <div className="w-full md:w-2/3">
+                <div className="w-full xl:w-[55%]">
                   <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Upload New Image</label>
                   <ImageUploader
                     imageFile={imageFiles['portrait']}
+                    existingImage={formData['portrait']}
                     onFileChange={(e) => handleFileChange('portrait', e)}
                     isUploading={isUploading}
                     uploadProgress={uploadProgress}
                   />
-                  <p className="text-[10px] text-gray-500 mt-3 border-l-2 border-gray-700 pl-2">
+                  <p className="text-[10px] text-gray-500 mt-3 border-l-2 border-gray-700 pl-3 leading-relaxed">
                     Upload a high-quality portrait or graphic. Transparent PNGs are recommended. Changes apply only after saving.
                   </p>
                 </div>
@@ -402,14 +406,18 @@ const HeroManager = () => {
             </div>
 
             {/* RESUME / CV */}
-            <div className="bg-[#131b2c] p-6 rounded-2xl border border-[#1e293b] shadow-sm">
-              <h3 className="text-base font-bold text-white mb-5 flex items-center gap-2 border-b border-[#1e293b] pb-3">
+            <div className="bg-[#131b2c] p-5 xl:p-6 rounded-2xl border border-[#1e293b] shadow-sm">
+              <h3 className="text-base font-bold text-white mb-4 flex items-center gap-2 border-b border-[#1e293b] pb-3">
                 <FileSignature className="w-4 h-4 text-gray-400" /> Resume / CV Document
               </h3>
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Resume URL</label>
+                  <div className="flex justify-between items-end mb-2">
+                    <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider">Resume URL</label>
+                    <span className="text-[9px] text-[#14f195] font-medium px-2 py-0.5 bg-[#14f195]/10 rounded-full">This URL powers the public Download CV button.</span>
+                  </div>
+                  
                   <div className="flex gap-2">
                     <input
                       type="url"
@@ -417,73 +425,61 @@ const HeroManager = () => {
                       value={formData.cvUrl || ''}
                       onChange={handleChange}
                       placeholder="https://..."
-                      className="flex-grow p-2.5 text-sm bg-[#0a0f1c] border border-[#1e293b] rounded-lg focus:border-[#14f195] text-white outline-none transition-colors font-mono"
+                      className="flex-grow p-2.5 text-sm bg-[#0a0f1c] border border-[#1e293b] rounded-lg focus:border-[#14f195] text-white outline-none transition-colors font-mono text-ellipsis overflow-hidden whitespace-nowrap min-w-0"
                     />
                     <button 
                       type="button"
                       onClick={() => copyToClipboard(formData.cvUrl)}
                       disabled={!formData.cvUrl}
-                      className="px-3 py-2 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors disabled:opacity-30"
+                      className="px-3.5 py-2.5 bg-[#1e293b] border border-[#1e293b] rounded-lg hover:bg-[#273549] transition-colors disabled:opacity-30 disabled:hover:bg-[#1e293b] flex-shrink-0"
                       title="Copy URL"
                     >
-                      <Copy className="w-4 h-4 text-gray-400" />
+                      <Copy className="w-4 h-4 text-gray-300" />
                     </button>
                     <a 
                       href={formData.cvUrl || '#'}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`px-4 py-2 flex items-center gap-2 rounded-lg font-bold text-sm transition-colors ${formData.cvUrl ? 'bg-[#14f195]/10 text-[#14f195] border border-[#14f195]/30 hover:bg-[#14f195]/20' : 'bg-white/5 text-gray-600 border border-white/5 pointer-events-none'}`}
+                      className={`px-4 py-2.5 flex items-center gap-2 rounded-lg font-bold text-sm transition-colors flex-shrink-0 ${formData.cvUrl ? 'bg-[#14f195]/10 text-[#14f195] border border-[#14f195]/30 hover:bg-[#14f195]/20' : 'bg-white/5 text-gray-600 border border-white/5 pointer-events-none'}`}
                     >
                       <ExternalLink className="w-4 h-4" /> Open
                     </a>
                   </div>
                 </div>
 
-                <div className="pt-2">
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Or Upload Document (PDF)</label>
+                <div className="pt-3 border-t border-[#1e293b] border-dashed">
+                  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Alternative: Upload Document (PDF)</label>
                   <input
                     type="file"
                     accept=".pdf,.doc,.docx"
                     onChange={(e) => handleFileChange('cvUrl', e)}
-                    className="w-full p-2 bg-[#0a0f1c] border border-[#1e293b] rounded-lg text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[11px] file:font-bold file:bg-white/5 file:text-white hover:file:bg-white/10 transition-colors cursor-pointer"
+                    className="w-full p-2 bg-[#0a0f1c] border border-[#1e293b] rounded-lg text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[11px] file:font-bold file:bg-[#1e293b] file:text-white hover:file:bg-[#273549] transition-colors cursor-pointer"
                   />
+                  <p className="text-[10px] text-gray-500 mt-2">
+                    Uploading a file here automatically replaces the URL above after saving.
+                  </p>
                 </div>
               </div>
             </div>
 
             {/* PUBLIC CTA (READ-ONLY) */}
-            <div className="bg-[#131b2c] p-6 rounded-2xl border border-[#1e293b] shadow-sm">
-              <h3 className="text-base font-bold text-white mb-4 flex items-center gap-2 border-b border-[#1e293b] pb-3">
-                <Briefcase className="w-4 h-4 text-gray-400" /> Public Call To Action
-              </h3>
-              <div className="bg-[#0a0f1c] border border-blue-900/30 rounded-xl p-4 flex gap-4 items-start">
-                <div className="mt-1 p-2 bg-blue-500/10 rounded-full text-blue-400">
-                  <ExternalLink className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-white">Download CV</h4>
-                  <p className="text-xs text-gray-400 mt-1 leading-relaxed">
-                    The public Hero section features a fixed "Download CV" action button. 
-                    It is automatically wired to use the <strong className="text-white">Resume URL</strong> configured above. 
-                    Changes to the Resume URL directly control where this button points.
-                  </p>
-                </div>
+            <div className="bg-[#131b2c] p-4 xl:p-5 rounded-2xl border border-[#1e293b] shadow-sm flex gap-4 items-center">
+              <div className="p-2.5 bg-blue-500/10 rounded-full text-blue-400 flex-shrink-0">
+                <Briefcase className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Public CTA</h4>
+                <p className="text-sm text-white mt-0.5">
+                  <strong>Download CV</strong> — Uses the Resume URL configured above.
+                </p>
               </div>
             </div>
 
           </div>
 
           {/* RIGHT COLUMN: Live Preview (40%) */}
-          <div className="sticky top-24 space-y-4">
-            <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#14f195] animate-pulse"></span>
-              Live Desktop Preview
-            </h3>
+          <div className="sticky top-6 pt-0 space-y-3">
             <LivePreview />
-            <div className="bg-[#131b2c] border border-[#1e293b] rounded-xl p-4 flex gap-3 text-xs text-gray-400">
-              <LayoutTemplate className="w-4 h-4 text-gray-500 flex-shrink-0" />
-              <p>This is a scaled representation of the public Hero section. Dynamic animations and background effects are simplified in the CMS for editing performance.</p>
-            </div>
           </div>
 
         </form>

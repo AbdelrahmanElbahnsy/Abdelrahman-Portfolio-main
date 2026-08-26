@@ -218,6 +218,25 @@ const ExperienceEditor = ({ isOpen, onClose, experience, onSave, isSaving }) => 
                   </div>
                 </div>
 
+                <SectionHeader number="04" title="ADDITIONAL DETAILS (OPTIONAL)" />
+                <div className="space-y-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <InputField label="COMPANY" name="company" value={formData.company} onChange={handleChange} />
+                    <InputField label="ORGANIZATION" name="organization" value={formData.organization} onChange={handleChange} />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <InputField label="DATE" name="date" value={formData.date} onChange={handleChange} placeholder="e.g. 2021 - Present" />
+                    <InputField label="BADGE" name="badge" value={formData.badge} onChange={handleChange} />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <InputField label="STATUS" name="status" value={formData.status} onChange={handleChange} />
+                    <InputField label="ICON" name="icon" value={formData.icon} onChange={handleChange} isMonospace />
+                  </div>
+                  <div className="w-1/2">
+                    <InputField label="COLOR" name="color" value={formData.color} onChange={handleChange} isMonospace placeholder="#14f195" />
+                  </div>
+                </div>
+
               </form>
             </div>
 

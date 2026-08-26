@@ -2,27 +2,33 @@ import React, { useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
-import { about as fallbackAbout, personalInfo } from '../../data/portfolioData';
+import { personalInfo } from '../../data/portfolioData';
 import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
 import { useLanguage } from '../../i18n/LanguageContext';
 
 const About = () => {
     const { t, language } = useLanguage();
-    const { data: firestoreData } = useFirestoreSingleDoc('about', 'main');
+    const { data: firestoreData, loading, error, subscribe } = useFirestoreSingleDoc('about', 'main');
+
+    React.useEffect(() => {
+        const unsubscribe = subscribe();
+        return () => {
+            if (unsubscribe) unsubscribe();
+        };
+    }, [subscribe]);
     
     const about = React.useMemo(() => {
-        if (!firestoreData || !firestoreData.title) return fallbackAbout;
+        if (!firestoreData) return null;
         
-        let paragraphs = fallbackAbout.paragraphs;
-        let badges = fallbackAbout.badges;
-        let terminalItems = fallbackAbout.terminalItems;
+        let paragraphs = [];
+        let badges = [];
+        let terminalItems = [];
         
         try { if (firestoreData.paragraphsJson) paragraphs = JSON.parse(firestoreData.paragraphsJson); } catch(e) {}
         try { if (firestoreData.badgesJson) badges = JSON.parse(firestoreData.badgesJson); } catch(e) {}
         try { if (firestoreData.terminalItemsJson) terminalItems = JSON.parse(firestoreData.terminalItemsJson); } catch(e) {}
 
         return {
-            ...fallbackAbout,
             ...firestoreData,
             paragraphs,
             badges,
@@ -30,22 +36,12 @@ const About = () => {
         };
     }, [firestoreData]);
     
-    const { 
-        subtitle: rawSubtitle, 
-        title: rawTitle, 
-        lead: rawLead, 
-        paragraphs: rawParagraphs, 
-        badges: rawBadges, 
-        terminalItems: rawTerminalItems,
-        subtitleAr, titleAr, leadAr
-    } = about;
-
-    const subtitle = language === 'ar' ? (about.subtitleAr || rawSubtitle) : rawSubtitle;
-    const title = language === 'ar' ? (about.titleAr || rawTitle) : rawTitle;
-    const lead = language === 'ar' ? (about.leadAr || rawLead) : rawLead;
-    const paragraphs = language === 'ar' && about.paragraphsAr ? about.paragraphsAr : (Array.isArray(rawParagraphs) ? rawParagraphs : fallbackAbout.paragraphs);
-    const badges = Array.isArray(rawBadges) ? rawBadges : fallbackAbout.badges;
-    const terminalItems = Array.isArray(rawTerminalItems) ? rawTerminalItems : fallbackAbout.terminalItems;
+    const subtitle = language === 'ar' ? (about?.subtitleAr || '') : (about?.subtitle || '');
+    const title = language === 'ar' ? (about?.titleAr || '') : (about?.title || '');
+    const lead = language === 'ar' ? (about?.leadAr || '') : (about?.lead || '');
+    const paragraphs = language === 'ar' && about?.paragraphsAr ? about.paragraphsAr : (about?.paragraphs || []);
+    const badges = about?.badges || [];
+    const terminalItems = about?.terminalItems || [];
     const sectionRef = useRef(null);
     const headerRef = useRef(null);
     const terminalRef = useRef(null);
@@ -107,56 +103,76 @@ const About = () => {
                 </div>
 
                 <div className="about-grid grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-stretch">
-                    <div className="about-image order-2 md:order-1 h-fit">
-                        <div ref={terminalRef} className="modern-terminal terminal-mini group h-fit flex flex-col justify-start">
-                            <div className="terminal-header bg-[var(--theme-bg-secondary)] p-4 flex items-center gap-4 border-b border-[var(--theme-border)] shrink-0">
-                                <div className="terminal-controls flex gap-2">
-                                    <span className="dot red w-3.5 h-3.5 rounded-full bg-[#ff5f56]"></span>
-                                    <span className="dot yellow w-3.5 h-3.5 rounded-full bg-[#ffbd2e]"></span>
-                                    <span className="dot green w-3.5 h-3.5 rounded-full bg-[#27c93f]"></span>
+                    {loading ? (
+                        <div className="col-span-1 md:col-span-2 flex flex-col items-center justify-center text-[var(--theme-accent)] min-h-[400px]">
+                            <i className="fas fa-spinner fa-spin text-4xl mb-4"></i>
+                            <p>{t('Loading about section...')}</p>
+                        </div>
+                    ) : error ? (
+                        <div className="col-span-1 md:col-span-2 flex flex-col items-center justify-center text-red-500 bg-red-500/10 p-6 rounded-2xl border border-red-500/20 min-h-[400px]">
+                            <i className="fas fa-exclamation-triangle text-3xl mb-3"></i>
+                            <p>{t('Failed to load about section')}</p>
+                            <p className="text-sm opacity-80 mt-2">{error}</p>
+                        </div>
+                    ) : !about ? (
+                        <div className="col-span-1 md:col-span-2 flex flex-col items-center justify-center text-[var(--theme-text-muted)] bg-[var(--theme-surface)] p-8 rounded-3xl border border-[var(--theme-border)] shadow-inner min-h-[400px]">
+                            <i className="fas fa-folder-open text-4xl mb-4 opacity-50"></i>
+                            <p>{t('No about information found.')}</p>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="about-image order-2 md:order-1 h-fit">
+                                <div ref={terminalRef} className="modern-terminal terminal-mini group h-fit flex flex-col justify-start">
+                                    <div className="terminal-header bg-[var(--theme-bg-secondary)] p-4 flex items-center gap-4 border-b border-[var(--theme-border)] shrink-0">
+                                        <div className="terminal-controls flex gap-2">
+                                            <span className="dot red w-3.5 h-3.5 rounded-full bg-[#ff5f56]"></span>
+                                            <span className="dot yellow w-3.5 h-3.5 rounded-full bg-[#ffbd2e]"></span>
+                                            <span className="dot green w-3.5 h-3.5 rounded-full bg-[#27c93f]"></span>
+                                        </div>
+                                        <span className="terminal-title font-mono text-xs text-[var(--theme-text-muted)] uppercase tracking-wider">{personalInfo.terminalTitle}</span>
+                                    </div>
+                                    <div className="terminal-body bg-[var(--theme-surface)] pt-4 pb-6 px-3 sm:px-4 md:pt-5 md:pb-8 md:px-8 flex-col overflow-x-hidden">
+                                        <ul className="terminal-list space-y-3 md:space-y-5 font-mono text-[10px] sm:text-xs md:text-base w-full text-left" dir="ltr">
+                                            {terminalItems.map((item, idx) => (
+                                                <li key={idx} className="term-line flex gap-1.5 sm:gap-2 md:gap-3 items-start">
+                                                    <span className="term-key text-[var(--theme-accent)] shrink-0">{t(item.key)}:</span>
+                                                    <span className="term-value text-[var(--theme-text)] break-words leading-[1.35] md:leading-normal" style={{ overflowWrap: 'anywhere' }}>{t(item.value)}</span>
+                                                </li>
+                                            ))}
+                                            <li className="pt-1 flex gap-1.5 sm:gap-2 md:gap-3 items-center mt-1 md:mt-2">
+                                                <span className="term-key text-[var(--theme-accent)] shrink-0">~</span>
+                                                <span className="text-[var(--theme-accent)] text-xs sm:text-sm md:text-lg" style={{ animation: 'blink-cursor 0.9s infinite' }}>█</span>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
-                                <span className="terminal-title font-mono text-xs text-[var(--theme-text-muted)] uppercase tracking-wider">{personalInfo.terminalTitle}</span>
                             </div>
-                            <div className="terminal-body bg-[var(--theme-surface)] pt-4 pb-6 px-3 sm:px-4 md:pt-5 md:pb-8 md:px-8 flex-col overflow-x-hidden">
-                                <ul className="terminal-list space-y-3 md:space-y-5 font-mono text-[10px] sm:text-xs md:text-base w-full text-left" dir="ltr">
-                                    {terminalItems.map((item, idx) => (
-                                        <li key={idx} className="term-line flex gap-1.5 sm:gap-2 md:gap-3 items-start">
-                                            <span className="term-key text-[var(--theme-accent)] shrink-0">{t(item.key)}:</span>
-                                            <span className="term-value text-[var(--theme-text)] break-words leading-[1.35] md:leading-normal" style={{ overflowWrap: 'anywhere' }}>{t(item.value)}</span>
-                                        </li>
+
+                            <div ref={textRef} className="about-text order-1 md:order-2 flex flex-col justify-center gap-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                                <p ref={leadRef} className="lead text-2xl font-bold text-[var(--theme-text)] border-l-4 rtl:border-l-0 rtl:border-r-4 border-[var(--theme-accent)] pl-6 rtl:pl-0 rtl:pr-6 py-2 bg-[var(--theme-accent-soft)]">{lead}</p>
+                                {paragraphs.map((paragraph, idx) => (
+                                    <p key={idx} className="about-para text-[var(--theme-text-secondary)] leading-relaxed text-lg">
+                                        {paragraph.text}
+                                        {paragraph.highlight && (
+                                            <strong className="text-[var(--theme-text)]">{paragraph.highlight}</strong>
+                                        )}
+                                        {paragraph.accent && (
+                                            <span className="text-[var(--theme-accent)] italic">{paragraph.accent}</span>
+                                        )}
+                                        {paragraph.suffix}
+                                    </p>
+                                ))}
+
+                                <div ref={badgesRef} className="about-badges flex flex-wrap gap-4 mt-6">
+                                    {badges.map((badge, idx) => (
+                                        <div key={idx} className="badge flex items-center gap-3 px-5 py-3 rounded-xl bg-[var(--theme-surface-elevated)] border border-[var(--theme-border-gold)] text-sm font-bold hover:border-[var(--theme-accent)] hover:bg-[var(--theme-accent-soft)] transition-all duration-300">
+                                            <i className={`${badge.icon} text-[var(--theme-accent)] text-lg`}></i> {language === 'ar' ? (badge.labelAr || t(badge.label)) : badge.label}
+                                        </div>
                                     ))}
-                                    <li className="pt-1 flex gap-1.5 sm:gap-2 md:gap-3 items-center mt-1 md:mt-2">
-                                        <span className="term-key text-[var(--theme-accent)] shrink-0">~</span>
-                                        <span className="text-[var(--theme-accent)] text-xs sm:text-sm md:text-lg" style={{ animation: 'blink-cursor 0.9s infinite' }}>█</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div ref={textRef} className="about-text order-1 md:order-2 flex flex-col justify-center gap-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-                        <p ref={leadRef} className="lead text-2xl font-bold text-[var(--theme-text)] border-l-4 rtl:border-l-0 rtl:border-r-4 border-[var(--theme-accent)] pl-6 rtl:pl-0 rtl:pr-6 py-2 bg-[var(--theme-accent-soft)]">{lead}</p>
-                        {paragraphs.map((paragraph, idx) => (
-                            <p key={idx} className="about-para text-[var(--theme-text-secondary)] leading-relaxed text-lg">
-                                {paragraph.text}
-                                {paragraph.highlight && (
-                                    <strong className="text-[var(--theme-text)]">{paragraph.highlight}</strong>
-                                )}
-                                {paragraph.accent && (
-                                    <span className="text-[var(--theme-accent)] italic">{paragraph.accent}</span>
-                                )}
-                                {paragraph.suffix}
-                            </p>
-                        ))}
-
-                        <div ref={badgesRef} className="about-badges flex flex-wrap gap-4 mt-6">
-                            {badges.map((badge, idx) => (
-                                <div key={idx} className="badge flex items-center gap-3 px-5 py-3 rounded-xl bg-[var(--theme-surface-elevated)] border border-[var(--theme-border-gold)] text-sm font-bold hover:border-[var(--theme-accent)] hover:bg-[var(--theme-accent-soft)] transition-all duration-300">
-                                    <i className={`${badge.icon} text-[var(--theme-accent)] text-lg`}></i> {language === 'ar' ? (badge.labelAr || t(badge.label)) : badge.label}
                                 </div>
-                            ))}
-                        </div>
-                    </div>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
 

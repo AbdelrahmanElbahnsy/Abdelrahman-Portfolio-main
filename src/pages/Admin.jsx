@@ -67,7 +67,7 @@ const Admin = () => {
           />
           <Route 
             path="contact" 
-            element={<SingleDocManager title="Contact Info" collection="content" docId="contact" fields={[
+            element={<SingleDocManager title="Contact Info" collection="contact" docId="main" fields={[
               {name: 'email', label: 'Contact Email', type: 'email'}, {name: 'phone', label: 'Phone Number'}, {name: 'location', label: 'Location / Address'}
             ]} />} 
           />

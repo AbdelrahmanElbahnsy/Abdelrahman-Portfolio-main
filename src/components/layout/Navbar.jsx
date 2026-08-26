@@ -7,8 +7,8 @@ import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
 import { useLanguage } from '../../i18n/LanguageContext';
 
 const Navbar = ({ splashDone = true }) => {
-    const { data: profileData, subscribe: subscribeProfile } = useFirestoreSingleDoc('profile', 'main');
-    const { data: navbarItemsData, subscribe: subscribeNavbar } = useFirestoreCrud('navbarItems', { orderByField: 'order', orderDirection: 'asc' });
+    const { data: profileData, loading: profileLoading, error: profileError, subscribe: subscribeProfile } = useFirestoreSingleDoc('profile', 'main');
+    const { data: navbarItemsData, loading: navLoading, error: navError, subscribe: subscribeNavbar } = useFirestoreCrud('navbarItems', { orderByField: 'order', orderDirection: 'asc' });
     const { language, toggleLanguage, t } = useLanguage();
 
     useEffect(() => {
@@ -20,16 +20,27 @@ const Navbar = ({ splashDone = true }) => {
         };
     }, [subscribeProfile, subscribeNavbar]);
 
-    const fallbackFirstName = personalInfo.firstName || 'Abdelrahman';
-    const fallbackLastName = personalInfo.lastName || 'El-bahnsy';
-
-    let firstName = fallbackFirstName;
-    let lastName = fallbackLastName;
+    let firstName = '';
+    let lastName = '';
+    let firstNameAr = '';
+    let lastNameAr = '';
     
     if (profileData?.fullName) {
         const nameParts = profileData.fullName.split(' ');
-        firstName = nameParts[0] || fallbackFirstName;
-        lastName = nameParts.slice(1).join(' ') || fallbackLastName;
+        firstName = nameParts[0] || '';
+        lastName = nameParts.slice(1).join(' ') || '';
+    } else if (profileData?.firstName || profileData?.lastName) {
+        firstName = profileData.firstName || '';
+        lastName = profileData.lastName || '';
+    }
+
+    if (profileData?.fullNameAr) {
+        const nameParts = profileData.fullNameAr.split(' ');
+        firstNameAr = nameParts[0] || '';
+        lastNameAr = nameParts.slice(1).join(' ') || '';
+    } else if (profileData?.firstNameAr || profileData?.lastNameAr) {
+        firstNameAr = profileData.firstNameAr || '';
+        lastNameAr = profileData.lastNameAr || '';
     }
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -60,33 +71,23 @@ const Navbar = ({ splashDone = true }) => {
     const menuItemsRef = useRef(null);
     const isScrollingRef = useRef(false);
 
-    const defaultNavLinks = [
-        { name: 'Home', href: '#home', id: 'hero', icon: 'fas fa-home' },
-        { name: 'About', href: '#about', id: 'about', icon: 'fas fa-user' },
-        { name: 'Skills', href: '#skills', id: 'skills', icon: 'fas fa-tools' },
-        { name: 'Projects', href: '#projects', id: 'projects', icon: 'fas fa-project-diagram' },
-        { name: 'Certifications', href: '#certifications', id: 'certifications', icon: 'fas fa-certificate' },
-        { name: 'Journey', href: '#journey', id: 'journey', icon: 'fas fa-route' },
-    ];
-
     const navLinks = React.useMemo(() => {
-        const sourceData = (!navbarItemsData || navbarItemsData.length === 0) ? defaultNavLinks : navbarItemsData;
+        const sourceData = navbarItemsData || [];
         const desiredOrder = ['#home', '#hero', '#about', '#skills', '#projects', '#certifications', '#journey'];
         
         return sourceData
             .filter(item => item.href !== '#contact')
             .map(item => {
-                const fallbackLink = defaultNavLinks.find(link => link.href === item.href) || {};
-                const href = item.href || fallbackLink.href || '#';
+                const href = item.href || '#';
                 const cleanHash = href.replace('#', '').toLowerCase();
-                const id = cleanHash === 'home' ? 'hero' : cleanHash || fallbackLink.id || '';
+                const id = cleanHash === 'home' ? 'hero' : cleanHash || '';
                 
-                const englishName = fallbackLink.name || item.name || item.label || 'Untitled';
+                const englishName = item.name || item.label || 'Untitled';
                 return {
-                    name: language === 'ar' ? (item.labelAr || item.nameAr || t(fallbackLink.name || englishName)) : englishName,
+                    name: language === 'ar' ? (item.labelAr || item.nameAr || englishName) : englishName,
                     href: href,
                     id: id,
-                    icon: item.icon || fallbackLink.icon || 'fas fa-circle'
+                    icon: item.icon || 'fas fa-circle'
                 };
             })
             .sort((a, b) => {
@@ -324,21 +325,34 @@ const Navbar = ({ splashDone = true }) => {
                         {/* Left Region: Logo */}
                         <div className="flex items-center shrink-0 min-w-0">
                             <a href="#hero" className="logo flex items-center gap-1 group min-w-0" onClick={(e) => handleNavClick(e, 'hero')} dir="ltr" style={{ overflowWrap: 'anywhere' }}>
-                                {language === 'ar' ? (
+                                {profileLoading ? (
+                                    <div className="flex items-center gap-2 opacity-60">
+                                        <span className="text-[var(--theme-accent)] font-black text-lg sm:text-xl xl:text-2xl">&lt;</span>
+                                        <div className="h-4 sm:h-5 w-16 sm:w-20 bg-[var(--theme-border-strong)] rounded animate-pulse"></div>
+                                        <span className="text-[var(--theme-accent)] hidden md:inline font-black text-lg sm:text-xl xl:text-2xl">/</span>
+                                        <div className="h-4 sm:h-5 w-20 sm:w-24 bg-[var(--theme-border-strong)] rounded animate-pulse hidden md:block"></div>
+                                        <span className="text-[var(--theme-accent)] font-black text-lg sm:text-xl xl:text-2xl">&gt;</span>
+                                    </div>
+                                ) : profileError || !profileData ? (
+                                    <div className="flex items-center gap-1 text-[var(--theme-text-muted)] text-sm font-mono">
+                                        <i className="fas fa-exclamation-triangle text-red-500"></i>
+                                        <span className="hidden sm:inline">DATA_ERR</span>
+                                    </div>
+                                ) : language === 'ar' ? (
                                     /* Arabic navbar logo — LTR outer, RTL name text */
                                     <span className={`font-black tracking-tighter text-[var(--theme-nav-text)] transition-all duration-500 ${isScrolled ? 'text-base sm:text-lg xl:text-xl' : 'text-lg sm:text-xl xl:text-2xl'}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '2px', whiteSpace: 'nowrap' }}>
                                         <span className="text-[var(--theme-accent)]">&lt; </span>
                                         <span dir="rtl" style={{ unicodeBidi: 'isolate', whiteSpace: 'nowrap' }}>
-                                            {profileData?.firstNameAr || personalInfo.firstNameAr}
+                                            {firstNameAr}
                                             <span className="text-[var(--theme-accent)] hidden md:inline"> / </span>
-                                            <span className="hidden md:inline">{profileData?.lastNameAr || personalInfo.lastNameAr}</span>
+                                            <span className="hidden md:inline">{lastNameAr}</span>
                                         </span>
                                         <span className="text-[var(--theme-accent)]"> &gt;</span>
                                     </span>
                                 ) : (
                                     /* English navbar logo */
                                     <span className={`font-black tracking-tighter text-[var(--theme-nav-text)] transition-all duration-500 ${isScrolled ? 'text-base sm:text-lg xl:text-xl' : 'text-lg sm:text-xl xl:text-2xl'}`} style={{ whiteSpace: 'normal', wordBreak: 'keep-all' }}>
-                                        <span className="text-[var(--theme-accent)]">&lt;</span>{firstName.charAt(0)}<span className="hidden md:inline">{firstName.slice(1).toUpperCase()}</span><span className="text-[var(--theme-accent)] hidden md:inline">/</span>{lastName.charAt(0)}<span className="hidden md:inline" style={{ whiteSpace: 'nowrap' }}>{lastName.slice(1).toUpperCase()}</span><span className="text-[var(--theme-accent)]">&gt;</span>
+                                        <span className="text-[var(--theme-accent)]">&lt;</span>{firstName ? firstName.charAt(0) : ''}<span className="hidden md:inline">{firstName ? firstName.slice(1).toUpperCase() : ''}</span><span className="text-[var(--theme-accent)] hidden md:inline">/</span>{lastName ? lastName.charAt(0) : ''}<span className="hidden md:inline" style={{ whiteSpace: 'nowrap' }}>{lastName ? lastName.slice(1).toUpperCase() : ''}</span><span className="text-[var(--theme-accent)]">&gt;</span>
                                     </span>
                                 )}
                             </a>

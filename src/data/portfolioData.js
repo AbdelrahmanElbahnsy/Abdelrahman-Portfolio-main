@@ -327,7 +327,7 @@ export const certifications = [
     title: 'Red Hat System Administration',
     issuer: 'ITI & Mahara-Tech',
     icon: 'fab fa-redhat',
-    link: 'https://drive.google.com/file/d/1-SEl_MdCC-phWbBFFmqt8Bvq3xlzgGmA/view?usp=sharing',
+    link: 'https://drive.google.com/file/d/1ruuFTpQoHbVhPksm_Vmhp0cho55ByWWz/view?usp=drive_link',
   },
   {
     title: 'Azure Fundamentals & Azure Administrator',

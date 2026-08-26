@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { socialLinks } from '../../data/portfolioData';
+import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
 import { useMagneticEffect } from '../../hooks/useMagneticEffect';
 
 const AirplaneSocial = () => {
+    const { data: socialsData, loading, error, subscribe } = useFirestoreCrud('socials', { orderByField: 'order', orderDirection: 'asc' });
     const [isActive, setIsActive] = useState(false);
     const menuRef = useRef(null);
     const triggerRef = useRef(null);
@@ -26,7 +27,30 @@ const AirplaneSocial = () => {
         };
 
         document.addEventListener('click', handleClickOutside);
-        return () => document.removeEventListener('click', handleClickOutside);
+        useEffect(() => {
+        const unsubscribe = subscribe();
+        return () => {
+            if (unsubscribe) unsubscribe();
+        };
+    }, [subscribe]);
+
+    const platformColors = {
+        linkedin: '#0077b5',
+        github: '#171515',
+        whatsapp: '#25D366',
+        telegram: '#229ED9',
+        email: '#EA4335',
+        facebook: '#1877F2',
+        instagram: '#E4405F',
+        twitter: '#1DA1F2',
+        youtube: '#FF0000',
+    };
+
+    if (loading || error || !socialsData || socialsData.length === 0) {
+        return null;
+    }
+
+    return () => document.removeEventListener('click', handleClickOutside);
     }, []);
 
     return (
@@ -37,31 +61,39 @@ const AirplaneSocial = () => {
                     isActive ? 'scale-100 opacity-100 translate-y-0' : 'scale-0 opacity-0 translate-y-10'
                 }`}
             >
-                {socialLinks.airplane.map((social, idx) => (
-                    <a
-                        key={idx}
-                        href={social.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group relative flex items-center h-12"
-                    >
-                        <div className="absolute left-16 opacity-0 group-hover:opacity-100 group-hover:left-14 transition-all duration-300 pointer-events-none">
-                            <span className="px-3 py-1.5 rounded-lg bg-[rgba(10,10,10,0.9)] border border-white/10 text-white text-[10px] font-bold tracking-widest uppercase whitespace-nowrap shadow-2xl backdrop-blur-md">
-                                {social.label}
-                            </span>
-                        </div>
-
-                        <div
-                            className="w-12 h-12 rounded-full flex items-center justify-center text-white text-lg transition-all duration-300 group-hover:scale-110 shadow-lg"
-                            style={{
-                                backgroundColor: social.color,
-                                border: '2px solid rgba(255, 255, 255, 0.15)'
-                            }}
+                {socialsData.map((social, idx) => {
+                    const platformName = (social.platform || social.label || '').toLowerCase();
+                    const color = social.color || platformColors[platformName] || '#c8a26e';
+                    
+                    return (
+                        <a
+                            key={idx}
+                            href={social.url || social.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group relative flex items-center h-12"
                         >
-                            <i className={`${social.icon} transition-transform duration-300 group-hover:rotate-[15deg]`}></i>
-                        </div>
-                    </a>
-                ))}
+                            <div className="absolute left-16 opacity-0 group-hover:opacity-100 group-hover:left-14 transition-all duration-300 pointer-events-none">
+                                <span 
+                                    className="px-3 py-1.5 rounded-lg border border-white/10 text-white text-[10px] font-bold tracking-widest uppercase whitespace-nowrap shadow-2xl backdrop-blur-md"
+                                    style={{ backgroundColor: color }}
+                                >
+                                    {social.platform || social.label}
+                                </span>
+                            </div>
+
+                            <div
+                                className="w-12 h-12 rounded-full flex items-center justify-center text-white text-lg transition-all duration-300 group-hover:scale-110 shadow-lg"
+                                style={{
+                                    backgroundColor: color,
+                                    border: '2px solid rgba(255, 255, 255, 0.15)'
+                                }}
+                            >
+                                <i className={`${social.icon} transition-transform duration-300 group-hover:rotate-[15deg]`}></i>
+                            </div>
+                        </a>
+                    );
+                })}
             </div>
 
             <button

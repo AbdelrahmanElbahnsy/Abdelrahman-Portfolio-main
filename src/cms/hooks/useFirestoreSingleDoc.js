@@ -49,6 +49,10 @@ export const useFirestoreSingleDoc = (collectionName, docId) => {
         setData(fetchedData);
         setLoading(false);
         setError(null);
+      },
+      (err) => {
+        setError(err.message || 'Error loading document');
+        setLoading(false);
       }
     );
     return unsubscribe;

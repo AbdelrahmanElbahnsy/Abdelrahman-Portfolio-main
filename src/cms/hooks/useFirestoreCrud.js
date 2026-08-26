@@ -70,12 +70,17 @@ export const useFirestoreCrud = (collectionName, defaultOptions = {}) => {
   const subscribe = useCallback((options = null) => {
     const fetchOptions = options || JSON.parse(optionsKey);
     setLoading(true);
+    setError(null);
     const unsubscribe = crudService.subscribe(
       collectionName,
       (fetchedData) => {
         setData(fetchedData);
         setLoading(false);
         setError(null);
+      },
+      (err) => {
+        setError(err.message);
+        setLoading(false);
       },
       fetchOptions
     );

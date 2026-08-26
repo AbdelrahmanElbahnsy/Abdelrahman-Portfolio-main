@@ -9,7 +9,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import ProjectModal from '../ui/ProjectModal';
 import ProjectCard from '../ui/ProjectCard';
-import { projects as localProjects } from '../../data/portfolioData';
 import { normalizeProjectTechnologies } from '../../utils/projectTechnologies';
 import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -37,30 +36,38 @@ const normalizeProject = (project, index) => ({
 const Projects = () => {
   const { t, language } = useLanguage();
   const [selectedProject, setSelectedProject] = useState(null);
-  const { data: projectsData, loading, subscribe } = useFirestoreCrud('projects', { orderBy: { field: 'order', direction: 'asc' } });
-  
+  const { data: firestoreProjects, loading, error, subscribe } = useFirestoreCrud('projects', { orderByField: 'order', orderDirection: 'asc' });
+
   const sectionRef = useRef(null);
   const headerRef = useRef(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const unsubscribe = subscribe();
     return () => {
       if (unsubscribe) unsubscribe();
     };
   }, [subscribe]);
 
-  const visibleProjects = useMemo(() => {
-    const dataToUse = (projectsData && projectsData.length > 0) ? projectsData : localProjects;
-    return dataToUse.map(normalizeProject);
-  }, [projectsData, loading]);
+  const projects = useMemo(() => {
+    if (!firestoreProjects) return [];
+    return firestoreProjects.map(proj => {
+      return {
+        ...proj,
+        github: proj.github || '#',
+        demo: proj.demo || '#',
+        image: proj.image || null,
+        tags: proj.tags || []
+      };
+    }).map(normalizeProject);
+  }, [firestoreProjects]);
 
   const handleOpenProject = useCallback((project) => setSelectedProject(project), []);
   const handleCloseProject = useCallback(() => setSelectedProject(null), []);
 
   const activeProject = useMemo(() => {
     if (!selectedProject) return null;
-    return visibleProjects.find((p) => p.id === selectedProject.id) ?? normalizeProject(selectedProject);
-  }, [selectedProject, visibleProjects]);
+    return projects.find((p) => p.id === selectedProject.id) ?? normalizeProject(selectedProject);
+  }, [selectedProject, projects]);
 
   useGSAP(
     () => {
@@ -103,62 +110,80 @@ const Projects = () => {
           </h2>
         </div>
 
-        {/* Standard Swiper Container */}
+        {/* Standard Swiper Container or States */}
         <div className="container mx-auto px-4 md:px-8 w-full max-w-[1400px]">
-          <div className="relative group/projects-slider projects-swiper-container pt-4 px-2 md:px-16">
-            
-            {/* Custom Navigation Arrows */}
-            <button 
-                className="projects-swiper-prev absolute left-0 md:-left-4 lg:-left-8 rtl:left-auto rtl:right-0 rtl:md:-right-4 rtl:lg:-right-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[var(--theme-border-gold)] bg-[var(--theme-surface-elevated)] text-[var(--theme-accent)] hover:text-[var(--theme-bg)] hover:bg-[var(--theme-accent)] flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--theme-accent)] shadow-[0_0_10px_var(--theme-accent-soft)] hover:shadow-[0_0_20px_var(--theme-accent-soft)] focus:outline-none cursor-pointer hidden md:flex"
-                aria-label="Previous project"
-            >
-                <i className="fas fa-chevron-left text-xl md:text-2xl drop-shadow-[0_0_3px_var(--theme-accent-soft)] rtl:rotate-180"></i>
-            </button>
-            <button 
-                className="projects-swiper-next absolute right-0 md:-right-4 lg:-right-8 rtl:right-auto rtl:left-0 rtl:md:-left-4 rtl:lg:-left-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[var(--theme-border-gold)] bg-[var(--theme-surface-elevated)] text-[var(--theme-accent)] hover:text-[var(--theme-bg)] hover:bg-[var(--theme-accent)] flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--theme-accent)] shadow-[0_0_10px_var(--theme-accent-soft)] hover:shadow-[0_0_20px_var(--theme-accent-soft)] focus:outline-none cursor-pointer hidden md:flex"
-                aria-label="Next project"
-            >
-                <i className="fas fa-chevron-right text-xl md:text-2xl drop-shadow-[0_0_3px_var(--theme-accent-soft)] rtl:rotate-180"></i>
-            </button>
+          {loading ? (
+            <div className="flex flex-col items-center justify-center text-[var(--theme-accent)] min-h-[400px]">
+              <i className="fas fa-spinner fa-spin text-4xl mb-4"></i>
+              <p>{t('Loading projects...')}</p>
+            </div>
+          ) : error ? (
+            <div className="flex flex-col items-center justify-center text-red-500 bg-red-500/10 p-6 rounded-2xl border border-red-500/20 min-h-[400px]">
+              <i className="fas fa-exclamation-triangle text-3xl mb-3"></i>
+              <p>{t('Failed to load projects')}</p>
+              <p className="text-sm opacity-80 mt-2">{error}</p>
+            </div>
+          ) : projects.length === 0 ? (
+            <div className="flex flex-col items-center justify-center text-[var(--theme-text-muted)] bg-[var(--theme-surface)] p-8 rounded-3xl border border-[var(--theme-border)] shadow-inner min-h-[400px]">
+              <i className="fas fa-folder-open text-4xl mb-4 opacity-50"></i>
+              <p>{t('No projects found.')}</p>
+            </div>
+          ) : (
+            <div className="relative group/projects-slider projects-swiper-container pt-4 px-2 md:px-16">
+              
+              {/* Custom Navigation Arrows */}
+              <button 
+                  className="projects-swiper-prev absolute left-0 md:-left-4 lg:-left-8 rtl:left-auto rtl:right-0 rtl:md:-right-4 rtl:lg:-right-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[var(--theme-border-gold)] bg-[var(--theme-surface-elevated)] text-[var(--theme-accent)] hover:text-[var(--theme-bg)] hover:bg-[var(--theme-accent)] flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--theme-accent)] shadow-[0_0_10px_var(--theme-accent-soft)] hover:shadow-[0_0_20px_var(--theme-accent-soft)] focus:outline-none cursor-pointer hidden md:flex"
+                  aria-label="Previous project"
+              >
+                  <i className="fas fa-chevron-left text-xl md:text-2xl drop-shadow-[0_0_3px_var(--theme-accent-soft)] rtl:rotate-180"></i>
+              </button>
+              <button 
+                  className="projects-swiper-next absolute right-0 md:-right-4 lg:-right-8 rtl:right-auto rtl:left-0 rtl:md:-left-4 rtl:lg:-left-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[var(--theme-border-gold)] bg-[var(--theme-surface-elevated)] text-[var(--theme-accent)] hover:text-[var(--theme-bg)] hover:bg-[var(--theme-accent)] flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--theme-accent)] shadow-[0_0_10px_var(--theme-accent-soft)] hover:shadow-[0_0_20px_var(--theme-accent-soft)] focus:outline-none cursor-pointer hidden md:flex"
+                  aria-label="Next project"
+              >
+                  <i className="fas fa-chevron-right text-xl md:text-2xl drop-shadow-[0_0_3px_var(--theme-accent-soft)] rtl:rotate-180"></i>
+              </button>
 
-            <Swiper
-                dir="ltr"
-                modules={[Navigation, Pagination, Keyboard, Autoplay]}
-                spaceBetween={30}
-                slidesPerView={1}
-                loop={true}
-                autoplay={{ delay: 3500, disableOnInteraction: false, pauseOnMouseEnter: true }}
-                keyboard={{ enabled: true }}
-                pagination={{ clickable: true, el: '.projects-pagination' }}
-                navigation={{
-                    nextEl: '.projects-swiper-next',
-                    prevEl: '.projects-swiper-prev',
-                }}
-                breakpoints={{
-                    640: {
-                        slidesPerView: 1,
-                        spaceBetween: 20,
-                    },
-                    768: {
-                        slidesPerView: 2,
-                        spaceBetween: 30,
-                    },
-                    1024: {
-                        slidesPerView: 3,
-                        spaceBetween: 40,
-                    }
-                }}
-                className="projects-swiper overflow-hidden py-8 px-4 md:px-0"
-            >
-                {visibleProjects.map((project) => (
-                    <SwiperSlide key={project.id} className="h-auto">
-                        <ProjectCard project={project} onClickDetails={handleOpenProject} />
-                    </SwiperSlide>
-                ))}
-            </Swiper>
-            
-            <div className="projects-pagination mt-8 flex justify-center"></div>
-          </div>
+              <Swiper
+                  dir="ltr"
+                  modules={[Navigation, Pagination, Keyboard, Autoplay]}
+                  spaceBetween={30}
+                  slidesPerView={1}
+                  loop={true}
+                  autoplay={{ delay: 3500, disableOnInteraction: false, pauseOnMouseEnter: true }}
+                  keyboard={{ enabled: true }}
+                  pagination={{ clickable: true, el: '.projects-pagination' }}
+                  navigation={{
+                      nextEl: '.projects-swiper-next',
+                      prevEl: '.projects-swiper-prev',
+                  }}
+                  breakpoints={{
+                      640: {
+                          slidesPerView: 1,
+                          spaceBetween: 20,
+                      },
+                      768: {
+                          slidesPerView: 2,
+                          spaceBetween: 30,
+                      },
+                      1024: {
+                          slidesPerView: 3,
+                          spaceBetween: 40,
+                      }
+                  }}
+                  className="projects-swiper overflow-hidden py-8 px-4 md:px-0"
+              >
+                  {projects.map((project) => (
+                      <SwiperSlide key={project.id} className="h-auto">
+                          <ProjectCard project={project} onClickDetails={handleOpenProject} />
+                      </SwiperSlide>
+                  ))}
+              </Swiper>
+              
+              <div className="projects-pagination mt-8 flex justify-center"></div>
+            </div>
+          )}
         </div>
       </section>
 

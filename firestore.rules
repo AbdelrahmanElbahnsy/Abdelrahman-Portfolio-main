@@ -1,0 +1,56 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Dynamic Admin Check: Safely evaluates role without circular dependency
+    function isAdmin() {
+      return request.auth != null && 
+             exists(/databases/$(database)/documents/admins/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Admins Collection: Secure RBAC Management
+    match /admins/{userId} {
+      // Users can read their own status; Admins can read all
+      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      
+      // Admins can create new admins
+      allow create: if isAdmin() && request.resource.data.role == 'admin';
+      
+      // PREVENT SELF-LOCKOUT: Admins can update/delete others, but cannot delete or demote themselves.
+      allow update: if isAdmin() && (
+        request.auth.uid != userId || request.resource.data.role == 'admin'
+      );
+      allow delete: if isAdmin() && request.auth.uid != userId;
+    }
+
+    // CMS Content Collections: Public visitors can ONLY read. Admins can read, create, update, delete.
+    match /hero/{document=**} { allow read: if true; allow write: if isAdmin(); }
+    match /about/{document=**} { allow read: if true; allow write: if isAdmin(); }
+    match /skills/{document=**} { allow read: if true; allow write: if isAdmin(); }
+    match /journey/{document=**} { allow read: if true; allow write: if isAdmin(); }
+    match /projects/{document=**} { allow read: if true; allow write: if isAdmin(); }
+    match /certifications/{document=**} { allow read: if true; allow write: if isAdmin(); }
+    match /socials/{document=**} { allow read: if true; allow write: if isAdmin(); }
+    match /contact/{document=**} { allow read: if true; allow write: if isAdmin(); }
+    match /navbarItems/{document=**} { allow read: if true; allow write: if isAdmin(); }
+    match /profile/{document=**} { allow read: if true; allow write: if isAdmin(); }
+
+    // Analytics (visits): Public Create-Only. Admin Read/Update/Delete.
+    match /visits/{document=**} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Activity Log: Strict Admins only (Internal audit trail)
+    match /activityLog/{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // Default deny for anything else to prevent data leaks
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

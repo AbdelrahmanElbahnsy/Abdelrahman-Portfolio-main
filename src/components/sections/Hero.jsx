@@ -14,7 +14,7 @@ import { useLanguage } from '../../i18n/LanguageContext';
 const Hero = ({ splashDone = true }) => {
     const { t, language } = useLanguage();
     const [typedText, setTypedText] = useState('');
-    const { data: firestoreData, subscribe, loading } = useFirestoreSingleDoc('hero', 'main');
+    const { data: firestoreData, subscribe, loading, error } = useFirestoreSingleDoc('hero', 'main');
 
     useEffect(() => {
         const unsubscribe = subscribe();
@@ -23,30 +23,31 @@ const Hero = ({ splashDone = true }) => {
         };
     }, [subscribe]);
 
-    const dataSource = firestoreData || personalInfo;
+    const dataSource = firestoreData;
     
-    const badge = language === 'ar' ? (dataSource.badgeAr || personalInfo.badgeAr || t(dataSource.badge || personalInfo.badge)) : (dataSource.badge || personalInfo.badge);
-    const firstName = dataSource.firstName || personalInfo.firstName;
-    const lastName = dataSource.lastName || personalInfo.lastName;
-    const fullNameAr = dataSource.fullNameAr || personalInfo.fullNameAr;
-    const description = language === 'ar' ? (dataSource.descriptionAr || personalInfo.descriptionAr || t(dataSource.description || personalInfo.description)) : (dataSource.description || personalInfo.description);
+    const badge = language === 'ar' ? (dataSource?.badgeAr || t(dataSource?.badge || '')) : (dataSource?.badge || '');
+    const firstName = dataSource?.firstName || '';
+    const lastName = dataSource?.lastName || '';
+    const fullNameAr = dataSource?.fullNameAr || '';
+    const description = language === 'ar' ? (dataSource?.descriptionAr || t(dataSource?.description || '')) : (dataSource?.description || '');
 
-    const { portrait, fullName, cvUrl } = dataSource;
+    const { portrait, fullName, cvUrl } = dataSource || {};
 
     const translatedRolesStr = useMemo(() => {
+        if (!dataSource) return JSON.stringify([]);
         if (language === 'ar') {
-            const arRoles = dataSource.rolesAr || personalInfo.rolesAr;
+            const arRoles = dataSource.rolesAr;
             if (arRoles && Array.isArray(arRoles) && arRoles.length > 0) {
                 return JSON.stringify(arRoles);
             }
         }
-        const rolesRaw = dataSource.roles || personalInfo.roles;
+        const rolesRaw = dataSource.roles;
         const parsedRoles = Array.isArray(rolesRaw) && rolesRaw.length > 0
             ? rolesRaw 
-            : (typeof rolesRaw === 'string' && rolesRaw.trim() !== '' ? rolesRaw.split(',').map(r => r.trim()) : personalInfo.roles);
+            : (typeof rolesRaw === 'string' && rolesRaw.trim() !== '' ? rolesRaw.split(',').map(r => r.trim()) : []);
         
         return JSON.stringify(parsedRoles.map(r => language === 'ar' ? t(r) : r));
-    }, [dataSource.roles, dataSource.rolesAr, language, t]);
+    }, [dataSource, language, t]);
 
     const rolesMemo = useMemo(() => JSON.parse(translatedRolesStr), [translatedRolesStr]);
 
@@ -145,8 +146,42 @@ const Hero = ({ splashDone = true }) => {
                 gsap.to(portraitRef.current, { y: -10, duration: 3, ease: 'sine.inOut', yoyo: true, repeat: -1 });
             });
         },
-        { scope: sectionRef, dependencies: [splashDone] },
+        { scope: sectionRef, dependencies: [splashDone, dataSource, loading] },
     );
+
+    if (loading) {
+        return (
+            <section id="hero" className="relative flex items-center justify-center min-h-[100vh] lg:min-h-[95vh] pt-[120px] pb-24 overflow-hidden bg-transparent">
+                <div className="flex flex-col items-center justify-center text-[var(--theme-accent)]">
+                    <i className="fas fa-spinner fa-spin text-4xl mb-4"></i>
+                    <p>{t('Loading...')}</p>
+                </div>
+            </section>
+        );
+    }
+
+    if (error) {
+        return (
+            <section id="hero" className="relative flex items-center justify-center min-h-[100vh] lg:min-h-[95vh] pt-[120px] pb-24 overflow-hidden bg-transparent">
+                <div className="flex flex-col items-center justify-center text-red-500 bg-red-500/10 p-6 rounded-2xl border border-red-500/20">
+                    <i className="fas fa-exclamation-triangle text-3xl mb-3"></i>
+                    <p>{t('Failed to load hero section')}</p>
+                    <p className="text-sm opacity-80 mt-2">{error}</p>
+                </div>
+            </section>
+        );
+    }
+
+    if (!dataSource) {
+        return (
+            <section id="hero" className="relative flex items-center justify-center min-h-[100vh] lg:min-h-[95vh] pt-[120px] pb-24 overflow-hidden bg-transparent">
+                <div className="flex flex-col items-center justify-center text-[var(--theme-text-muted)] bg-[var(--theme-surface)] p-8 rounded-3xl border border-[var(--theme-border)] shadow-inner">
+                    <i className="fas fa-folder-open text-4xl mb-4 opacity-50"></i>
+                    <p>{t('No hero information found.')}</p>
+                </div>
+            </section>
+        );
+    }
 
     return (
         <section
@@ -174,7 +209,7 @@ const Hero = ({ splashDone = true }) => {
                                 </span>
                             ) : (
                                 <span className="hero-name-en highlight-surname text-[var(--theme-accent)]" dir="ltr">
-                                    {(dataSource.fullName || personalInfo.fullName || `${firstName} ${lastName}`)}
+                                    {(fullName || `${firstName} ${lastName}`)}
                                 </span>
                             )}
                         </h1>

@@ -102,7 +102,7 @@ const OverviewDashboard = () => {
     );
   }
 
-  const allSystemsOnline = systemHealth && Object.values(systemHealth).every(s => s.status === 'online');
+  const allSystemsOnline = systemHealth && Object.values(systemHealth).every(s => ['online', 'configured', 'unknown'].includes(s.status));
   const activeWarnings = (notifications ?? []).filter(n => !dismissedWarnings.has(n.id) && (n.type === 'warning' || n.type === 'error'));
 
   return (
@@ -161,8 +161,8 @@ const OverviewDashboard = () => {
           <div className="flex justify-between items-start">
             <div>
               <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Storage Used</p>
-              <h3 className="text-3xl font-black text-white tracking-tight flex items-baseline gap-1">
-                {storageStats?.estimatedUsageMB || '0.0'}<span className="text-lg text-gray-500">MB</span>
+              <h3 className="text-sm font-bold text-gray-400 mt-2">
+                Storage usage unavailable
               </h3>
             </div>
             <div className="p-2.5 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 transition-transform group-hover:scale-110">
@@ -265,7 +265,20 @@ const OverviewDashboard = () => {
                       <div className="flex items-center gap-2 mb-0.5">
                         <span className="text-[10px] font-bold text-white bg-white/10 px-1.5 py-0.5 rounded shadow-sm">{item._collection}</span>
                         <p className="text-sm font-bold text-gray-200 truncate group-hover:text-white transition-colors">
-                          {item.title || item.name || item.label || item.firstName || `[${item._collection}/${item.id}]`}
+                          {item.title || item.name || item.label || item.firstName || (() => {
+                            const map = {
+                              navbarItems: 'Navbar Item',
+                              socials: 'Social Link',
+                              certifications: 'Certification',
+                              projects: 'Project',
+                              skills: 'Skill',
+                              hero: 'Hero Section',
+                              about: 'About Section',
+                              contact: 'Contact Info',
+                              journey: 'Journey Item'
+                            };
+                            return map[item._collection] || item._collection.charAt(0).toUpperCase() + item._collection.slice(1);
+                          })()}
                         </p>
                       </div>
                       <p className="text-[11px] font-medium text-gray-500">
@@ -431,13 +444,16 @@ const OverviewDashboard = () => {
                     <div>
                       <p className="text-xs font-bold text-gray-200 group-hover:text-white transition-colors">{info.label}</p>
                       <p className="text-[10px] text-gray-500 font-mono flex items-center gap-1">
-                        {info.status === 'online' ? `${info.latency}ms latency` : 'Connection Failed'}
+                        {info.status === 'online' ? `${info.latency}ms latency` : 
+                         info.status === 'configured' ? 'Configured' :
+                         info.status === 'unknown' ? 'Unknown state' :
+                         'Connection Failed'}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] font-bold text-gray-500 group-hover:text-white transition-colors opacity-0 group-hover:opacity-100">Details</span>
-                    <div className={`w-2 h-2 rounded-full shadow-[0_0_5px_currentColor] ${info.status === 'online' ? 'bg-emerald-500 text-emerald-500' : 'bg-red-500 text-red-500'}`}></div>
+                    <div className={`w-2 h-2 rounded-full shadow-[0_0_5px_currentColor] ${info.status === 'online' ? 'bg-emerald-500 text-emerald-500' : info.status === 'configured' ? 'bg-blue-500 text-blue-500' : info.status === 'unknown' ? 'bg-gray-500 text-gray-500' : 'bg-red-500 text-red-500'}`}></div>
                   </div>
                 </div>
               ))}

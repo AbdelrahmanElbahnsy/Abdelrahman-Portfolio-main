@@ -143,13 +143,49 @@ const JourneyManager = () => {
           </p>
           
           {!loading && items && items.length > 0 && (
-            <div className="text-sm font-mono text-gray-500 bg-[#131b2c] border border-[#1e293b] px-4 py-2 rounded-lg inline-flex items-center">
-              <span className="text-white font-bold mr-2">{items.length} EXPERIENCES</span>
-              <span className="opacity-50 mx-2">|</span>
-              <span className="truncate">
-                {items.map(i => i.title?.split(' ')[0]).slice(0, 4).join(' → ')}
-                {items.length > 4 ? ' → ...' : ''}
-              </span>
+            <div className="mt-8 bg-[#131b2c] border border-[#1e293b] rounded-[14px] p-5 md:p-6 w-full overflow-hidden">
+              <div className="mb-6">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-gray-500 block">
+                  JOURNEY PROGRESSION
+                </span>
+                <div className="text-xl font-bold text-white mt-1">
+                  <span className="text-[#14f195] mr-1.5">{items.length}</span> 
+                  PHASES
+                </div>
+              </div>
+              
+              <div className="overflow-x-auto scrollbar-none pb-2 -mx-2 px-2">
+                <div className="flex items-start min-w-max">
+                  {items.map((item, idx) => {
+                    const isActive = idx === items.length - 1;
+                    return (
+                      <div key={item.id} className="flex items-center group cursor-default">
+                        <div className="flex flex-col items-center relative">
+                          {/* Node */}
+                          <div className={`w-3 h-3 rounded-full z-10 transition-colors duration-200 ${isActive ? 'bg-[#14f195] shadow-[0_0_10px_rgba(20,241,149,0.3)]' : 'bg-[#1e293b] border-2 border-[#334155] group-hover:border-[#475569]'}`}></div>
+                          
+                          {/* Labels */}
+                          <div className="absolute top-6 flex flex-col items-center w-28 text-center transition-colors duration-200">
+                            <span className={`text-[10px] font-mono mb-1 ${isActive ? 'text-[#14f195]' : 'text-gray-500 group-hover:text-gray-400'}`}>
+                              {String(item.order).padStart(2, '0')}
+                            </span>
+                            <span className={`text-xs font-medium truncate w-full px-1 ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-gray-300'}`}>
+                              {item.title}
+                            </span>
+                          </div>
+                        </div>
+                        
+                        {/* Connecting Line */}
+                        {idx < items.length - 1 && (
+                          <div className={`h-[2px] w-16 sm:w-20 md:w-24 lg:w-32 -mx-1 transition-colors duration-200 ${idx === items.length - 2 ? 'bg-gradient-to-r from-[#334155] to-[#14f195]/40' : 'bg-[#334155] group-hover:bg-[#475569]'}`}></div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+                {/* Spacer for absolute positioned labels */}
+                <div className="h-14"></div>
+              </div>
             </div>
           )}
         </div>

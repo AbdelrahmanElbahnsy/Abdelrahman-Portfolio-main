@@ -27,39 +27,27 @@ const hasValidLink = (value) =>
   typeof value === 'string' && value.trim().length > 0;
 
 const inferProjectStatus = (project) => {
-  // Explicit status wins
-  if (project.status === 'published' || project.status === 'draft') {
-    return project.status;
-  }
-  // Legacy inference: any recognised link field → published
+  if (project.status === 'published' || project.status === 'draft') return project.status;
   if (
-    hasValidLink(project.github) ||
-    hasValidLink(project.githubLink) ||
-    hasValidLink(project.githubUrl) ||
-    hasValidLink(project.repo) ||
-    hasValidLink(project.repository) ||
-    hasValidLink(project.live) ||
-    hasValidLink(project.liveLink) ||
-    hasValidLink(project.liveUrl) ||
+    hasValidLink(project.github) || hasValidLink(project.githubLink) ||
+    hasValidLink(project.githubUrl) || hasValidLink(project.repo) ||
+    hasValidLink(project.repository) || hasValidLink(project.live) ||
+    hasValidLink(project.liveLink) || hasValidLink(project.liveUrl) ||
     hasValidLink(project.demo)
-  ) {
-    return 'published';
-  }
+  ) return 'published';
   return 'draft';
 };
 
-// Canonicalise GitHub link — prefer github, fall back through aliases
-const getGithubLink = (project) =>
-  project.github || project.githubLink || project.githubUrl || project.repo || project.repository || '';
+const getGithubLink = (p) =>
+  p.github || p.githubLink || p.githubUrl || p.repo || p.repository || '';
 
-// Canonicalise live link — prefer live, fall back through aliases
-const getLiveLink = (project) =>
-  project.live || project.liveLink || project.liveUrl || project.demo || '';
+const getLiveLink = (p) =>
+  p.live || p.liveLink || p.liveUrl || p.demo || '';
 
 const getProjectTags = (project) => normalizeProjectTechnologies(project);
 
 // ─────────────────────────────────────────────────────────────────────────────
-// THUMBNAIL PLACEHOLDER
+// LIST-VIEW THUMBNAIL PLACEHOLDER
 // ─────────────────────────────────────────────────────────────────────────────
 const ThumbnailPlaceholder = ({ size = 'sm' }) => {
   if (size === 'sm') {
@@ -105,7 +93,7 @@ const StatusBadge = ({ status }) => {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// TECH CHIPS (display-only)
+// TECH CHIPS (display-only, used in list/grid)
 // ─────────────────────────────────────────────────────────────────────────────
 const TechChips = ({ tags, maxVisible = 4 }) => {
   const visible = tags.slice(0, maxVisible);
@@ -121,64 +109,52 @@ const TechChips = ({ tags, maxVisible = 4 }) => {
         </span>
       ))}
       {overflow > 0 && (
-        <span className="text-[9px] font-mono text-gray-700 px-0.5 leading-none">
-          +{overflow}
-        </span>
+        <span className="text-[9px] font-mono text-gray-700 px-0.5 leading-none">+{overflow}</span>
       )}
     </div>
   );
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// EDITOR DRAWER  (lifted out to avoid rules-of-hooks violations)
+// EDITOR DRAWER  — IDE-style panel
 // ─────────────────────────────────────────────────────────────────────────────
-const EditorDrawer = ({
-  isOpen,
-  item,
-  projectIndex,
-  projectCount,
-  onClose,
-  onSave,
-}) => {
+const EditorDrawer = ({ isOpen, item, projectIndex, projectCount, onClose, onSave }) => {
   if (!isOpen) return null;
 
-  const isEditing = !!item;
+  const isEditing   = !!item;
   const initialData = item || {};
-
-  // Derive canonical link values from all alias fields
   const initialGithub = getGithubLink(initialData);
-  const initialLive = getLiveLink(initialData);
+  const initialLive   = getLiveLink(initialData);
+
+  // ── Form state ──────────────────────────────────────────────────────────
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [title, setTitle] = useState(initialData.title || '');
+  const [title,       setTitle]       = useState(initialData.title || '');
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [description, setDescription] = useState(initialData.description || '');
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [github, setGithub] = useState(initialGithub);
+  const [github,      setGithub]      = useState(initialGithub);
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [live, setLive] = useState(initialLive);
+  const [live,        setLive]        = useState(initialLive);
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [status, setStatus] = useState(initialData.derivedStatus || 'draft');
+  const [status,      setStatus]      = useState(initialData.derivedStatus || 'draft');
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [techTags, setTechTags] = useState(isEditing ? getProjectTags(initialData) : []);
+  const [techTags,    setTechTags]    = useState(isEditing ? getProjectTags(initialData) : []);
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [techInput, setTechInput] = useState('');
+  const [techInput,   setTechInput]   = useState('');
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [imageFile, setImageFile] = useState(null);
+  const [imageFile,   setImageFile]   = useState(null);
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [isSaving, setIsSaving] = useState(false);
+  const [isSaving,    setIsSaving]    = useState(false);
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [isSuccess,   setIsSuccess]   = useState(false);
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const { uploadImage, uploadProgress, resetUploadState } = useImageUpload();
 
-  const existingImage = initialData.image || '';
+  const existingImage   = initialData.image || '';
   const previewImageSrc = imageFile ? URL.createObjectURL(imageFile) : existingImage;
+  const projectNumber   = String(isEditing ? projectIndex + 1 : projectCount + 1).padStart(2, '0');
 
-  const projectNumber = String(
-    isEditing ? projectIndex + 1 : projectCount + 1
-  ).padStart(2, '0');
-
-  // Dirty state
+  // ── Dirty detection ──────────────────────────────────────────────────────
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const isDirty = useMemo(() => {
     if (!isEditing) {
@@ -188,7 +164,7 @@ const EditorDrawer = ({
       title !== (initialData.title || '') ||
       description !== (initialData.description || '') ||
       github !== initialGithub ||
-      live !== initialLive ||
+      live   !== initialLive   ||
       status !== initialData.derivedStatus ||
       JSON.stringify(techTags) !== JSON.stringify(getProjectTags(initialData)) ||
       imageFile !== null
@@ -196,6 +172,7 @@ const EditorDrawer = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [title, description, github, live, status, techTags, imageFile]);
 
+  // ── Handlers ─────────────────────────────────────────────────────────────
   const handleAddTech = () => {
     if (!techInput.trim()) return;
     const newTags = parseTechnologiesInput(techInput);
@@ -204,10 +181,7 @@ const EditorDrawer = ({
   };
 
   const handleSave = async () => {
-    if (!title.trim()) {
-      toast.error('Project title is required.');
-      return;
-    }
+    if (!title.trim()) { toast.error('Project title is required.'); return; }
     setIsSaving(true);
     try {
       let imageUrl = existingImage;
@@ -219,94 +193,141 @@ const EditorDrawer = ({
         github: github.trim(),
         live: live.trim(),
         status,
-        // Preserve comma-separated format — backward compatible with public portfolio
-        technologies: techTags.join(', '),
+        technologies: techTags.join(', '), // comma-separated — backward compatible
         image: imageUrl,
       };
 
       await onSave(isEditing ? initialData.id : null, payload);
       setIsSuccess(true);
       toast.success(isEditing ? 'Project updated.' : 'Project created.');
-      setTimeout(() => {
-        onClose();
-        resetUploadState();
-      }, 900);
+      setTimeout(() => { onClose(); resetUploadState(); }, 900);
     } catch {
       toast.error('Failed to save project.');
       setIsSaving(false);
     }
   };
 
+  // ── Shared input style ────────────────────────────────────────────────────
+  const iCls = [
+    'w-full h-11 bg-[#060c18] border border-[#1b2d47] rounded px-3',
+    'text-[13px] text-white placeholder:text-[#253550]',
+    'focus:border-[#14f195]/55 focus:ring-0 outline-none transition-colors',
+  ].join(' ');
+
+  // ── Render ────────────────────────────────────────────────────────────────
   return (
     <div className="fixed inset-0 z-50 flex justify-end" aria-modal="true" role="dialog">
-      {/* Backdrop — dark overlay ONLY, no blur */}
+
+      {/* ── Backdrop: translucent so project list stays visible ── */}
       <div
-        className="absolute inset-0 bg-[#030814]/75 animate-in fade-in duration-150"
+        className="absolute inset-0"
+        style={{ background: 'rgba(3, 8, 20, 0.60)' }}
         onClick={() => !isSaving && onClose()}
       />
 
-      {/* Panel */}
-      <div className="relative w-full sm:max-w-[540px] h-full bg-[#090e1a] border-l border-[#1a2440] shadow-2xl flex flex-col animate-in slide-in-from-right duration-250">
+      {/* ── Panel ── */}
+      <div
+        className="relative w-full sm:max-w-[548px] h-full flex flex-col overflow-hidden"
+        style={{
+          background: '#0c1322',
+          borderLeft: '1px solid #182840',
+          boxShadow: '-16px 0 48px rgba(0,0,0,0.55)',
+          animation: 'drawerSlideIn 180ms cubic-bezier(0.25,1,0.5,1) both',
+        }}
+      >
 
-        {/* ── HEADER ── */}
-        <div className="px-7 pt-6 pb-5 border-b border-[#1a2440] bg-[#0b1120] flex items-start justify-between shrink-0">
-          <div className="flex flex-col gap-0.5 min-w-0 mr-3">
-            <span className="text-[#14f195] font-mono text-[9px] uppercase tracking-[0.22em] font-bold">
-              {isEditing ? 'EDIT PROJECT' : 'NEW PROJECT'}
-            </span>
-            <span className="text-gray-700 font-mono text-[10px] uppercase tracking-[0.16em]">
-              PROJECT {projectNumber}
-            </span>
-            <h2 className="text-lg font-black text-white tracking-tight mt-0.5 truncate">
+        {/* ════════════ HEADER ════════════ */}
+        <div
+          className="shrink-0 px-6 pt-5 pb-4 flex items-start gap-4 justify-between"
+          style={{ borderBottom: '1px solid #182840', background: '#09101d' }}
+        >
+          {/* Left: hierarchy */}
+          <div className="min-w-0 flex-1">
+            {/* Row 1: mode badge */}
+            <div className="flex items-center gap-2 mb-2">
+              <span
+                className="inline-flex items-center gap-1.5 text-[9px] font-mono font-bold uppercase tracking-[0.18em] px-2 py-0.5 rounded-sm"
+                style={{
+                  color: '#14f195',
+                  background: 'rgba(20,241,149,0.07)',
+                  border: '1px solid rgba(20,241,149,0.15)',
+                }}
+              >
+                <span className="w-1 h-1 rounded-full bg-[#14f195]" />
+                {isEditing ? 'EDIT PROJECT' : 'NEW PROJECT'}
+              </span>
+            </div>
+
+            {/* Row 2: meta */}
+            <div className="flex items-center gap-1.5 mb-1">
+              <span className="font-mono text-[9px] uppercase tracking-[0.14em]" style={{ color: '#253550' }}>
+                PROJECT {projectNumber}
+              </span>
+              <span style={{ color: '#182840' }}>·</span>
+              <span className="font-mono text-[9px] uppercase tracking-[0.12em]" style={{ color: '#253550' }}>
+                CONFIGURATION
+              </span>
+            </div>
+
+            {/* Row 3: live title — dominant */}
+            <h2
+              className="text-white font-bold leading-tight truncate"
+              style={{ fontSize: '16px', letterSpacing: '-0.01em' }}
+            >
               {title || (isEditing ? (initialData.title || 'Untitled') : 'Untitled Project')}
             </h2>
           </div>
+
+          {/* Close button */}
           <button
             onClick={() => !isSaving && onClose()}
             disabled={isSaving}
-            className="shrink-0 w-8 h-8 rounded-lg bg-[#1a2440] text-gray-500 hover:text-white hover:bg-[#223060] flex items-center justify-center transition-colors mt-0.5"
+            className="shrink-0 w-7 h-7 flex items-center justify-center rounded transition-colors disabled:opacity-30"
+            style={{ background: '#111d30', border: '1px solid #1b2d47', color: '#3d5470' }}
+            onMouseEnter={e => { e.currentTarget.style.color='#fff'; e.currentTarget.style.borderColor='#2d4060'; }}
+            onMouseLeave={e => { e.currentTarget.style.color='#3d5470'; e.currentTarget.style.borderColor='#1b2d47'; }}
           >
-            <X className="w-4 h-4" />
+            <X className="w-3.5 h-3.5" />
           </button>
         </div>
 
-        {/* ── BODY (scrollable) ── */}
+        {/* ════════════ BODY ════════════ */}
         <div className="flex-1 overflow-y-auto project-editor-scrollbar">
-          <div className="px-7 py-6 space-y-7">
+          <div className="px-6 py-5 space-y-5">
 
-            {/* 01 / IDENTITY */}
+            {/* ── 01  IDENTITY ── */}
             <section>
-              <SectionLabel label="01 / IDENTITY" />
-              <div className="space-y-3">
+              <DSL n="01" label="IDENTITY" />
+              <div className="space-y-2">
                 <div>
-                  <FieldLabel>Project Title <span className="text-[#14f195]">*</span></FieldLabel>
+                  <DFL>Project Title <span style={{ color: '#14f195' }}>*</span></DFL>
                   <input
                     type="text"
                     value={title}
                     onChange={e => setTitle(e.target.value)}
                     placeholder="e.g. Enterprise Cloud Architecture"
-                    className="w-full h-[42px] bg-[#111827] border border-[#1a2440] rounded-lg px-3.5 text-white text-sm focus:border-[#14f195]/50 focus:ring-1 focus:ring-[#14f195]/10 outline-none transition-all placeholder:text-gray-700"
+                    className={iCls}
                   />
                 </div>
                 <div>
-                  <FieldLabel>Description</FieldLabel>
+                  <DFL>Description</DFL>
                   <textarea
                     value={description}
                     onChange={e => setDescription(e.target.value)}
-                    rows={4}
-                    placeholder="Explain the architecture, challenges, and outcomes..."
-                    className="w-full bg-[#111827] border border-[#1a2440] rounded-lg px-3.5 py-3 text-white text-sm focus:border-[#14f195]/50 focus:ring-1 focus:ring-[#14f195]/10 outline-none transition-all resize-y placeholder:text-gray-700 leading-relaxed"
+                    placeholder="Architecture, technical challenges, outcomes…"
+                    className="w-full bg-[#060c18] border border-[#1b2d47] rounded px-3 py-2.5 text-[13px] text-white placeholder:text-[#253550] focus:border-[#14f195]/55 outline-none transition-colors leading-relaxed resize-none"
+                    style={{ minHeight: '108px' }}
                   />
                 </div>
               </div>
             </section>
 
-            {/* 02 / PROJECT MEDIA */}
+            {/* ── 02  MEDIA ── */}
             <section>
-              <SectionLabel label="02 / PROJECT MEDIA" />
+              <DSL n="02" label="MEDIA" />
               <div
-                className="relative overflow-hidden bg-[#111827] border border-dashed border-[#1a2440] hover:border-[#14f195]/35 transition-all rounded-xl flex items-center justify-center cursor-pointer group"
-                style={{ aspectRatio: '16/7' }}
+                className="relative overflow-hidden rounded cursor-pointer group"
+                style={{ height: '192px', background: '#060c18', border: '1px dashed #1b2d47' }}
               >
                 <input
                   type="file"
@@ -314,52 +335,96 @@ const EditorDrawer = ({
                   onChange={e => setImageFile(e.target.files[0])}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                 />
+
                 {previewImageSrc ? (
                   <div className="absolute inset-0">
                     <img
                       src={previewImageSrc}
                       alt="Preview"
-                      className="w-full h-full object-cover opacity-75 group-hover:opacity-50 transition-opacity"
+                      className="w-full h-full object-cover transition-opacity duration-200"
+                      style={{ opacity: 0.85 }}
                     />
-                    <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/50">
-                      <UploadCloud className="w-6 h-6 text-white mb-1" />
-                      <span className="text-white text-[11px] font-bold uppercase tracking-widest">Change Image</span>
+                    {/* Hover overlay */}
+                    <div
+                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center justify-center"
+                      style={{ background: 'rgba(6,12,24,0.72)' }}
+                    >
+                      <span
+                        className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-widest px-3 py-1.5 rounded-sm"
+                        style={{
+                          color: '#14f195',
+                          border: '1px solid rgba(20,241,149,0.3)',
+                          background: 'rgba(20,241,149,0.06)',
+                        }}
+                      >
+                        <UploadCloud className="w-3 h-3" />
+                        Change Image
+                      </span>
                     </div>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center gap-2 py-5">
-                    <UploadCloud className="w-6 h-6 text-gray-600 group-hover:text-[#14f195] transition-colors" />
+                  /* Empty — engineering-style placeholder */
+                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none gap-3">
+                    {/* dot-grid motif */}
+                    <div className="grid grid-cols-5 gap-[5px] opacity-[0.09]">
+                      {[...Array(15)].map((_, i) => (
+                        <div key={i} className="w-2.5 h-2.5 rounded-full bg-gray-400" />
+                      ))}
+                    </div>
                     <div className="text-center">
-                      <div className="text-sm font-bold text-gray-500 group-hover:text-white transition-colors">Upload Thumbnail</div>
-                      <div className="text-[10px] font-mono text-gray-700 mt-0.5">PNG · JPG · max 2MB</div>
+                      <div
+                        className="text-[11px] font-semibold mb-0.5 group-hover:text-[#5070a0] transition-colors"
+                        style={{ color: '#2d4060' }}
+                      >
+                        + PROJECT IMAGE
+                      </div>
+                      <div className="font-mono text-[9px] uppercase tracking-widest" style={{ color: '#1b2d47' }}>
+                        Upload thumbnail · PNG / JPG · max 2MB
+                      </div>
                     </div>
                   </div>
                 )}
+
+                {/* Upload progress overlay */}
                 {uploadProgress > 0 && (
-                  <div className="absolute inset-0 bg-black/85 flex flex-col items-center justify-center z-20">
-                    <span className="text-[#14f195] font-mono font-black text-xl">{uploadProgress}%</span>
-                    <span className="text-gray-500 text-[10px] font-mono mt-0.5 uppercase tracking-widest">Uploading</span>
+                  <div
+                    className="absolute inset-0 z-20 flex flex-col items-center justify-center"
+                    style={{ background: 'rgba(6,12,24,0.92)' }}
+                  >
+                    <span className="font-mono font-black text-xl" style={{ color: '#14f195' }}>
+                      {uploadProgress}%
+                    </span>
+                    <span className="font-mono text-[9px] uppercase tracking-widest mt-1" style={{ color: '#3d5470' }}>
+                      Uploading
+                    </span>
                   </div>
                 )}
               </div>
             </section>
 
-            {/* 03 / TECHNOLOGY STACK */}
+            {/* ── 03  STACK ── */}
             <section>
-              <SectionLabel label="03 / TECHNOLOGY STACK" />
-              <div className="bg-[#111827] border border-[#1a2440] rounded-xl p-3.5 focus-within:border-[#14f195]/40 transition-all">
+              <DSL n="03" label="STACK" />
+              <div
+                className="rounded transition-colors"
+                style={{ background: '#060c18', border: '1px solid #1b2d47' }}
+              >
+                {/* Active chips */}
                 {techTags.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 mb-3">
+                  <div className="flex flex-wrap gap-1.5 px-3 pt-2.5 pb-2">
                     {techTags.map((tag, i) => (
                       <span
                         key={i}
-                        className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#1a2440] border border-white/5 rounded text-[10px] font-mono text-gray-300 uppercase tracking-wider"
+                        className="inline-flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider rounded-sm"
+                        style={{ padding: '2px 8px', background: '#0f1e33', border: '1px solid #1b3050', color: '#7090b0' }}
                       >
                         {tag}
                         <button
                           type="button"
                           onClick={() => setTechTags(prev => prev.filter((_, idx) => idx !== i))}
-                          className="text-gray-600 hover:text-red-400 transition-colors ml-0.5"
+                          style={{ color: '#304060', marginLeft: '2px', lineHeight: 1 }}
+                          onMouseEnter={e => (e.currentTarget.style.color = '#d05050')}
+                          onMouseLeave={e => (e.currentTarget.style.color = '#304060')}
                         >
                           <X className="w-2.5 h-2.5" />
                         </button>
@@ -367,120 +432,173 @@ const EditorDrawer = ({
                     ))}
                   </div>
                 )}
-                <div className={`flex items-center gap-2 ${techTags.length > 0 ? 'border-t border-[#1a2440] pt-2.5' : ''}`}>
+
+                {/* Input */}
+                <div
+                  className={`flex items-center gap-2 px-3 ${techTags.length > 0 ? 'border-t py-2' : 'py-2'}`}
+                  style={{ borderColor: '#182840' }}
+                >
+                  <span className="font-mono text-[11px]" style={{ color: '#253550' }}>+</span>
                   <input
                     type="text"
                     value={techInput}
                     onChange={e => setTechInput(e.target.value)}
                     onKeyDown={e => {
-                      if (e.key === 'Enter' || e.key === ',') {
-                        e.preventDefault();
-                        handleAddTech();
-                      }
+                      if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); handleAddTech(); }
                     }}
-                    placeholder={techTags.length === 0 ? 'e.g. Terraform, Kubernetes, Azure…' : 'Add another…'}
-                    className="flex-1 bg-transparent text-sm text-white outline-none placeholder:text-gray-700"
+                    placeholder={techTags.length === 0
+                      ? 'Add technology… (Enter or comma)'
+                      : 'Add another…'
+                    }
+                    className="flex-1 bg-transparent text-[13px] text-white outline-none placeholder:text-[#253550]"
                   />
                   {techInput.trim() && (
                     <button
                       type="button"
                       onClick={handleAddTech}
-                      className="text-[10px] font-bold uppercase tracking-widest text-[#14f195] hover:text-[#10d482] transition-colors px-1"
+                      className="font-mono text-[10px] font-bold uppercase tracking-widest transition-colors"
+                      style={{ color: '#14f195' }}
                     >
-                      Add
+                      Add ↵
                     </button>
                   )}
                 </div>
-                {techTags.length === 0 && !techInput && (
-                  <p className="text-[10px] font-mono text-gray-700 mt-1.5">Press Enter or comma to add a tag</p>
-                )}
               </div>
             </section>
 
-            {/* 04 / LINKS */}
+            {/* ── 04  LINKS ── */}
             <section>
-              <SectionLabel label="04 / LINKS" />
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <DSL n="04" label="LINKS" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div>
-                  <FieldLabel>
-                    <GitBranch className="w-3 h-3 inline mr-1 -mt-px" />
-                    GitHub / Repo
-                  </FieldLabel>
+                  <DFL>
+                    <GitBranch className="w-3 h-3 inline mr-1 opacity-40 -mt-px" />
+                    GitHub Repository
+                  </DFL>
                   <input
                     type="url"
                     value={github}
                     onChange={e => setGithub(e.target.value)}
                     placeholder="https://github.com/…"
-                    className="w-full h-[42px] bg-[#111827] border border-[#1a2440] rounded-lg px-3.5 text-white text-sm focus:border-[#14f195]/50 focus:ring-1 focus:ring-[#14f195]/10 outline-none transition-all placeholder:text-gray-700"
+                    className={iCls}
                   />
                 </div>
                 <div>
-                  <FieldLabel>
-                    <ExternalLink className="w-3 h-3 inline mr-1 -mt-px" />
+                  <DFL>
+                    <ExternalLink className="w-3 h-3 inline mr-1 opacity-40 -mt-px" />
                     Live Demo
-                  </FieldLabel>
+                  </DFL>
                   <input
                     type="url"
                     value={live}
                     onChange={e => setLive(e.target.value)}
                     placeholder="https://…"
-                    className="w-full h-[42px] bg-[#111827] border border-[#1a2440] rounded-lg px-3.5 text-white text-sm focus:border-[#14f195]/50 focus:ring-1 focus:ring-[#14f195]/10 outline-none transition-all placeholder:text-gray-700"
+                    className={iCls}
                   />
                 </div>
               </div>
             </section>
 
-            {/* 05 / STATUS */}
+            {/* ── 05  VISIBILITY ── */}
             <section>
-              <SectionLabel label="05 / STATUS" />
-              <div className="flex bg-[#111827] border border-[#1a2440] rounded-xl p-1 gap-1">
+              <DSL n="05" label="VISIBILITY" />
+              <div
+                className="flex p-0.5 rounded"
+                style={{ background: '#060c18', border: '1px solid #1b2d47' }}
+              >
                 {[
-                  { value: 'draft',     label: 'Draft',     active: 'text-amber-400',    dot: 'bg-amber-400' },
-                  { value: 'published', label: 'Published', active: 'text-[#14f195]', dot: 'bg-[#14f195]' },
-                ].map(({ value, label, active, dot }) => (
-                  <button
-                    key={value}
-                    type="button"
-                    onClick={() => setStatus(value)}
-                    className={`flex-1 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
-                      status === value
-                        ? `bg-[#1a2440] ${active} shadow-sm`
-                        : 'text-gray-600 hover:text-gray-400'
-                    }`}
-                  >
-                    <span className={`w-1.5 h-1.5 rounded-full ${status === value ? dot : 'bg-gray-700'}`} />
-                    {label}
-                  </button>
-                ))}
+                  {
+                    value: 'draft',
+                    label: 'Draft',
+                    color: '#d97706',
+                    activeBg: 'rgba(217,119,6,0.08)',
+                    activeBorder: 'rgba(217,119,6,0.22)',
+                  },
+                  {
+                    value: 'published',
+                    label: 'Published',
+                    color: '#14f195',
+                    activeBg: 'rgba(20,241,149,0.07)',
+                    activeBorder: 'rgba(20,241,149,0.2)',
+                  },
+                ].map(({ value, label, color, activeBg, activeBorder }) => {
+                  const on = status === value;
+                  return (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => setStatus(value)}
+                      className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded text-[10px] font-mono font-bold uppercase tracking-wider transition-all"
+                      style={on
+                        ? { color, background: activeBg, border: `1px solid ${activeBorder}` }
+                        : { color: '#2d4060', background: 'transparent', border: '1px solid transparent' }
+                      }
+                    >
+                      <span
+                        className="w-1.5 h-1.5 rounded-full"
+                        style={{ background: on ? color : '#1b2d47' }}
+                      />
+                      ● {label}
+                    </button>
+                  );
+                })}
               </div>
             </section>
 
-            {/* LIVE PREVIEW */}
-            <section className="pb-2">
-              <SectionLabel label="LIVE PREVIEW" />
-              <div className="bg-[#111827] rounded-xl border border-[#1a2440] p-3.5 flex gap-3.5">
-                <div className="w-16 h-16 rounded-lg bg-[#0a0f1c] border border-[#1a2440] overflow-hidden shrink-0">
+            {/* ── LIVE PREVIEW ── */}
+            <section style={{ paddingBottom: '6px' }}>
+              <DSL label="PREVIEW" />
+              <div
+                className="flex gap-3 rounded p-3"
+                style={{ background: '#070e1c', border: '1px solid #152030' }}
+              >
+                {/* Thumbnail */}
+                <div
+                  className="shrink-0 rounded overflow-hidden"
+                  style={{ width: '60px', height: '60px', background: '#060c18', border: '1px solid #1b2d47' }}
+                >
                   {previewImageSrc
-                    ? <img src={previewImageSrc} alt="Preview" className="w-full h-full object-cover" />
-                    : <ThumbnailPlaceholder size="sm" />
+                    ? <img src={previewImageSrc} alt="" className="w-full h-full object-cover" />
+                    : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <FolderOpen className="w-4 h-4" style={{ color: '#1b2d47' }} />
+                      </div>
+                    )
                   }
                 </div>
+
+                {/* Content */}
                 <div className="flex-1 min-w-0 overflow-hidden">
-                  <div className="flex items-center justify-between gap-2 mb-1">
-                    <h4 className="text-white font-bold text-[13px] truncate">{title || 'Untitled Project'}</h4>
-                    <StatusBadge status={status} />
+                  <div className="flex items-start justify-between gap-2 mb-1">
+                    <h4 className="text-white font-semibold text-[12px] truncate leading-snug">
+                      {title || 'Untitled Project'}
+                    </h4>
+                    {/* Inline status dot */}
+                    <span
+                      className="shrink-0 text-[8px] font-mono font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-sm"
+                      style={status === 'published'
+                        ? { color: '#14f195', background: 'rgba(20,241,149,0.08)', border: '1px solid rgba(20,241,149,0.18)' }
+                        : { color: '#d97706', background: 'rgba(217,119,6,0.08)',  border: '1px solid rgba(217,119,6,0.18)' }
+                      }
+                    >
+                      {status}
+                    </span>
                   </div>
-                  <p className="text-gray-600 text-[11px] line-clamp-2 leading-relaxed mb-1.5">
+                  <p className="text-[10px] line-clamp-2 leading-relaxed mb-1.5" style={{ color: '#3d5470' }}>
                     {description || 'No description provided.'}
                   </p>
                   <div className="flex flex-wrap gap-1">
-                    {techTags.slice(0, 3).map((t, i) => (
-                      <span key={i} className="text-[9px] font-mono text-gray-600 bg-[#1a2440] px-1.5 py-0.5 rounded uppercase">
+                    {techTags.slice(0, 4).map((t, i) => (
+                      <span
+                        key={i}
+                        className="text-[8px] font-mono uppercase px-1.5 py-0.5 rounded-sm"
+                        style={{ color: '#3d5470', background: '#0f1e33', border: '1px solid #1b3050' }}
+                      >
                         {t}
                       </span>
                     ))}
-                    {techTags.length > 3 && (
-                      <span className="text-[9px] font-mono text-gray-700">+{techTags.length - 3}</span>
+                    {techTags.length > 4 && (
+                      <span className="text-[8px] font-mono" style={{ color: '#1b2d47' }}>+{techTags.length - 4}</span>
                     )}
                   </div>
                 </div>
@@ -490,33 +608,49 @@ const EditorDrawer = ({
           </div>
         </div>
 
-        {/* ── FOOTER ── */}
-        <div className="px-7 py-4 bg-[#090e1a] border-t border-[#1a2440] flex items-center justify-between shrink-0">
-          <span className={`flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest ${isDirty ? 'text-amber-400' : 'text-gray-700'}`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${isDirty ? 'bg-amber-400 animate-pulse' : 'bg-gray-700'}`} />
-            {isDirty ? 'Unsaved Changes' : 'All Changes Saved'}
+        {/* ════════════ FOOTER ════════════ */}
+        <div
+          className="shrink-0 flex items-center justify-between px-6"
+          style={{ height: '64px', borderTop: '1px solid #182840', background: '#09101d' }}
+        >
+          {/* Save state indicator */}
+          <span
+            className="flex items-center gap-1.5 text-[9px] font-mono uppercase tracking-widest"
+            style={{ color: isDirty ? '#d97706' : '#253550' }}
+          >
+            <span
+              className="w-1.5 h-1.5 rounded-full"
+              style={{ background: isDirty ? '#d97706' : '#253550' }}
+            />
+            {isDirty ? 'Unsaved changes' : 'Saved'}
           </span>
 
+          {/* Action buttons */}
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={onClose}
               disabled={isSaving}
-              className="px-4 py-2 rounded-lg text-gray-500 font-bold text-sm hover:text-white hover:bg-[#1a2440] transition-colors disabled:opacity-40"
+              className="h-9 px-4 rounded text-[12px] font-medium transition-colors disabled:opacity-30"
+              style={{ color: '#3d5470' }}
+              onMouseEnter={e => { e.currentTarget.style.color='#fff'; e.currentTarget.style.background='#111d30'; }}
+              onMouseLeave={e => { e.currentTarget.style.color='#3d5470'; e.currentTarget.style.background='transparent'; }}
             >
               Cancel
             </button>
+
             <button
               type="button"
               onClick={handleSave}
               disabled={!isDirty || isSaving}
-              className={`px-5 py-2 rounded-lg font-bold text-sm flex items-center gap-1.5 transition-all ${
+              className="h-9 px-5 rounded text-[12px] font-bold flex items-center gap-1.5 transition-all"
+              style={
                 isSuccess
-                  ? 'bg-transparent border border-[#14f195] text-[#14f195]'
+                  ? { color: '#14f195', background: 'rgba(20,241,149,0.07)', border: '1px solid rgba(20,241,149,0.25)' }
                   : isDirty && !isSaving
-                    ? 'bg-[#14f195] text-[#090e1a] hover:bg-[#10d482] shadow-[0_0_16px_rgba(20,241,149,0.15)]'
-                    : 'bg-[#111827] border border-[#1a2440] text-gray-600 cursor-not-allowed'
-              }`}
+                    ? { color: '#09101d', background: '#14f195', border: '1px solid #14f195', boxShadow: '0 0 12px rgba(20,241,149,0.2)' }
+                    : { color: '#253550', background: '#0a1322', border: '1px solid #1b2d47', cursor: 'not-allowed', opacity: 0.5 }
+              }
             >
               {isSaving
                 ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Saving…</>
@@ -528,20 +662,30 @@ const EditorDrawer = ({
           </div>
         </div>
       </div>
+
+      {/* Keyframe — injected once */}
+      <style>{`
+        @keyframes drawerSlideIn {
+          from { transform: translateX(100%); opacity: 0.6; }
+          to   { transform: translateX(0);    opacity: 1;   }
+        }
+      `}</style>
     </div>
   );
 };
 
-// Small helpers to keep markup clean
-const SectionLabel = ({ label }) => (
-  <div className="flex items-center gap-3 mb-3">
-    <span className="text-[9px] font-mono text-gray-600 uppercase tracking-[0.22em] shrink-0">{label}</span>
-    <span className="flex-1 h-px bg-[#1a2440]" />
+// ── Drawer helpers ─────────────────────────────────────────────────────────────
+// DSL = Drawer Section Label, DFL = Drawer Field Label
+const DSL = ({ n, label }) => (
+  <div className="flex items-center gap-2 mb-2.5">
+    {n && <span className="font-mono text-[8px] font-bold" style={{ color: 'rgba(20,241,149,0.6)' }}>{n}</span>}
+    <span className="font-mono text-[9px] uppercase tracking-[0.18em]" style={{ color: '#253550' }}>{label}</span>
+    <span className="flex-1 h-px" style={{ background: '#182840' }} />
   </div>
 );
 
-const FieldLabel = ({ children }) => (
-  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+const DFL = ({ children }) => (
+  <label className="block text-[10px] font-mono uppercase tracking-wider mb-1.5" style={{ color: '#304060' }}>
     {children}
   </label>
 );
@@ -560,9 +704,7 @@ const DeleteDialog = ({ item, onCancel, onConfirm }) => {
         <span className="font-mono text-[9px] text-red-500/70 uppercase tracking-[0.2em] mb-2 block">
           DELETE PROJECT?
         </span>
-        <p className="text-gray-400 text-[13px] leading-relaxed mb-1">
-          Permanently delete:
-        </p>
+        <p className="text-gray-400 text-[13px] leading-relaxed mb-1">Permanently delete:</p>
         <p className="text-white font-bold text-sm mb-1 truncate px-4">{item.title}</p>
         <p className="text-gray-700 text-[11px] mb-5">This action cannot be undone.</p>
         <div className="flex gap-2">
@@ -593,39 +735,36 @@ export default function ProjectsManager() {
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
-  const [searchQuery, setSearchQuery]   = useState('');
-  const [filterStatus, setFilterStatus] = useState('ALL');
-  const [viewMode, setViewMode]         = useState('LIST');
-  const [editorState, setEditorState]   = useState({ isOpen: false, item: null });
-  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [searchQuery,   setSearchQuery]   = useState('');
+  const [filterStatus,  setFilterStatus]  = useState('ALL');
+  const [viewMode,      setViewMode]      = useState('LIST');
+  const [editorState,   setEditorState]   = useState({ isOpen: false, item: null });
+  const [deleteTarget,  setDeleteTarget]  = useState(null);
 
-  // ── Enrich raw data ──────────────────────────────────────────────────────
+  // ── Enrich raw data ────────────────────────────────────────────────────────
   const projects = useMemo(() => {
     if (!rawProjects) return [];
     return rawProjects.map(p => ({
       ...p,
       derivedStatus: inferProjectStatus(p),
       tags: getProjectTags(p),
-      // canonical link aliases so the list view doesn't need to repeat logic
       _githubUrl: getGithubLink(p),
       _liveUrl:   getLiveLink(p),
     }));
   }, [rawProjects]);
 
-  // ── Stats ────────────────────────────────────────────────────────────────
+  // ── Stats ──────────────────────────────────────────────────────────────────
   const stats = useMemo(() => {
     const published = projects.filter(p => p.derivedStatus === 'published').length;
     const draft     = projects.length - published;
     const techCounts = {};
     projects.forEach(p => p.tags.forEach(t => { techCounts[t] = (techCounts[t] || 0) + 1; }));
     const topTech = Object.entries(techCounts)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 4)
-      .map(([t]) => t.toUpperCase());
+      .sort((a, b) => b[1] - a[1]).slice(0, 4).map(([t]) => t.toUpperCase());
     return { total: projects.length, published, draft, topTech };
   }, [projects]);
 
-  // ── Filtered list ────────────────────────────────────────────────────────
+  // ── Filtered list ──────────────────────────────────────────────────────────
   const filteredProjects = useMemo(() => {
     return projects.filter(p => {
       if (filterStatus === 'PUBLISHED' && p.derivedStatus !== 'published') return false;
@@ -642,13 +781,10 @@ export default function ProjectsManager() {
     });
   }, [projects, filterStatus, searchQuery]);
 
-  // ── Handlers ─────────────────────────────────────────────────────────────
+  // ── Handlers ──────────────────────────────────────────────────────────────
   const handleSave = useCallback(async (id, payload) => {
-    if (id) {
-      await update(id, payload);
-    } else {
-      await create(payload);
-    }
+    if (id) await update(id, payload);
+    else    await create(payload);
     await fetchAll();
   }, [update, create, fetchAll]);
 
@@ -665,10 +801,10 @@ export default function ProjectsManager() {
     }
   };
 
-  const openEditor = useCallback((item = null) => setEditorState({ isOpen: true, item }), []);
+  const openEditor  = useCallback((item = null) => setEditorState({ isOpen: true, item }), []);
   const closeEditor = useCallback(() => setEditorState({ isOpen: false, item: null }), []);
 
-  // ── Loading state ────────────────────────────────────────────────────────
+  // ── Loading ────────────────────────────────────────────────────────────────
   if (loading && (!rawProjects || rawProjects.length === 0)) {
     return (
       <div className="flex items-center justify-center h-[55vh]">
@@ -680,11 +816,11 @@ export default function ProjectsManager() {
     );
   }
 
-  // ── Render ───────────────────────────────────────────────────────────────
+  // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="max-w-[1280px] mx-auto pb-16 animate-in fade-in duration-300">
 
-      {/* ══ PAGE HEADER ══════════════════════════════════════════════════════ */}
+      {/* ══ PAGE HEADER ══ */}
       <div className="mb-7">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-5">
           <div>
@@ -706,7 +842,7 @@ export default function ProjectsManager() {
           </button>
         </div>
 
-        {/* ── Stats bar ── */}
+        {/* Stats bar */}
         <div className="flex flex-wrap items-center gap-x-5 gap-y-2 bg-[#0b1120] border border-[#1a2440] rounded-xl px-5 py-3.5">
           <Stat value={stats.total} label="Projects" color="text-[#14f195]" />
           <Divider />
@@ -724,7 +860,7 @@ export default function ProjectsManager() {
         </div>
       </div>
 
-      {/* ══ TOOLBAR ══════════════════════════════════════════════════════════ */}
+      {/* ══ TOOLBAR ══ */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-5">
         {/* Search */}
         <div className="relative flex-1 sm:max-w-[340px]">
@@ -790,9 +926,9 @@ export default function ProjectsManager() {
         </div>
       </div>
 
-      {/* ══ CONTENT ══════════════════════════════════════════════════════════ */}
+      {/* ══ CONTENT ══ */}
       {filteredProjects.length === 0 ? (
-        /* ── Empty state ── */
+        /* Empty state */
         <div className="py-16 flex flex-col items-center justify-center bg-[#0b1120] border border-dashed border-[#1a2440] rounded-2xl text-center px-6">
           <div className="w-14 h-14 rounded-2xl bg-[#111827] border border-[#1a2440] flex items-center justify-center mb-4">
             <FolderOpen className="w-6 h-6 text-gray-700" />
@@ -849,9 +985,7 @@ export default function ProjectsManager() {
                   key={project.id}
                   className="group relative bg-[#0b1120] border border-[#1a2440] hover:border-[#14f195]/20 rounded-xl overflow-hidden transition-colors duration-150 hover:bg-[#0d1628]"
                 >
-                  {/* Accent left bar */}
                   <div className="absolute left-0 top-3 bottom-3 w-[2px] bg-[#14f195] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-
                   <div
                     className="flex flex-col lg:grid lg:items-center gap-3 lg:gap-0 p-4 pl-5"
                     style={{ gridTemplateColumns: '1fr 100px 190px 64px 80px 68px' }}
@@ -865,33 +999,19 @@ export default function ProjectsManager() {
                         }
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h3 className="text-[13px] font-bold text-white leading-snug truncate mb-1">
-                          {project.title}
-                        </h3>
-                        {/* Status shown on mobile (below title) */}
+                        <h3 className="text-[13px] font-bold text-white leading-snug truncate mb-1">{project.title}</h3>
                         <div className="flex items-center gap-2 mb-1.5 lg:hidden">
                           <StatusBadge status={project.derivedStatus} />
                         </div>
-                        <p className="text-[12px] text-gray-500 line-clamp-2 leading-relaxed">
-                          {project.description || '—'}
-                        </p>
+                        <p className="text-[12px] text-gray-500 line-clamp-2 leading-relaxed">{project.description || '—'}</p>
                       </div>
                     </div>
-
-                    {/* STATUS — desktop */}
+                    {/* STATUS */}
                     <div className="hidden lg:flex">
                       <StatusBadge status={project.derivedStatus} />
                     </div>
-
                     {/* TECH STACK */}
-                    <div>
-                      <TechChips tags={project.tags} maxVisible={3} />
-                      {/* Mobile: show below description */}
-                      <div className="mt-2 lg:hidden">
-                        {/* Already rendered inside project column on mobile */}
-                      </div>
-                    </div>
-
+                    <div><TechChips tags={project.tags} maxVisible={3} /></div>
                     {/* LINKS */}
                     <div className="flex items-center gap-2.5">
                       {ghUrl && (
@@ -909,7 +1029,6 @@ export default function ProjectsManager() {
                         </a>
                       )}
                     </div>
-
                     {/* UPDATED */}
                     <div className="hidden lg:block">
                       <span className="font-mono text-[10px] text-gray-700">
@@ -921,7 +1040,6 @@ export default function ProjectsManager() {
                         }
                       </span>
                     </div>
-
                     {/* ACTIONS */}
                     <div className="flex items-center gap-0.5 justify-end lg:justify-start">
                       <button
@@ -957,7 +1075,6 @@ export default function ProjectsManager() {
                 key={project.id}
                 className="group bg-[#0b1120] border border-[#1a2440] hover:border-[#14f195]/25 rounded-2xl overflow-hidden flex flex-col transition-colors duration-150"
               >
-                {/* 16:9 image */}
                 <div className="relative border-b border-[#1a2440] overflow-hidden" style={{ aspectRatio: '16/9' }}>
                   {project.image
                     ? <img src={project.image} alt={project.title} className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300" />
@@ -967,17 +1084,12 @@ export default function ProjectsManager() {
                     <StatusBadge status={project.derivedStatus} />
                   </div>
                 </div>
-
-                {/* Card body */}
                 <div className="p-4 flex-1 flex flex-col">
                   <h3 className="text-[13px] font-bold text-white mb-1 line-clamp-1">{project.title}</h3>
                   <p className="text-[12px] text-gray-500 line-clamp-2 mb-3 leading-relaxed flex-1">
                     {project.description || 'No description provided.'}
                   </p>
-                  <div className="mb-3">
-                    <TechChips tags={project.tags} maxVisible={4} />
-                  </div>
-                  {/* Footer */}
+                  <div className="mb-3"><TechChips tags={project.tags} maxVisible={4} /></div>
                   <div className="flex items-center justify-between pt-3 border-t border-[#1a2440]">
                     <div className="flex items-center gap-2.5">
                       {ghUrl && (
@@ -1017,7 +1129,7 @@ export default function ProjectsManager() {
         </div>
       )}
 
-      {/* ══ OVERLAYS ═════════════════════════════════════════════════════════ */}
+      {/* ══ OVERLAYS ══ */}
       <EditorDrawer
         isOpen={editorState.isOpen}
         item={editorState.item}
@@ -1032,12 +1144,11 @@ export default function ProjectsManager() {
         onCancel={() => setDeleteTarget(null)}
         onConfirm={handleDeleteConfirm}
       />
-
     </div>
   );
 }
 
-// ── Tiny helpers ──────────────────────────────────────────────────────────────
+// ── Page-level stat helpers ───────────────────────────────────────────────────
 const Stat = ({ value, label, color }) => (
   <div className="flex items-baseline gap-2">
     <span className={`text-2xl font-black leading-none ${color}`}>{value}</span>

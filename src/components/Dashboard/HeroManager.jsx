@@ -138,65 +138,91 @@ const HeroManager = () => {
     return <div className="flex justify-center p-12"><Loader2 className="w-10 h-10 animate-spin text-[#14f195]" /></div>;
   }
 
-  // Live Preview Component
+  // Proper Desktop-Oriented Live Preview Component
   const LivePreview = () => {
     const previewImage = imageFiles['portrait'] 
       ? URL.createObjectURL(imageFiles['portrait']) 
       : formData.portrait;
 
     return (
-      <div className="bg-[#0a0f1c] rounded-[24px] border border-[#1e293b] shadow-2xl relative overflow-hidden flex flex-col p-8 w-full h-[500px]">
-        
-        {/* Background gradient hint */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-[#14f195] opacity-5 blur-[100px] rounded-full pointer-events-none"></div>
-
-        <div className="flex flex-col h-full z-10">
+      <div className="w-full flex flex-col">
+        {/* Browser Frame */}
+        <div className="bg-[#0a0f1c] rounded-xl border border-[#1e293b] shadow-2xl overflow-hidden flex flex-col w-full h-[400px] xl:h-[450px]">
           
-          <div className="flex flex-col items-start max-w-[80%] flex-grow">
-            {formData.badge && (
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#14f195]/10 border border-[#14f195]/30 text-[#14f195] text-[10px] font-medium italic mb-4">
-                <span>✨</span> {formData.badge}
-              </div>
-            )}
-            
-            <h1 className="text-3xl font-black text-white leading-[1.1] mb-2 tracking-tight">
-              <span className="bg-gradient-to-r from-[#14f195] to-[#10d482] text-transparent bg-clip-text">
-                {formData.firstName} {formData.lastName}
-              </span>
-            </h1>
-            
-            {formData.roles && (
-              <h2 className="text-sm font-bold text-[#14f195] mb-4">
-                {formData.roles.split(',')[0]?.trim()} <span className="animate-pulse">|</span>
-              </h2>
-            )}
-            
-            {formData.description && (
-              <p className="text-gray-400 text-[11px] leading-relaxed line-clamp-4 max-w-[90%] mb-6">
-                {formData.description}
-              </p>
-            )}
-            
-            {formData.cvUrl && (
-              <div className="mt-auto mb-4">
-                <div className="px-5 py-2.5 bg-[#14f195] text-[#0a0f1c] rounded-full text-[11px] font-bold inline-flex items-center gap-2 shadow-[0_0_15px_rgba(20,241,149,0.3)]">
-                  <FileText className="w-3 h-3" /> Download CV
-                </div>
-              </div>
-            )}
-          </div>
-          
-          {/* Portrait placement mimicking desktop flow */}
-          {previewImage && (
-            <div className="absolute right-6 bottom-6 w-[180px] h-[240px] rounded-[20px] overflow-hidden border border-[#1e293b] shadow-2xl bg-gradient-to-b from-[#131b2c] to-[#0a0f1c] flex justify-center items-end">
-              <img 
-                src={previewImage} 
-                alt="Portrait" 
-                className="w-full h-full object-contain object-bottom" 
-              />
+          {/* Browser Top Strip */}
+          <div className="h-8 bg-[#131b2c] border-b border-[#1e293b] flex items-center px-4 gap-2 relative">
+            <div className="flex gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-[#ef4444] opacity-50"></div>
+              <div className="w-2.5 h-2.5 rounded-full bg-[#eab308] opacity-50"></div>
+              <div className="w-2.5 h-2.5 rounded-full bg-[#22c55e] opacity-50"></div>
             </div>
-          )}
+            <div className="absolute left-1/2 -translate-x-1/2 text-[9px] text-gray-500 font-medium uppercase tracking-widest hidden sm:block">
+              Portfolio Preview
+            </div>
+          </div>
+
+          {/* Hero Viewport */}
+          <div className="flex-grow flex items-center p-6 sm:p-8 relative overflow-hidden">
+            {/* Subtle background glow */}
+            <div className="absolute top-1/2 right-0 -translate-y-1/2 w-48 h-48 bg-[#14f195]/5 blur-[80px] rounded-full pointer-events-none"></div>
+
+            <div className="flex w-full h-full gap-4 xl:gap-8 items-center z-10">
+              
+              {/* Left Column: Typography */}
+              <div className="flex-1 flex flex-col justify-center max-w-[65%]">
+                {formData.badge && (
+                  <div className="self-start inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#14f195]/10 border border-[#14f195]/30 text-[#14f195] text-[9px] font-medium italic mb-3">
+                    <span>✨</span> {formData.badge}
+                  </div>
+                )}
+                
+                <h1 className="text-2xl sm:text-3xl xl:text-4xl font-black text-white leading-[1.05] mb-2 tracking-tight">
+                  <span className="bg-gradient-to-r from-[#14f195] to-[#10d482] text-transparent bg-clip-text">
+                    {formData.firstName} {formData.lastName}
+                  </span>
+                </h1>
+                
+                {formData.roles && (
+                  <h2 className="text-[11px] sm:text-xs font-bold text-[#14f195] mb-3 xl:mb-4">
+                    {formData.roles.split(',')[0]?.trim()} <span className="animate-pulse">|</span>
+                  </h2>
+                )}
+                
+                {formData.description && (
+                  <p className="text-gray-400 text-[10px] sm:text-[11px] leading-relaxed line-clamp-4 max-w-[95%] mb-5 xl:mb-6">
+                    {formData.description}
+                  </p>
+                )}
+                
+                {formData.cvUrl && (
+                  <div className="mt-auto">
+                    <div className="px-5 py-2.5 bg-[#14f195] text-[#0a0f1c] rounded-full text-[10px] font-bold inline-flex items-center gap-2 shadow-[0_0_15px_rgba(20,241,149,0.3)]">
+                      <FileText className="w-3 h-3" /> Download CV
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              {/* Right Column: Hero Image Area */}
+              {previewImage && (
+                <div className="flex-1 max-w-[35%] h-full flex items-center justify-center relative">
+                  <div className="w-full h-full max-h-[220px] xl:max-h-[260px] rounded-[16px] overflow-hidden border border-[#1e293b]/50 shadow-lg bg-gradient-to-b from-[#131b2c]/80 to-[#0a0f1c]/80 flex justify-center items-end p-2 relative group">
+                    <img 
+                      src={previewImage} 
+                      alt="Hero Layout Portrait" 
+                      className="w-full h-full object-contain object-bottom drop-shadow-xl" 
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
+        
+        {/* Compact Disclaimer */}
+        <p className="text-[10px] text-gray-500 mt-3 text-center">
+          Preview reflects current unsaved form values.
+        </p>
       </div>
     );
   };
@@ -204,8 +230,8 @@ const HeroManager = () => {
   return (
     <div className="max-w-[1600px] mx-auto pb-16 animate-in fade-in duration-500">
       
-      {/* PAGE HEADER */}
-      <div className="bg-[#131b2c] border-b border-[#1e293b] sticky top-0 z-50 px-6 py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm">
+      {/* PAGE HEADER (Properly Z-Indexed and Opaque) */}
+      <div className="bg-[#0f172a] border-b border-[#1e293b] sticky top-0 z-[60] px-6 py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-md">
         <div>
           <h1 className="text-2xl font-black text-white flex items-center gap-3">
             <LayoutTemplate className="w-6 h-6 text-[#14f195]" /> Hero Section

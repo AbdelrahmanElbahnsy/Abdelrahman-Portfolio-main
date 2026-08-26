@@ -190,14 +190,14 @@ const AboutManager = () => {
 
   const LivePreview = () => (
     <div className="w-full flex flex-col bg-[#0f172a] rounded-2xl border border-[#1e293b] p-6 sm:p-10 shadow-2xl">
-      <div className="mb-8">
+      <div className="mb-10">
         <span className="text-[#14f195] font-mono uppercase tracking-widest text-xs mb-3 block">
           {formData.subtitle || 'Subtitle'}
         </span>
         <h2 className="text-3xl sm:text-4xl font-black text-white leading-tight">{formData.title || 'Section Title'}</h2>
       </div>
 
-      <div className="flex flex-col gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_1.2fr] gap-10 xl:gap-12 items-start">
         {formData.terminalItems.length > 0 && (
           <div className="w-full rounded-2xl overflow-hidden border border-[#1e293b] shadow-lg bg-[#0a0f1c]">
             <div className="bg-[#1e293b]/50 p-3.5 flex items-center gap-3 border-b border-[#1e293b]">
@@ -208,7 +208,7 @@ const AboutManager = () => {
               </div>
               <span className="font-mono text-[10px] text-gray-400 uppercase tracking-wider">{personalInfo.terminalTitle || 'Terminal'}</span>
             </div>
-            <div className="p-5 font-mono text-xs leading-relaxed">
+            <div className="p-5 font-mono text-[11px] sm:text-xs leading-relaxed">
               <ul className="space-y-3">
                 {formData.terminalItems.map((item, idx) => (
                   <li key={idx} className="flex gap-3 items-start">
@@ -227,26 +227,26 @@ const AboutManager = () => {
 
         <div className="flex flex-col gap-8">
           {formData.lead && (
-            <p className="text-xl font-bold text-white border-l-4 border-[#14f195] pl-5 py-2 bg-[#14f195]/5 leading-snug">
+            <p className="text-lg sm:text-xl font-bold text-white border-l-4 border-[#14f195] pl-5 py-2 bg-[#14f195]/5 leading-snug">
               {formData.lead}
             </p>
           )}
           
-          <div className="space-y-5">
+          <div className="space-y-6">
             {formData.paragraphs.map((p, idx) => (
-              <p key={idx} className="text-gray-400 text-base leading-relaxed">
+              <p key={idx} className="text-gray-300 text-sm sm:text-base leading-relaxed">
                 {p.text}{' '}
-                {p.highlight && <strong className="text-white">{p.highlight}</strong>}{' '}
+                {p.highlight && <strong className="text-white font-semibold">{p.highlight}</strong>}{' '}
                 {p.suffix}
               </p>
             ))}
           </div>
 
           {formData.badges.length > 0 && (
-            <div className="flex flex-wrap gap-2.5 mt-2">
+            <div className="flex flex-wrap gap-3 mt-4">
               {formData.badges.map((b, idx) => (
-                <div key={idx} className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#131b2c] border border-blue-900/30 text-xs font-bold text-gray-300">
-                  <i className={`${b.icon} text-[#14f195] text-sm`}></i> {b.label || 'Badge'}
+                <div key={idx} className="flex items-center gap-2.5 px-4 py-2.5 rounded-lg bg-[#131b2c] border border-blue-900/30 text-[11px] sm:text-xs font-bold text-gray-300 shadow-sm">
+                  <i className={`${b.icon} text-[#14f195] text-sm sm:text-base`}></i> {b.label || 'Badge'}
                 </div>
               ))}
             </div>
@@ -257,7 +257,7 @@ const AboutManager = () => {
   );
 
   return (
-    <div className="max-w-[1600px] mx-auto pb-16 animate-in fade-in duration-500">
+    <div className="max-w-[1700px] mx-auto pb-24 animate-in fade-in duration-500">
       
       {/* HEADER */}
       <div className="mb-10 px-2 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -298,10 +298,10 @@ const AboutManager = () => {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="px-2 flex flex-col xl:flex-row gap-10 items-start">
+      <form onSubmit={handleSubmit} className="px-2 flex flex-col xl:flex-row gap-10 lg:gap-12 items-start">
         
         {/* MAIN EDITOR (65%) */}
-        <div className="flex-1 w-full max-w-4xl space-y-8">
+        <div className="flex-1 w-full min-w-[500px] max-w-4xl space-y-8">
           
           {/* ABOUT IDENTITY */}
           <section>
@@ -518,7 +518,7 @@ const AboutManager = () => {
         </div>
 
         {/* PREVIEW COLUMN (35%) */}
-        <div className="w-full xl:w-[480px] 2xl:w-[550px] shrink-0 xl:sticky xl:top-[100px] max-h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar">
+        <div className="w-full xl:w-[600px] 2xl:w-[750px] shrink-0 xl:sticky xl:top-[100px]">
           <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-4">Live Preview</h3>
           <LivePreview />
         </div>

@@ -189,26 +189,26 @@ const AboutManager = () => {
   }
 
   const LivePreview = () => (
-    <div className="w-full flex flex-col bg-[#0f172a] rounded-xl border border-[#1e293b] p-6 shadow-xl">
+    <div className="w-full flex flex-col bg-[#0f172a] rounded-2xl border border-[#1e293b] p-6 sm:p-10 shadow-2xl">
       <div className="mb-8">
-        <span className="text-[#14f195] font-mono uppercase tracking-widest text-[10px] mb-2 block">
+        <span className="text-[#14f195] font-mono uppercase tracking-widest text-xs mb-3 block">
           {formData.subtitle || 'Subtitle'}
         </span>
-        <h2 className="text-3xl font-black text-white leading-tight">{formData.title || 'Section Title'}</h2>
+        <h2 className="text-3xl sm:text-4xl font-black text-white leading-tight">{formData.title || 'Section Title'}</h2>
       </div>
 
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-10">
         {formData.terminalItems.length > 0 && (
           <div className="w-full rounded-2xl overflow-hidden border border-[#1e293b] shadow-lg bg-[#0a0f1c]">
-            <div className="bg-[#1e293b]/50 p-3 flex items-center gap-3 border-b border-[#1e293b]">
+            <div className="bg-[#1e293b]/50 p-3.5 flex items-center gap-3 border-b border-[#1e293b]">
               <div className="flex gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-[#ef4444]"></span>
-                <span className="w-2 h-2 rounded-full bg-[#eab308]"></span>
-                <span className="w-2 h-2 rounded-full bg-[#22c55e]"></span>
+                <span className="w-3 h-3 rounded-full bg-[#ef4444]"></span>
+                <span className="w-3 h-3 rounded-full bg-[#eab308]"></span>
+                <span className="w-3 h-3 rounded-full bg-[#22c55e]"></span>
               </div>
-              <span className="font-mono text-[9px] text-gray-400 uppercase tracking-wider">{personalInfo.terminalTitle || 'Terminal'}</span>
+              <span className="font-mono text-[10px] text-gray-400 uppercase tracking-wider">{personalInfo.terminalTitle || 'Terminal'}</span>
             </div>
-            <div className="p-4 font-mono text-[11px] leading-relaxed">
+            <div className="p-5 font-mono text-xs leading-relaxed">
               <ul className="space-y-3">
                 {formData.terminalItems.map((item, idx) => (
                   <li key={idx} className="flex gap-3 items-start">
@@ -225,16 +225,16 @@ const AboutManager = () => {
           </div>
         )}
 
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-8">
           {formData.lead && (
-            <p className="text-lg font-bold text-white border-l-2 border-[#14f195] pl-4 py-1 bg-[#14f195]/5">
+            <p className="text-xl font-bold text-white border-l-4 border-[#14f195] pl-5 py-2 bg-[#14f195]/5 leading-snug">
               {formData.lead}
             </p>
           )}
           
-          <div className="space-y-4">
+          <div className="space-y-5">
             {formData.paragraphs.map((p, idx) => (
-              <p key={idx} className="text-gray-400 text-sm leading-relaxed">
+              <p key={idx} className="text-gray-400 text-base leading-relaxed">
                 {p.text}{' '}
                 {p.highlight && <strong className="text-white">{p.highlight}</strong>}{' '}
                 {p.suffix}
@@ -243,9 +243,9 @@ const AboutManager = () => {
           </div>
 
           {formData.badges.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-2">
+            <div className="flex flex-wrap gap-2.5 mt-2">
               {formData.badges.map((b, idx) => (
-                <div key={idx} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#131b2c] border border-blue-900/30 text-[10px] font-bold text-gray-300">
+                <div key={idx} className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#131b2c] border border-blue-900/30 text-xs font-bold text-gray-300">
                   <i className={`${b.icon} text-[#14f195] text-sm`}></i> {b.label || 'Badge'}
                 </div>
               ))}
@@ -270,7 +270,7 @@ const AboutManager = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-4 bg-[#0f172a] p-2 pr-2 pl-4 rounded-xl border border-[#1e293b]">
+        <div className="flex items-center gap-4 bg-[#0f172a] p-2 pr-2 pl-4 rounded-xl border border-[#1e293b] shrink-0">
           <div className="text-xs font-bold uppercase tracking-wider mr-2">
             {saveStatus === 'saved' && <span className="text-gray-500">✓ All changes saved</span>}
             {saveStatus === 'unsaved' && <span className="text-orange-400 flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse"></span> Unsaved changes</span>}
@@ -284,7 +284,7 @@ const AboutManager = () => {
               disabled={!isDirty || isSaving}
               className="px-4 py-2 rounded-lg font-bold text-gray-400 hover:text-white hover:bg-[#1e293b] transition-colors disabled:opacity-30 text-sm"
             >
-              Discard Changes
+              Discard
             </button>
             <button
               type="button"
@@ -298,16 +298,16 @@ const AboutManager = () => {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="px-2 grid grid-cols-1 lg:grid-cols-[2.5fr_1fr] gap-10 items-start">
+      <form onSubmit={handleSubmit} className="px-2 flex flex-col xl:flex-row gap-10 items-start">
         
-        {/* MAIN EDITOR (70%) */}
-        <div className="space-y-8 max-w-4xl">
+        {/* MAIN EDITOR (65%) */}
+        <div className="flex-1 w-full max-w-4xl space-y-8">
           
           {/* ABOUT IDENTITY */}
           <section>
             <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-4">About Identity</h3>
             <div className="bg-[#0f172a] p-6 rounded-2xl border border-[#1e293b] space-y-5">
-              <div className="grid grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Subtitle</label>
                   <input
@@ -517,8 +517,8 @@ const AboutManager = () => {
 
         </div>
 
-        {/* PREVIEW COLUMN (30%) */}
-        <div className="lg:sticky lg:top-[100px]">
+        {/* PREVIEW COLUMN (35%) */}
+        <div className="w-full xl:w-[480px] 2xl:w-[550px] shrink-0 xl:sticky xl:top-[100px] max-h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar">
           <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-4">Live Preview</h3>
           <LivePreview />
         </div>

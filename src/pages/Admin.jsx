@@ -13,6 +13,7 @@ const SingleDocManager = lazy(() => import('../components/Dashboard/SingleDocMan
 const DeveloperTools = lazy(() => import('../components/Dashboard/DeveloperTools'));
 const FeatureUnavailable = lazy(() => import('../components/Dashboard/FeatureUnavailable'));
 const HeroManager = lazy(() => import('../components/Dashboard/HeroManager'));
+const AboutManager = lazy(() => import('../components/Dashboard/AboutManager'));
 
 const SectionSkeleton = () => (
   <div className="w-full space-y-6 animate-pulse">
@@ -64,7 +65,7 @@ const Admin = () => {
           />
           <Route 
             path="about" 
-            element={<SingleDocManager title="About Section" collection="about" docId="main" fields={aboutSchema.fields} />} 
+            element={<AboutManager />} 
           />
           <Route 
             path="contact" 

@@ -266,32 +266,7 @@ export const DashboardProvider = ({ children }) => {
 
       // 4.9 Contact Validation (Schema: email)
       const contactCol = allUpdates.find(colArray => colArray[0]?._collection === 'contact') || [];
-      let contactDoc = contactCol.find(d => d.id === 'main');
-      
-      if (!contactDoc) {
-        // ONE-TIME MIGRATION: Auto-migrate from portfolioData if missing
-        try {
-          console.log("Contact document missing. Running auto-migration from portfolioData.js...");
-          const { migrateContact } = await import('../cms/migrations/migrateContact.js');
-          await migrateContact();
-          
-          // Refetch to confirm migration
-          const migratedDocs = await crudService.getAll('contact');
-          contactDoc = migratedDocs.find(d => d.id === 'main');
-          
-          if (contactDoc) {
-            console.log("Migration successful, contactDoc loaded.");
-            contactDoc._collection = 'contact';
-            if (contactCol.length === 0) {
-              allUpdates.push([contactDoc]);
-            } else {
-              contactCol.push(contactDoc);
-            }
-          }
-        } catch(e) {
-          console.error("Auto-migration failed:", e);
-        }
-      }
+      const contactDoc = contactCol.find(d => d.id === 'main');
 
       if (!contactDoc) {
         addIssue('contact-missing', 'Configure Contact Settings', 'Contact information is missing.', '/admin/contact', 5, 'contact');
@@ -323,13 +298,27 @@ export const DashboardProvider = ({ children }) => {
       };
 
       // 7. Unified Notifications
-      const formattedActivity = recentActivity.map(act => ({
-        id: `act-${act.id}`,
-        type: 'info',
-        message: `${act.action} ${act.target || 'item'}`,
-        time: act.timestamp?.toMillis ? act.timestamp.toMillis() : new Date(act.timestamp).getTime(),
-        link: act.link || '/admin/overview'
-      }));
+      const formattedActivity = recentActivity.map(act => {
+        // Deterministic Title Fallback Logic
+        let displayMessage = 'Portfolio Update';
+        
+        if (act.message) {
+          displayMessage = act.message;
+        } else if (act.title) {
+          displayMessage = act.title;
+        } else if (act.action) {
+          const targetStr = act.target || act.collection || act.item || '';
+          displayMessage = targetStr ? `${act.action} ${targetStr}` : act.action;
+        }
+
+        return {
+          id: `act-${act.id}`,
+          type: act.type || 'info',
+          message: displayMessage,
+          time: act.timestamp?.toMillis ? act.timestamp.toMillis() : (act.timestamp ? new Date(act.timestamp).getTime() : Date.now()),
+          link: act.link || '/admin/overview'
+        };
+      });
 
       const unifiedNotifications = [...notifications, ...formattedActivity].sort((a, b) => b.time - a.time);
 

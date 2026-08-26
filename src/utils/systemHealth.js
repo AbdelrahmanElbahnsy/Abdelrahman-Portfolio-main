@@ -28,29 +28,17 @@ export async function checkSystemHealth() {
   // 2. Check Cloudinary Configuration
   const cloudinaryName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
   if (cloudinaryName && cloudinaryName.length > 3) {
-    status.cloudinary.status = 'online';
-    status.cloudinary.latency = 0; // Configured properly
+    status.cloudinary.status = 'configured';
   } else {
     status.cloudinary.status = 'warning'; 
     status.cloudinary.reason = 'Missing VITE_CLOUDINARY_CLOUD_NAME config.';
   }
 
   // 3. Check Vercel
-  if (isLocal) {
-    status.vercel.status = 'online';
-    status.vercel.latency = 0;
-    status.vercel.reason = 'Running locally';
-  } else {
-    status.vercel.status = 'online';
-    status.vercel.latency = 8;
-  }
+  status.vercel.status = 'unknown';
 
   // 4. Check GitHub
-  status.github.status = 'online';
-  status.github.latency = 0;
-  if (isLocal) {
-     status.github.reason = 'Running locally';
-  }
+  status.github.status = 'unknown';
 
   return status;
 }

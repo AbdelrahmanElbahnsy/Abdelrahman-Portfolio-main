@@ -119,29 +119,17 @@ const AnalyticsIntegrationModal = ({ isOpen, onClose }) => {
                   </div>
                 </div>
 
-                {/* Simulated Error Message */}
-                <AnimatePresence>
-                  {showError && (
-                    <motion.div 
-                      initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                      animate={{ opacity: 1, height: 'auto', marginTop: 24 }}
-                      exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="p-4 bg-cms-danger/10 border border-cms-danger/20 rounded-xl flex items-start gap-3">
-                        <AlertCircle className="w-5 h-5 text-cms-danger shrink-0 mt-0.5" />
-                        <div>
-                          <h5 className="text-sm font-bold text-red-400 mb-1">Configuration Unavailable</h5>
-                          <p className="text-xs text-red-400/80 leading-relaxed">
-                            Backend support for injecting API keys dynamically is currently missing. 
-                            This feature requires a Firebase Cloud Function or automated CI/CD injection, 
-                            which is scheduled for a future Enterprise release.
-                          </p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                {/* Integration Status */}
+                <div className="p-4 bg-white/5 border border-white/10 rounded-xl flex items-start gap-3">
+                  <Activity className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" />
+                  <div>
+                    <h5 className="text-sm font-bold text-gray-200 mb-1">Not Configured</h5>
+                    <p className="text-xs text-gray-400 leading-relaxed">
+                      Automatic backend integration for Analytics is coming soon. 
+                      For now, please follow the documentation to inject the script manually in your production environment.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -161,13 +149,7 @@ const AnalyticsIntegrationModal = ({ isOpen, onClose }) => {
                 onClick={onClose}
                 className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white rounded-lg font-medium transition-colors text-sm"
               >
-                Cancel
-              </button>
-              <button 
-                onClick={handleConfigure}
-                className="px-6 py-2 bg-cms-primary hover:bg-cms-primary/90 text-cms-background font-bold rounded-lg transition-colors text-sm shadow-glow-primary"
-              >
-                Configure
+                Close
               </button>
             </div>
           </div>

@@ -24,7 +24,7 @@ export const DashboardProvider = ({ children }) => {
 
   const COLLECTIONS = [
     'projects', 'skills', 'certifications', 'journey', 
-    'socials', 'navbarItems', 'hero', 'about', 'profile', 'content'
+    'socials', 'navbarItems', 'hero', 'about', 'profile', 'contact'
   ];
 
   const fetchMetrics = useCallback(async (isRefresh = false) => {
@@ -39,7 +39,7 @@ export const DashboardProvider = ({ children }) => {
       const counts = await crudService.getCollectionCounts(COLLECTIONS);
 
       // 2. Fetch Latest Updates (Mixed Content)
-      const editableCollections = ['projects', 'skills', 'certifications', 'journey', 'hero', 'about', 'navbarItems', 'socials', 'content'];
+      const editableCollections = ['projects', 'skills', 'certifications', 'journey', 'hero', 'about', 'navbarItems', 'socials', 'contact'];
       
       const latestPromises = editableCollections.map(col =>
         crudService.getAll(col, { orderByField: 'updatedAt', orderDirection: 'desc' })
@@ -265,13 +265,13 @@ export const DashboardProvider = ({ children }) => {
       }
 
       // 4.9 Contact Validation (Schema: email)
-      const contentCol = allUpdates.find(colArray => colArray[0]?._collection === 'content') || [];
-      const contactDoc = contentCol.find(d => d.id === 'contact');
+      const contactCol = allUpdates.find(colArray => colArray[0]?._collection === 'contact') || [];
+      const contactDoc = contactCol.find(d => d.id === 'main');
       if (!contactDoc) {
-        addIssue('contact-missing', 'Configure Contact Settings', 'Contact information is missing.', '/admin/contact', 5, 'content');
+        addIssue('contact-missing', 'Configure Contact Settings', 'Contact information is missing.', '/admin/contact', 5, 'contact');
       } else {
         if (!contactDoc.email || !contactDoc.email.includes('@')) {
-          addIssue('contact-email', 'Fix Contact Email', 'Valid contact email is missing.', '/admin/contact', 5, 'content');
+          addIssue('contact-email', 'Fix Contact Email', 'Valid contact email is missing.', '/admin/contact', 5, 'contact');
         }
       }
 
@@ -293,7 +293,6 @@ export const DashboardProvider = ({ children }) => {
       const storageStats = {
         firestoreDocs: totalContent,
         cloudinaryImages: cloudinaryImages,
-        estimatedUsageMB: (cloudinaryImages * 1.5).toFixed(1), // Estimate 1.5MB per image
         backups: 0
       };
 

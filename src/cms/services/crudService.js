@@ -192,14 +192,7 @@ export const crudService = {
     }
   },
 
-  /**
-   * Subscribe to real-time updates for a collection
-   * @param {string} collectionName 
-   * @param {Function} callback 
-   * @param {Object} options 
-   * @returns {Function} unsubscribe function
-   */
-  subscribe(collectionName, callback, options = {}) {
+  subscribe(collectionName, callback, onError, options = {}) {
     let q = collection(db, collectionName);
     
     if (options.filters && Array.isArray(options.filters)) {
@@ -221,13 +214,14 @@ export const crudService = {
       callback(data);
     }, (error) => {
       console.error(`Realtime subscription error for ${collectionName}:`, error);
+      if (onError) onError(error);
     });
   },
 
   /**
    * Subscribe to real-time updates for a single document
    */
-  subscribeOne(collectionName, id, callback) {
+  subscribeOne(collectionName, id, callback, onError) {
     const docRef = doc(db, collectionName, id);
     return onSnapshot(docRef, (snapshot) => {
       if (snapshot.exists()) {
@@ -237,6 +231,7 @@ export const crudService = {
       }
     }, (error) => {
       console.error(`Realtime subscription error for ${collectionName}/${id}:`, error);
+      if (onError) onError(error);
     });
   }
 };

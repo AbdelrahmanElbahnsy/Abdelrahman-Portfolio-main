@@ -14,6 +14,7 @@ const DeveloperTools = lazy(() => import('../components/Dashboard/DeveloperTools
 const FeatureUnavailable = lazy(() => import('../components/Dashboard/FeatureUnavailable'));
 const HeroManager = lazy(() => import('../components/Dashboard/HeroManager'));
 const AboutManager = lazy(() => import('../components/Dashboard/AboutManager'));
+const JourneyManager = lazy(() => import('../components/Dashboard/JourneyManager'));
 
 const SectionSkeleton = () => (
   <div className="w-full space-y-6 animate-pulse">
@@ -56,7 +57,7 @@ const Admin = () => {
           />
           <Route 
             path="journey" 
-            element={<GenericListManager title="Journey / Experience" collectionName="journey" fields={journeySchema.fields} />} 
+            element={<JourneyManager />} 
           />
           
           <Route 

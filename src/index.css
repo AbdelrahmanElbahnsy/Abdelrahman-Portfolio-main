@@ -636,3 +636,22 @@ header nav > div:last-child {
   }
 }
 
+/* ── PROJECT EDITOR DRAWER SCROLLBAR ── */
+.project-editor-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #1e293b transparent;
+}
+.project-editor-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.project-editor-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.project-editor-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #1e293b;
+  border-radius: 4px;
+}
+.project-editor-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #263550;
+}
+

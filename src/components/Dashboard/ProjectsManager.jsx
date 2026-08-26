@@ -209,103 +209,65 @@ const EditorDrawer = ({ isOpen, item, projectIndex, projectCount, onClose, onSav
 
   // ── Shared input style ────────────────────────────────────────────────────
   const iCls = [
-    'w-full h-11 bg-[#060c18] border border-[#1b2d47] rounded px-3',
-    'text-[13px] text-white placeholder:text-[#253550]',
-    'focus:border-[#14f195]/55 focus:ring-0 outline-none transition-colors',
+    'w-full h-11 bg-[#090e17] border border-[#1e2d42] rounded-lg px-3',
+    'text-[13px] text-white placeholder:text-[#4b6385]',
+    'focus:border-[#14f195] focus:ring-1 focus:ring-[#14f195] outline-none transition-all duration-200',
   ].join(' ');
 
-  // ── Render ────────────────────────────────────────────────────────────────
   return (
     <div className="fixed inset-0 z-50 flex justify-end" aria-modal="true" role="dialog">
-
-      {/* ── Backdrop: translucent so project list stays visible ── */}
+      {/* ── Backdrop ── */}
       <div
-        className="absolute inset-0"
-        style={{ background: 'rgba(3, 8, 20, 0.60)' }}
+        className="absolute inset-0 bg-[#030712]/70"
         onClick={() => !isSaving && onClose()}
       />
 
       {/* ── Panel ── */}
       <div
-        className="relative w-full sm:max-w-[548px] h-full flex flex-col overflow-hidden"
-        style={{
-          background: '#0c1322',
-          borderLeft: '1px solid #182840',
-          boxShadow: '-16px 0 48px rgba(0,0,0,0.55)',
-          animation: 'drawerSlideIn 180ms cubic-bezier(0.25,1,0.5,1) both',
-        }}
+        className="relative w-full sm:w-[620px] md:w-[680px] h-full flex flex-col bg-[#050914] border-l border-[#1e2d42] shadow-2xl overflow-hidden"
+        style={{ animation: 'drawerSlideIn 250ms cubic-bezier(0.16, 1, 0.3, 1) both' }}
       >
-
         {/* ════════════ HEADER ════════════ */}
-        <div
-          className="shrink-0 px-6 pt-5 pb-4 flex items-start gap-4 justify-between"
-          style={{ borderBottom: '1px solid #182840', background: '#09101d' }}
-        >
-          {/* Left: hierarchy */}
-          <div className="min-w-0 flex-1">
-            {/* Row 1: mode badge */}
-            <div className="flex items-center gap-2 mb-2">
-              <span
-                className="inline-flex items-center gap-1.5 text-[9px] font-mono font-bold uppercase tracking-[0.18em] px-2 py-0.5 rounded-sm"
-                style={{
-                  color: '#14f195',
-                  background: 'rgba(20,241,149,0.07)',
-                  border: '1px solid rgba(20,241,149,0.15)',
-                }}
-              >
-                <span className="w-1 h-1 rounded-full bg-[#14f195]" />
-                {isEditing ? 'EDIT PROJECT' : 'NEW PROJECT'}
-              </span>
+        <div className="shrink-0 px-6 pt-5 pb-4 border-b border-[#1e2d42] bg-[#050914]">
+          <div className="flex items-start justify-between">
+            <div>
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="text-[#14f195] font-mono text-[10px] uppercase font-bold tracking-wider">
+                  {isEditing ? '[ EDIT PROJECT ]' : '[ NEW PROJECT ]'}
+                </span>
+                <span className="text-[#4b6385] font-mono text-[10px] uppercase tracking-wider">
+                  PROJECT {projectNumber}
+                </span>
+              </div>
+              <h2 className="text-white font-semibold text-lg leading-tight truncate">
+                {title || (isEditing ? (initialData.title || 'Untitled') : 'Untitled Project')}
+              </h2>
             </div>
-
-            {/* Row 2: meta */}
-            <div className="flex items-center gap-1.5 mb-1">
-              <span className="font-mono text-[9px] uppercase tracking-[0.14em]" style={{ color: '#253550' }}>
-                PROJECT {projectNumber}
-              </span>
-              <span style={{ color: '#182840' }}>·</span>
-              <span className="font-mono text-[9px] uppercase tracking-[0.12em]" style={{ color: '#253550' }}>
-                CONFIGURATION
-              </span>
-            </div>
-
-            {/* Row 3: live title — dominant */}
-            <h2
-              className="text-white font-bold leading-tight truncate"
-              style={{ fontSize: '16px', letterSpacing: '-0.01em' }}
+            <button
+              onClick={() => !isSaving && onClose()}
+              disabled={isSaving}
+              className="w-8 h-8 flex items-center justify-center rounded-md transition-all hover:bg-[#1e2d42] text-[#8b9bb4] hover:text-white disabled:opacity-30"
             >
-              {title || (isEditing ? (initialData.title || 'Untitled') : 'Untitled Project')}
-            </h2>
+              <X className="w-4 h-4" />
+            </button>
           </div>
-
-          {/* Close button */}
-          <button
-            onClick={() => !isSaving && onClose()}
-            disabled={isSaving}
-            className="shrink-0 w-7 h-7 flex items-center justify-center rounded transition-colors disabled:opacity-30"
-            style={{ background: '#111d30', border: '1px solid #1b2d47', color: '#3d5470' }}
-            onMouseEnter={e => { e.currentTarget.style.color='#fff'; e.currentTarget.style.borderColor='#2d4060'; }}
-            onMouseLeave={e => { e.currentTarget.style.color='#3d5470'; e.currentTarget.style.borderColor='#1b2d47'; }}
-          >
-            <X className="w-3.5 h-3.5" />
-          </button>
         </div>
 
         {/* ════════════ BODY ════════════ */}
         <div className="flex-1 overflow-y-auto project-editor-scrollbar">
-          <div className="px-6 py-5 space-y-5">
+          <div className="px-6 py-6 space-y-8">
 
-            {/* ── 01  IDENTITY ── */}
+            {/* ── 01 IDENTITY ── */}
             <section>
               <DSL n="01" label="IDENTITY" />
-              <div className="space-y-2">
+              <div className="space-y-4">
                 <div>
-                  <DFL>Project Title <span style={{ color: '#14f195' }}>*</span></DFL>
+                  <DFL>Project Title <span className="text-[#14f195]">*</span></DFL>
                   <input
                     type="text"
                     value={title}
                     onChange={e => setTitle(e.target.value)}
-                    placeholder="e.g. Enterprise Cloud Architecture"
+                    placeholder="e.g. Smart-Inventory"
                     className={iCls}
                   />
                 </div>
@@ -314,25 +276,25 @@ const EditorDrawer = ({ isOpen, item, projectIndex, projectCount, onClose, onSav
                   <textarea
                     value={description}
                     onChange={e => setDescription(e.target.value)}
-                    placeholder="Architecture, technical challenges, outcomes…"
-                    className="w-full bg-[#060c18] border border-[#1b2d47] rounded px-3 py-2.5 text-[13px] text-white placeholder:text-[#253550] focus:border-[#14f195]/55 outline-none transition-colors leading-relaxed resize-none"
-                    style={{ minHeight: '108px' }}
+                    placeholder="Architecture, technical challenges..."
+                    className="w-full bg-[#090e17] border border-[#1e2d42] rounded-lg px-3 py-2.5 text-[13px] text-white placeholder:text-[#4b6385] focus:border-[#14f195] focus:ring-1 focus:ring-[#14f195] outline-none transition-all resize-none leading-relaxed"
+                    style={{ minHeight: '90px' }}
                   />
                 </div>
               </div>
             </section>
 
-            {/* ── 02  MEDIA ── */}
+            {/* ── 02 MEDIA ── */}
             <section>
               <DSL n="02" label="MEDIA" />
               <div
-                className="relative overflow-hidden rounded cursor-pointer group"
-                style={{ height: '192px', background: '#060c18', border: '1px dashed #1b2d47' }}
+                className="relative overflow-hidden rounded-lg cursor-pointer group transition-all bg-[#090e17] border border-dashed border-[#1e2d42] hover:border-[#14f195] hover:shadow-[0_0_15px_rgba(20,241,149,0.05)]"
+                style={{ height: '160px' }}
               >
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={e => setImageFile(e.target.files[0])}
+                  onChange={e => { if(e.target.files[0]) setImageFile(e.target.files[0]); }}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                 />
 
@@ -341,264 +303,204 @@ const EditorDrawer = ({ isOpen, item, projectIndex, projectCount, onClose, onSav
                     <img
                       src={previewImageSrc}
                       alt="Preview"
-                      className="w-full h-full object-cover transition-opacity duration-200"
-                      style={{ opacity: 0.85 }}
+                      className="w-full h-full object-cover transition-opacity duration-300"
                     />
-                    {/* Hover overlay */}
-                    <div
-                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center justify-center"
-                      style={{ background: 'rgba(6,12,24,0.72)' }}
-                    >
-                      <span
-                        className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-widest px-3 py-1.5 rounded-sm"
-                        style={{
-                          color: '#14f195',
-                          border: '1px solid rgba(20,241,149,0.3)',
-                          background: 'rgba(20,241,149,0.06)',
-                        }}
-                      >
-                        <UploadCloud className="w-3 h-3" />
-                        Change Image
+                    <div className="absolute inset-0 bg-[#050914]/70 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-3">
+                      <span className="flex items-center gap-2 text-[11px] font-mono font-bold uppercase tracking-widest px-3 py-1.5 rounded bg-[#14f195]/10 text-[#14f195] border border-[#14f195]/30">
+                        <UploadCloud className="w-4 h-4" /> Change Image
                       </span>
+                      {imageFile && (
+                        <button 
+                          className="text-[10px] font-mono text-red-400 hover:text-red-300 uppercase tracking-widest z-20 relative px-3 py-1.5"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setImageFile(null);
+                          }}
+                        >
+                          Remove
+                        </button>
+                      )}
                     </div>
                   </div>
                 ) : (
-                  /* Empty — engineering-style placeholder */
-                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none gap-3">
-                    {/* dot-grid motif */}
-                    <div className="grid grid-cols-5 gap-[5px] opacity-[0.09]">
-                      {[...Array(15)].map((_, i) => (
-                        <div key={i} className="w-2.5 h-2.5 rounded-full bg-gray-400" />
-                      ))}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none gap-2">
+                    <UploadCloud className="w-5 h-5 text-[#4b6385] group-hover:text-[#14f195] transition-colors mb-1" />
+                    <div className="text-[11px] font-semibold text-[#8b9bb4] uppercase tracking-wider group-hover:text-white transition-colors">
+                      PROJECT THUMBNAIL
                     </div>
-                    <div className="text-center">
-                      <div
-                        className="text-[11px] font-semibold mb-0.5 group-hover:text-[#5070a0] transition-colors"
-                        style={{ color: '#2d4060' }}
-                      >
-                        + PROJECT IMAGE
-                      </div>
-                      <div className="font-mono text-[9px] uppercase tracking-widest" style={{ color: '#1b2d47' }}>
-                        Upload thumbnail · PNG / JPG · max 2MB
-                      </div>
+                    <div className="text-[12px] text-[#4b6385]">
+                      Drop image or click to upload
+                    </div>
+                    <div className="font-mono text-[9px] uppercase tracking-widest text-[#4b6385] mt-1">
+                      PNG / JPG · MAX 2MB
                     </div>
                   </div>
                 )}
 
-                {/* Upload progress overlay */}
                 {uploadProgress > 0 && (
-                  <div
-                    className="absolute inset-0 z-20 flex flex-col items-center justify-center"
-                    style={{ background: 'rgba(6,12,24,0.92)' }}
-                  >
-                    <span className="font-mono font-black text-xl" style={{ color: '#14f195' }}>
-                      {uploadProgress}%
-                    </span>
-                    <span className="font-mono text-[9px] uppercase tracking-widest mt-1" style={{ color: '#3d5470' }}>
-                      Uploading
-                    </span>
+                  <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#050914]/90 backdrop-blur-sm">
+                    <span className="font-mono font-black text-2xl text-[#14f195]">{uploadProgress}%</span>
+                    <span className="font-mono text-[10px] uppercase tracking-widest mt-1 text-[#8b9bb4]">Uploading</span>
                   </div>
                 )}
               </div>
             </section>
 
-            {/* ── 03  STACK ── */}
+            {/* ── 03 STACK ── */}
             <section>
               <DSL n="03" label="STACK" />
-              <div
-                className="rounded transition-colors"
-                style={{ background: '#060c18', border: '1px solid #1b2d47' }}
-              >
-                {/* Active chips */}
+              <div className="space-y-2">
+                <input
+                  type="text"
+                  value={techInput}
+                  onChange={e => setTechInput(e.target.value)}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); handleAddTech(); }
+                  }}
+                  placeholder="+ Add technology... (Enter or comma)"
+                  className={iCls}
+                />
+                
                 {techTags.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 px-3 pt-2.5 pb-2">
+                  <div className="flex flex-wrap gap-1.5 mt-2">
                     {techTags.map((tag, i) => (
                       <span
                         key={i}
-                        className="inline-flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider rounded-sm"
-                        style={{ padding: '2px 8px', background: '#0f1e33', border: '1px solid #1b3050', color: '#7090b0' }}
+                        className="inline-flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider rounded px-2 py-1 bg-[#090e17] border border-[#1e2d42] text-[#c0d0e0] group hover:border-[#14f195]/50 hover:text-[#14f195] transition-all"
                       >
                         {tag}
                         <button
                           type="button"
                           onClick={() => setTechTags(prev => prev.filter((_, idx) => idx !== i))}
-                          style={{ color: '#304060', marginLeft: '2px', lineHeight: 1 }}
-                          onMouseEnter={e => (e.currentTarget.style.color = '#d05050')}
-                          onMouseLeave={e => (e.currentTarget.style.color = '#304060')}
+                          className="text-[#4b6385] group-hover:text-[#14f195] hover:!text-red-400 transition-colors ml-0.5"
                         >
-                          <X className="w-2.5 h-2.5" />
+                          <X className="w-3 h-3" />
                         </button>
                       </span>
                     ))}
                   </div>
                 )}
-
-                {/* Input */}
-                <div
-                  className={`flex items-center gap-2 px-3 ${techTags.length > 0 ? 'border-t py-2' : 'py-2'}`}
-                  style={{ borderColor: '#182840' }}
-                >
-                  <span className="font-mono text-[11px]" style={{ color: '#253550' }}>+</span>
-                  <input
-                    type="text"
-                    value={techInput}
-                    onChange={e => setTechInput(e.target.value)}
-                    onKeyDown={e => {
-                      if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); handleAddTech(); }
-                    }}
-                    placeholder={techTags.length === 0
-                      ? 'Add technology… (Enter or comma)'
-                      : 'Add another…'
-                    }
-                    className="flex-1 bg-transparent text-[13px] text-white outline-none placeholder:text-[#253550]"
-                  />
-                  {techInput.trim() && (
-                    <button
-                      type="button"
-                      onClick={handleAddTech}
-                      className="font-mono text-[10px] font-bold uppercase tracking-widest transition-colors"
-                      style={{ color: '#14f195' }}
-                    >
-                      Add ↵
-                    </button>
-                  )}
-                </div>
               </div>
             </section>
 
-            {/* ── 04  LINKS ── */}
+            {/* ── 04 LINKS ── */}
             <section>
               <DSL n="04" label="LINKS" />
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <div>
-                  <DFL>
-                    <GitBranch className="w-3 h-3 inline mr-1 opacity-40 -mt-px" />
-                    GitHub Repository
-                  </DFL>
-                  <input
-                    type="url"
-                    value={github}
-                    onChange={e => setGithub(e.target.value)}
-                    placeholder="https://github.com/…"
-                    className={iCls}
-                  />
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <DFL><span className="flex items-center gap-1.5"><GitBranch className="w-3.5 h-3.5" /> GITHUB REPOSITORY</span></DFL>
+                  <div className="relative">
+                    <input
+                      type="url"
+                      value={github}
+                      onChange={e => setGithub(e.target.value)}
+                      placeholder="https://github.com/..."
+                      className={`${iCls} pl-9`}
+                    />
+                    <GitBranch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4b6385] pointer-events-none" />
+                    {hasValidLink(github) && (
+                      <a href={github} target="_blank" rel="noreferrer" className="absolute right-3 top-1/2 -translate-y-1/2 text-[#4b6385] hover:text-[#14f195] transition-colors p-1">
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <DFL>
-                    <ExternalLink className="w-3 h-3 inline mr-1 opacity-40 -mt-px" />
-                    Live Demo
-                  </DFL>
-                  <input
-                    type="url"
-                    value={live}
-                    onChange={e => setLive(e.target.value)}
-                    placeholder="https://…"
-                    className={iCls}
-                  />
+                <div className="flex-1">
+                  <DFL><span className="flex items-center gap-1.5"><ExternalLink className="w-3.5 h-3.5" /> LIVE DEMO</span></DFL>
+                  <div className="relative">
+                    <input
+                      type="url"
+                      value={live}
+                      onChange={e => setLive(e.target.value)}
+                      placeholder="https://..."
+                      className={`${iCls} pl-9`}
+                    />
+                    <ExternalLink className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4b6385] pointer-events-none" />
+                    {hasValidLink(live) && (
+                      <a href={live} target="_blank" rel="noreferrer" className="absolute right-3 top-1/2 -translate-y-1/2 text-[#4b6385] hover:text-[#14f195] transition-colors p-1">
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
+                    )}
+                  </div>
                 </div>
               </div>
             </section>
 
-            {/* ── 05  VISIBILITY ── */}
+            {/* ── 05 VISIBILITY ── */}
             <section>
               <DSL n="05" label="VISIBILITY" />
-              <div
-                className="flex p-0.5 rounded"
-                style={{ background: '#060c18', border: '1px solid #1b2d47' }}
-              >
+              <div className="flex rounded-lg bg-[#090e17] border border-[#1e2d42] overflow-hidden p-0.5">
                 {[
-                  {
-                    value: 'draft',
-                    label: 'Draft',
-                    color: '#d97706',
-                    activeBg: 'rgba(217,119,6,0.08)',
-                    activeBorder: 'rgba(217,119,6,0.22)',
-                  },
-                  {
-                    value: 'published',
-                    label: 'Published',
-                    color: '#14f195',
-                    activeBg: 'rgba(20,241,149,0.07)',
-                    activeBorder: 'rgba(20,241,149,0.2)',
-                  },
-                ].map(({ value, label, color, activeBg, activeBorder }) => {
-                  const on = status === value;
+                  { value: 'draft', label: 'DRAFT', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
+                  { value: 'published', label: 'PUBLISHED', color: '#14f195', bg: 'rgba(20,241,149,0.1)' },
+                ].map(({ value, label, color, bg }) => {
+                  const isActive = status === value;
                   return (
                     <button
                       key={value}
                       type="button"
                       onClick={() => setStatus(value)}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded text-[10px] font-mono font-bold uppercase tracking-wider transition-all"
-                      style={on
-                        ? { color, background: activeBg, border: `1px solid ${activeBorder}` }
-                        : { color: '#2d4060', background: 'transparent', border: '1px solid transparent' }
+                      className="flex-1 flex items-center justify-center gap-2 py-2 rounded-[5px] text-[11px] font-mono font-semibold uppercase tracking-widest transition-all"
+                      style={isActive 
+                        ? { color: color, background: bg } 
+                        : { color: '#4b6385', background: 'transparent' }
                       }
                     >
                       <span
                         className="w-1.5 h-1.5 rounded-full"
-                        style={{ background: on ? color : '#1b2d47' }}
+                        style={{ background: isActive ? color : '#1e2d42' }}
                       />
-                      ● {label}
+                      {label}
                     </button>
                   );
                 })}
               </div>
             </section>
 
-            {/* ── LIVE PREVIEW ── */}
-            <section style={{ paddingBottom: '6px' }}>
-              <DSL label="PREVIEW" />
-              <div
-                className="flex gap-3 rounded p-3"
-                style={{ background: '#070e1c', border: '1px solid #152030' }}
-              >
-                {/* Thumbnail */}
-                <div
-                  className="shrink-0 rounded overflow-hidden"
-                  style={{ width: '60px', height: '60px', background: '#060c18', border: '1px solid #1b2d47' }}
-                >
-                  {previewImageSrc
-                    ? <img src={previewImageSrc} alt="" className="w-full h-full object-cover" />
-                    : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <FolderOpen className="w-4 h-4" style={{ color: '#1b2d47' }} />
-                      </div>
-                    )
-                  }
+            {/* ── 06 LIVE PREVIEW ── */}
+            <section>
+              <DSL n="06" label="LIVE PREVIEW" />
+              <div className="flex gap-4 rounded-lg p-3 bg-[#090e17] border border-[#1e2d42]">
+                <div className="shrink-0 w-24 h-16 sm:w-32 sm:h-20 rounded-md overflow-hidden bg-[#050914] border border-[#1e2d42]">
+                  {previewImageSrc ? (
+                    <img src={previewImageSrc} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-[#1e2d42]">
+                      <FolderOpen className="w-5 h-5" />
+                    </div>
+                  )}
                 </div>
 
-                {/* Content */}
-                <div className="flex-1 min-w-0 overflow-hidden">
-                  <div className="flex items-start justify-between gap-2 mb-1">
-                    <h4 className="text-white font-semibold text-[12px] truncate leading-snug">
+                <div className="flex-1 min-w-0 flex flex-col justify-center">
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <h4 className="text-white font-semibold text-[13px] truncate">
                       {title || 'Untitled Project'}
                     </h4>
-                    {/* Inline status dot */}
                     <span
-                      className="shrink-0 text-[8px] font-mono font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-sm"
+                      className="shrink-0 text-[8px] font-mono font-bold uppercase tracking-widest px-1.5 py-0.5 rounded"
                       style={status === 'published'
-                        ? { color: '#14f195', background: 'rgba(20,241,149,0.08)', border: '1px solid rgba(20,241,149,0.18)' }
-                        : { color: '#d97706', background: 'rgba(217,119,6,0.08)',  border: '1px solid rgba(217,119,6,0.18)' }
+                        ? { color: '#14f195', background: 'rgba(20,241,149,0.1)' }
+                        : { color: '#f59e0b', background: 'rgba(245,158,11,0.1)' }
                       }
                     >
-                      {status}
+                      ● {status}
                     </span>
                   </div>
-                  <p className="text-[10px] line-clamp-2 leading-relaxed mb-1.5" style={{ color: '#3d5470' }}>
+                  <p className="text-[11px] text-[#8b9bb4] line-clamp-1 mb-2">
                     {description || 'No description provided.'}
                   </p>
                   <div className="flex flex-wrap gap-1">
-                    {techTags.slice(0, 4).map((t, i) => (
+                    {techTags.slice(0, 3).map((t, i) => (
                       <span
                         key={i}
-                        className="text-[8px] font-mono uppercase px-1.5 py-0.5 rounded-sm"
-                        style={{ color: '#3d5470', background: '#0f1e33', border: '1px solid #1b3050' }}
+                        className="text-[8px] font-mono uppercase px-1.5 py-0.5 rounded bg-[#050914] border border-[#1e2d42] text-[#8b9bb4]"
                       >
                         {t}
                       </span>
                     ))}
-                    {techTags.length > 4 && (
-                      <span className="text-[8px] font-mono" style={{ color: '#1b2d47' }}>+{techTags.length - 4}</span>
+                    {techTags.length > 3 && (
+                      <span className="text-[8px] font-mono text-[#4b6385] px-1 py-0.5">+{techTags.length - 3}</span>
                     )}
                   </div>
                 </div>
@@ -609,32 +511,21 @@ const EditorDrawer = ({ isOpen, item, projectIndex, projectCount, onClose, onSav
         </div>
 
         {/* ════════════ FOOTER ════════════ */}
-        <div
-          className="shrink-0 flex items-center justify-between px-6"
-          style={{ height: '64px', borderTop: '1px solid #182840', background: '#09101d' }}
-        >
-          {/* Save state indicator */}
+        <div className="shrink-0 flex items-center justify-between px-6 py-4 border-t border-[#1e2d42] bg-[#050914]">
           <span
-            className="flex items-center gap-1.5 text-[9px] font-mono uppercase tracking-widest"
-            style={{ color: isDirty ? '#d97706' : '#253550' }}
+            className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest font-semibold"
+            style={{ color: isDirty ? '#f59e0b' : '#4b6385' }}
           >
-            <span
-              className="w-1.5 h-1.5 rounded-full"
-              style={{ background: isDirty ? '#d97706' : '#253550' }}
-            />
-            {isDirty ? 'Unsaved changes' : 'Saved'}
+            <span className="w-1.5 h-1.5 rounded-full" style={{ background: isDirty ? '#f59e0b' : '#4b6385' }} />
+            {isDirty ? 'UNSAVED CHANGES' : 'ALL CHANGES SAVED'}
           </span>
 
-          {/* Action buttons */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={onClose}
               disabled={isSaving}
-              className="h-9 px-4 rounded text-[12px] font-medium transition-colors disabled:opacity-30"
-              style={{ color: '#3d5470' }}
-              onMouseEnter={e => { e.currentTarget.style.color='#fff'; e.currentTarget.style.background='#111d30'; }}
-              onMouseLeave={e => { e.currentTarget.style.color='#3d5470'; e.currentTarget.style.background='transparent'; }}
+              className="px-4 py-2 rounded-md text-[12px] font-semibold text-[#8b9bb4] hover:text-white hover:bg-[#1e2d42] transition-colors disabled:opacity-30"
             >
               Cancel
             </button>
@@ -643,31 +534,31 @@ const EditorDrawer = ({ isOpen, item, projectIndex, projectCount, onClose, onSav
               type="button"
               onClick={handleSave}
               disabled={!isDirty || isSaving}
-              className="h-9 px-5 rounded text-[12px] font-bold flex items-center gap-1.5 transition-all"
+              className="px-4 py-2 rounded-md text-[12px] font-bold flex items-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               style={
                 isSuccess
-                  ? { color: '#14f195', background: 'rgba(20,241,149,0.07)', border: '1px solid rgba(20,241,149,0.25)' }
-                  : isDirty && !isSaving
-                    ? { color: '#09101d', background: '#14f195', border: '1px solid #14f195', boxShadow: '0 0 12px rgba(20,241,149,0.2)' }
-                    : { color: '#253550', background: '#0a1322', border: '1px solid #1b2d47', cursor: 'not-allowed', opacity: 0.5 }
+                  ? { color: '#050914', background: '#14f195' }
+                  : isDirty
+                    ? { color: '#050914', background: '#14f195', boxShadow: '0 0 15px rgba(20,241,149,0.3)' }
+                    : { color: '#8b9bb4', background: '#1e2d42' }
               }
             >
-              {isSaving
-                ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Saving…</>
-                : isSuccess
-                  ? <><Check className="w-3.5 h-3.5" /> Saved</>
-                  : 'Save Changes'
-              }
+              {isSaving ? (
+                <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Saving</>
+              ) : isSuccess ? (
+                <><Check className="w-3.5 h-3.5" /> Saved</>
+              ) : (
+                'Save Changes'
+              )}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Keyframe — injected once */}
       <style>{`
         @keyframes drawerSlideIn {
-          from { transform: translateX(100%); opacity: 0.6; }
-          to   { transform: translateX(0);    opacity: 1;   }
+          from { transform: translateX(100%); }
+          to   { transform: translateX(0); }
         }
       `}</style>
     </div>
@@ -675,17 +566,16 @@ const EditorDrawer = ({ isOpen, item, projectIndex, projectCount, onClose, onSav
 };
 
 // ── Drawer helpers ─────────────────────────────────────────────────────────────
-// DSL = Drawer Section Label, DFL = Drawer Field Label
 const DSL = ({ n, label }) => (
-  <div className="flex items-center gap-2 mb-2.5">
-    {n && <span className="font-mono text-[8px] font-bold" style={{ color: 'rgba(20,241,149,0.6)' }}>{n}</span>}
-    <span className="font-mono text-[9px] uppercase tracking-[0.18em]" style={{ color: '#253550' }}>{label}</span>
-    <span className="flex-1 h-px" style={{ background: '#182840' }} />
+  <div className="flex items-center gap-3 mb-3">
+    {n && <span className="font-mono text-[10px] font-bold text-[#14f195]">{n} /</span>}
+    <span className="font-mono text-[11px] font-semibold uppercase tracking-widest text-[#8b9bb4]">{label}</span>
+    <span className="flex-1 h-[1px] bg-[#1e2d42]" />
   </div>
 );
 
 const DFL = ({ children }) => (
-  <label className="block text-[10px] font-mono uppercase tracking-wider mb-1.5" style={{ color: '#304060' }}>
+  <label className="block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5">
     {children}
   </label>
 );

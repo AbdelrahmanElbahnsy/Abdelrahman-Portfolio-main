@@ -1,7 +1,6 @@
 import { contact } from '../../data/portfolioData.js';
 import { db } from '../../services/firebase.js';
-import { doc, getDoc, setDoc, getCountFromServer } from 'firebase/firestore';
-
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 async function loggedSetDoc(docRef, data, options) {
   try {
@@ -13,27 +12,19 @@ async function loggedSetDoc(docRef, data, options) {
     throw e;
   }
 }
-async function loggedAddDoc(colRef, data) {
-  try {
-    const res = await addDoc(colRef, data);
-    console.log(`Collection path: ${colRef.path}, Document ID: ${res.id}, Write result: SUCCESS, Returned ID: ${res.id}`);
-    return res;
-  } catch(e) {
-    console.log(`Collection path: ${colRef.path}, Write result: FAILED, Exception: ${e}`);
-    throw e;
-  }
-}
 
 export const migrateContact = async () => {
   const result = { created: 0, updated: 0, skipped: 0, failed: 0 };
   try {
-    const contactRef = doc(db, 'content', 'contact');
+    // Migration target is now contact/main
+    const contactRef = doc(db, 'contact', 'main');
     const snap = await getDoc(contactRef);
     
     let email = '';
     let phone = '';
     let location = '';
     
+    // Extract specific fields from channels
     for (const channel of contact.channels || []) {
       if (channel.label === 'Email') email = channel.value;
       if (channel.label === 'Phone') phone = channel.value;
@@ -41,9 +32,14 @@ export const migrateContact = async () => {
     }
 
     const contactData = {
+      title: contact.title || '',
+      subtitle: contact.subtitle || '',
       email,
       phone,
       location,
+      channels: contact.channels || [],
+      opportunities: contact.opportunities || [],
+      formSubjects: contact.formSubjects || [],
       updatedAt: new Date()
     };
     
@@ -56,7 +52,7 @@ export const migrateContact = async () => {
       result.created++;
     }
     
-    console.log('[CMS MIGRATION] Contact data successfully migrated to Firestore.');
+    console.log('[CMS MIGRATION] Contact data successfully migrated to Firestore contact/main.');
   } catch (error) {
     console.error('[CMS MIGRATION] Error migrating Contact data:', error);
     result.failed++; result.error = error;

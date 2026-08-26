@@ -118,7 +118,7 @@ const OverviewDashboard = () => {
           <div className="flex items-center gap-4 mt-2">
             <span className="flex items-center gap-2 text-sm text-gray-400 font-medium">
               <span className={`w-2 h-2 rounded-full shadow-[0_0_8px_currentColor] ${allSystemsOnline ? 'bg-cms-success text-cms-success animate-pulse' : 'bg-cms-warning text-cms-warning'}`}></span>
-              {allSystemsOnline ? 'All systems operational' : 'Degraded performance'}
+              {allSystemsOnline ? 'Core systems operational' : 'Degraded performance'}
             </span>
             <span className="text-gray-600">|</span>
             <span className="text-sm text-gray-400 font-medium">Enterprise CMS Version 2.0</span>

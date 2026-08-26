@@ -266,7 +266,33 @@ export const DashboardProvider = ({ children }) => {
 
       // 4.9 Contact Validation (Schema: email)
       const contactCol = allUpdates.find(colArray => colArray[0]?._collection === 'contact') || [];
-      const contactDoc = contactCol.find(d => d.id === 'main');
+      let contactDoc = contactCol.find(d => d.id === 'main');
+      
+      if (!contactDoc) {
+        // ONE-TIME MIGRATION: Auto-migrate from portfolioData if missing
+        try {
+          console.log("Contact document missing. Running auto-migration from portfolioData.js...");
+          const { migrateContact } = await import('../cms/migrations/migrateContact.js');
+          await migrateContact();
+          
+          // Refetch to confirm migration
+          const migratedDocs = await crudService.getAll('contact');
+          contactDoc = migratedDocs.find(d => d.id === 'main');
+          
+          if (contactDoc) {
+            console.log("Migration successful, contactDoc loaded.");
+            contactDoc._collection = 'contact';
+            if (contactCol.length === 0) {
+              allUpdates.push([contactDoc]);
+            } else {
+              contactCol.push(contactDoc);
+            }
+          }
+        } catch(e) {
+          console.error("Auto-migration failed:", e);
+        }
+      }
+
       if (!contactDoc) {
         addIssue('contact-missing', 'Configure Contact Settings', 'Contact information is missing.', '/admin/contact', 5, 'contact');
       } else {
@@ -278,10 +304,10 @@ export const DashboardProvider = ({ children }) => {
       // 5. System Health
       const systemHealth = await checkSystemHealth();
       Object.entries(systemHealth).forEach(([key, info]) => {
-        if (info.status !== 'online') {
+        if (info.status === 'error' || info.status === 'offline') {
           healthDiagnostics.push({ label: `${info.label} is degraded`, penalty: 5, link: '/admin/account' });
           healthScore -= 5;
-          notifications.push({ id: `notif-sys-${key}`, type: 'error', message: `${info.label} is currently ${info.status}.`, time: Date.now() });
+          notifications.push({ id: `notif-sys-${key}`, type: 'error', message: `${info.label} is currently ${info.status}: ${info.reason || 'Service unavailable'}.`, time: Date.now() });
         }
       });
 

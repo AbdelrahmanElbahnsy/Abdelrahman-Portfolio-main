@@ -189,30 +189,30 @@ const AboutManager = () => {
   }
 
   const LivePreview = () => (
-    <div className="w-full flex flex-col bg-[#0f172a] rounded-2xl border border-[#1e293b] p-6 sm:p-10 shadow-2xl">
-      <div className="mb-10">
-        <span className="text-[#14f195] font-mono uppercase tracking-widest text-xs mb-3 block">
+    <div className="w-full flex flex-col bg-[#0a0f1c] rounded-2xl border border-[#1e293b] p-6 shadow-xl relative overflow-hidden">
+      <div className="mb-6">
+        <span className="text-[#14f195] font-mono uppercase tracking-widest text-[10px] mb-2 block">
           {formData.subtitle || 'Subtitle'}
         </span>
-        <h2 className="text-3xl sm:text-4xl font-black text-white leading-tight">{formData.title || 'Section Title'}</h2>
+        <h2 className="text-2xl font-black text-white leading-tight">{formData.title || 'Section Title'}</h2>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_1.2fr] gap-10 xl:gap-12 items-start">
+      <div className="flex flex-col gap-8 items-start">
         {formData.terminalItems.length > 0 && (
-          <div className="w-full rounded-2xl overflow-hidden border border-[#1e293b] shadow-lg bg-[#0a0f1c]">
-            <div className="bg-[#1e293b]/50 p-3.5 flex items-center gap-3 border-b border-[#1e293b]">
+          <div className="w-full rounded-xl overflow-hidden border border-[#1e293b] shadow-lg bg-[#0f172a]">
+            <div className="bg-[#1e293b]/30 p-2.5 flex items-center gap-2.5 border-b border-[#1e293b]">
               <div className="flex gap-1.5">
-                <span className="w-3 h-3 rounded-full bg-[#ef4444]"></span>
-                <span className="w-3 h-3 rounded-full bg-[#eab308]"></span>
-                <span className="w-3 h-3 rounded-full bg-[#22c55e]"></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-[#ef4444]"></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-[#eab308]"></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-[#22c55e]"></span>
               </div>
-              <span className="font-mono text-[10px] text-gray-400 uppercase tracking-wider">{personalInfo.terminalTitle || 'Terminal'}</span>
+              <span className="font-mono text-[9px] text-gray-500 uppercase tracking-wider">{personalInfo.terminalTitle || 'Terminal'}</span>
             </div>
-            <div className="p-5 font-mono text-[11px] sm:text-xs leading-relaxed">
-              <ul className="space-y-3">
+            <div className="p-4 font-mono text-[10px] leading-relaxed">
+              <ul className="space-y-2.5">
                 {formData.terminalItems.map((item, idx) => (
-                  <li key={idx} className="flex gap-3 items-start">
-                    <span className="text-[#14f195] shrink-0">{item.key || 'key'}:</span>
+                  <li key={idx} className="flex flex-col sm:flex-row gap-1 sm:gap-3 items-start">
+                    <span className="text-[#14f195] shrink-0 font-bold">{item.key || 'key'}:</span>
                     <span className="text-gray-300 break-words">{item.value || 'value'}</span>
                   </li>
                 ))}
@@ -225,16 +225,16 @@ const AboutManager = () => {
           </div>
         )}
 
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-6">
           {formData.lead && (
-            <p className="text-lg sm:text-xl font-bold text-white border-l-4 border-[#14f195] pl-5 py-2 bg-[#14f195]/5 leading-snug">
+            <p className="text-base font-bold text-white border-l-4 border-[#14f195] pl-4 py-1.5 bg-[#14f195]/5 leading-snug">
               {formData.lead}
             </p>
           )}
           
-          <div className="space-y-6">
+          <div className="space-y-4">
             {formData.paragraphs.map((p, idx) => (
-              <p key={idx} className="text-gray-300 text-sm sm:text-base leading-relaxed">
+              <p key={idx} className="text-gray-300 text-sm leading-relaxed">
                 {p.text}{' '}
                 {p.highlight && <strong className="text-white font-semibold">{p.highlight}</strong>}{' '}
                 {p.suffix}
@@ -243,10 +243,10 @@ const AboutManager = () => {
           </div>
 
           {formData.badges.length > 0 && (
-            <div className="flex flex-wrap gap-3 mt-4">
+            <div className="flex flex-wrap gap-2 mt-2">
               {formData.badges.map((b, idx) => (
-                <div key={idx} className="flex items-center gap-2.5 px-4 py-2.5 rounded-lg bg-[#131b2c] border border-blue-900/30 text-[11px] sm:text-xs font-bold text-gray-300 shadow-sm">
-                  <i className={`${b.icon} text-[#14f195] text-sm sm:text-base`}></i> {b.label || 'Badge'}
+                <div key={idx} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#131b2c] border border-blue-900/30 text-[10px] font-bold text-gray-300 shadow-sm">
+                  <i className={`${b.icon} text-[#14f195] text-sm`}></i> {b.label || 'Badge'}
                 </div>
               ))}
             </div>
@@ -257,23 +257,23 @@ const AboutManager = () => {
   );
 
   return (
-    <div className="max-w-[1700px] mx-auto pb-24 animate-in fade-in duration-500">
+    <div className="max-w-[1800px] mx-auto pb-24 animate-in fade-in duration-500">
       
       {/* HEADER */}
-      <div className="mb-10 px-2 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="mb-8 px-2 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-black text-white flex items-center gap-3">
             About Section
           </h1>
           <p className="text-gray-400 mt-1 text-sm max-w-lg">
-            Manage the story, expertise highlights, and technical profile displayed in the public About section.
+            Manage the complete About section displayed on the public portfolio.
           </p>
         </div>
 
-        <div className="flex items-center gap-4 bg-[#0f172a] p-2 pr-2 pl-4 rounded-xl border border-[#1e293b] shrink-0">
+        <div className="flex items-center gap-4 shrink-0">
           <div className="text-xs font-bold uppercase tracking-wider mr-2">
-            {saveStatus === 'saved' && <span className="text-gray-500">✓ All changes saved</span>}
-            {saveStatus === 'unsaved' && <span className="text-orange-400 flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse"></span> Unsaved changes</span>}
+            {saveStatus === 'saved' && <span className="text-gray-500">✓ All Changes Saved</span>}
+            {saveStatus === 'unsaved' && <span className="text-orange-400 flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse"></span> Unsaved Changes</span>}
             {saveStatus === 'saving' && <span className="text-blue-400 flex items-center gap-2"><Loader2 className="w-3 h-3 animate-spin" /> Saving...</span>}
             {saveStatus === 'success' && <span className="text-[#14f195]">✓ Saved Successfully</span>}
           </div>
@@ -298,10 +298,10 @@ const AboutManager = () => {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="px-2 flex flex-col xl:flex-row gap-10 lg:gap-12 items-start">
+      <form onSubmit={handleSubmit} className="px-2 flex flex-col lg:flex-row gap-8 lg:gap-10 items-start">
         
-        {/* MAIN EDITOR (SINGLE COMPLETE CONTENT AREA) */}
-        <div className="flex-1 w-full min-w-[500px] max-w-4xl bg-[#0f172a] rounded-2xl border border-[#1e293b] p-6 sm:p-10 shadow-xl">
+        {/* MAIN EDITOR (75%) */}
+        <div className="flex-1 w-full lg:w-[75%] min-w-0 bg-[#0f172a] rounded-2xl border border-[#1e293b] p-6 sm:p-10 shadow-xl">
           
           {/* ABOUT IDENTITY */}
           <div className="mb-12">
@@ -397,7 +397,7 @@ const AboutManager = () => {
                       <div className="flex items-center bg-[#0a0f1c] border border-[#1e293b] hover:border-gray-700 focus-within:border-[#14f195] rounded-lg overflow-hidden transition-colors">
                         <span className="w-20 shrink-0 text-[10px] font-bold text-gray-500 uppercase tracking-wider text-center border-r border-[#1e293b] py-3 bg-[#0f172a]/50">Suffix</span>
                         <textarea
-                          rows="2"
+                          rows="3"
                           value={p.suffix || ''}
                           onChange={(e) => {
                             e.target.style.height = 'auto';
@@ -417,7 +417,7 @@ const AboutManager = () => {
                     </div>
                   </div>
                   {idx < formData.paragraphs.length - 1 && (
-                    <div className="h-px w-full bg-[#1e293b] my-4"></div>
+                    <div className="h-px w-full bg-[#1e293b]/60 my-4"></div>
                   )}
                 </div>
               ))}
@@ -494,14 +494,14 @@ const AboutManager = () => {
                 </div>
               )}
               {formData.terminalItems.length > 0 && (
-                <div className="grid grid-cols-[1fr_2.5fr_80px] gap-3 px-1 pb-2 border-b border-[#1e293b] text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">
+                <div className="grid grid-cols-[120px_1fr_80px] sm:grid-cols-[150px_1fr_80px] gap-3 px-1 pb-2 border-b border-[#1e293b] text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">
                   <div>Key</div>
                   <div>Value</div>
                   <div className="text-center">Action</div>
                 </div>
               )}
               {formData.terminalItems.map((item, idx) => (
-                <div key={idx} className="grid grid-cols-[1fr_2.5fr_80px] gap-3 items-center group py-1">
+                <div key={idx} className="grid grid-cols-[120px_1fr_80px] sm:grid-cols-[150px_1fr_80px] gap-3 items-center group py-1">
                   <input
                     type="text"
                     value={item.key || ''}
@@ -535,8 +535,8 @@ const AboutManager = () => {
 
         </div>
 
-        {/* PREVIEW COLUMN (35%) */}
-        <div className="w-full xl:w-[600px] 2xl:w-[750px] shrink-0 xl:sticky xl:top-[100px]">
+        {/* PREVIEW COLUMN (25%) */}
+        <div className="w-full lg:w-[25%] lg:min-w-[320px] lg:max-w-[380px] shrink-0 lg:sticky lg:top-[100px]">
           <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-4">Live Preview</h3>
           <LivePreview />
         </div>

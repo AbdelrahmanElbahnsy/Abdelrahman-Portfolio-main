@@ -189,7 +189,7 @@ const AnalyticsDashboard = () => {
               <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">Daily Visits</p>
             </div>
             
-            <div className="h-[220px] w-full">
+            <div className="h-[160px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <RechartsBarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <XAxis 

@@ -1,11 +1,37 @@
 import React, { useState, useEffect, memo } from 'react';
+import { motion } from 'framer-motion';
+import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { getVisitsStats, subscribeToVisitsStats } from '../../services/analytics';
-import { BarChart3, Users, Calendar, Activity, Loader2 } from 'lucide-react';
+import { BarChart3, Users, Calendar, Activity, Loader2, AlertTriangle, TrendingUp, Clock } from 'lucide-react';
+
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    const dateStr = new Date(`${data.dateString}T00:00:00`).toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'short',
+      day: 'numeric'
+    });
+    return (
+      <div className="bg-[#0a0f1c] border border-white/10 p-3 rounded-lg shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-1 bg-[#14f195]" />
+        <p className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-2">{dateStr}</p>
+        <p className="text-white text-lg font-black flex items-center gap-2">
+          <Users className="w-4 h-4 text-[#14f195]" />
+          {data.visits} {data.visits === 1 ? 'Visit' : 'Visits'}
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
 
 const AnalyticsDashboard = () => {
   const [stats, setStats] = useState({
     totalVisits: 0,
     visitsToday: 0,
+    visitsLast7Days: 0,
+    visitsLast30Days: 0,
     dailyVisits: {},
     recentDailyVisits: [],
   });
@@ -17,11 +43,7 @@ const AnalyticsDashboard = () => {
 
     const loadInitialStats = async () => {
       const initialStats = await getVisitsStats();
-
-      if (!isMounted) {
-        return;
-      }
-
+      if (!isMounted) return;
       setStats(initialStats);
       setError(initialStats?.error || null);
       setLoading(false);
@@ -31,19 +53,13 @@ const AnalyticsDashboard = () => {
 
     const unsubscribe = subscribeToVisitsStats(
       (nextStats) => {
-        if (!isMounted) {
-          return;
-        }
-
+        if (!isMounted) return;
         setStats(nextStats);
         setError(null);
         setLoading(false);
       },
       (subscriptionError) => {
-        if (!isMounted) {
-          return;
-        }
-
+        if (!isMounted) return;
         setError(subscriptionError);
         setLoading(false);
       }
@@ -55,73 +71,154 @@ const AnalyticsDashboard = () => {
     };
   }, []);
 
+  const containerVariants = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.05 } } };
+  const itemVariants = { hidden: { opacity: 0, y: 15 }, show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } } };
+
   if (loading) {
-     return <div className="flex justify-center p-12"><Loader2 className="w-10 h-10 animate-spin text-[#14f195]" /></div>;
+    return (
+      <div className="flex flex-col items-center justify-center h-[70vh] gap-4">
+        <div className="w-10 h-10 border-4 border-white/10 border-t-[#14f195] rounded-full animate-spin shadow-[0_0_15px_rgba(20,241,149,0.3)]"></div>
+        <p className="text-gray-400 font-bold text-sm tracking-wider uppercase animate-pulse">Loading analytics...</p>
+      </div>
+    );
   }
 
-  const recentDays = stats?.recentDailyVisits || [];
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[70vh] gap-4 bg-red-500/5 border border-red-500/20 rounded-2xl m-6">
+        <AlertTriangle className="w-12 h-12 text-red-400" />
+        <h3 className="text-white font-bold text-lg">Unable to load analytics data</h3>
+        <p className="text-gray-400 text-sm">Please check your connection and try again.</p>
+      </div>
+    );
+  }
+
+  const chartData = (stats?.recentDailyVisits || []).map(([dateString, count]) => ({
+    dateString,
+    visits: count,
+    displayDate: new Date(`${dateString}T00:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  }));
+
+  const hasVisits = stats?.totalVisits > 0;
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
-        <BarChart3 className="text-[#14f195] w-8 h-8"/> 
-        Visitor Analytics
-      </h2>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="bg-[#131b2c] p-6 rounded-3xl border border-[#1e293b] flex items-center gap-6 shadow-sm relative overflow-hidden group hover:border-[#14f195]/30 transition-colors">
-          <div className="w-14 h-14 bg-[#14f195]/10 rounded-2xl flex items-center justify-center text-[#14f195] relative z-10">
-            <Users className="w-7 h-7" />
+    <motion.div variants={containerVariants} initial="hidden" animate="show" className="w-full space-y-6 pb-20">
+      
+      {/* HEADER */}
+      <motion.div variants={itemVariants} className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-white/5 pb-6">
+        <div>
+          <h1 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
+            Analytics Console
+          </h1>
+          <div className="flex items-center gap-3 mt-2">
+            <span className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-gray-400">
+              <span className="w-2 h-2 rounded-full bg-[#14f195] text-[#14f195] shadow-[0_0_8px_currentColor] animate-pulse"></span>
+              Live Tracking Active
+            </span>
           </div>
-          <div className="relative z-10">
-            <p className="text-gray-400 font-medium">Total Lifetime Visits</p>
-            <h3 className="text-4xl font-black text-white mt-1">{stats?.totalVisits || 0}</h3>
-          </div>
-          <div className="absolute right-0 top-0 w-32 h-32 bg-[#14f195]/5 rounded-full blur-2xl -mr-16 -mt-16" />
         </div>
+      </motion.div>
 
-        <div className="bg-[#131b2c] p-6 rounded-3xl border border-[#1e293b] flex items-center gap-6 shadow-sm relative overflow-hidden group hover:border-blue-400/30 transition-colors">
-          <div className="w-14 h-14 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-400 relative z-10">
-            <Activity className="w-7 h-7" />
-          </div>
-          <div className="relative z-10">
-            <p className="text-gray-400 font-medium">Visits Today</p>
-            <h3 className="text-4xl font-black text-white mt-1">{stats?.visitsToday || 0}</h3>
-          </div>
-          <div className="absolute right-0 top-0 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl -mr-16 -mt-16" />
-        </div>
-      </div>
-
-      {error ? (
-        <p className="text-sm text-red-400">
-          Unable to load live analytics right now.
-        </p>
-      ) : null}
-
-      <div className="bg-[#131b2c] p-8 rounded-3xl border border-[#1e293b] shadow-sm mt-8">
-        <h3 className="text-xl font-bold mb-6 flex items-center gap-2 border-b border-[#1e293b] pb-4">
-          <Calendar className="text-[#14f195] w-6 h-6"/>
-          Recent Daily Breakdown
-        </h3>
-        
-        {recentDays.length === 0 ? (
-          <p className="text-gray-400 text-center py-8">No daily records found yet.</p>
-        ) : (
-          <div className="space-y-4">
-            {recentDays.map(([dateString, count]) => (
-              <div key={dateString} className="flex justify-between items-center p-4 bg-[#0a0f1c] rounded-xl border border-[#1e293b] hover:border-[#14f195]/30 transition-colors shadow-sm">
-                <span className="font-medium text-gray-300">
-                  {new Date(`${dateString}T00:00:00`).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
-                </span>
-                <span className="bg-[#14f195]/10 text-[#14f195] font-bold px-4 py-1.5 rounded-lg flex items-center gap-2">
-                   <Users className="w-4 h-4"/> {count} visits
-                </span>
+      {hasVisits ? (
+        <>
+          {/* KPI ROW */}
+          <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-cms-cards border border-white/5 rounded-xl p-5 hover:border-white/10 transition-colors flex flex-col h-full group">
+              <div className="flex justify-between items-start mb-auto">
+                <div>
+                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 group-hover:text-gray-400 transition-colors">Lifetime Visits</p>
+                  <h3 className="text-3xl font-black text-white tracking-tight">{stats.totalVisits}</h3>
+                </div>
+                <div className="p-2 rounded-lg bg-[#14f195]/10 text-[#14f195] transition-transform group-hover:scale-110">
+                  <Users className="w-5 h-5" />
+                </div>
               </div>
-            ))}
+            </div>
+
+            <div className="bg-cms-cards border border-white/5 rounded-xl p-5 hover:border-white/10 transition-colors flex flex-col h-full group">
+              <div className="flex justify-between items-start mb-auto">
+                <div>
+                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 group-hover:text-gray-400 transition-colors">Visits Today</p>
+                  <h3 className="text-3xl font-black text-white tracking-tight">{stats.visitsToday}</h3>
+                </div>
+                <div className="p-2 rounded-lg bg-blue-500/10 text-blue-400 transition-transform group-hover:scale-110">
+                  <Activity className="w-5 h-5" />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-cms-cards border border-white/5 rounded-xl p-5 hover:border-white/10 transition-colors flex flex-col h-full group">
+              <div className="flex justify-between items-start mb-auto">
+                <div>
+                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 group-hover:text-gray-400 transition-colors">Last 7 Days</p>
+                  <h3 className="text-3xl font-black text-white tracking-tight">{stats.visitsLast7Days}</h3>
+                </div>
+                <div className="p-2 rounded-lg bg-purple-500/10 text-purple-400 transition-transform group-hover:scale-110">
+                  <TrendingUp className="w-5 h-5" />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-cms-cards border border-white/5 rounded-xl p-5 hover:border-white/10 transition-colors flex flex-col h-full group">
+              <div className="flex justify-between items-start mb-auto">
+                <div>
+                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 group-hover:text-gray-400 transition-colors">Last 30 Days</p>
+                  <h3 className="text-3xl font-black text-white tracking-tight">{stats.visitsLast30Days}</h3>
+                </div>
+                <div className="p-2 rounded-lg bg-orange-500/10 text-orange-400 transition-transform group-hover:scale-110">
+                  <Calendar className="w-5 h-5" />
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* CHART AREA */}
+          <motion.div variants={itemVariants} className="bg-cms-cards border border-white/5 rounded-xl p-6">
+            <div className="flex items-center justify-between mb-8 border-b border-white/5 pb-4">
+              <h3 className="font-bold text-white flex items-center gap-2">
+                <BarChart3 className="w-4 h-4 text-[#14f195]" /> 7-Day Traffic Breakdown
+              </h3>
+              <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">Unique Daily Views</p>
+            </div>
+            
+            <div className="h-[300px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <RechartsBarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <XAxis 
+                    dataKey="displayDate" 
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#6b7280', fontSize: 12, fontWeight: 600 }}
+                    dy={10}
+                  />
+                  <YAxis 
+                    allowDecimals={false}
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#6b7280', fontSize: 12, fontWeight: 600 }}
+                  />
+                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
+                  <Bar dataKey="visits" radius={[4, 4, 0, 0]} maxBarSize={50}>
+                    {chartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.visits > 0 ? '#14f195' : '#374151'} fillOpacity={entry.visits > 0 ? 1 : 0.2} className="hover:opacity-80 transition-opacity outline-none" />
+                    ))}
+                  </Bar>
+                </RechartsBarChart>
+              </ResponsiveContainer>
+            </div>
+          </motion.div>
+        </>
+      ) : (
+        <motion.div variants={itemVariants} className="flex flex-col items-center justify-center py-24 px-4 bg-cms-cards border border-white/5 rounded-2xl text-center">
+          <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center text-gray-500 mb-6 border border-white/10">
+            <Clock className="w-8 h-8" />
           </div>
-        )}
-      </div>
-    </div>
+          <h3 className="text-2xl font-bold text-white mb-2">Awaiting Data</h3>
+          <p className="text-gray-400 max-w-md">Visitor tracking is active, but no visits have been recorded yet. Share your portfolio to start generating analytics.</p>
+        </motion.div>
+      )}
+
+    </motion.div>
   );
 };
 

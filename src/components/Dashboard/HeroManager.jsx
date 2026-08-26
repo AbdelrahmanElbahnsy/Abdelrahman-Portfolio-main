@@ -34,6 +34,8 @@ const HeroManager = () => {
       heroSchema.fields.forEach(f => {
         defaultState[f.name] = data[f.name] !== undefined ? data[f.name] : '';
       });
+      // Set default for cta1 if it doesn't exist yet so it feels natural
+      if (!defaultState.cta1) defaultState.cta1 = 'Download CV';
       setFormData(defaultState);
       setSaveStatus('saved');
     }
@@ -79,6 +81,7 @@ const HeroManager = () => {
       heroSchema.fields.forEach(f => {
         defaultState[f.name] = data[f.name] !== undefined ? data[f.name] : '';
       });
+      if (!defaultState.cta1) defaultState.cta1 = 'Download CV';
       setFormData(defaultState);
       setImageFiles({});
       setIsDirty(false);
@@ -147,7 +150,7 @@ const HeroManager = () => {
     return (
       <div className="w-full flex flex-col">
         {/* Browser Frame */}
-        <div className="bg-[#0a0f1c] rounded-xl border border-[#1e293b] shadow-2xl overflow-hidden flex flex-col w-full h-[450px] xl:h-[500px]">
+        <div className="bg-[#0a0f1c] rounded-xl border border-[#1e293b] shadow-2xl overflow-hidden flex flex-col w-full min-h-[400px]">
           
           {/* Browser Top Strip */}
           <div className="h-8 bg-[#131b2c] border-b border-[#1e293b] flex items-center px-4 gap-2 relative">
@@ -162,14 +165,14 @@ const HeroManager = () => {
           </div>
 
           {/* Hero Viewport */}
-          <div className="flex-grow flex items-center px-6 sm:px-8 py-4 relative overflow-hidden">
+          <div className="flex-grow flex items-center px-6 sm:px-8 py-8 relative overflow-hidden">
             {/* Subtle background glow */}
             <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-64 h-64 bg-[#14f195]/5 blur-[100px] rounded-full pointer-events-none"></div>
 
-            <div className="flex w-full h-full gap-4 xl:gap-6 items-center z-10">
+            <div className="flex w-full gap-4 xl:gap-8 items-center justify-between z-10">
               
               {/* Left Column: Typography (55-60%) */}
-              <div className="w-[55%] xl:w-[60%] flex flex-col justify-center h-full pt-4 pb-4">
+              <div className="w-[55%] xl:w-[60%] flex flex-col justify-center">
                 {formData.badge && (
                   <div className="self-start inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#14f195]/10 border border-[#14f195]/30 text-[#14f195] text-[9px] font-medium italic mb-3">
                     <span>✨</span> {formData.badge}
@@ -189,15 +192,15 @@ const HeroManager = () => {
                 )}
                 
                 {formData.description && (
-                  <p className="text-gray-400 text-[10px] sm:text-[11px] leading-relaxed line-clamp-4 pr-2 mb-5 xl:mb-6">
+                  <p className="text-gray-400 text-[10px] sm:text-[11px] leading-relaxed line-clamp-4 pr-2 mb-6">
                     {formData.description}
                   </p>
                 )}
                 
                 {formData.cvUrl && (
-                  <div className="mt-auto self-start">
-                    <div className="px-5 py-2.5 bg-[#14f195] text-[#0a0f1c] rounded-full text-[10px] font-bold inline-flex items-center gap-2 shadow-[0_0_15px_rgba(20,241,149,0.25)]">
-                      <FileText className="w-3 h-3" /> Download CV
+                  <div className="self-start">
+                    <div className="px-6 py-3 bg-[#14f195] text-[#0a0f1c] rounded-full text-[11px] font-bold inline-flex items-center gap-2 shadow-[0_0_15px_rgba(20,241,149,0.25)]">
+                      <FileText className="w-3.5 h-3.5" /> {formData.cta1 || 'Download CV'}
                     </div>
                   </div>
                 )}
@@ -205,12 +208,12 @@ const HeroManager = () => {
               
               {/* Right Column: Hero Image Area (40-45%) */}
               {previewImage && (
-                <div className="w-[45%] xl:w-[40%] h-full flex items-center justify-center relative py-4">
-                  <div className="w-full h-full max-h-[300px] xl:max-h-[350px] rounded-2xl overflow-hidden border border-[#1e293b]/50 shadow-2xl bg-gradient-to-b from-[#131b2c]/80 to-[#0a0f1c]/80 flex justify-center items-end p-0">
+                <div className="w-[45%] xl:w-[40%] flex items-center justify-center">
+                  <div className="w-full aspect-[3/4] max-h-[360px] rounded-2xl overflow-hidden border border-[#1e293b]/50 shadow-2xl bg-gradient-to-b from-[#131b2c]/80 to-[#0a0f1c]/80 flex justify-center items-center p-4">
                     <img 
                       src={previewImage} 
                       alt="Hero Layout Portrait" 
-                      className="w-full h-full object-contain object-bottom drop-shadow-2xl" 
+                      className="w-full h-full object-contain drop-shadow-2xl" 
                     />
                   </div>
                 </div>
@@ -408,15 +411,12 @@ const HeroManager = () => {
             {/* RESUME / CV */}
             <div className="bg-[#131b2c] p-5 xl:p-6 rounded-2xl border border-[#1e293b] shadow-sm">
               <h3 className="text-base font-bold text-white mb-4 flex items-center gap-2 border-b border-[#1e293b] pb-3">
-                <FileSignature className="w-4 h-4 text-gray-400" /> Resume / CV Document
+                <FileSignature className="w-4 h-4 text-gray-400" /> Resume / CV
               </h3>
               
               <div className="space-y-4">
                 <div>
-                  <div className="flex justify-between items-end mb-2">
-                    <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider">Resume URL</label>
-                    <span className="text-[9px] text-[#14f195] font-medium px-2 py-0.5 bg-[#14f195]/10 rounded-full">This URL powers the public Download CV button.</span>
-                  </div>
+                  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Resume URL</label>
                   
                   <div className="flex gap-2">
                     <input
@@ -448,29 +448,38 @@ const HeroManager = () => {
                 </div>
 
                 <div className="pt-3 border-t border-[#1e293b] border-dashed">
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Alternative: Upload Document (PDF)</label>
+                  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Or Upload Document (PDF)</label>
                   <input
                     type="file"
                     accept=".pdf,.doc,.docx"
                     onChange={(e) => handleFileChange('cvUrl', e)}
                     className="w-full p-2 bg-[#0a0f1c] border border-[#1e293b] rounded-lg text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[11px] file:font-bold file:bg-[#1e293b] file:text-white hover:file:bg-[#273549] transition-colors cursor-pointer"
                   />
-                  <p className="text-[10px] text-gray-500 mt-2">
-                    Uploading a file here automatically replaces the URL above after saving.
+                  <p className="text-[10px] text-[#14f195] mt-2.5 font-medium flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5" /> Used by the public CTA button
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* PUBLIC CTA (READ-ONLY) */}
-            <div className="bg-[#131b2c] p-4 xl:p-5 rounded-2xl border border-[#1e293b] shadow-sm flex gap-4 items-center">
-              <div className="p-2.5 bg-blue-500/10 rounded-full text-blue-400 flex-shrink-0">
-                <Briefcase className="w-5 h-5" />
-              </div>
+            {/* CALL TO ACTION */}
+            <div className="bg-[#131b2c] p-5 xl:p-6 rounded-2xl border border-[#1e293b] shadow-sm">
+              <h3 className="text-base font-bold text-white mb-4 flex items-center gap-2 border-b border-[#1e293b] pb-3">
+                <Briefcase className="w-4 h-4 text-gray-400" /> Call To Action
+              </h3>
+              
               <div>
-                <h4 className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Public CTA</h4>
-                <p className="text-sm text-white mt-0.5">
-                  <strong>Download CV</strong> — Uses the Resume URL configured above.
+                <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Button Label</label>
+                <input
+                  type="text"
+                  name="cta1"
+                  value={formData.cta1 || ''}
+                  onChange={handleChange}
+                  placeholder="e.g., Download CV"
+                  className="w-full md:w-1/2 p-2.5 text-sm bg-[#0a0f1c] border border-[#1e293b] rounded-lg focus:border-[#14f195] text-white outline-none transition-colors"
+                />
+                <p className="text-[10px] text-gray-500 mt-2">
+                  This button appears in the public Hero section.
                 </p>
               </div>
             </div>

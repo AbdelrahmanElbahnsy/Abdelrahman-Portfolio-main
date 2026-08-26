@@ -270,7 +270,7 @@ const Hero = ({ splashDone = true }) => {
                                 className="btn-cv flex items-center gap-2 px-6 py-3 rounded-full bg-[var(--theme-accent)] text-black font-bold hover:scale-105 transition-transform shadow-[var(--theme-shadow-strong)]"
                             >
                                 <i className="fas fa-file-download"></i>
-                                <span>{t('Download CV')}</span>
+                                <span>{dataSource?.cta1 || t('Download CV')}</span>
                             </a>
                         </div>
                     </div>

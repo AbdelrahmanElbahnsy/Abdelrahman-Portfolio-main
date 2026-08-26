@@ -300,14 +300,18 @@ const AboutManager = () => {
 
       <form onSubmit={handleSubmit} className="px-2 flex flex-col xl:flex-row gap-10 lg:gap-12 items-start">
         
-        {/* MAIN EDITOR (65%) */}
-        <div className="flex-1 w-full min-w-[500px] max-w-4xl space-y-8">
+        {/* MAIN EDITOR (SINGLE COMPLETE CONTENT AREA) */}
+        <div className="flex-1 w-full min-w-[500px] max-w-4xl bg-[#0f172a] rounded-2xl border border-[#1e293b] p-6 sm:p-10 shadow-xl">
           
           {/* ABOUT IDENTITY */}
-          <section>
-            <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-4">About Identity</h3>
-            <div className="bg-[#0f172a] p-6 rounded-2xl border border-[#1e293b] space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="mb-12">
+            <div className="flex items-center gap-4 mb-8">
+              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-widest shrink-0">About Identity</span>
+              <div className="h-px bg-[#1e293b] flex-1"></div>
+            </div>
+            
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Subtitle</label>
                   <input
@@ -315,7 +319,7 @@ const AboutManager = () => {
                     name="subtitle"
                     value={formData.subtitle}
                     onChange={handleTextChange}
-                    className="w-full p-2.5 text-sm bg-[#0a0f1c] border border-[#1e293b] rounded-lg focus:border-[#14f195] text-white outline-none transition-colors"
+                    className="w-full p-3 text-sm bg-[#0a0f1c] border border-[#1e293b] rounded-lg focus:border-[#14f195] text-white outline-none transition-colors"
                   />
                 </div>
                 <div>
@@ -325,7 +329,7 @@ const AboutManager = () => {
                     name="title"
                     value={formData.title}
                     onChange={handleTextChange}
-                    className="w-full p-2.5 text-sm bg-[#0a0f1c] border border-[#1e293b] rounded-lg focus:border-[#14f195] text-white outline-none transition-colors"
+                    className="w-full p-3 text-sm bg-[#0a0f1c] border border-[#1e293b] rounded-lg focus:border-[#14f195] text-white outline-none transition-colors"
                   />
                 </div>
               </div>
@@ -336,117 +340,127 @@ const AboutManager = () => {
                 </div>
                 <textarea
                   name="lead"
-                  rows="3"
+                  rows="2"
                   value={formData.lead}
                   onChange={handleTextChange}
-                  className="w-full p-3 text-sm bg-[#0a0f1c] border border-[#1e293b] rounded-lg focus:border-[#14f195] text-white outline-none transition-colors resize-y leading-relaxed"
+                  className="w-full p-3 text-sm bg-[#0a0f1c] border border-[#1e293b] rounded-lg focus:border-[#14f195] text-white outline-none transition-colors resize-y leading-relaxed font-medium"
                 />
               </div>
             </div>
-          </section>
+          </div>
 
           {/* ABOUT STORY */}
-          <section>
-            <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-4">About Story</h3>
-            <div className="space-y-3">
+          <div className="mb-12">
+            <div className="flex items-center gap-4 mb-8">
+              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-widest shrink-0">About Story</span>
+              <div className="h-px bg-[#1e293b] flex-1"></div>
+            </div>
+
+            <div className="space-y-0">
               {formData.paragraphs.length === 0 && (
-                <div className="p-6 border border-dashed border-[#1e293b] rounded-xl text-gray-500 text-sm text-center">
+                <div className="py-8 text-gray-500 text-sm text-center">
                   No story paragraphs yet.
                 </div>
               )}
-              {formData.paragraphs.map((p, idx) => {
-                const isExpanded = expandedParagraph === idx;
-                const summary = p.text ? (p.text.length > 50 ? p.text.substring(0, 50) + '...' : p.text) : 'Empty paragraph...';
-                
-                return (
-                  <div key={idx} className={`border rounded-xl transition-colors ${isExpanded ? 'bg-[#0f172a] border-[#1e293b]' : 'bg-[#0a0f1c] border-transparent hover:border-[#1e293b]'}`}>
-                    {/* Accordion Header */}
-                    <div 
-                      className="px-5 py-3.5 flex justify-between items-center cursor-pointer group"
-                      onClick={() => setExpandedParagraph(isExpanded ? null : idx)}
-                    >
-                      <div className="flex items-center gap-4 overflow-hidden pr-4">
-                        <span className="text-[10px] font-mono font-bold text-[#14f195]">{String(idx + 1).padStart(2, '0')}</span>
-                        <span className="text-sm text-gray-300 truncate font-medium">{summary}</span>
+              {formData.paragraphs.map((p, idx) => (
+                <div key={idx} className="relative group">
+                  <div className="flex items-start gap-4 py-4">
+                    <div className="flex-1 flex flex-col gap-1.5 relative">
+                      <div className="flex items-center bg-[#0a0f1c] border border-[#1e293b] hover:border-gray-700 focus-within:border-[#14f195] rounded-lg overflow-hidden transition-colors">
+                        <span className="w-20 shrink-0 text-[10px] font-bold text-gray-500 uppercase tracking-wider text-center border-r border-[#1e293b] py-3 bg-[#0f172a]/50">Prefix</span>
+                        <textarea
+                          rows="1"
+                          value={p.text || ''}
+                          onChange={(e) => {
+                            e.target.style.height = 'auto';
+                            e.target.style.height = e.target.scrollHeight + 'px';
+                            handleArrayChange('paragraphs', idx, 'text', e.target.value);
+                          }}
+                          className="flex-1 p-3 text-sm bg-transparent text-gray-400 outline-none resize-none overflow-hidden"
+                          placeholder="E.g. I'm..."
+                        />
                       </div>
-                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
-                        <button type="button" onClick={() => moveArrayItem('paragraphs', idx, 'up')} disabled={idx === 0} className="p-1.5 text-gray-500 hover:text-white disabled:opacity-30"><ChevronUp className="w-4 h-4" /></button>
-                        <button type="button" onClick={() => moveArrayItem('paragraphs', idx, 'down')} disabled={idx === formData.paragraphs.length - 1} className="p-1.5 text-gray-500 hover:text-white disabled:opacity-30"><ChevronDown className="w-4 h-4" /></button>
-                        <button type="button" onClick={() => removeArrayItem('paragraphs', idx)} className="p-1.5 text-gray-500 hover:text-red-400 ml-2"><X className="w-4 h-4" /></button>
+                      <div className="flex items-center bg-[#0a0f1c] border border-[#1e293b] hover:border-gray-700 focus-within:border-[#14f195] rounded-lg overflow-hidden transition-colors">
+                        <span className="w-20 shrink-0 text-[10px] font-bold text-[#14f195] uppercase tracking-wider text-center border-r border-[#1e293b] py-3 bg-[#14f195]/5">Highlight</span>
+                        <textarea
+                          rows="1"
+                          value={p.highlight || ''}
+                          onChange={(e) => {
+                            e.target.style.height = 'auto';
+                            e.target.style.height = e.target.scrollHeight + 'px';
+                            handleArrayChange('paragraphs', idx, 'highlight', e.target.value);
+                          }}
+                          className="flex-1 p-3 text-sm bg-transparent text-white font-bold outline-none resize-none overflow-hidden"
+                          placeholder="E.g. Abdelrahman El-bahnsy"
+                        />
+                      </div>
+                      <div className="flex items-center bg-[#0a0f1c] border border-[#1e293b] hover:border-gray-700 focus-within:border-[#14f195] rounded-lg overflow-hidden transition-colors">
+                        <span className="w-20 shrink-0 text-[10px] font-bold text-gray-500 uppercase tracking-wider text-center border-r border-[#1e293b] py-3 bg-[#0f172a]/50">Suffix</span>
+                        <textarea
+                          rows="2"
+                          value={p.suffix || ''}
+                          onChange={(e) => {
+                            e.target.style.height = 'auto';
+                            e.target.style.height = e.target.scrollHeight + 'px';
+                            handleArrayChange('paragraphs', idx, 'suffix', e.target.value);
+                          }}
+                          className="flex-1 p-3 text-sm bg-transparent text-gray-400 outline-none resize-none overflow-hidden leading-relaxed"
+                          placeholder="E.g. , a Computer Science graduate..."
+                        />
                       </div>
                     </div>
-
-                    {/* Accordion Body */}
-                    {isExpanded && (
-                      <div className="px-5 pb-5 pt-2 border-t border-[#1e293b]/50 space-y-4">
-                        <div>
-                          <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Text</label>
-                          <textarea
-                            rows="2"
-                            value={p.text || ''}
-                            onChange={(e) => handleArrayChange('paragraphs', idx, 'text', e.target.value)}
-                            className="w-full p-2.5 text-sm bg-[#0a0f1c] border border-[#1e293b] rounded-lg focus:border-[#14f195] text-white outline-none resize-y"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Highlight</label>
-                          <input
-                            type="text"
-                            value={p.highlight || ''}
-                            onChange={(e) => handleArrayChange('paragraphs', idx, 'highlight', e.target.value)}
-                            className="w-full p-2.5 text-sm bg-[#0a0f1c] border border-[#1e293b] rounded-lg focus:border-[#14f195] text-white outline-none font-bold"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Suffix</label>
-                          <textarea
-                            rows="2"
-                            value={p.suffix || ''}
-                            onChange={(e) => handleArrayChange('paragraphs', idx, 'suffix', e.target.value)}
-                            className="w-full p-2.5 text-sm bg-[#0a0f1c] border border-[#1e293b] rounded-lg focus:border-[#14f195] text-white outline-none resize-y"
-                          />
-                        </div>
-                      </div>
-                    )}
+                    
+                    <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity pt-1 shrink-0">
+                      <button type="button" onClick={() => moveArrayItem('paragraphs', idx, 'up')} disabled={idx === 0} className="p-1.5 text-gray-500 hover:text-white disabled:opacity-30 bg-[#131b2c] rounded border border-[#1e293b]"><ChevronUp className="w-3 h-3" /></button>
+                      <button type="button" onClick={() => moveArrayItem('paragraphs', idx, 'down')} disabled={idx === formData.paragraphs.length - 1} className="p-1.5 text-gray-500 hover:text-white disabled:opacity-30 bg-[#131b2c] rounded border border-[#1e293b]"><ChevronDown className="w-3 h-3" /></button>
+                      <button type="button" onClick={() => removeArrayItem('paragraphs', idx)} className="p-1.5 text-red-400/70 hover:text-red-400 bg-[#131b2c] rounded border border-[#1e293b] mt-2"><X className="w-3 h-3" /></button>
+                    </div>
                   </div>
-                );
-              })}
+                  {idx < formData.paragraphs.length - 1 && (
+                    <div className="h-px w-full bg-[#1e293b] my-4"></div>
+                  )}
+                </div>
+              ))}
               
               <button
                 type="button"
                 onClick={() => addArrayItem('paragraphs', { text: '', highlight: '', suffix: '' })}
-                className="w-full py-3.5 border border-dashed border-[#1e293b] rounded-xl text-gray-400 hover:text-white hover:border-gray-500 hover:bg-[#0f172a] transition-colors font-bold text-sm flex items-center justify-center gap-2"
+                className="w-full mt-4 py-3.5 rounded-xl text-gray-400 hover:text-white hover:bg-[#131b2c] transition-colors font-bold text-sm flex items-center justify-center gap-2 border border-transparent hover:border-[#1e293b]"
               >
-                <Plus className="w-4 h-4" /> Add Paragraph
+                <Plus className="w-4 h-4" /> Add Story Paragraph
               </button>
             </div>
-          </section>
+          </div>
 
           {/* EXPERTISE BADGES */}
-          <section>
-            <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-4">Expertise Badges</h3>
-            <div className="space-y-2">
+          <div className="mb-12">
+            <div className="flex items-center gap-4 mb-6">
+              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-widest shrink-0">Expertise Badges</span>
+              <div className="h-px bg-[#1e293b] flex-1"></div>
+            </div>
+
+            <div className="space-y-1">
               {formData.badges.length === 0 && (
-                <div className="p-6 border border-dashed border-[#1e293b] rounded-xl text-gray-500 text-sm text-center">
+                <div className="py-4 text-gray-500 text-sm text-center">
                   No expertise badges yet.
                 </div>
               )}
               {formData.badges.map((b, idx) => (
-                <div key={idx} className="flex gap-3 items-center group">
-                  <div className="flex-grow grid grid-cols-[1fr_2fr] gap-3">
+                <div key={idx} className="flex gap-3 items-center group py-1">
+                  <div className="flex-grow grid grid-cols-[100px_1fr] sm:grid-cols-[150px_1fr] gap-3">
                     <input
                       type="text"
                       value={b.icon || ''}
                       onChange={(e) => handleArrayChange('badges', idx, 'icon', e.target.value)}
-                      placeholder="Icon (e.g. fa fa-shield-alt)"
-                      className="w-full p-2 text-sm bg-[#0a0f1c] border border-[#1e293b] rounded-lg focus:border-[#14f195] text-gray-400 font-mono outline-none"
+                      placeholder="Icon class"
+                      className="w-full p-2 text-sm bg-[#0a0f1c] border border-[#1e293b] hover:border-gray-700 focus:border-[#14f195] rounded-lg text-gray-400 font-mono outline-none transition-colors"
                     />
                     <input
                       type="text"
                       value={b.label || ''}
                       onChange={(e) => handleArrayChange('badges', idx, 'label', e.target.value)}
                       placeholder="Label"
-                      className="w-full p-2 text-sm bg-[#0a0f1c] border border-[#1e293b] rounded-lg focus:border-[#14f195] text-white font-bold outline-none"
+                      className="w-full p-2 text-sm bg-[#0a0f1c] border border-[#1e293b] hover:border-gray-700 focus:border-[#14f195] rounded-lg text-white font-bold outline-none transition-colors"
                     />
                   </div>
                   <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -459,31 +473,35 @@ const AboutManager = () => {
               <button
                 type="button"
                 onClick={() => addArrayItem('badges', { icon: '', label: '' })}
-                className="py-2.5 px-4 text-gray-400 hover:text-white transition-colors font-bold text-sm flex items-center gap-2 mt-2"
+                className="py-2.5 px-3 text-gray-400 hover:text-white hover:bg-[#131b2c] rounded-lg transition-colors font-bold text-sm flex items-center gap-2 mt-2"
               >
                 <Plus className="w-4 h-4" /> Add Badge
               </button>
             </div>
-          </section>
+          </div>
 
           {/* TECHNICAL PROFILE */}
-          <section>
-            <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-4">Technical Profile</h3>
-            <div className="space-y-2">
+          <div>
+            <div className="flex items-center gap-4 mb-6">
+              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-widest shrink-0">Technical Profile</span>
+              <div className="h-px bg-[#1e293b] flex-1"></div>
+            </div>
+
+            <div className="space-y-1">
               {formData.terminalItems.length === 0 && (
-                <div className="p-6 border border-dashed border-[#1e293b] rounded-xl text-gray-500 text-sm text-center">
+                <div className="py-4 text-gray-500 text-sm text-center">
                   No technical profile items yet.
                 </div>
               )}
               {formData.terminalItems.length > 0 && (
-                <div className="grid grid-cols-[1fr_2.5fr_100px] gap-3 px-1 pb-2 border-b border-[#1e293b] text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                <div className="grid grid-cols-[1fr_2.5fr_80px] gap-3 px-1 pb-2 border-b border-[#1e293b] text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">
                   <div>Key</div>
                   <div>Value</div>
                   <div className="text-center">Action</div>
                 </div>
               )}
               {formData.terminalItems.map((item, idx) => (
-                <div key={idx} className="grid grid-cols-[1fr_2.5fr_100px] gap-3 items-center group">
+                <div key={idx} className="grid grid-cols-[1fr_2.5fr_80px] gap-3 items-center group py-1">
                   <input
                     type="text"
                     value={item.key || ''}
@@ -499,21 +517,21 @@ const AboutManager = () => {
                     className="w-full p-2 text-sm bg-[#0a0f1c] border border-transparent hover:border-[#1e293b] focus:border-[#14f195] focus:bg-[#131b2c] rounded-lg text-white font-mono outline-none transition-colors"
                   />
                   <div className="flex justify-center items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button type="button" onClick={() => moveArrayItem('terminalItems', idx, 'up')} disabled={idx === 0} className="p-1.5 text-gray-500 hover:text-white disabled:opacity-30"><ChevronUp className="w-4 h-4" /></button>
-                    <button type="button" onClick={() => moveArrayItem('terminalItems', idx, 'down')} disabled={idx === formData.terminalItems.length - 1} className="p-1.5 text-gray-500 hover:text-white disabled:opacity-30"><ChevronDown className="w-4 h-4" /></button>
-                    <button type="button" onClick={() => removeArrayItem('terminalItems', idx)} className="p-1.5 text-gray-500 hover:text-red-400 ml-1"><X className="w-4 h-4" /></button>
+                    <button type="button" onClick={() => moveArrayItem('terminalItems', idx, 'up')} disabled={idx === 0} className="p-1 text-gray-500 hover:text-white disabled:opacity-30"><ChevronUp className="w-4 h-4" /></button>
+                    <button type="button" onClick={() => moveArrayItem('terminalItems', idx, 'down')} disabled={idx === formData.terminalItems.length - 1} className="p-1 text-gray-500 hover:text-white disabled:opacity-30"><ChevronDown className="w-4 h-4" /></button>
+                    <button type="button" onClick={() => removeArrayItem('terminalItems', idx)} className="p-1 text-gray-500 hover:text-red-400 ml-1"><X className="w-4 h-4" /></button>
                   </div>
                 </div>
               ))}
               <button
                 type="button"
                 onClick={() => addArrayItem('terminalItems', { key: '', value: '' })}
-                className="py-2.5 px-4 text-gray-400 hover:text-white transition-colors font-bold text-sm flex items-center gap-2 mt-2"
+                className="py-2.5 px-3 text-gray-400 hover:text-white hover:bg-[#131b2c] rounded-lg transition-colors font-bold text-sm flex items-center gap-2 mt-2"
               >
                 <Plus className="w-4 h-4" /> Add Technical Item
               </button>
             </div>
-          </section>
+          </div>
 
         </div>
 

@@ -7,6 +7,7 @@ import { skillsSchema, heroSchema, journeySchema, aboutSchema } from '../cms/sch
 const OverviewDashboard = lazy(() => import('../components/Dashboard/OverviewDashboard'));
 const AnalyticsDashboard = lazy(() => import('../components/Dashboard/AnalyticsDashboard'));
 const ProjectsManager = lazy(() => import('../components/Dashboard/ProjectsManager'));
+const SkillsManager = lazy(() => import('../components/Dashboard/SkillsManager'));
 const AccountCenter = lazy(() => import('../components/Dashboard/AccountCenter'));
 const GenericListManager = lazy(() => import('../components/Dashboard/GenericListManager'));
 const ContactManager = lazy(() => import('../components/Dashboard/ContactManager'));
@@ -35,7 +36,7 @@ const Admin = () => {
           <Route path="projects" element={<ProjectsManager />} />
           <Route 
             path="skills" 
-            element={<GenericListManager title="Skills & Tools" collectionName="skills" fields={skillsSchema.fields} />} 
+            element={<SkillsManager />} 
           />
           <Route 
             path="certifications" 

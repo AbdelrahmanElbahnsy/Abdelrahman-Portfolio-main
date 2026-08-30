@@ -175,8 +175,8 @@ const JourneyManager = () => {
                   <span className="text-sm font-medium text-gray-500">No phases available yet.</span>
                 </div>
               ) : (
-                <div className="overflow-x-auto scrollbar-none pb-4 pt-2 px-1 sm:px-2 md:px-4">
-                  <div className="flex items-start justify-between min-w-max md:min-w-full mx-auto max-w-[1200px]">
+                <div className="overflow-x-hidden md:overflow-x-auto scrollbar-none pb-4 pt-2 px-1 sm:px-2 md:px-4">
+                  <div className="flex flex-col md:flex-row items-stretch md:items-start justify-between min-w-full mx-auto max-w-[1200px]">
                     {items.map((item, idx) => {
                       const isActive = activePhaseId === item.id;
                       const nextItem = items[idx + 1];
@@ -186,16 +186,16 @@ const JourneyManager = () => {
                         <div 
                           key={item.id}
                           onClick={() => handleEdit(item)}
-                          className="flex-1 flex flex-col items-center group cursor-pointer relative min-w-[100px] sm:min-w-[120px] max-w-[240px]"
+                          className="w-full md:flex-1 flex flex-row md:flex-col items-stretch md:items-center group cursor-pointer relative min-h-[70px] md:min-h-0 min-w-0 md:min-w-[120px] max-w-full md:max-w-[240px]"
                           title={item.title}
                         >
                           {/* Node and Connectors Container */}
-                          <div className="w-full flex items-center mb-4 relative">
-                            {/* Left Connector */}
-                            <div className={`flex-1 h-[2px] transition-colors duration-200 ${idx === 0 ? 'opacity-0' : (activePhaseId === prevItem?.id ? 'bg-gradient-to-r from-[#334155] to-[#14f195]/40' : 'bg-[#334155]')}`}></div>
+                          <div className="flex flex-col md:flex-row items-center w-8 md:w-full md:mb-4 relative shrink-0">
+                            {/* Top/Left Connector */}
+                            <div className={`flex-1 w-[2px] md:w-auto md:h-[2px] transition-colors duration-200 ${idx === 0 ? 'opacity-0' : (activePhaseId === prevItem?.id ? 'bg-gradient-to-b md:bg-gradient-to-r from-[#334155] to-[#14f195]/40' : 'bg-[#334155]')}`}></div>
                             
-                            {/* Hover Edit Affordance */}
-                            <div className="absolute -top-5 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-[#14f195]">
+                            {/* Hover Edit Affordance (Mobile: left, Desktop: top) */}
+                            <div className="absolute md:-top-5 left-10 md:left-1/2 md:-translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-[#14f195] z-20">
                               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                               </svg>
@@ -204,12 +204,12 @@ const JourneyManager = () => {
                             {/* Node */}
                             <div className={`w-3 h-3 shrink-0 rounded-full z-10 transition-all duration-200 group-hover:scale-125 ${isActive ? 'bg-[#14f195] shadow-[0_0_10px_rgba(20,241,149,0.3)]' : 'bg-[#1e293b] border-2 border-[#334155] group-hover:border-[#14f195]/50 group-hover:bg-[#14f195]/10'}`}></div>
                             
-                            {/* Right Connector */}
-                            <div className={`flex-1 h-[2px] transition-colors duration-200 ${idx === items.length - 1 ? 'opacity-0' : (isActive ? 'bg-gradient-to-r from-[#14f195]/40 to-[#334155]' : 'bg-[#334155]')}`}></div>
+                            {/* Bottom/Right Connector */}
+                            <div className={`flex-1 w-[2px] md:w-auto md:h-[2px] transition-colors duration-200 ${idx === items.length - 1 ? 'opacity-0' : (isActive ? 'bg-gradient-to-b md:bg-gradient-to-r from-[#14f195]/40 to-[#334155]' : 'bg-[#334155]')}`}></div>
                           </div>
                           
                           {/* Labels */}
-                          <div className="flex flex-col items-center text-center w-full px-2 transition-colors duration-200">
+                          <div className="flex flex-col justify-center items-start md:items-center text-left md:text-center w-full px-4 md:px-2 py-3 md:py-0 transition-colors duration-200 min-w-0">
                             <span className={`text-[10px] font-mono mb-1 ${isActive ? 'text-[#14f195]' : 'text-gray-500 group-hover:text-[#14f195]/70'}`}>
                               {String(item.order).padStart(2, '0')}
                             </span>

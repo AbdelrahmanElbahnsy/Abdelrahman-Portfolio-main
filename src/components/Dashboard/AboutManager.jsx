@@ -366,8 +366,8 @@ const AboutManager = () => {
                 <div key={idx} className="relative group">
                   <div className="flex items-start gap-4 py-4">
                     <div className="flex-1 flex flex-col gap-1.5 relative">
-                      <div className="flex items-center bg-[#0a0f1c] border border-[#1e293b] hover:border-gray-700 focus-within:border-[#14f195] rounded-lg overflow-hidden transition-colors">
-                        <span className="w-20 shrink-0 text-[10px] font-bold text-gray-500 uppercase tracking-wider text-center border-r border-[#1e293b] py-3 bg-[#0f172a]/50">Prefix</span>
+                      <div className="flex flex-col sm:flex-row sm:items-center bg-[#0a0f1c] border border-[#1e293b] hover:border-gray-700 focus-within:border-[#14f195] rounded-lg overflow-hidden transition-colors">
+                        <span className="w-full sm:w-20 shrink-0 text-[10px] font-bold text-gray-500 uppercase tracking-wider text-center border-b sm:border-b-0 sm:border-r border-[#1e293b] py-2 sm:py-3 bg-[#0f172a]/50">Prefix</span>
                         <textarea
                           rows="1"
                           value={p.text || ''}
@@ -376,12 +376,12 @@ const AboutManager = () => {
                             e.target.style.height = e.target.scrollHeight + 'px';
                             handleArrayChange('paragraphs', idx, 'text', e.target.value);
                           }}
-                          className="flex-1 p-3 text-sm bg-transparent text-gray-400 outline-none resize-none overflow-hidden"
+                          className="flex-1 w-full min-w-0 p-3 text-sm bg-transparent text-gray-400 outline-none resize-none overflow-hidden"
                           placeholder="E.g. I'm..."
                         />
                       </div>
-                      <div className="flex items-center bg-[#0a0f1c] border border-[#1e293b] hover:border-gray-700 focus-within:border-[#14f195] rounded-lg overflow-hidden transition-colors">
-                        <span className="w-20 shrink-0 text-[10px] font-bold text-[#14f195] uppercase tracking-wider text-center border-r border-[#1e293b] py-3 bg-[#14f195]/5">Highlight</span>
+                      <div className="flex flex-col sm:flex-row sm:items-center bg-[#0a0f1c] border border-[#1e293b] hover:border-gray-700 focus-within:border-[#14f195] rounded-lg overflow-hidden transition-colors">
+                        <span className="w-full sm:w-20 shrink-0 text-[10px] font-bold text-[#14f195] uppercase tracking-wider text-center border-b sm:border-b-0 sm:border-r border-[#1e293b] py-2 sm:py-3 bg-[#14f195]/5">Highlight</span>
                         <textarea
                           rows="1"
                           value={p.highlight || ''}
@@ -390,12 +390,12 @@ const AboutManager = () => {
                             e.target.style.height = e.target.scrollHeight + 'px';
                             handleArrayChange('paragraphs', idx, 'highlight', e.target.value);
                           }}
-                          className="flex-1 p-3 text-sm bg-transparent text-white font-bold outline-none resize-none overflow-hidden"
+                          className="flex-1 w-full min-w-0 p-3 text-sm bg-transparent text-white font-bold outline-none resize-none overflow-hidden"
                           placeholder="E.g. Abdelrahman El-bahnsy"
                         />
                       </div>
-                      <div className="flex items-center bg-[#0a0f1c] border border-[#1e293b] hover:border-gray-700 focus-within:border-[#14f195] rounded-lg overflow-hidden transition-colors">
-                        <span className="w-20 shrink-0 text-[10px] font-bold text-gray-500 uppercase tracking-wider text-center border-r border-[#1e293b] py-3 bg-[#0f172a]/50">Suffix</span>
+                      <div className="flex flex-col sm:flex-row sm:items-center bg-[#0a0f1c] border border-[#1e293b] hover:border-gray-700 focus-within:border-[#14f195] rounded-lg overflow-hidden transition-colors">
+                        <span className="w-full sm:w-20 shrink-0 text-[10px] font-bold text-gray-500 uppercase tracking-wider text-center border-b sm:border-b-0 sm:border-r border-[#1e293b] py-2 sm:py-3 bg-[#0f172a]/50">Suffix</span>
                         <textarea
                           rows="3"
                           value={p.suffix || ''}
@@ -404,7 +404,7 @@ const AboutManager = () => {
                             e.target.style.height = e.target.scrollHeight + 'px';
                             handleArrayChange('paragraphs', idx, 'suffix', e.target.value);
                           }}
-                          className="flex-1 p-3 text-sm bg-transparent text-gray-400 outline-none resize-none overflow-hidden leading-relaxed"
+                          className="flex-1 w-full min-w-0 p-3 text-sm bg-transparent text-gray-400 outline-none resize-none overflow-hidden leading-relaxed"
                           placeholder="E.g. , a Computer Science graduate..."
                         />
                       </div>
@@ -446,8 +446,8 @@ const AboutManager = () => {
                 </div>
               )}
               {formData.badges.map((b, idx) => (
-                <div key={idx} className="flex gap-3 items-center group py-1">
-                  <div className="flex-grow grid grid-cols-[100px_1fr] sm:grid-cols-[150px_1fr] gap-3">
+                <div key={idx} className="flex flex-col sm:flex-row gap-3 sm:items-center group py-2 sm:py-1 border-b border-[#1e293b]/50 sm:border-0">
+                  <div className="flex-grow grid grid-cols-1 sm:grid-cols-[150px_1fr] gap-2 sm:gap-3">
                     <input
                       type="text"
                       value={b.icon || ''}
@@ -463,7 +463,7 @@ const AboutManager = () => {
                       className="w-full p-2 text-sm bg-[#0a0f1c] border border-[#1e293b] hover:border-gray-700 focus:border-[#14f195] rounded-lg text-white font-bold outline-none transition-colors"
                     />
                   </div>
-                  <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex items-center justify-end gap-1 sm:gap-0.5 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity mt-1 sm:mt-0">
                     <button type="button" onClick={() => moveArrayItem('badges', idx, 'up')} disabled={idx === 0} className="p-1.5 text-gray-500 hover:text-white disabled:opacity-30"><ChevronUp className="w-4 h-4" /></button>
                     <button type="button" onClick={() => moveArrayItem('badges', idx, 'down')} disabled={idx === formData.badges.length - 1} className="p-1.5 text-gray-500 hover:text-white disabled:opacity-30"><ChevronDown className="w-4 h-4" /></button>
                     <button type="button" onClick={() => removeArrayItem('badges', idx)} className="p-1.5 text-gray-500 hover:text-red-400 ml-1"><X className="w-4 h-4" /></button>
@@ -494,14 +494,14 @@ const AboutManager = () => {
                 </div>
               )}
               {formData.terminalItems.length > 0 && (
-                <div className="grid grid-cols-[120px_1fr_80px] sm:grid-cols-[150px_1fr_80px] gap-3 px-1 pb-2 border-b border-[#1e293b] text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">
+                <div className="hidden sm:grid sm:grid-cols-[150px_1fr_80px] gap-3 px-1 pb-2 border-b border-[#1e293b] text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">
                   <div>Key</div>
                   <div>Value</div>
                   <div className="text-center">Action</div>
                 </div>
               )}
               {formData.terminalItems.map((item, idx) => (
-                <div key={idx} className="grid grid-cols-[120px_1fr_80px] sm:grid-cols-[150px_1fr_80px] gap-3 items-center group py-1">
+                <div key={idx} className="flex flex-col sm:grid sm:grid-cols-[150px_1fr_80px] gap-2 sm:gap-3 sm:items-center group py-3 sm:py-1 border-b border-[#1e293b]/50 sm:border-0">
                   <input
                     type="text"
                     value={item.key || ''}
@@ -516,7 +516,7 @@ const AboutManager = () => {
                     placeholder="value"
                     className="w-full p-2 text-sm bg-[#0a0f1c] border border-transparent hover:border-[#1e293b] focus:border-[#14f195] focus:bg-[#131b2c] rounded-lg text-white font-mono outline-none transition-colors"
                   />
-                  <div className="flex justify-center items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex justify-end sm:justify-center items-center gap-1 sm:gap-0.5 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity mt-1 sm:mt-0">
                     <button type="button" onClick={() => moveArrayItem('terminalItems', idx, 'up')} disabled={idx === 0} className="p-1 text-gray-500 hover:text-white disabled:opacity-30"><ChevronUp className="w-4 h-4" /></button>
                     <button type="button" onClick={() => moveArrayItem('terminalItems', idx, 'down')} disabled={idx === formData.terminalItems.length - 1} className="p-1 text-gray-500 hover:text-white disabled:opacity-30"><ChevronDown className="w-4 h-4" /></button>
                     <button type="button" onClick={() => removeArrayItem('terminalItems', idx)} className="p-1 text-gray-500 hover:text-red-400 ml-1"><X className="w-4 h-4" /></button>

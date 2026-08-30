@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
 import UsersManager from './UsersManager';
+import AppearanceManager from './AppearanceManager';
 import { useImageUpload } from '../../cms/hooks/useImageUpload';
 import { updatePassword, EmailAuthProvider, reauthenticateWithCredential, updateProfile } from 'firebase/auth';
 import { 
@@ -212,7 +213,6 @@ const AccountCenter = () => {
   const currentUserRole = adminData?.role || 'viewer';
 
   const [activeTab, setActiveTab] = useState('overview');
-  const [isDarkMode, setIsDarkMode] = useState(true);
   
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [isSavingAccount, setIsSavingAccount] = useState(false);
@@ -231,13 +231,6 @@ const AccountCenter = () => {
       if (unsubscribeAdmin) unsubscribeAdmin();
     };
   }, [subscribeAdmin, user?.uid]);
-
-  useEffect(() => {
-    if (typeof document !== 'undefined') {
-      const isDark = !document.documentElement.classList.contains('light-theme');
-      setIsDarkMode(isDark);
-    }
-  }, []);
 
   const handleAccountSave = async (formData, avatarFile, uploadImage) => {
     setIsSavingAccount(true);
@@ -264,20 +257,6 @@ const AccountCenter = () => {
     } finally {
       setIsSavingAccount(false);
     }
-  };
-
-  const handleThemeToggle = () => {
-    const newIsDark = !isDarkMode;
-    setIsDarkMode(newIsDark);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('portfolio-theme', newIsDark ? 'dark' : 'light');
-      if (newIsDark) {
-        document.documentElement.classList.remove('light-theme');
-      } else {
-        document.documentElement.classList.add('light-theme');
-      }
-    }
-    toast.success(`Dashboard theme updated to ${newIsDark ? 'Dark' : 'Light'} Mode`);
   };
 
   const handlePasswordUpdate = async (e) => {
@@ -484,29 +463,7 @@ const AccountCenter = () => {
           )}
 
           {activeTab === 'appearance' && (
-            <div className="space-y-6 animate-in fade-in duration-300">
-              <div className="mb-8">
-                <h2 className="text-2xl font-bold text-white mb-2 tracking-tight">Appearance Settings</h2>
-                <p className="text-gray-400 text-sm">Control the display mode of the AdminOS dashboard only.</p>
-              </div>
-
-              <div className="bg-[#0a0f1c] border border-[#1e293b] rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6">
-                <div>
-                  <h3 className="text-white font-bold mb-1">Interface Theme</h3>
-                  <p className="text-gray-400 text-sm">Toggle between Dark Mode (default) and Light Mode for the Admin panel.</p>
-                </div>
-                <button
-                  onClick={handleThemeToggle}
-                  className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-all border ${
-                    isDarkMode 
-                      ? 'bg-[#1e293b] text-white border-[#334155] hover:bg-[#334155]' 
-                      : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  {isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-                </button>
-              </div>
-            </div>
+            <AppearanceManager currentUserRole={currentUserRole} />
           )}
 
           {activeTab === 'security' && (

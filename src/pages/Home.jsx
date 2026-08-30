@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, lazy, Suspense } from 'react';
+import { useLanguage } from '../i18n/LanguageContext';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import Hero from '../components/sections/Hero';
@@ -16,6 +17,7 @@ const Certifications = lazy(() => import('../components/sections/Certifications'
 const Contact = lazy(() => import('../components/sections/Contact'));
 
 function Home({ splashDone = true }) {
+  const { language } = useLanguage();
   const hasTrackedVisitRef = useRef(false);
   const mainRef = useRef(null);
 
@@ -34,7 +36,10 @@ function Home({ splashDone = true }) {
   }, []);
 
   return (
-    <div className="page-wrapper min-h-screen flex flex-col relative">
+    <div 
+      className="page-wrapper min-h-screen flex flex-col relative portfolio-theme-root" 
+      dir={language === 'ar' ? 'rtl' : 'ltr'}
+    >
       {/* Global Animated Background */}
       <AnimatedBackground />
 

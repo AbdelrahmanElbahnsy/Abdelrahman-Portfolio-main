@@ -401,8 +401,8 @@ html {}
     .skills-circular-row .relative {
       width: 120px !important;
       height: 120px !important;
-      margin-left: auto !important;
-      margin-right: auto !important;
+      margin-inline-start: auto !important;
+      margin-inline-end: auto !important;
     }
     
     .skills-circular-row .text-3xl {
@@ -655,3 +655,20 @@ header nav > div:last-child {
   background-color: #263550;
 }
 
+
+
+/* === PORTFOLIO ISOLATION === */
+.portfolio-theme-root {
+  --theme-bg: var(--portfolio-background, var(--clr-bg));
+  --theme-surface: var(--portfolio-surface, rgba(15, 20, 30, 0.5));
+  --theme-text: var(--portfolio-text, #ffffff);
+  --theme-text-muted: var(--portfolio-muted, rgba(255, 255, 255, 0.5));
+  --theme-border: var(--portfolio-border, rgba(255, 255, 255, 0.05));
+  --theme-accent: var(--portfolio-primary, var(--clr-accent));
+  --theme-accent-hover: var(--portfolio-secondary, #eacda3);
+  --theme-border-gold: var(--portfolio-primary, rgba(200, 162, 110, 0.35));
+  --theme-nav-border: var(--portfolio-primary, rgba(200, 162, 110, 0.35));
+  --theme-nav-active-bg: var(--portfolio-primary, var(--clr-accent));
+  background-color: var(--theme-bg);
+  color: var(--theme-text);
+}

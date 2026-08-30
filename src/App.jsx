@@ -2,6 +2,7 @@ import React, { Suspense, lazy, useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './routes/ProtectedRoute';
 import SplashScreen from './components/ui/SplashScreen';
+import { AppearanceProvider } from './context/AppearanceContext';
 
 /* ─── Lazy Imports ───────────────────────────────────────────────────────── */
 const Home = lazy(() => import('./pages/Home'));
@@ -26,21 +27,23 @@ function App() {
   return (
     <>
       {/* Mount routes unconditionally so they render behind the splash screen */}
-      <Suspense fallback={null}>
-        <Routes>
-          <Route path="/" element={<Home splashDone={splashDone} />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route
-            path="/admin/*"
-            element={
-              <ProtectedRoute>
-                <Admin />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </Suspense>
+      <AppearanceProvider>
+        <Suspense fallback={null}>
+          <Routes>
+            <Route path="/" element={<Home splashDone={splashDone} />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route
+              path="/admin/*"
+              element={
+                <ProtectedRoute>
+                  <Admin />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </Suspense>
+      </AppearanceProvider>
 
       {/* Splash stays overlaid on top until BOTH animation + chunk load finish */}
       {!splashDone && (

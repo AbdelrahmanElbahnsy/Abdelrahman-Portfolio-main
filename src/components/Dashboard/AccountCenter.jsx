@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
+import UsersManager from './UsersManager';
 import { useImageUpload } from '../../cms/hooks/useImageUpload';
 import ImageUploader from '../../cms/components/ImageUploader';
 import { auth } from '../../services/firebase';
@@ -8,7 +9,7 @@ import { updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 
 import { 
   User, Shield, Palette, AlertTriangle, 
   CheckCircle2, Clock, Calendar, Lock,
-  LogOut, Activity, Edit2, X, FileText, Image as ImageIcon, Link as LinkIcon
+  LogOut, Activity, Edit2, X, FileText, Image as ImageIcon, Link as LinkIcon, Users
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -358,6 +359,10 @@ const ProfileEditorModal = ({ isOpen, onClose, profileData, onSave, isSaving }) 
 const AccountCenter = () => {
   const { user, logout } = useAuth();
   
+  // Real-time listener for current user's role
+  const { data: adminData, subscribe: subscribeAdmin } = useFirestoreSingleDoc('admins', user?.uid);
+  const currentUserRole = adminData?.role || 'viewer';
+
   const { 
     data: profileData, 
     loading: profileLoading, 
@@ -378,13 +383,18 @@ const AccountCenter = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
 
-  // Subscribe to real-time updates from Firestore profile/main
+  // Subscribe to real-time updates from Firestore profile/main and admins
   useEffect(() => {
-    const unsubscribe = subscribe();
+    const unsubscribeProfile = subscribe();
+    let unsubscribeAdmin;
+    if (user?.uid) {
+      unsubscribeAdmin = subscribeAdmin();
+    }
     return () => {
-      if (unsubscribe) unsubscribe();
+      if (unsubscribeProfile) unsubscribeProfile();
+      if (unsubscribeAdmin) unsubscribeAdmin();
     };
-  }, [subscribe]);
+  }, [subscribe, subscribeAdmin, user?.uid]);
 
   // Initialize theme from localStorage/DOM
   useEffect(() => {
@@ -587,30 +597,39 @@ const AccountCenter = () => {
             <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-gray-500 mb-3 block px-4">
               Account Settings
             </span>
-            {TABS.map((tab) => {
-              const isActive = activeTab === tab.id;
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`
-                    w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all outline-none
-                    ${isActive 
-                      ? tab.danger 
-                        ? 'bg-red-500/10 text-red-400 border border-red-500/20' 
-                        : 'bg-[#1e293b] text-white border border-[#334155] shadow-sm'
-                      : tab.danger 
-                        ? 'text-red-400/70 hover:bg-red-500/5 hover:text-red-400 border border-transparent'
-                        : 'text-gray-400 hover:bg-[#1e293b]/50 hover:text-gray-300 border border-transparent'
-                    }
-                  `}
-                >
-                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? '' : 'opacity-70'}`} />
-                  {tab.label}
-                </button>
-              );
-            })}
+            
+            {/* Dynamic Tabs based on Role */}
+            {(() => {
+              const displayTabs = [...TABS];
+              if (currentUserRole === 'owner' || currentUserRole === 'admin') {
+                displayTabs.splice(1, 0, { id: 'users', label: 'Users & Access', icon: Users });
+              }
+              
+              return displayTabs.map((tab) => {
+                const isActive = activeTab === tab.id;
+                const Icon = tab.icon;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`
+                      w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all outline-none
+                      ${isActive 
+                        ? tab.danger 
+                          ? 'bg-red-500/10 text-red-400 border border-red-500/20' 
+                          : 'bg-[#1e293b] text-white border border-[#334155] shadow-sm'
+                        : tab.danger 
+                          ? 'text-red-400/70 hover:bg-red-500/5 hover:text-red-400 border border-transparent'
+                          : 'text-gray-400 hover:bg-[#1e293b]/50 hover:text-gray-300 border border-transparent'
+                      }
+                    `}
+                  >
+                    <Icon className={`w-4 h-4 shrink-0 ${isActive ? '' : 'opacity-70'}`} />
+                    {tab.label}
+                  </button>
+                );
+              });
+            })()}
           </nav>
         </div>
 
@@ -657,6 +676,11 @@ const AccountCenter = () => {
                 </div>
               </div>
             </div>
+          )}
+
+          {/* TAB 1.5: USERS & ACCESS */}
+          {activeTab === 'users' && (currentUserRole === 'owner' || currentUserRole === 'admin') && (
+            <UsersManager currentUserRole={currentUserRole} />
           )}
 
           {/* TAB 2: APPEARANCE */}

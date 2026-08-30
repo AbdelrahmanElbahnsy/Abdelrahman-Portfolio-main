@@ -3,52 +3,78 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Dynamic Admin Check: Safely evaluates role without circular dependency
+    // ─── ROLE-BASED ACCESS CONTROL (RBAC) FUNCTIONS ──────────────────────────
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function getRole() {
+      // Safely fetch role from the admins collection (returns null if doesn't exist)
+      return isAuthenticated() && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        ? get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role
+        : null;
+    }
+
+    function isOwner() {
+      return getRole() == 'owner';
+    }
+
     function isAdmin() {
-      return request.auth != null && 
-             exists(/databases/$(database)/documents/admins/$(request.auth.uid)) &&
-             get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'admin';
+      return getRole() == 'admin' || isOwner();
     }
 
-    // Admins Collection: Secure RBAC Management
+    function isEditor() {
+      return getRole() == 'editor' || isAdmin();
+    }
+
+    function isViewer() {
+      // If they have any valid role, they are at least a viewer
+      return getRole() in ['owner', 'admin', 'editor', 'viewer'];
+    }
+
+    // ─── ADMINS & USERS COLLECTION ───────────────────────────────────────────
     match /admins/{userId} {
-      // Users can read their own status; Admins can read all
-      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      // Users can read their own role; Owners and Admins can read all roles.
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
       
-      // Admins can create new admins
-      allow create: if isAdmin() && request.resource.data.role == 'admin';
-      
-      // PREVENT SELF-LOCKOUT: Admins can update/delete others, but cannot delete or demote themselves.
-      allow update: if isAdmin() && (
-        request.auth.uid != userId || request.resource.data.role == 'admin'
-      );
-      allow delete: if isAdmin() && request.auth.uid != userId;
+      // All writes to /admins are strictly disabled from the client.
+      // Modifying roles/access MUST go through the secure Vercel API (/api/admin/users)
+      // This prevents ANY client-side privilege escalation or accidental lockout.
+      allow write: if false; 
     }
 
-    // CMS Content Collections: Public visitors can ONLY read. Admins can read, create, update, delete.
-    match /hero/{document=**} { allow read: if true; allow write: if isAdmin(); }
-    match /about/{document=**} { allow read: if true; allow write: if isAdmin(); }
-    match /skills/{document=**} { allow read: if true; allow write: if isAdmin(); }
-    match /journey/{document=**} { allow read: if true; allow write: if isAdmin(); }
-    match /projects/{document=**} { allow read: if true; allow write: if isAdmin(); }
-    match /certifications/{document=**} { allow read: if true; allow write: if isAdmin(); }
-    match /socials/{document=**} { allow read: if true; allow write: if isAdmin(); }
-    match /contact/{document=**} { allow read: if true; allow write: if isAdmin(); }
-    match /navbarItems/{document=**} { allow read: if true; allow write: if isAdmin(); }
-    match /profile/{document=**} { allow read: if true; allow write: if isAdmin(); }
+    // ─── CMS PORTFOLIO CONTENT (PUBLIC READ, EDITOR+ WRITE) ──────────────────
+    // Public visitors can ONLY read. 
+    // Owners, Admins, and Editors can read, create, update, delete.
+    
+    match /hero/{document=**} { allow read: if true; allow write: if isEditor(); }
+    match /about/{document=**} { allow read: if true; allow write: if isEditor(); }
+    match /skills/{document=**} { allow read: if true; allow write: if isEditor(); }
+    match /journey/{document=**} { allow read: if true; allow write: if isEditor(); }
+    match /projects/{document=**} { allow read: if true; allow write: if isEditor(); }
+    match /certifications/{document=**} { allow read: if true; allow write: if isEditor(); }
+    match /socials/{document=**} { allow read: if true; allow write: if isEditor(); }
+    match /contact/{document=**} { allow read: if true; allow write: if isEditor(); }
+    match /navbarItems/{document=**} { allow read: if true; allow write: if isEditor(); }
+    match /profile/{document=**} { allow read: if true; allow write: if isEditor(); }
 
-    // Analytics (visits): Public Create-Only. Admin Read/Update/Delete.
+    // ─── ANALYTICS ───────────────────────────────────────────────────────────
     match /visits/{document=**} {
+      // Public can record visits
       allow create: if true;
+      // Only Admin+ can read/modify analytics
       allow read, update, delete: if isAdmin();
     }
 
-    // Activity Log: Strict Admins only (Internal audit trail)
+    // ─── INTERNAL AUDIT TRAIL ────────────────────────────────────────────────
     match /activityLog/{document=**} {
+      // Only Admin+ can read/write activity logs
       allow read, write: if isAdmin();
     }
 
-    // Default deny for anything else to prevent data leaks
+    // ─── DEFAULT DENY ────────────────────────────────────────────────────────
+    // Safely block access to any other collections not explicitly defined above
     match /{document=**} {
       allow read, write: if false;
     }

@@ -8,13 +8,12 @@ import { updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 
 import { 
   User, Shield, Palette, AlertTriangle, 
   CheckCircle2, Clock, Calendar, Lock,
-  LogOut, ShieldAlert, Activity, FileText, Image as ImageIcon
+  LogOut, Activity, Edit2, X, FileText, Image as ImageIcon, Link as LinkIcon
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const TABS = [
   { id: 'overview', label: 'Overview', icon: Activity },
-  { id: 'personal', label: 'Personal Info', icon: User },
   { id: 'appearance', label: 'Appearance', icon: Palette },
   { id: 'security', label: 'Security', icon: Shield },
   { id: 'danger', label: 'Danger Zone', icon: AlertTriangle, danger: true },
@@ -55,17 +54,11 @@ const SectionHeader = ({ number, title }) => (
   </div>
 );
 
-const AccountCenter = () => {
-  // ─── HOOKS ─────────────────────────────────────────────────────────────────
-  const { user, logout } = useAuth();
-  
-  const { 
-    data: profileData, 
-    loading: profileLoading, 
-    setDocData, 
-    subscribe 
-  } = useFirestoreSingleDoc('profile', 'main');
 
+// ─────────────────────────────────────────────────────────────────────────────
+// EDITOR MODAL
+// ─────────────────────────────────────────────────────────────────────────────
+const ProfileEditorModal = ({ isOpen, onClose, profileData, onSave, isSaving }) => {
   const {
     imageFile: avatarFile,
     isUploading: isAvatarUploading,
@@ -84,13 +77,299 @@ const AccountCenter = () => {
     resetUpload: resetResume
   } = useImageUpload();
 
-  // ─── STATE ─────────────────────────────────────────────────────────────────
+  const [formData, setFormData] = useState({});
+  const [initialData, setInitialData] = useState({});
+
+  useEffect(() => {
+    if (isOpen) {
+      if (profileData) {
+        const pData = {
+          fullName: profileData.fullName || '',
+          fullNameAr: profileData.fullNameAr || '',
+          bio: profileData.bio || '',
+          email: profileData.email || '',
+          github: profileData.github || '',
+          linkedin: profileData.linkedin || '',
+          resumeUrl: profileData.resumeUrl || '',
+          avatar: profileData.avatar || ''
+        };
+        setFormData(pData);
+        setInitialData(pData);
+      }
+      resetAvatar();
+      resetResume();
+    }
+  }, [isOpen, profileData]);
+
+  // Handle escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isOpen && !isSaving) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, isSaving, onClose]);
+
+  const isDirty = useMemo(() => {
+    const fields = ['fullName', 'fullNameAr', 'bio', 'email', 'github', 'linkedin', 'resumeUrl'];
+    const textDirty = fields.some(k => (formData[k] || '') !== (initialData[k] || ''));
+    const filesDirty = avatarFile || resumeFile;
+    return textDirty || !!filesDirty;
+  }, [formData, initialData, avatarFile, resumeFile]);
+
+  const tempAvatar = useMemo(() => {
+    if (avatarFile) return URL.createObjectURL(avatarFile);
+    return formData.avatar;
+  }, [avatarFile, formData.avatar]);
+
+  useEffect(() => {
+    return () => {
+      if (avatarFile && tempAvatar && tempAvatar.startsWith('blob:')) {
+        URL.revokeObjectURL(tempAvatar);
+      }
+    };
+  }, [tempAvatar, avatarFile]);
+
+  // MUST BE AFTER ALL HOOKS
+  if (!isOpen) return null;
+
+  const handleChange = (e) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!isDirty) return;
+    
+    // We pass the files explicitly to the parent so it can upload them
+    await onSave(formData, avatarFile, uploadAvatar, resumeFile, uploadResume);
+  };
+
+  const handleOverlayClick = (e) => {
+    if (e.target === e.currentTarget && !isSaving) {
+      onClose();
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6">
+      {/* Overlay */}
+      <div
+        className="absolute inset-0 bg-[#030814]/80 backdrop-blur-sm transition-opacity"
+        onClick={handleOverlayClick}
+      ></div>
+
+      {/* Modal */}
+      <div className="relative w-full max-w-[800px] max-h-[95vh] md:max-h-[90vh] bg-[#0d1321] border border-[#1e293b] rounded-[24px] shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        
+        {/* Header */}
+        <div className="flex items-start justify-between p-6 border-b border-[#1e293b] bg-[#0d1321] shrink-0">
+          <div className="min-w-0">
+            <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#14f195] mb-1 block">
+              PORTFOLIO CMS
+            </span>
+            <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight truncate flex items-center gap-2">
+              <Edit2 className="w-5 h-5 text-gray-400" />
+              Edit Profile
+            </h2>
+          </div>
+          <button
+            onClick={onClose}
+            disabled={isSaving}
+            className="p-2 -mr-2 text-gray-400 hover:text-white hover:bg-[#1e293b] rounded-lg transition-colors shrink-0 ml-4 disabled:opacity-50"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Scrollable Body */}
+        <div className="flex-grow overflow-y-auto p-6 md:p-8 scrollbar-thin scrollbar-thumb-[#1e293b] scrollbar-track-transparent">
+          <form id="profile-form" onSubmit={handleSubmit} className="space-y-4 max-w-3xl mx-auto">
+
+            <SectionHeader number="01" title="IDENTITY" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
+              <div>
+                <label className="block text-[11px] font-mono font-bold text-gray-400 mb-3 uppercase tracking-widest">
+                  PROFILE PICTURE / AVATAR
+                </label>
+                <ImageUploader
+                  imageFile={avatarFile}
+                  existingImage={formData.avatar}
+                  onFileChange={handleAvatarChange}
+                  isUploading={isAvatarUploading}
+                  uploadProgress={avatarProgress}
+                />
+              </div>
+              <div className="space-y-5">
+                <InputField
+                  label="FULL NAME (ENGLISH)"
+                  name="fullName"
+                  value={formData.fullName}
+                  onChange={handleChange}
+                  placeholder="e.g. John Doe"
+                />
+                <InputField
+                  label="FULL NAME (ARABIC)"
+                  name="fullNameAr"
+                  value={formData.fullNameAr}
+                  onChange={handleChange}
+                  placeholder="e.g. جون دو"
+                />
+              </div>
+            </div>
+
+            <SectionHeader number="02" title="PROFESSIONAL PROFILE" />
+            <div className="space-y-5">
+              <InputField
+                label="SHORT BIO / DESCRIPTION"
+                name="bio"
+                type="textarea"
+                value={formData.bio}
+                onChange={handleChange}
+                placeholder="A brief description of who you are and what you do..."
+                helper="This will appear in the main hero or about sections of the portfolio."
+              />
+            </div>
+
+            <SectionHeader number="03" title="PUBLIC CONTACT" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+              <InputField
+                label="PUBLIC EMAIL"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                isMonospace
+                helper="This is the contact email shown to visitors, distinct from your Auth email."
+              />
+              <div className="space-y-5">
+                <InputField
+                  label="GITHUB URL"
+                  name="github"
+                  value={formData.github}
+                  onChange={handleChange}
+                  isMonospace
+                />
+                <InputField
+                  label="LINKEDIN URL"
+                  name="linkedin"
+                  value={formData.linkedin}
+                  onChange={handleChange}
+                  isMonospace
+                />
+              </div>
+            </div>
+            
+            <div className="bg-[#0a0f1c] border border-[#1e293b] rounded-xl p-5 mt-5">
+              <div className="flex items-center gap-2 mb-4">
+                <FileText className="w-4 h-4 text-gray-400" />
+                <h4 className="text-sm font-bold text-white uppercase tracking-wider">Resume / CV Document</h4>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                   <InputField
+                    label="RESUME DIRECT URL"
+                    name="resumeUrl"
+                    value={formData.resumeUrl}
+                    onChange={handleChange}
+                    isMonospace
+                    placeholder="https://..."
+                    helper="Paste a link or upload a file below."
+                  />
+                  {formData.resumeUrl && !resumeFile && (
+                     <a href={formData.resumeUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 mt-2 text-xs text-blue-400 hover:text-blue-300">
+                       <LinkIcon className="w-3 h-3" /> View current resume
+                     </a>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-[11px] font-mono font-bold text-gray-400 mb-2 uppercase tracking-widest">
+                    UPLOAD NEW RESUME (PDF)
+                  </label>
+                  <ImageUploader
+                    imageFile={resumeFile}
+                    existingImage={null} // Don't preview PDF
+                    onFileChange={handleResumeChange}
+                    isUploading={isResumeUploading}
+                    uploadProgress={resumeProgress}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <SectionHeader number="04" title="PREVIEW" />
+            <div className="bg-[#0a0f1c] border border-[#1e293b] rounded-2xl p-6 flex items-center gap-6 mb-4">
+              <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl overflow-hidden bg-[#1e293b] shrink-0 border border-[#334155]">
+                {tempAvatar ? (
+                  <img src={tempAvatar} alt="Preview" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-500 font-bold text-2xl">
+                    {formData.fullName?.[0]?.toUpperCase() || 'U'}
+                  </div>
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <h3 className="text-white font-bold text-lg md:text-xl truncate">{formData.fullName || 'Your Name'}</h3>
+                <p className="text-[#14f195] text-sm mt-0.5 truncate">{formData.email || 'your.email@example.com'}</p>
+                <p className="text-gray-500 text-xs mt-2 line-clamp-2 max-w-md">{formData.bio || 'Your bio will appear here...'}</p>
+              </div>
+            </div>
+
+          </form>
+        </div>
+
+        {/* Footer Actions */}
+        <div className="flex items-center justify-end gap-3 p-6 border-t border-[#1e293b] bg-[#0d1321] shrink-0">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={isSaving}
+            className="px-5 py-2.5 text-sm font-bold text-gray-400 hover:text-white transition-colors disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            form="profile-form"
+            disabled={!isDirty || isSaving}
+            className="px-6 py-2.5 bg-[#14f195] hover:bg-[#14f195]/90 text-[#0a0f1c] text-sm font-bold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          >
+            {isSaving ? (
+              <>
+                <div className="w-4 h-4 border-2 border-[#0a0f1c]/30 border-t-[#0a0f1c] rounded-full animate-spin" />
+                <span>Saving...</span>
+              </>
+            ) : (
+              <span>Save Changes</span>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MAIN COMPONENT
+// ─────────────────────────────────────────────────────────────────────────────
+const AccountCenter = () => {
+  const { user, logout } = useAuth();
+  
+  const { 
+    data: profileData, 
+    loading: profileLoading, 
+    setDocData, 
+    subscribe 
+  } = useFirestoreSingleDoc('profile', 'main');
+
   const [activeTab, setActiveTab] = useState('overview');
   const [isDarkMode, setIsDarkMode] = useState(true);
   
-  // Personal Info Form State
-  const [formData, setFormData] = useState({});
-  const [initialData, setInitialData] = useState({});
+  // Editor State
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [isSavingProfile, setIsSavingProfile] = useState(false);
 
   // Security Tab State
@@ -99,7 +378,6 @@ const AccountCenter = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
 
-  // ─── EFFECTS ───────────────────────────────────────────────────────────────
   // Subscribe to real-time updates from Firestore profile/main
   useEffect(() => {
     const unsubscribe = subscribe();
@@ -107,24 +385,6 @@ const AccountCenter = () => {
       if (unsubscribe) unsubscribe();
     };
   }, [subscribe]);
-
-  // Sync profile data to form state when data arrives
-  useEffect(() => {
-    if (profileData && Object.keys(initialData).length === 0) {
-      const pData = {
-        fullName: profileData.fullName || '',
-        fullNameAr: profileData.fullNameAr || '',
-        bio: profileData.bio || '',
-        email: profileData.email || '',
-        github: profileData.github || '',
-        linkedin: profileData.linkedin || '',
-        avatar: profileData.avatar || '',
-        resumeUrl: profileData.resumeUrl || ''
-      };
-      setFormData(pData);
-      setInitialData(pData);
-    }
-  }, [profileData, initialData]);
 
   // Initialize theme from localStorage/DOM
   useEffect(() => {
@@ -134,8 +394,6 @@ const AccountCenter = () => {
     }
   }, []);
 
-  // ─── COMPUTED VALUES ───────────────────────────────────────────────────────
-  // Calculate completion percentage based on the 8 core profile fields
   const completionPercentage = useMemo(() => {
     if (!profileData) return 0;
     const fields = ['fullName', 'fullNameAr', 'bio', 'email', 'github', 'linkedin', 'avatar', 'resumeUrl'];
@@ -148,24 +406,11 @@ const AccountCenter = () => {
     return Math.round((filled / fields.length) * 100);
   }, [profileData]);
 
-  const isProfileDirty = useMemo(() => {
-    const fields = ['fullName', 'fullNameAr', 'bio', 'email', 'github', 'linkedin'];
-    const textDirty = fields.some(k => (formData[k] || '') !== (initialData[k] || ''));
-    const filesDirty = avatarFile || resumeFile;
-    return textDirty || !!filesDirty;
-  }, [formData, initialData, avatarFile, resumeFile]);
-
-  // ─── HANDLERS ──────────────────────────────────────────────────────────────
-  const handleFormChange = (e) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleProfileSave = async (e) => {
-    e.preventDefault();
-    if (!isProfileDirty) return;
-    
+  // Handle Profile Save
+  const handleProfileSave = async (formData, avatarFile, uploadAvatar, resumeFile, uploadResume) => {
     setIsSavingProfile(true);
     try {
+      // Build strictly defined payload to prevent data corruption
       const payload = {
         fullName: formData.fullName || '',
         fullNameAr: formData.fullNameAr || '',
@@ -173,32 +418,24 @@ const AccountCenter = () => {
         email: formData.email || '',
         github: formData.github || '',
         linkedin: formData.linkedin || '',
+        resumeUrl: formData.resumeUrl || ''
       };
 
-      // Handle avatar upload if changed
+      // Handle file uploads natively via existing hook functions passed down
       if (avatarFile) {
         const url = await uploadAvatar('profile');
         if (url) payload.avatar = url;
       }
 
-      // Handle resume upload if changed
       if (resumeFile) {
-        // Upload resume directly to a media folder
         const url = await uploadResume('documents');
         if (url) payload.resumeUrl = url;
       }
 
-      // The setDocData uses setDoc with { merge: true } under the hood, ensuring safe partial updates
+      // Safe merge via useFirestoreSingleDoc -> setDoc(..., { merge: true })
       await setDocData(payload);
       toast.success('Profile updated successfully');
-      
-      // Reset upload states so new images become the 'initial' existing state visually
-      if (avatarFile) resetAvatar();
-      if (resumeFile) resetResume();
-      
-      // Update initial data tracker to prevent unnecessary saves
-      setInitialData(prev => ({ ...prev, ...payload }));
-      
+      setIsEditorOpen(false);
     } catch (err) {
       toast.error(err.message || 'Error updating profile');
     } finally {
@@ -233,11 +470,11 @@ const AccountCenter = () => {
     
     setIsUpdatingPassword(true);
     try {
-      // 1. Re-authenticate first to prevent Firebase 'auth/requires-recent-login' errors
+      // Re-authenticate first to satisfy Firebase 'auth/requires-recent-login'
       const credential = EmailAuthProvider.credential(user.email, currentPassword);
       await reauthenticateWithCredential(user, credential);
       
-      // 2. Update password
+      // Update password
       await updatePassword(user, newPassword);
       toast.success('Password updated successfully');
       setCurrentPassword('');
@@ -260,13 +497,11 @@ const AccountCenter = () => {
     try {
       await logout();
       toast.success('Signed out successfully');
-      // Router will naturally redirect to /login due to AuthProvider protections
     } catch (err) {
       toast.error('Failed to sign out');
     }
   };
 
-  // ─── RENDER ────────────────────────────────────────────────────────────────
   if (!user || profileLoading) {
     return (
       <div className="flex items-center justify-center h-64 w-full">
@@ -275,7 +510,6 @@ const AccountCenter = () => {
     );
   }
 
-  // Format dates securely checking existence
   const memberSince = user?.metadata?.creationTime 
     ? new Date(user.metadata.creationTime).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
     : 'Unknown';
@@ -285,37 +519,32 @@ const AccountCenter = () => {
     : 'Unknown';
 
   return (
-    <div className="max-w-[1600px] mx-auto space-y-8 animate-in fade-in duration-500">
+    <div className="max-w-[1600px] mx-auto space-y-8 animate-in fade-in duration-500 relative">
       
       {/* ═══ PREMIUM HEADER CARD ═══ */}
       <div className="relative w-full rounded-[24px] overflow-hidden bg-[#0d1321] border border-[#1e293b] shadow-2xl">
-        {/* Abstract Background */}
         <div className="h-40 w-full bg-gradient-to-r from-[#0a0f1c] via-[#1e293b] to-[#0a0f1c] relative overflow-hidden">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#0d1321]"></div>
         </div>
 
-        {/* Profile Details Area */}
         <div className="relative px-6 md:px-10 pb-8 flex flex-col md:flex-row gap-6 items-center md:items-end -mt-16 text-center md:text-left">
           
-          {/* Avatar Container */}
           <div className="relative shrink-0">
             <div className="w-32 h-32 rounded-[20px] bg-[#0a0f1c] border-[4px] border-[#0d1321] shadow-2xl overflow-hidden flex items-center justify-center">
               {profileData?.avatar ? (
                 <img src={profileData.avatar} alt="Profile" className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full bg-gradient-to-tr from-[#1e293b] to-[#334155] flex items-center justify-center text-4xl font-black text-white">
-                  {user.email[0].toUpperCase()}
+                  {profileData?.fullName?.[0]?.toUpperCase() || user.email[0].toUpperCase()}
                 </div>
               )}
             </div>
-            {/* Status indicator derived from auth */}
             <div className="absolute -bottom-2 -right-2 bg-[#0d1321] p-1.5 rounded-full border border-[#1e293b] shadow-lg">
               <div className="w-4 h-4 rounded-full bg-[#14f195] animate-pulse shadow-[0_0_10px_rgba(20,241,149,0.5)]"></div>
             </div>
           </div>
 
-          {/* Info Block */}
           <div className="flex-1 mt-4 md:mt-0 flex flex-col md:flex-row md:items-center justify-between gap-6 w-full">
             <div>
               <div className="flex flex-col md:flex-row items-center md:items-start gap-3">
@@ -328,12 +557,22 @@ const AccountCenter = () => {
                   </span>
                 )}
               </div>
-              <p className="text-gray-400 font-mono text-sm mt-1">{user.email}</p>
+              <p className="text-gray-400 font-mono text-sm mt-1">{profileData?.email || user.email}</p>
               
               <div className="flex flex-wrap justify-center md:justify-start gap-4 md:gap-6 mt-4 text-xs font-mono text-gray-500 uppercase tracking-wider">
                 <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> Since {memberSince}</span>
                 <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> Last: {lastLogin}</span>
               </div>
+            </div>
+            
+            <div className="shrink-0 w-full md:w-auto">
+              <button
+                onClick={() => setIsEditorOpen(true)}
+                className="w-full md:w-auto px-6 py-3 bg-[#1e293b] hover:bg-[#334155] text-white font-bold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 border border-[#334155]"
+              >
+                <Edit2 className="w-4 h-4" />
+                <span>Edit Profile</span>
+              </button>
             </div>
           </div>
         </div>
@@ -387,8 +626,6 @@ const AccountCenter = () => {
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                
-                {/* Completion Widget */}
                 <div className="bg-[#0a0f1c] border border-[#1e293b] p-6 rounded-2xl">
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-[11px] font-mono font-bold text-gray-400 uppercase tracking-widest">Public Profile</span>
@@ -400,10 +637,9 @@ const AccountCenter = () => {
                       style={{ width: `${completionPercentage}%` }}
                     />
                   </div>
-                  <p className="text-xs text-gray-500 mt-4">Calculated based on {profileData ? Object.keys(profileData).length : 0} configured schema fields.</p>
+                  <p className="text-xs text-gray-500 mt-4">Calculated based on configured schema fields. Click "Edit Profile" to update.</p>
                 </div>
 
-                {/* Authentication Widget */}
                 <div className="bg-[#0a0f1c] border border-[#1e293b] p-6 rounded-2xl">
                    <div className="flex items-center justify-between mb-4">
                     <span className="text-[11px] font-mono font-bold text-gray-400 uppercase tracking-widest">Auth Provider</span>
@@ -419,137 +655,11 @@ const AccountCenter = () => {
                     </div>
                   </div>
                 </div>
-
               </div>
             </div>
           )}
 
-          {/* TAB 2: PERSONAL INFO */}
-          {activeTab === 'personal' && (
-            <div className="animate-in fade-in duration-300">
-              <div className="mb-8">
-                <h2 className="text-2xl font-bold text-white mb-2 tracking-tight">Public Profile Information</h2>
-                <p className="text-gray-400 text-sm">This data populates the main portfolio layout and SEO tags.</p>
-              </div>
-
-              <form onSubmit={handleProfileSave} className="space-y-2">
-                <SectionHeader number="01" title="IDENTITY" />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <InputField
-                    label="FULL NAME (ENGLISH)"
-                    name="fullName"
-                    value={formData.fullName}
-                    onChange={handleFormChange}
-                    placeholder="e.g. John Doe"
-                  />
-                  <InputField
-                    label="FULL NAME (ARABIC)"
-                    name="fullNameAr"
-                    value={formData.fullNameAr}
-                    onChange={handleFormChange}
-                    placeholder="e.g. جون دو"
-                  />
-                </div>
-                
-                <div className="mt-5">
-                  <InputField
-                    label="SHORT BIO / DESCRIPTION"
-                    name="bio"
-                    type="textarea"
-                    value={formData.bio}
-                    onChange={handleFormChange}
-                    placeholder="A brief description of who you are and what you do..."
-                  />
-                </div>
-
-                <SectionHeader number="02" title="PUBLIC CONTACT & SOCIALS" />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <InputField
-                    label="PUBLIC EMAIL (NOT AUTH)"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleFormChange}
-                    isMonospace
-                    helper="This is the email shown to visitors. Changing this does not affect your login email."
-                  />
-                  <InputField
-                    label="GITHUB URL"
-                    name="github"
-                    value={formData.github}
-                    onChange={handleFormChange}
-                    isMonospace
-                  />
-                  <InputField
-                    label="LINKEDIN URL"
-                    name="linkedin"
-                    value={formData.linkedin}
-                    onChange={handleFormChange}
-                    isMonospace
-                  />
-                </div>
-
-                <SectionHeader number="03" title="MEDIA & DOCUMENTS" />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div>
-                    <label className="block text-[11px] font-mono font-bold text-gray-400 mb-3 uppercase tracking-widest">
-                      PORTRAIT AVATAR
-                    </label>
-                    <ImageUploader
-                      imageFile={avatarFile}
-                      existingImage={profileData?.avatar}
-                      onFileChange={handleAvatarChange}
-                      isUploading={isAvatarUploading}
-                      uploadProgress={avatarProgress}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-mono font-bold text-gray-400 mb-3 uppercase tracking-widest">
-                      RESUME / CV (PDF)
-                    </label>
-                    <div className="space-y-3">
-                       <InputField
-                        label=""
-                        name="resumeUrl"
-                        value={formData.resumeUrl}
-                        onChange={handleFormChange}
-                        isMonospace
-                        placeholder="Direct URL or upload below..."
-                      />
-                      <div className="mt-2">
-                        <ImageUploader
-                          imageFile={resumeFile}
-                          existingImage={null} // Don't show preview for PDF
-                          onFileChange={handleResumeChange}
-                          isUploading={isResumeUploading}
-                          uploadProgress={resumeProgress}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-8 mt-8 border-t border-[#1e293b] flex justify-end">
-                  <button
-                    type="submit"
-                    disabled={!isProfileDirty || isSavingProfile}
-                    className="px-6 py-2.5 bg-[#14f195] hover:bg-[#14f195]/90 text-[#0a0f1c] text-sm font-bold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                  >
-                    {isSavingProfile ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-[#0a0f1c]/30 border-t-[#0a0f1c] rounded-full animate-spin" />
-                        <span>Saving...</span>
-                      </>
-                    ) : (
-                      <span>Save Changes</span>
-                    )}
-                  </button>
-                </div>
-              </form>
-            </div>
-          )}
-
-          {/* TAB 3: APPEARANCE */}
+          {/* TAB 2: APPEARANCE */}
           {activeTab === 'appearance' && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div className="mb-8">
@@ -576,7 +686,7 @@ const AccountCenter = () => {
             </div>
           )}
 
-          {/* TAB 4: SECURITY */}
+          {/* TAB 3: SECURITY */}
           {activeTab === 'security' && (
             <div className="animate-in fade-in duration-300">
               <div className="mb-8">
@@ -631,7 +741,7 @@ const AccountCenter = () => {
             </div>
           )}
 
-          {/* TAB 5: DANGER ZONE */}
+          {/* TAB 4: DANGER ZONE */}
           {activeTab === 'danger' && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div className="mb-8">
@@ -659,9 +769,18 @@ const AccountCenter = () => {
               </div>
             </div>
           )}
-
         </div>
       </div>
+
+      {/* Editor Modal is safely positioned outside conditional renders, 
+          managing its own safe internal hooks */}
+      <ProfileEditorModal 
+        isOpen={isEditorOpen} 
+        onClose={() => setIsEditorOpen(false)} 
+        profileData={profileData} 
+        onSave={handleProfileSave} 
+        isSaving={isSavingProfile} 
+      />
     </div>
   );
 };

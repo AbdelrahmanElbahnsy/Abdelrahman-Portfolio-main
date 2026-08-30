@@ -121,7 +121,7 @@ const ProfileEditorModal = ({ isOpen, onClose, user, onSave, isSaving }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6">
       <div className="absolute inset-0 bg-[#030814]/80 backdrop-blur-sm transition-opacity" onClick={handleOverlayClick}></div>
-      <div className="relative w-full max-w-[600px] max-h-[95vh] md:max-h-[90vh] bg-[#0d1321] border border-[#1e293b] rounded-[24px] shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-[600px] w-[calc(100vw-32px)] md:w-full max-h-[95vh] md:max-h-[90vh] bg-[#0d1321] border border-[#1e293b] rounded-[24px] shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         <div className="flex items-start justify-between p-6 border-b border-[#1e293b] bg-[#0d1321] shrink-0">
           <div>
             <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#14f195] mb-1 block">ADMIN ACCOUNT</span>
@@ -375,10 +375,10 @@ const AccountCenter = () => {
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-8">
-        <div className="w-full md:w-64 shrink-0">
-          <nav className="flex flex-col space-y-1.5 sticky top-24">
-            <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-gray-500 mb-3 block px-4">
+      <div className="flex flex-col md:flex-row gap-6 md:gap-8">
+        <div className="w-full md:w-64 shrink-0 overflow-hidden">
+          <nav className="flex flex-row md:flex-col space-x-2 md:space-x-0 md:space-y-1.5 overflow-x-auto md:sticky md:top-24 pb-2 md:pb-0 hide-scrollbar" style={{ overscrollBehaviorX: 'contain' }}>
+            <span className="hidden md:block text-[10px] font-mono font-bold uppercase tracking-widest text-gray-500 mb-3 px-4">
               Account Settings
             </span>
             {(() => {
@@ -394,7 +394,7 @@ const AccountCenter = () => {
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={`
-                      w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all outline-none
+                      shrink-0 md:w-full flex items-center justify-center md:justify-start gap-2 md:gap-3 px-4 py-2.5 md:py-3 rounded-xl text-xs md:text-sm font-bold transition-all outline-none
                       ${isActive 
                         ? tab.danger 
                           ? 'bg-red-500/10 text-red-400 border border-red-500/20' 
@@ -406,7 +406,7 @@ const AccountCenter = () => {
                     `}
                   >
                     <Icon className={`w-4 h-4 shrink-0 ${isActive ? '' : 'opacity-70'}`} />
-                    {tab.label}
+                    <span className="whitespace-nowrap">{tab.label}</span>
                   </button>
                 );
               });
@@ -414,7 +414,7 @@ const AccountCenter = () => {
           </nav>
         </div>
 
-        <div className="flex-1 bg-[#0d1321] border border-[#1e293b] rounded-[24px] p-6 md:p-10 min-h-[500px]">
+        <div className="flex-1 bg-[#0d1321] border border-[#1e293b] rounded-[24px] p-5 md:p-10 min-h-[500px] min-w-0">
           {activeTab === 'overview' && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div className="mb-8">

@@ -661,7 +661,7 @@ const UsersManager = ({ currentUserRole }) => {
         </div>
 
         {/* Data Grid */}
-        <div className="overflow-x-auto min-h-[300px]">
+        <div className="overflow-x-auto overscroll-x-contain min-h-[300px]">
           {loading ? (
              <div className="p-6"><TableSkeleton /></div>
           ) : errorState ? (
@@ -678,7 +678,7 @@ const UsersManager = ({ currentUserRole }) => {
               <p className="text-sm">Adjust your search or filter criteria.</p>
             </div>
           ) : (
-            <table className="w-full text-left border-collapse">
+            <table className="w-full min-w-[800px] text-left border-collapse">
               <thead>
                 <tr className="border-b border-[#1e293b] bg-[#0d1321] text-[10px] font-mono font-bold text-gray-400 uppercase tracking-widest">
                   <th className="px-6 py-4 font-bold">User</th>

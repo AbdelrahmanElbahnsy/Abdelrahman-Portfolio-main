@@ -17,6 +17,7 @@ const HeroManager = lazy(() => import('../components/Dashboard/HeroManager'));
 const AboutManager = lazy(() => import('../components/Dashboard/AboutManager'));
 const JourneyManager = lazy(() => import('../components/Dashboard/JourneyManager'));
 const CertificationsManager = lazy(() => import('../components/Dashboard/CertificationsManager'));
+const SocialsManager = lazy(() => import('../components/Dashboard/SocialsManager'));
 
 const SectionSkeleton = () => (
   <div className="w-full space-y-6 animate-pulse">
@@ -45,9 +46,7 @@ const Admin = () => {
           />
           <Route 
             path="socials" 
-            element={<GenericListManager title="Social Accounts" collectionName="socials" fields={[
-              {name: 'platform', label: 'Platform (GitHub, LinkedIn)'}, {name: 'url', label: 'Profile URL', type: 'url'}, {name: 'icon', label: 'Icon Name'}, {name: 'order', label: 'Display Order', type: 'number', required: false}
-            ]} />} 
+            element={<SocialsManager />} 
           />
           <Route 
             path="navbar" 

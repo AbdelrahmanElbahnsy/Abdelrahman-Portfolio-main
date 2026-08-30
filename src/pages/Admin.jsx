@@ -16,6 +16,7 @@ const FeatureUnavailable = lazy(() => import('../components/Dashboard/FeatureUna
 const HeroManager = lazy(() => import('../components/Dashboard/HeroManager'));
 const AboutManager = lazy(() => import('../components/Dashboard/AboutManager'));
 const JourneyManager = lazy(() => import('../components/Dashboard/JourneyManager'));
+const CertificationsManager = lazy(() => import('../components/Dashboard/CertificationsManager'));
 
 const SectionSkeleton = () => (
   <div className="w-full space-y-6 animate-pulse">
@@ -40,9 +41,7 @@ const Admin = () => {
           />
           <Route 
             path="certifications" 
-            element={<GenericListManager title="Certifications" collectionName="certifications" fields={[
-              {name: 'title', label: 'Certificate Title'}, {name: 'issuer', label: 'Issuing Organization'}, {name: 'link', label: 'Credential URL', type: 'url'}, {name: 'order', label: 'Display Order', type: 'number', required: false}
-            ]} />} 
+            element={<CertificationsManager />} 
           />
           <Route 
             path="socials" 

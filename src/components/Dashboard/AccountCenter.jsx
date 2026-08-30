@@ -1,15 +1,13 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
 import UsersManager from './UsersManager';
 import { useImageUpload } from '../../cms/hooks/useImageUpload';
-import ImageUploader from '../../cms/components/ImageUploader';
-import { auth } from '../../services/firebase';
-import { updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
+import { updatePassword, EmailAuthProvider, reauthenticateWithCredential, updateProfile } from 'firebase/auth';
 import { 
-  User, Shield, Palette, AlertTriangle, 
+  Shield, Palette, AlertTriangle, 
   CheckCircle2, Clock, Calendar, Lock,
-  LogOut, Activity, Edit2, X, FileText, Image as ImageIcon, Link as LinkIcon, Users
+  LogOut, Activity, Edit2, X, Users, Upload
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -25,25 +23,14 @@ const InputField = ({ label, name, value, onChange, type = 'text', placeholder, 
     <label className="block text-[11px] font-mono font-bold text-gray-400 mb-2 uppercase tracking-widest">
       {label}
     </label>
-    {type === 'textarea' ? (
-      <textarea
-        name={name}
-        value={value ?? ''}
-        onChange={onChange}
-        rows={4}
-        placeholder={placeholder}
-        className={`w-full bg-[#030814]/50 border border-[#1e293b] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#14f195]/50 focus:ring-1 focus:ring-[#14f195]/50 transition-all resize-none ${isMonospace ? 'font-mono text-sm' : ''}`}
-      />
-    ) : (
-      <input
-        type={type}
-        name={name}
-        value={value ?? ''}
-        onChange={onChange}
-        placeholder={placeholder}
-        className={`w-full bg-[#030814]/50 border border-[#1e293b] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#14f195]/50 focus:ring-1 focus:ring-[#14f195]/50 transition-all ${isMonospace ? 'font-mono text-sm' : ''}`}
-      />
-    )}
+    <input
+      type={type}
+      name={name}
+      value={value ?? ''}
+      onChange={onChange}
+      placeholder={placeholder}
+      className={`w-full bg-[#030814]/50 border border-[#1e293b] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#14f195]/50 focus:ring-1 focus:ring-[#14f195]/50 transition-all ${isMonospace ? 'font-mono text-sm' : ''}`}
+    />
     {helper && <p className="text-xs text-gray-500 mt-2">{helper}</p>}
   </div>
 );
@@ -55,75 +42,45 @@ const SectionHeader = ({ number, title }) => (
   </div>
 );
 
+const ProfileEditorModal = ({ isOpen, onClose, user, onSave, isSaving }) => {
+  const { uploadImage, isUploading, resetUploadState, uploadProgress } = useImageUpload();
+  const fileInputRef = useRef(null);
 
-// ─────────────────────────────────────────────────────────────────────────────
-// EDITOR MODAL
-// ─────────────────────────────────────────────────────────────────────────────
-const ProfileEditorModal = ({ isOpen, onClose, profileData, onSave, isSaving }) => {
-  const {
-    imageFile: avatarFile,
-    isUploading: isAvatarUploading,
-    uploadProgress: avatarProgress,
-    handleFileChange: handleAvatarChange,
-    uploadImage: uploadAvatar,
-    resetUpload: resetAvatar
-  } = useImageUpload();
-
-  const {
-    imageFile: resumeFile,
-    isUploading: isResumeUploading,
-    uploadProgress: resumeProgress,
-    handleFileChange: handleResumeChange,
-    uploadImage: uploadResume,
-    resetUpload: resetResume
-  } = useImageUpload();
-
-  const [formData, setFormData] = useState({});
-  const [initialData, setInitialData] = useState({});
+  const [formData, setFormData] = useState({ displayName: '', photoURL: '' });
+  const [initialData, setInitialData] = useState({ displayName: '', photoURL: '' });
+  const [avatarFile, setAvatarFile] = useState(null);
 
   useEffect(() => {
-    if (isOpen) {
-      if (profileData) {
-        const pData = {
-          fullName: profileData.fullName || '',
-          fullNameAr: profileData.fullNameAr || '',
-          bio: profileData.bio || '',
-          email: profileData.email || '',
-          github: profileData.github || '',
-          linkedin: profileData.linkedin || '',
-          resumeUrl: profileData.resumeUrl || '',
-          avatar: profileData.avatar || ''
-        };
-        setFormData(pData);
-        setInitialData(pData);
-      }
-      resetAvatar();
-      resetResume();
+    if (isOpen && user) {
+      const pData = {
+        displayName: user.displayName || '',
+        photoURL: user.photoURL || ''
+      };
+      setFormData(pData);
+      setInitialData(pData);
+      setAvatarFile(null);
+      resetUploadState();
     }
-  }, [isOpen, profileData]);
+  }, [isOpen, user, resetUploadState]);
 
-  // Handle escape key
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && isOpen && !isSaving) {
+      if (e.key === 'Escape' && isOpen && !isSaving && !isUploading) {
         onClose();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, isSaving, onClose]);
+  }, [isOpen, isSaving, isUploading, onClose]);
 
   const isDirty = useMemo(() => {
-    const fields = ['fullName', 'fullNameAr', 'bio', 'email', 'github', 'linkedin', 'resumeUrl'];
-    const textDirty = fields.some(k => (formData[k] || '') !== (initialData[k] || ''));
-    const filesDirty = avatarFile || resumeFile;
-    return textDirty || !!filesDirty;
-  }, [formData, initialData, avatarFile, resumeFile]);
+    return formData.displayName !== initialData.displayName || !!avatarFile;
+  }, [formData, initialData, avatarFile]);
 
   const tempAvatar = useMemo(() => {
     if (avatarFile) return URL.createObjectURL(avatarFile);
-    return formData.avatar;
-  }, [avatarFile, formData.avatar]);
+    return formData.photoURL;
+  }, [avatarFile, formData.photoURL]);
 
   useEffect(() => {
     return () => {
@@ -133,217 +90,114 @@ const ProfileEditorModal = ({ isOpen, onClose, profileData, onSave, isSaving }) 
     };
   }, [tempAvatar, avatarFile]);
 
-  // MUST BE AFTER ALL HOOKS
   if (!isOpen) return null;
 
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setAvatarFile(e.target.files[0]);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isDirty) return;
     
-    // We pass the files explicitly to the parent so it can upload them
-    await onSave(formData, avatarFile, uploadAvatar, resumeFile, uploadResume);
+    await onSave(formData, avatarFile, uploadImage);
   };
 
   const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget && !isSaving) {
+    if (e.target === e.currentTarget && !isSaving && !isUploading) {
       onClose();
     }
   };
 
+  const isWorking = isSaving || isUploading;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6">
-      {/* Overlay */}
-      <div
-        className="absolute inset-0 bg-[#030814]/80 backdrop-blur-sm transition-opacity"
-        onClick={handleOverlayClick}
-      ></div>
-
-      {/* Modal */}
-      <div className="relative w-full max-w-[800px] max-h-[95vh] md:max-h-[90vh] bg-[#0d1321] border border-[#1e293b] rounded-[24px] shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        
-        {/* Header */}
+      <div className="absolute inset-0 bg-[#030814]/80 backdrop-blur-sm transition-opacity" onClick={handleOverlayClick}></div>
+      <div className="relative w-full max-w-[600px] max-h-[95vh] md:max-h-[90vh] bg-[#0d1321] border border-[#1e293b] rounded-[24px] shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         <div className="flex items-start justify-between p-6 border-b border-[#1e293b] bg-[#0d1321] shrink-0">
-          <div className="min-w-0">
-            <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#14f195] mb-1 block">
-              PORTFOLIO CMS
-            </span>
-            <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight truncate flex items-center gap-2">
+          <div>
+            <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#14f195] mb-1 block">ADMIN ACCOUNT</span>
+            <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight flex items-center gap-2">
               <Edit2 className="w-5 h-5 text-gray-400" />
-              Edit Profile
+              Edit Account
             </h2>
           </div>
-          <button
-            onClick={onClose}
-            disabled={isSaving}
-            className="p-2 -mr-2 text-gray-400 hover:text-white hover:bg-[#1e293b] rounded-lg transition-colors shrink-0 ml-4 disabled:opacity-50"
-          >
+          <button onClick={onClose} disabled={isWorking} className="p-2 -mr-2 text-gray-400 hover:text-white hover:bg-[#1e293b] rounded-lg transition-colors shrink-0 disabled:opacity-50">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Scrollable Body */}
         <div className="flex-grow overflow-y-auto p-6 md:p-8 scrollbar-thin scrollbar-thumb-[#1e293b] scrollbar-track-transparent">
-          <form id="profile-form" onSubmit={handleSubmit} className="space-y-4 max-w-3xl mx-auto">
-
-            <SectionHeader number="01" title="IDENTITY" />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
-              <div>
-                <label className="block text-[11px] font-mono font-bold text-gray-400 mb-3 uppercase tracking-widest">
-                  PROFILE PICTURE / AVATAR
-                </label>
-                <ImageUploader
-                  imageFile={avatarFile}
-                  existingImage={formData.avatar}
-                  onFileChange={handleAvatarChange}
-                  isUploading={isAvatarUploading}
-                  uploadProgress={avatarProgress}
-                />
+          <form id="admin-account-form" onSubmit={handleSubmit} className="space-y-4 max-w-3xl mx-auto">
+            <SectionHeader number="01" title="ACCOUNT IDENTITY" />
+            
+            <div className="flex flex-col md:flex-row gap-8 mb-6">
+              <div className="shrink-0 flex flex-col items-center gap-3">
+                <label className="block text-[11px] font-mono font-bold text-gray-400 uppercase tracking-widest text-center">Admin Avatar</label>
+                <div className="relative w-32 h-32 rounded-2xl bg-[#1e293b] border border-[#334155] overflow-hidden group">
+                  {tempAvatar ? (
+                    <img src={tempAvatar} alt="Admin Preview" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-4xl font-bold text-gray-500">
+                      {formData.displayName?.[0]?.toUpperCase() || user.email[0].toUpperCase()}
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button type="button" onClick={() => fileInputRef.current?.click()} className="p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors text-white">
+                      <Upload className="w-5 h-5" />
+                    </button>
+                  </div>
+                  {isUploading && (
+                    <div className="absolute inset-0 bg-[#0d1321]/80 flex flex-col items-center justify-center">
+                      <div className="text-[#14f195] text-xs font-mono font-bold mb-1">{uploadProgress}%</div>
+                      <div className="w-2/3 h-1 bg-[#1e293b] rounded-full overflow-hidden">
+                        <div className="h-full bg-[#14f195]" style={{ width: `${uploadProgress}%` }} />
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
               </div>
-              <div className="space-y-5">
+              
+              <div className="flex-grow space-y-5 flex flex-col justify-center">
                 <InputField
-                  label="FULL NAME (ENGLISH)"
-                  name="fullName"
-                  value={formData.fullName}
+                  label="ADMIN DISPLAY NAME"
+                  name="displayName"
+                  value={formData.displayName}
                   onChange={handleChange}
-                  placeholder="e.g. John Doe"
-                />
-                <InputField
-                  label="FULL NAME (ARABIC)"
-                  name="fullNameAr"
-                  value={formData.fullNameAr}
-                  onChange={handleChange}
-                  placeholder="e.g. جون دو"
-                />
-              </div>
-            </div>
-
-            <SectionHeader number="02" title="PROFESSIONAL PROFILE" />
-            <div className="space-y-5">
-              <InputField
-                label="SHORT BIO / DESCRIPTION"
-                name="bio"
-                type="textarea"
-                value={formData.bio}
-                onChange={handleChange}
-                placeholder="A brief description of who you are and what you do..."
-                helper="This will appear in the main hero or about sections of the portfolio."
-              />
-            </div>
-
-            <SectionHeader number="03" title="PUBLIC CONTACT" />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
-              <InputField
-                label="PUBLIC EMAIL"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                isMonospace
-                helper="This is the contact email shown to visitors, distinct from your Auth email."
-              />
-              <div className="space-y-5">
-                <InputField
-                  label="GITHUB URL"
-                  name="github"
-                  value={formData.github}
-                  onChange={handleChange}
-                  isMonospace
-                />
-                <InputField
-                  label="LINKEDIN URL"
-                  name="linkedin"
-                  value={formData.linkedin}
-                  onChange={handleChange}
-                  isMonospace
+                  placeholder="e.g. Admin User"
                 />
               </div>
             </div>
             
-            <div className="bg-[#0a0f1c] border border-[#1e293b] rounded-xl p-5 mt-5">
-              <div className="flex items-center gap-2 mb-4">
-                <FileText className="w-4 h-4 text-gray-400" />
-                <h4 className="text-sm font-bold text-white uppercase tracking-wider">Resume / CV Document</h4>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                   <InputField
-                    label="RESUME DIRECT URL"
-                    name="resumeUrl"
-                    value={formData.resumeUrl}
-                    onChange={handleChange}
-                    isMonospace
-                    placeholder="https://..."
-                    helper="Paste a link or upload a file below."
-                  />
-                  {formData.resumeUrl && !resumeFile && (
-                     <a href={formData.resumeUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 mt-2 text-xs text-blue-400 hover:text-blue-300">
-                       <LinkIcon className="w-3 h-3" /> View current resume
-                     </a>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-[11px] font-mono font-bold text-gray-400 mb-2 uppercase tracking-widest">
-                    UPLOAD NEW RESUME (PDF)
-                  </label>
-                  <ImageUploader
-                    imageFile={resumeFile}
-                    existingImage={null} // Don't preview PDF
-                    onFileChange={handleResumeChange}
-                    isUploading={isResumeUploading}
-                    uploadProgress={resumeProgress}
-                  />
-                </div>
-              </div>
+            <SectionHeader number="02" title="ACCOUNT INFORMATION" />
+            <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4 flex flex-col gap-2">
+              <p className="text-sm text-blue-400 font-mono"><strong>Auth Email:</strong> {user.email}</p>
+              <p className="text-sm text-blue-400 font-mono"><strong>Auth UID:</strong> {user.uid}</p>
+              <p className="text-xs text-blue-400/80 mt-1">To change your email address or password, use the Security tab.</p>
             </div>
-
-            <SectionHeader number="04" title="PREVIEW" />
-            <div className="bg-[#0a0f1c] border border-[#1e293b] rounded-2xl p-6 flex items-center gap-6 mb-4">
-              <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl overflow-hidden bg-[#1e293b] shrink-0 border border-[#334155]">
-                {tempAvatar ? (
-                  <img src={tempAvatar} alt="Preview" className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-500 font-bold text-2xl">
-                    {formData.fullName?.[0]?.toUpperCase() || 'U'}
-                  </div>
-                )}
-              </div>
-              <div className="min-w-0 flex-1">
-                <h3 className="text-white font-bold text-lg md:text-xl truncate">{formData.fullName || 'Your Name'}</h3>
-                <p className="text-[#14f195] text-sm mt-0.5 truncate">{formData.email || 'your.email@example.com'}</p>
-                <p className="text-gray-500 text-xs mt-2 line-clamp-2 max-w-md">{formData.bio || 'Your bio will appear here...'}</p>
-              </div>
-            </div>
-
           </form>
         </div>
 
-        {/* Footer Actions */}
         <div className="flex items-center justify-end gap-3 p-6 border-t border-[#1e293b] bg-[#0d1321] shrink-0">
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={isSaving}
-            className="px-5 py-2.5 text-sm font-bold text-gray-400 hover:text-white transition-colors disabled:opacity-50"
-          >
+          <button type="button" onClick={onClose} disabled={isWorking} className="px-5 py-2.5 text-sm font-bold text-gray-400 hover:text-white transition-colors disabled:opacity-50">
             Cancel
           </button>
-          <button
-            type="submit"
-            form="profile-form"
-            disabled={!isDirty || isSaving}
-            className="px-6 py-2.5 bg-[#14f195] hover:bg-[#14f195]/90 text-[#0a0f1c] text-sm font-bold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-          >
-            {isSaving ? (
+          <button type="submit" form="admin-account-form" disabled={!isDirty || isWorking} className="px-6 py-2.5 bg-[#14f195] hover:bg-[#14f195]/90 text-[#0a0f1c] text-sm font-bold rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2">
+            {isWorking ? (
               <>
                 <div className="w-4 h-4 border-2 border-[#0a0f1c]/30 border-t-[#0a0f1c] rounded-full animate-spin" />
                 <span>Saving...</span>
               </>
             ) : (
-              <span>Save Changes</span>
+              <span>Save Account</span>
             )}
           </button>
         </div>
@@ -352,51 +206,32 @@ const ProfileEditorModal = ({ isOpen, onClose, profileData, onSave, isSaving }) 
   );
 };
 
-
-// ─────────────────────────────────────────────────────────────────────────────
-// MAIN COMPONENT
-// ─────────────────────────────────────────────────────────────────────────────
 const AccountCenter = () => {
   const { user, logout } = useAuth();
-  
-  // Real-time listener for current user's role
   const { data: adminData, subscribe: subscribeAdmin } = useFirestoreSingleDoc('admins', user?.uid);
   const currentUserRole = adminData?.role || 'viewer';
-
-  const { 
-    data: profileData, 
-    loading: profileLoading, 
-    setDocData, 
-    subscribe 
-  } = useFirestoreSingleDoc('profile', 'main');
 
   const [activeTab, setActiveTab] = useState('overview');
   const [isDarkMode, setIsDarkMode] = useState(true);
   
-  // Editor State
   const [isEditorOpen, setIsEditorOpen] = useState(false);
-  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [isSavingAccount, setIsSavingAccount] = useState(false);
 
-  // Security Tab State
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
 
-  // Subscribe to real-time updates from Firestore profile/main and admins
   useEffect(() => {
-    const unsubscribeProfile = subscribe();
     let unsubscribeAdmin;
     if (user?.uid) {
       unsubscribeAdmin = subscribeAdmin();
     }
     return () => {
-      if (unsubscribeProfile) unsubscribeProfile();
       if (unsubscribeAdmin) unsubscribeAdmin();
     };
-  }, [subscribe, subscribeAdmin, user?.uid]);
+  }, [subscribeAdmin, user?.uid]);
 
-  // Initialize theme from localStorage/DOM
   useEffect(() => {
     if (typeof document !== 'undefined') {
       const isDark = !document.documentElement.classList.contains('light-theme');
@@ -404,52 +239,30 @@ const AccountCenter = () => {
     }
   }, []);
 
-  const completionPercentage = useMemo(() => {
-    if (!profileData) return 0;
-    const fields = ['fullName', 'fullNameAr', 'bio', 'email', 'github', 'linkedin', 'avatar', 'resumeUrl'];
-    let filled = 0;
-    fields.forEach(field => {
-      if (profileData[field] && typeof profileData[field] === 'string' && profileData[field].trim() !== '') {
-        filled++;
-      }
-    });
-    return Math.round((filled / fields.length) * 100);
-  }, [profileData]);
-
-  // Handle Profile Save
-  const handleProfileSave = async (formData, avatarFile, uploadAvatar, resumeFile, uploadResume) => {
-    setIsSavingProfile(true);
+  const handleAccountSave = async (formData, avatarFile, uploadImage) => {
+    setIsSavingAccount(true);
     try {
-      // Build strictly defined payload to prevent data corruption
-      const payload = {
-        fullName: formData.fullName || '',
-        fullNameAr: formData.fullNameAr || '',
-        bio: formData.bio || '',
-        email: formData.email || '',
-        github: formData.github || '',
-        linkedin: formData.linkedin || '',
-        resumeUrl: formData.resumeUrl || ''
-      };
-
-      // Handle file uploads natively via existing hook functions passed down
+      let finalPhotoURL = formData.photoURL;
       if (avatarFile) {
-        const url = await uploadAvatar('profile');
-        if (url) payload.avatar = url;
+        const url = await uploadImage(avatarFile);
+        if (url) finalPhotoURL = url;
       }
-
-      if (resumeFile) {
-        const url = await uploadResume('documents');
-        if (url) payload.resumeUrl = url;
-      }
-
-      // Safe merge via useFirestoreSingleDoc -> setDoc(..., { merge: true })
-      await setDocData(payload);
-      toast.success('Profile updated successfully');
+      
+      await updateProfile(user, {
+        displayName: formData.displayName,
+        photoURL: finalPhotoURL
+      });
+      
+      // Force user object to refresh across the app if needed, 
+      // but Firebase Auth listener usually catches it, or we just rely on local re-render
+      // because we modified the user object in place somewhat, 
+      // though usually a reload is not needed for display name.
+      toast.success('Admin account updated securely');
       setIsEditorOpen(false);
     } catch (err) {
-      toast.error(err.message || 'Error updating profile');
+      toast.error(err.message || 'Error updating account');
     } finally {
-      setIsSavingProfile(false);
+      setIsSavingAccount(false);
     }
   };
 
@@ -464,7 +277,7 @@ const AccountCenter = () => {
         document.documentElement.classList.add('light-theme');
       }
     }
-    toast.success(`Theme updated to ${newIsDark ? 'Dark' : 'Light'} Mode`);
+    toast.success(`Dashboard theme updated to ${newIsDark ? 'Dark' : 'Light'} Mode`);
   };
 
   const handlePasswordUpdate = async (e) => {
@@ -480,11 +293,8 @@ const AccountCenter = () => {
     
     setIsUpdatingPassword(true);
     try {
-      // Re-authenticate first to satisfy Firebase 'auth/requires-recent-login'
       const credential = EmailAuthProvider.credential(user.email, currentPassword);
       await reauthenticateWithCredential(user, credential);
-      
-      // Update password
       await updatePassword(user, newPassword);
       toast.success('Password updated successfully');
       setCurrentPassword('');
@@ -512,7 +322,7 @@ const AccountCenter = () => {
     }
   };
 
-  if (!user || profileLoading) {
+  if (!user) {
     return (
       <div className="flex items-center justify-center h-64 w-full">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#14f195]"></div>
@@ -530,8 +340,6 @@ const AccountCenter = () => {
 
   return (
     <div className="max-w-[1600px] mx-auto space-y-8 animate-in fade-in duration-500 relative">
-      
-      {/* ═══ PREMIUM HEADER CARD ═══ */}
       <div className="relative w-full rounded-[24px] overflow-hidden bg-[#0d1321] border border-[#1e293b] shadow-2xl">
         <div className="h-40 w-full bg-gradient-to-r from-[#0a0f1c] via-[#1e293b] to-[#0a0f1c] relative overflow-hidden">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
@@ -542,11 +350,11 @@ const AccountCenter = () => {
           
           <div className="relative shrink-0">
             <div className="w-32 h-32 rounded-[20px] bg-[#0a0f1c] border-[4px] border-[#0d1321] shadow-2xl overflow-hidden flex items-center justify-center">
-              {profileData?.avatar ? (
-                <img src={profileData.avatar} alt="Profile" className="w-full h-full object-cover" />
+              {user.photoURL ? (
+                <img src={user.photoURL} alt="Admin Profile" className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full bg-gradient-to-tr from-[#1e293b] to-[#334155] flex items-center justify-center text-4xl font-black text-white">
-                  {profileData?.fullName?.[0]?.toUpperCase() || user.email[0].toUpperCase()}
+                  {user.displayName?.[0]?.toUpperCase() || user.email[0].toUpperCase()}
                 </div>
               )}
             </div>
@@ -559,7 +367,7 @@ const AccountCenter = () => {
             <div>
               <div className="flex flex-col md:flex-row items-center md:items-start gap-3">
                 <h1 className="text-3xl font-black text-white tracking-tight">
-                  {profileData?.fullName || 'Admin User'}
+                  {user.displayName || 'Admin Account'}
                 </h1>
                 {user.emailVerified && (
                   <span className="bg-[#14f195]/10 text-[#14f195] text-[10px] font-mono font-bold px-2 py-1 rounded border border-[#14f195]/20 uppercase tracking-widest flex items-center gap-1 shrink-0">
@@ -567,7 +375,7 @@ const AccountCenter = () => {
                   </span>
                 )}
               </div>
-              <p className="text-gray-400 font-mono text-sm mt-1">{profileData?.email || user.email}</p>
+              <p className="text-gray-400 font-mono text-sm mt-1">{user.email}</p>
               
               <div className="flex flex-wrap justify-center md:justify-start gap-4 md:gap-6 mt-4 text-xs font-mono text-gray-500 uppercase tracking-wider">
                 <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> Since {memberSince}</span>
@@ -581,30 +389,24 @@ const AccountCenter = () => {
                 className="w-full md:w-auto px-6 py-3 bg-[#1e293b] hover:bg-[#334155] text-white font-bold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 border border-[#334155]"
               >
                 <Edit2 className="w-4 h-4" />
-                <span>Edit Profile</span>
+                <span>Edit Account</span>
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* ═══ MAIN LAYOUT ═══ */}
       <div className="flex flex-col md:flex-row gap-8">
-        
-        {/* Navigation Sidebar */}
         <div className="w-full md:w-64 shrink-0">
           <nav className="flex flex-col space-y-1.5 sticky top-24">
             <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-gray-500 mb-3 block px-4">
               Account Settings
             </span>
-            
-            {/* Dynamic Tabs based on Role */}
             {(() => {
               const displayTabs = [...TABS];
               if (currentUserRole === 'owner' || currentUserRole === 'admin') {
                 displayTabs.splice(1, 0, { id: 'users', label: 'Users & Access', icon: Users });
               }
-              
               return displayTabs.map((tab) => {
                 const isActive = activeTab === tab.id;
                 const Icon = tab.icon;
@@ -633,32 +435,15 @@ const AccountCenter = () => {
           </nav>
         </div>
 
-        {/* Content Area */}
         <div className="flex-1 bg-[#0d1321] border border-[#1e293b] rounded-[24px] p-6 md:p-10 min-h-[500px]">
-          
-          {/* TAB 1: OVERVIEW */}
           {activeTab === 'overview' && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div className="mb-8">
                 <h2 className="text-2xl font-bold text-white mb-2 tracking-tight">Account Overview</h2>
-                <p className="text-gray-400 text-sm">Review your live authentication and profile status.</p>
+                <p className="text-gray-400 text-sm">Review your real authentication status and admin account.</p>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-[#0a0f1c] border border-[#1e293b] p-6 rounded-2xl">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-[11px] font-mono font-bold text-gray-400 uppercase tracking-widest">Public Profile</span>
-                    <span className="text-lg font-bold text-[#14f195]">{completionPercentage}%</span>
-                  </div>
-                  <div className="w-full h-2 bg-[#1e293b] rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-gradient-to-r from-[#14f195] to-emerald-400 rounded-full transition-all duration-1000"
-                      style={{ width: `${completionPercentage}%` }}
-                    />
-                  </div>
-                  <p className="text-xs text-gray-500 mt-4">Calculated based on configured schema fields. Click "Edit Profile" to update.</p>
-                </div>
-
                 <div className="bg-[#0a0f1c] border border-[#1e293b] p-6 rounded-2xl">
                    <div className="flex items-center justify-between mb-4">
                     <span className="text-[11px] font-mono font-bold text-gray-400 uppercase tracking-widest">Auth Provider</span>
@@ -674,27 +459,41 @@ const AccountCenter = () => {
                     </div>
                   </div>
                 </div>
+
+                <div className="bg-[#0a0f1c] border border-[#1e293b] p-6 rounded-2xl">
+                   <div className="flex items-center justify-between mb-4">
+                    <span className="text-[11px] font-mono font-bold text-gray-400 uppercase tracking-widest">Admin Role</span>
+                    <Users className="w-4 h-4 text-gray-400" />
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-[#1e293b] flex items-center justify-center">
+                      <Activity className="w-5 h-5 text-[#14f195]" />
+                    </div>
+                    <div>
+                      <div className="text-white font-bold text-sm capitalize">{currentUserRole} Access</div>
+                      <div className="text-xs text-gray-400 mt-0.5">Assigned via RBAC policies.</div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           )}
 
-          {/* TAB 1.5: USERS & ACCESS */}
           {activeTab === 'users' && (currentUserRole === 'owner' || currentUserRole === 'admin') && (
             <UsersManager currentUserRole={currentUserRole} />
           )}
 
-          {/* TAB 2: APPEARANCE */}
           {activeTab === 'appearance' && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div className="mb-8">
                 <h2 className="text-2xl font-bold text-white mb-2 tracking-tight">Appearance Settings</h2>
-                <p className="text-gray-400 text-sm">Control the display mode of the AdminOS dashboard.</p>
+                <p className="text-gray-400 text-sm">Control the display mode of the AdminOS dashboard only.</p>
               </div>
 
               <div className="bg-[#0a0f1c] border border-[#1e293b] rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6">
                 <div>
                   <h3 className="text-white font-bold mb-1">Interface Theme</h3>
-                  <p className="text-gray-400 text-sm">Toggle between Dark Mode (default) and Light Mode.</p>
+                  <p className="text-gray-400 text-sm">Toggle between Dark Mode (default) and Light Mode for the Admin panel.</p>
                 </div>
                 <button
                   onClick={handleThemeToggle}
@@ -710,12 +509,11 @@ const AccountCenter = () => {
             </div>
           )}
 
-          {/* TAB 3: SECURITY */}
           {activeTab === 'security' && (
             <div className="animate-in fade-in duration-300">
               <div className="mb-8">
                 <h2 className="text-2xl font-bold text-white mb-2 tracking-tight">Security Configuration</h2>
-                <p className="text-gray-400 text-sm">Manage your Firebase authentication credentials.</p>
+                <p className="text-gray-400 text-sm">Manage your real Firebase authentication credentials.</p>
               </div>
 
               <form onSubmit={handlePasswordUpdate} className="space-y-6 max-w-lg">
@@ -765,7 +563,6 @@ const AccountCenter = () => {
             </div>
           )}
 
-          {/* TAB 4: DANGER ZONE */}
           {activeTab === 'danger' && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div className="mb-8">
@@ -796,14 +593,12 @@ const AccountCenter = () => {
         </div>
       </div>
 
-      {/* Editor Modal is safely positioned outside conditional renders, 
-          managing its own safe internal hooks */}
       <ProfileEditorModal 
         isOpen={isEditorOpen} 
         onClose={() => setIsEditorOpen(false)} 
-        profileData={profileData} 
-        onSave={handleProfileSave} 
-        isSaving={isSavingProfile} 
+        user={user} 
+        onSave={handleAccountSave} 
+        isSaving={isSavingAccount} 
       />
     </div>
   );

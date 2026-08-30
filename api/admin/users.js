@@ -1,18 +1,10 @@
-// Modular dynamic imports to bypass Vercel's strict CJS/ESM bundling conflicts
-let appModule, authModule, firestoreModule;
+import { initializeApp, getApps, cert } from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
+import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 
-const loadModules = async () => {
-  if (!appModule) {
-    appModule = await import('firebase-admin/app');
-    authModule = await import('firebase-admin/auth');
-    firestoreModule = await import('firebase-admin/firestore');
-  }
-};
-
-const initFirebaseAdmin = async () => {
-  await loadModules();
-  
-  if (appModule.getApps().length === 0) {
+// Helper to initialize and retrieve Firebase Admin securely
+const initFirebaseAdmin = () => {
+  if (getApps().length === 0) {
     const projectId = process.env.FIREBASE_PROJECT_ID;
     const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
     const rawPrivateKey = process.env.FIREBASE_PRIVATE_KEY;
@@ -42,8 +34,8 @@ const initFirebaseAdmin = async () => {
     }
 
     try {
-      appModule.initializeApp({
-        credential: appModule.cert({
+      initializeApp({
+        credential: cert({
           projectId,
           clientEmail,
           privateKey,
@@ -108,14 +100,14 @@ export default async function handler(req, res) {
   try {
     // 1. Initialize Firebase safely
     try {
-      await initFirebaseAdmin();
+      initFirebaseAdmin();
     } catch (initErr) {
       console.error('API Diagnostic Error [Init]:', initErr);
       return res.status(500).json({ success: false, error: 'Firebase Admin initialization failed' });
     }
 
-    const db = firestoreModule.getFirestore();
-    const auth = authModule.getAuth();
+    const db = getFirestore();
+    const auth = getAuth();
 
     // 2. Verify caller authentication and role
     const caller = await verifyTokenAndRole(req, db, auth);
@@ -200,7 +192,7 @@ export default async function handler(req, res) {
       try {
         await db.collection('admins').doc(userRecord.uid).set({
           role,
-          createdAt: firestoreModule.FieldValue.serverTimestamp(),
+          createdAt: FieldValue.serverTimestamp(),
         });
       } catch (err) {
         console.error('API Diagnostic Error [Firestore SET]:', err);

@@ -1,6 +1,10 @@
-import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getAuth } from 'firebase-admin/auth';
-import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
+// Use require() to force the CJS versions and prevent ERR_REQUIRE_ESM in Vercel's bundler
+const { initializeApp, getApps, cert } = require('firebase-admin/app');
+const { getAuth } = require('firebase-admin/auth');
+const { getFirestore, FieldValue } = require('firebase-admin/firestore');
 
 // Helper to initialize and retrieve Firebase Admin securely
 const initFirebaseAdmin = () => {

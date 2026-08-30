@@ -1,56 +1,71 @@
-import admin from 'firebase-admin';
+import { initializeApp, getApps, cert } from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
+import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 
 // Helper to initialize and retrieve Firebase Admin securely
-const getFirebaseAdmin = () => {
-  if (!admin.apps.length) {
+const initFirebaseAdmin = () => {
+  if (getApps().length === 0) {
     const projectId = process.env.FIREBASE_PROJECT_ID || process.env.VITE_FIREBASE_PROJECT_ID;
     const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
     const rawPrivateKey = process.env.FIREBASE_PRIVATE_KEY;
 
     if (!projectId || !clientEmail || !rawPrivateKey) {
-      throw new Error('Firebase Admin credentials are not fully configured. Missing required environment variables.');
+      throw new Error('Firebase Admin initialization failed: Missing required environment variables.');
     }
 
+    // Safely parse the private key ensuring newlines are handled correctly from Vercel config
     const privateKey = rawPrivateKey.replace(/\\n/g, '\n');
 
-    admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId,
-        clientEmail,
-        privateKey,
-      }),
-    });
+    try {
+      initializeApp({
+        credential: cert({
+          projectId,
+          clientEmail,
+          privateKey,
+        }),
+      });
+    } catch (err) {
+      throw new Error('Firebase Admin initialization failed: Invalid credentials format.');
+    }
   }
-  return admin;
 };
 
 // Middleware to verify Auth Token and extract current user role
 const verifyTokenAndRole = async (req, db, auth) => {
-  const authHeader = req.headers.authorization;
+  const authHeader = req.headers?.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    throw new Error('Unauthorized - Missing or invalid token');
+    throw new Error('Unauthorized');
   }
 
   const token = authHeader.split('Bearer ')[1];
+  let decodedToken;
   try {
-    const decodedToken = await auth.verifyIdToken(token);
-    
-    // Check if the user is in the /admins collection in Firestore
-    const adminDoc = await db.collection('admins').doc(decodedToken.uid).get();
-    
-    if (!adminDoc.exists) {
-      throw new Error('Forbidden - User has no assigned role in admins collection');
-    }
-
-    const userData = adminDoc.data();
-    return {
-      uid: decodedToken.uid,
-      email: decodedToken.email,
-      role: userData.role || 'viewer', // Default to safest role
-    };
-  } catch (error) {
-    throw new Error(`Unauthorized - ${error.message}`);
+    decodedToken = await auth.verifyIdToken(token);
+  } catch (err) {
+    throw new Error('Unauthorized');
   }
+  
+  if (!decodedToken?.uid) {
+    throw new Error('Unauthorized');
+  }
+
+  let adminDoc;
+  try {
+    adminDoc = await db.collection('admins').doc(decodedToken.uid).get();
+  } catch (err) {
+    throw new Error('Firestore lookup failed');
+  }
+
+  if (!adminDoc || !adminDoc.exists) {
+    throw new Error('Forbidden');
+  }
+
+  const userData = adminDoc.data();
+  return {
+    uid: decodedToken.uid,
+    email: decodedToken.email,
+    role: userData?.role || 'viewer',
+  };
 };
 
 export default async function handler(req, res) {
@@ -65,187 +80,217 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 1. Initialize Firebase safely within the try-catch block
-    const adminApp = getFirebaseAdmin();
-    const db = adminApp.firestore();
-    const auth = adminApp.auth();
+    // 1. Initialize Firebase safely
+    try {
+      initFirebaseAdmin();
+    } catch (initErr) {
+      console.error('API Diagnostic Error [Init]:', initErr);
+      return res.status(500).json({ success: false, error: 'Firebase Admin initialization failed' });
+    }
+
+    const db = getFirestore();
+    const auth = getAuth();
 
     // 2. Verify caller authentication and role
     const caller = await verifyTokenAndRole(req, db, auth);
 
     // GET /api/admin/users
-    // Lists all users from Firebase Auth and merges them with Firestore 'admins' roles
     if (req.method === 'GET') {
       if (caller.role !== 'owner' && caller.role !== 'admin') {
-        return res.status(403).json({ success: false, error: 'Forbidden - Insufficient permissions to view users' });
+        return res.status(403).json({ success: false, error: 'Forbidden' });
       }
 
-      const listUsersResult = await auth.listUsers(1000); // Pagination could be added
-      const authUsers = listUsersResult.users;
+      let listUsersResult;
+      try {
+        listUsersResult = await auth.listUsers(1000);
+      } catch (err) {
+        console.error('API Diagnostic Error [listUsers]:', err);
+        return res.status(500).json({ success: false, error: 'listUsers() failed' });
+      }
 
-      // Fetch all roles from Firestore
-      const rolesSnapshot = await db.collection('admins').get();
+      let rolesSnapshot;
+      try {
+        rolesSnapshot = await db.collection('admins').get();
+      } catch (err) {
+        console.error('API Diagnostic Error [Firestore GET]:', err);
+        return res.status(500).json({ success: false, error: 'Firestore lookup failed' });
+      }
+
       const rolesMap = {};
-      rolesSnapshot.forEach(doc => {
-        rolesMap[doc.id] = doc.data().role;
-      });
+      if (rolesSnapshot) {
+        rolesSnapshot.forEach(doc => {
+          const data = doc.data();
+          if (data) rolesMap[doc.id] = data.role;
+        });
+      }
 
-      const users = authUsers.map(user => ({
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName || '',
-        photoURL: user.photoURL || '',
-        emailVerified: user.emailVerified,
-        disabled: user.disabled,
-        creationTime: user.metadata.creationTime,
-        lastSignInTime: user.metadata.lastSignInTime,
-        role: rolesMap[user.uid] || 'user'
+      const usersList = listUsersResult?.users || [];
+      const users = usersList.map(user => ({
+        uid: user?.uid,
+        email: user?.email,
+        displayName: user?.displayName || '',
+        photoURL: user?.photoURL || '',
+        emailVerified: user?.emailVerified,
+        disabled: user?.disabled,
+        creationTime: user?.metadata?.creationTime,
+        lastSignInTime: user?.metadata?.lastSignInTime,
+        role: rolesMap[user?.uid] || 'unassigned' // Handles unassigned gracefully
       }));
 
       return res.status(200).json({ success: true, users });
     }
 
     // POST /api/admin/users
-    // Creates a new Firebase Auth user and assigns them a role
     if (req.method === 'POST') {
       if (caller.role !== 'owner' && caller.role !== 'admin') {
-        return res.status(403).json({ success: false, error: 'Forbidden - Insufficient permissions' });
+        return res.status(403).json({ success: false, error: 'Forbidden' });
       }
 
       const { email, password, displayName, role } = req.body || {};
 
       if (!email || !password || !role) {
-        return res.status(400).json({ success: false, error: 'Email, password, and role are required' });
+        return res.status(400).json({ success: false, error: 'Invalid request fields' });
       }
 
-      // Security Constraint: Admins cannot create owners
       if (caller.role === 'admin' && role === 'owner') {
-        return res.status(403).json({ success: false, error: 'Forbidden - Admins cannot create owners' });
+        return res.status(403).json({ success: false, error: 'Forbidden' });
       }
 
-      // Create the Auth User
-      const userRecord = await auth.createUser({
-        email,
-        password,
-        displayName: displayName || '',
-      });
+      let userRecord;
+      try {
+        userRecord = await auth.createUser({
+          email,
+          password,
+          displayName: displayName || '',
+        });
+      } catch (err) {
+        console.error('API Diagnostic Error [createUser]:', err);
+        if (err?.code === 'auth/email-already-exists') {
+          return res.status(409).json({ success: false, error: 'Duplicate email' });
+        }
+        return res.status(500).json({ success: false, error: 'Internal Server Error' });
+      }
 
-      // Create the Role document
-      await db.collection('admins').doc(userRecord.uid).set({
-        role,
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      });
+      try {
+        await db.collection('admins').doc(userRecord.uid).set({
+          role,
+          createdAt: FieldValue.serverTimestamp(),
+        });
+      } catch (err) {
+        console.error('API Diagnostic Error [Firestore SET]:', err);
+        return res.status(500).json({ success: false, error: 'Firestore lookup failed' });
+      }
 
-      return res.status(201).json({ success: true, message: 'User created securely', uid: userRecord.uid });
+      return res.status(201).json({ success: true, message: 'User created', uid: userRecord.uid });
     }
 
     // PATCH /api/admin/users
-    // Updates a user's role or status
     if (req.method === 'PATCH') {
       if (caller.role !== 'owner' && caller.role !== 'admin') {
-        return res.status(403).json({ success: false, error: 'Forbidden - Insufficient permissions' });
+        return res.status(403).json({ success: false, error: 'Forbidden' });
       }
 
       const { uid, role, disabled } = req.body || {};
 
-      if (!uid) return res.status(400).json({ success: false, error: 'UID is required' });
+      if (!uid) return res.status(400).json({ success: false, error: 'Invalid request fields' });
 
-      // Protect the Owner
-      const targetDoc = await db.collection('admins').doc(uid).get();
-      if (!targetDoc.exists) {
-         return res.status(404).json({ success: false, error: 'Target user role record not found' });
+      let targetDoc;
+      try {
+        targetDoc = await db.collection('admins').doc(uid).get();
+      } catch (err) {
+        console.error('API Diagnostic Error [Firestore PATCH GET]:', err);
+        return res.status(500).json({ success: false, error: 'Firestore lookup failed' });
       }
-      const targetRole = targetDoc.data().role;
 
+      if (!targetDoc || !targetDoc.exists) {
+         return res.status(404).json({ success: false, error: 'User not found' });
+      }
+      
+      const targetData = targetDoc.data();
+      const targetRole = targetData?.role;
+
+      // Owner Protection Server-Side
       if (targetRole === 'owner') {
-        // Only the exact same owner can modify their own non-destructive attributes, 
-        // but no one (not even the owner) can demote/disable the owner via API
         if (role !== 'owner' || disabled === true) {
-           return res.status(403).json({ success: false, error: 'Forbidden - Cannot modify, demote, or disable an Owner account' });
+           return res.status(403).json({ success: false, error: 'Forbidden' });
         }
       }
-
       if (caller.role === 'admin' && targetRole === 'owner') {
-        return res.status(403).json({ success: false, error: 'Forbidden - Admins cannot manage an Owner' });
+        return res.status(403).json({ success: false, error: 'Forbidden' });
       }
       if (caller.role === 'admin' && role === 'owner') {
-        return res.status(403).json({ success: false, error: 'Forbidden - Admins cannot promote to Owner' });
+        return res.status(403).json({ success: false, error: 'Forbidden' });
       }
 
-      // Update Auth status if provided
-      if (disabled !== undefined) {
-        await auth.updateUser(uid, { disabled });
+      try {
+        if (disabled !== undefined) {
+          await auth.updateUser(uid, { disabled });
+        }
+        if (role) {
+          await db.collection('admins').doc(uid).set({ role }, { merge: true });
+        }
+      } catch (err) {
+        console.error('API Diagnostic Error [PATCH updates]:', err);
+        return res.status(500).json({ success: false, error: 'Internal Server Error' });
       }
 
-      // Update Role if provided
-      if (role) {
-        await db.collection('admins').doc(uid).set({ role }, { merge: true });
-      }
-
-      return res.status(200).json({ success: true, message: 'User updated securely' });
+      return res.status(200).json({ success: true, message: 'User updated' });
     }
 
     // DELETE /api/admin/users
     if (req.method === 'DELETE') {
       if (caller.role !== 'owner' && caller.role !== 'admin') {
-        return res.status(403).json({ success: false, error: 'Forbidden - Insufficient permissions' });
+        return res.status(403).json({ success: false, error: 'Forbidden' });
       }
 
       const { uid } = req.query || {}; 
 
-      if (!uid) return res.status(400).json({ success: false, error: 'UID is required' });
+      if (!uid) return res.status(400).json({ success: false, error: 'Invalid request fields' });
 
-      // Protect Owner
-      const targetDoc = await db.collection('admins').doc(uid).get();
-      const targetRole = targetDoc.exists ? targetDoc.data().role : null;
+      let targetDoc;
+      try {
+        targetDoc = await db.collection('admins').doc(uid).get();
+      } catch (err) {
+        console.error('API Diagnostic Error [Firestore DELETE GET]:', err);
+        return res.status(500).json({ success: false, error: 'Firestore lookup failed' });
+      }
 
+      const targetData = targetDoc?.exists ? targetDoc.data() : null;
+      const targetRole = targetData?.role;
+
+      // Owner Protection
       if (targetRole === 'owner') {
-        return res.status(403).json({ success: false, error: 'Forbidden - Owner accounts cannot be deleted' });
+        return res.status(403).json({ success: false, error: 'Forbidden' });
       }
       if (caller.role === 'admin' && targetRole === 'owner') {
-         return res.status(403).json({ success: false, error: 'Forbidden - Admins cannot manage an Owner' });
+         return res.status(403).json({ success: false, error: 'Forbidden' });
       }
 
-      // Delete from Auth
-      await auth.deleteUser(uid);
-      
-      // Delete from Firestore
-      await db.collection('admins').doc(uid).delete();
+      try {
+        await auth.deleteUser(uid);
+        await db.collection('admins').doc(uid).delete();
+      } catch (err) {
+        console.error('API Diagnostic Error [DELETE]:', err);
+        if (err?.code === 'auth/user-not-found') {
+           return res.status(404).json({ success: false, error: 'User not found' });
+        }
+        return res.status(500).json({ success: false, error: 'Internal Server Error' });
+      }
 
-      return res.status(200).json({ success: true, message: 'User deleted securely' });
+      return res.status(200).json({ success: true, message: 'User deleted' });
     }
 
     return res.status(405).json({ success: false, error: 'Method not allowed' });
 
   } catch (error) {
-    console.error('API Error:', error);
+    console.error('API Diagnostic Error [Unhandled]:', error?.stack || error);
     
-    let status = 500;
-    let message = 'Internal Server Error';
+    // Explicitly handle our known thrown errors from verifyTokenAndRole
+    if (error?.message === 'Unauthorized') return res.status(401).json({ success: false, error: 'Unauthorized' });
+    if (error?.message === 'Forbidden') return res.status(403).json({ success: false, error: 'Forbidden' });
+    if (error?.message === 'Firestore lookup failed') return res.status(500).json({ success: false, error: 'Firestore lookup failed' });
 
-    if (error.message.includes('Unauthorized')) {
-      status = 401;
-      message = error.message;
-    } else if (error.message.includes('Forbidden')) {
-      status = 403;
-      message = error.message;
-    } else if (error.code && error.code.startsWith('auth/')) {
-       // Propagate specific Firebase Auth errors
-       status = 400; // generally bad requests, like email-already-exists
-       if (error.code === 'auth/email-already-exists') {
-         status = 409;
-       } else if (error.code === 'auth/user-not-found') {
-         status = 404;
-       }
-       message = error.message;
-    } else {
-       // To avoid exposing sensitive keys, only return the message if it's explicitly generated by our code
-       if (error.message.includes('Firebase Admin credentials are not fully configured')) {
-         message = 'Server configuration error. Firebase Admin initialization failed.';
-       }
-    }
-    
-    // GUARANTEE valid JSON response
-    return res.status(status).json({ success: false, error: message });
+    // Catch-all
+    return res.status(500).json({ success: false, error: 'Internal Server Error' });
   }
 }

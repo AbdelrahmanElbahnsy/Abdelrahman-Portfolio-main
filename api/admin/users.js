@@ -1,14 +1,19 @@
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
+// Modular dynamic imports to bypass Vercel's strict CJS/ESM bundling conflicts
+let appModule, authModule, firestoreModule;
 
-// Use require() to force the CJS versions and prevent ERR_REQUIRE_ESM in Vercel's bundler
-const { initializeApp, getApps, cert } = require('firebase-admin/app');
-const { getAuth } = require('firebase-admin/auth');
-const { getFirestore, FieldValue } = require('firebase-admin/firestore');
+const loadModules = async () => {
+  if (!appModule) {
+    appModule = await import('firebase-admin/app');
+    authModule = await import('firebase-admin/auth');
+    firestoreModule = await import('firebase-admin/firestore');
+  }
+};
 
 // Helper to initialize and retrieve Firebase Admin securely
-const initFirebaseAdmin = () => {
-  if (getApps().length === 0) {
+const initFirebaseAdmin = async () => {
+  await loadModules();
+  
+  if (appModule.getApps().length === 0) {
     const projectId = process.env.FIREBASE_PROJECT_ID || process.env.VITE_FIREBASE_PROJECT_ID;
     const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
     const rawPrivateKey = process.env.FIREBASE_PRIVATE_KEY;
@@ -21,8 +26,8 @@ const initFirebaseAdmin = () => {
     const privateKey = rawPrivateKey.replace(/\\n/g, '\n');
 
     try {
-      initializeApp({
-        credential: cert({
+      appModule.initializeApp({
+        credential: appModule.cert({
           projectId,
           clientEmail,
           privateKey,
@@ -86,14 +91,14 @@ export default async function handler(req, res) {
   try {
     // 1. Initialize Firebase safely
     try {
-      initFirebaseAdmin();
+      await initFirebaseAdmin();
     } catch (initErr) {
       console.error('API Diagnostic Error [Init]:', initErr);
       return res.status(500).json({ success: false, error: 'Firebase Admin initialization failed' });
     }
 
-    const db = getFirestore();
-    const auth = getAuth();
+    const db = firestoreModule.getFirestore();
+    const auth = authModule.getAuth();
 
     // 2. Verify caller authentication and role
     const caller = await verifyTokenAndRole(req, db, auth);
@@ -178,7 +183,7 @@ export default async function handler(req, res) {
       try {
         await db.collection('admins').doc(userRecord.uid).set({
           role,
-          createdAt: FieldValue.serverTimestamp(),
+          createdAt: firestoreModule.FieldValue.serverTimestamp(),
         });
       } catch (err) {
         console.error('API Diagnostic Error [Firestore SET]:', err);

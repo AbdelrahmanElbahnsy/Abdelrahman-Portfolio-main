@@ -9,21 +9,37 @@ const loadModules = async () => {
   }
 };
 
-// Helper to initialize and retrieve Firebase Admin securely
 const initFirebaseAdmin = async () => {
   await loadModules();
   
   if (appModule.getApps().length === 0) {
-    const projectId = process.env.FIREBASE_PROJECT_ID || process.env.VITE_FIREBASE_PROJECT_ID;
+    const projectId = process.env.FIREBASE_PROJECT_ID;
     const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
     const rawPrivateKey = process.env.FIREBASE_PRIVATE_KEY;
 
     if (!projectId || !clientEmail || !rawPrivateKey) {
+      console.error('API Diagnostic Error [InitEnv]: Missing required environment variables.', {
+        hasProjectId: !!projectId,
+        hasClientEmail: !!clientEmail,
+        hasPrivateKey: !!rawPrivateKey,
+      });
       throw new Error('Firebase Admin initialization failed: Missing required environment variables.');
     }
 
-    // Safely parse the private key ensuring newlines are handled correctly from Vercel config
-    const privateKey = rawPrivateKey.replace(/\\n/g, '\n');
+    // Vercel environment variables sometimes include surrounding quotes and escaped newlines.
+    // Strip quotes and safely convert \n to actual newlines.
+    let privateKey = rawPrivateKey;
+    if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
+      privateKey = privateKey.slice(1, -1);
+    } else if (privateKey.startsWith("'") && privateKey.endsWith("'")) {
+      privateKey = privateKey.slice(1, -1);
+    }
+    privateKey = privateKey.replace(/\\n/g, '\n');
+
+    // Diagnostic validation of PEM structure
+    if (!privateKey.includes('-----BEGIN PRIVATE KEY-----') || !privateKey.includes('-----END PRIVATE KEY-----')) {
+      console.error('API Diagnostic Error [InitKey]: Private key does not contain expected PEM boundaries.');
+    }
 
     try {
       appModule.initializeApp({
@@ -34,7 +50,8 @@ const initFirebaseAdmin = async () => {
         }),
       });
     } catch (err) {
-      throw new Error('Firebase Admin initialization failed: Invalid credentials format.');
+      console.error('API Diagnostic Error [InitCert]: Firebase Admin initialization threw an exception:', err?.message, err?.code);
+      throw new Error('Firebase Admin initialization failed: ' + (err?.message || 'Unknown error'));
     }
   }
 };

@@ -7,18 +7,29 @@ export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState('en');
 
   useEffect(() => {
-    // Check local storage for saved language
-    const savedLanguage = localStorage.getItem('portfolio-language');
-    if (savedLanguage === 'ar' || savedLanguage === 'en') {
-      setLanguage(savedLanguage);
-      document.documentElement.lang = savedLanguage;
-    } else {
-      // Default is en
-      setLanguage('en');
-      document.documentElement.lang = 'en';
-    }
-    // Structural layout MUST remain LTR to prevent breaking Swiper and positioning.
-    document.documentElement.dir = 'ltr'; 
+    const applyLanguage = () => {
+      const savedLanguage = localStorage.getItem('portfolio-language');
+      if (savedLanguage === 'ar' || savedLanguage === 'en') {
+        setLanguage(savedLanguage);
+        document.documentElement.lang = savedLanguage;
+      } else {
+        // Default is en
+        setLanguage('en');
+        document.documentElement.lang = 'en';
+      }
+      
+      // Update .portfolio-theme-root dir instead of global html to isolate RTL
+      const root = document.documentElement;
+      // Note: In React, we rely on setting standard DOM properties on elements that aren't managed by React
+      // Here, we update the global language. RTL will be handled in CSS using `:lang(ar)` where needed, 
+      // or we can explicitly set dir="rtl" on specific containers.
+    };
+
+    applyLanguage();
+
+    // Listen for global appearance context changes
+    window.addEventListener('portfolio-language-updated', applyLanguage);
+    return () => window.removeEventListener('portfolio-language-updated', applyLanguage);
   }, []);
 
   const toggleLanguage = () => {
@@ -26,8 +37,6 @@ export const LanguageProvider = ({ children }) => {
     setLanguage(newLanguage);
     localStorage.setItem('portfolio-language', newLanguage);
     document.documentElement.lang = newLanguage;
-    // Structural layout MUST remain LTR to prevent breaking Swiper and positioning.
-    document.documentElement.dir = 'ltr';
   };
 
   const t = (key) => getTranslation(key, language);

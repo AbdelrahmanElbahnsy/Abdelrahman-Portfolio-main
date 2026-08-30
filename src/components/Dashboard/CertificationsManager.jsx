@@ -77,7 +77,7 @@ const InputField = ({ label, name, value, onChange, required, placeholder, helpe
 // ─────────────────────────────────────────────────────────────────────────────
 // EDITOR MODAL
 // ─────────────────────────────────────────────────────────────────────────────
-const CertificationEditor = ({ isOpen, onClose, certification, onSave, isSaving }) => {
+const CertificationEditor = ({ isOpen, onClose, certification, onSave, isSaving, nextOrderNumber }) => {
   const [formData, setFormData] = useState({});
   const [initialData, setInitialData] = useState({});
 
@@ -106,17 +106,22 @@ const CertificationEditor = ({ isOpen, onClose, certification, onSave, isSaving 
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, isSaving, onClose]);
 
+  // Dirty state: check if form differs from initial
+  // IMPORTANT: This useMemo MUST be called before any early return
+  // to maintain consistent hook call order across renders.
+  const isDirty = useMemo(() => {
+    const keys = ['title', 'issuer', 'link', 'icon', 'order', 'date'];
+    return keys.some(k => (formData[k] || '') !== (initialData[k] || ''));
+  }, [formData, initialData]);
+
+  // Determine if date field has a real value to show
+  const hasDate = certification && certification.date && String(certification.date).trim() !== '';
+
   if (!isOpen) return null;
 
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
-
-  // Dirty state: check if form differs from initial
-  const isDirty = useMemo(() => {
-    const keys = ['title', 'issuer', 'link', 'icon', 'order', 'date'];
-    return keys.some(k => (formData[k] || '') !== (initialData[k] || ''));
-  }, [formData, initialData]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -137,9 +142,6 @@ const CertificationEditor = ({ isOpen, onClose, certification, onSave, isSaving 
     }
   };
 
-  // Determine if date field has a real value to show
-  const hasDate = certification && certification.date && String(certification.date).trim() !== '';
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6">
       {/* Overlay */}
@@ -154,14 +156,20 @@ const CertificationEditor = ({ isOpen, onClose, certification, onSave, isSaving 
         {/* Header */}
         <div className="flex items-start justify-between p-6 border-b border-[#1e293b] bg-[#0d1321] shrink-0">
           <div className="min-w-0">
-            <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-gray-400 mb-2 block">
+            <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-gray-400 mb-1 block">
               {certification ? 'EDIT CERTIFICATION' : 'NEW CERTIFICATION'}
+            </span>
+            <span className="text-[11px] font-mono text-[#14f195]/60 mb-2 block">
+              {certification
+                ? `CERTIFICATION ${String(certification.order ?? '').toString().padStart(2, '0')}`
+                : `CERTIFICATION ${String(nextOrderNumber ?? 0).toString().padStart(2, '0')}`
+              }
             </span>
             <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight truncate">
               {certification ? (
                 <span className="truncate">{formData.title || certification.title}</span>
               ) : (
-                'Add a new professional credential'
+                formData.title?.trim() || 'Untitled Certification'
               )}
             </h2>
           </div>
@@ -300,22 +308,10 @@ const CertificationCard = ({ certification, onEdit, onDelete, onMoveUp, onMoveDo
     <div className="bg-[#0f172a] rounded-[16px] border border-[#1e293b] p-6 shadow-sm hover:shadow-xl hover:border-[#334155] transition-all duration-300 flex flex-col h-full group relative overflow-hidden hover:-translate-y-0.5">
 
       {/* Order badge */}
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4">
         <span className="text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-[#14f195]/80">
           {orderDisplay} / CERT
         </span>
-        {hasLink && (
-          <a
-            href={certification.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-1.5 text-gray-500 hover:text-[#14f195] transition-colors"
-            title="Open credential"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <ExternalLink className="w-3.5 h-3.5" />
-          </a>
-        )}
       </div>
 
       {/* Content */}
@@ -324,26 +320,33 @@ const CertificationCard = ({ certification, onEdit, onDelete, onMoveUp, onMoveDo
           <h3 className="text-lg font-bold text-white mb-2 tracking-tight leading-snug break-words">
             {certification.title || 'Untitled Certification'}
           </h3>
-          <p className="text-sm text-[#14f195]/70 font-medium">
+          <p className="text-sm text-gray-400 font-medium">
             {certification.issuer || 'Unknown issuer'}
           </p>
         </div>
 
-        {/* Icon class indicator */}
-        {certification.icon && (
+        {/* Credential link button */}
+        {hasLink && (
           <div className="mt-auto mb-4">
-            <span className="text-[10px] font-mono text-gray-600 bg-[#1e293b]/50 px-2 py-1 rounded border border-[#1e293b]">
-              {certification.icon}
-            </span>
+            <a
+              href={certification.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-[12px] font-bold text-[#14f195]/80 hover:text-[#14f195] uppercase tracking-wider transition-colors"
+              onClick={(e) => e.stopPropagation()}
+            >
+              View Credential
+              <ExternalLink className="w-3 h-3" />
+            </a>
           </div>
         )}
 
-        {/* Credential URL (truncated) */}
-        {hasLink && (
+        {/* Icon class indicator */}
+        {certification.icon && (
           <div className="mb-2">
-            <p className="text-[11px] text-gray-500 truncate font-mono" title={certification.link}>
-              {certification.link}
-            </p>
+            <span className="text-[10px] font-mono text-gray-600 bg-[#1e293b]/50 px-2 py-1 rounded border border-[#1e293b]">
+              {certification.icon}
+            </span>
           </div>
         )}
       </div>
@@ -854,6 +857,7 @@ const CertificationsManager = () => {
         certification={editingCert}
         onSave={handleSave}
         isSaving={isSaving}
+        nextOrderNumber={items ? items.length : 0}
       />
 
       {/* ═══ DELETE DIALOG ═══ */}

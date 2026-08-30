@@ -46,15 +46,27 @@ const MENU_GROUPS = [
   }
 ];
 
-const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
+const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileMenuOpen, setIsMobileMenuOpen }) => {
   const location = useLocation();
   const { counts, pendingTasks } = useDashboard();
 
   return (
-    <aside
-      style={{ width: isCollapsed ? '80px' : '280px' }}
-      className="bg-cms-sidebar border-r border-white/5 h-screen fixed left-0 top-0 flex flex-col z-50 shadow-2xl duration-300 transition-[width]"
-    >
+
+    <>
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[45] md:hidden"
+          />
+        )}
+      </AnimatePresence>
+      <aside
+        className={`bg-cms-sidebar border-r border-white/5 h-screen fixed left-0 top-0 flex flex-col z-50 shadow-2xl duration-300 transition-all w-[280px] ${isCollapsed ? 'md:w-[80px]' : 'md:w-[280px]'} ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
+      >
       {/* Logo Area */}
       <div className="h-20 flex items-center justify-between px-6 border-b border-white/5 bg-cms-background/30 backdrop-blur-md shrink-0">
         <AnimatePresence mode="wait">
@@ -88,7 +100,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
       {/* Collapse Toggle */}
       <button 
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute -right-3 top-24 w-6 h-6 bg-cms-cards border border-white/10 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:border-cms-primary hover:shadow-glow-primary transition-all z-50"
+        className="hidden md:flex absolute -right-3 top-24 w-6 h-6 bg-cms-cards border border-white/10 rounded-full items-center justify-center text-gray-400 hover:text-white hover:border-cms-primary hover:shadow-glow-primary transition-all z-50"
       >
         <ChevronLeft className={`w-3 h-3 transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`} />
       </button>
@@ -210,6 +222,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
         </AnimatePresence>
       </div>
     </aside>
+    </>
   );
 };
 

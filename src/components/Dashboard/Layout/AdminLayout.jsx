@@ -13,7 +13,13 @@ const AdminLayoutContent = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
 
   // Lenis smooth scroll must not run inside the Dashboard — it intercepts
   // ALL wheel/touch events globally and prevents our scroll containers from working.
@@ -77,12 +83,22 @@ const AdminLayoutContent = () => {
       
       <GlobalSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
       
-      <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
+      <Sidebar 
+        isCollapsed={isCollapsed} 
+        setIsCollapsed={setIsCollapsed} 
+        isMobileMenuOpen={isMobileMenuOpen}
+        setIsMobileMenuOpen={setIsMobileMenuOpen}
+      />
 
-      <div className={`flex-1 min-w-0 min-h-0 flex flex-col h-full transition-[margin] duration-300 ${isCollapsed ? 'ml-[80px]' : 'ml-[280px]'}`}>
-        <Topbar title={currentTitle} onLogout={handleLogout} onSearchClick={() => setSearchOpen(true)} />
+      <div className={`flex-1 min-w-0 min-h-0 flex flex-col h-full transition-[margin] duration-300 ml-0 ${isCollapsed ? 'md:ml-[80px]' : 'md:ml-[280px]'}`}>
+        <Topbar 
+          title={currentTitle} 
+          onLogout={handleLogout} 
+          onSearchClick={() => setSearchOpen(true)} 
+          onMenuClick={() => setIsMobileMenuOpen(true)}
+        />
 
-        <main className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-8 pb-32 max-w-7xl mx-auto w-full">
+        <main className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 md:p-8 pb-32 max-w-7xl mx-auto w-full">
           <Outlet />
         </main>
       </div>

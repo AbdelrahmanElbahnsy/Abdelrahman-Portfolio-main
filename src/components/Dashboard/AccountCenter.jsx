@@ -4,7 +4,7 @@ import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
 import UsersManager from './UsersManager';
 import AppearanceManager from './AppearanceManager';
 import { useImageUpload } from '../../cms/hooks/useImageUpload';
-import { updatePassword, EmailAuthProvider, reauthenticateWithCredential, updateProfile } from 'firebase/auth';
+import { updatePassword, EmailAuthProvider, reauthenticateWithCredential, updateProfile, sendEmailVerification } from 'firebase/auth';
 import {
   Shield, Palette, AlertTriangle,
   CheckCircle2, Clock, Calendar, Lock,
@@ -363,7 +363,7 @@ const ProfileEditorModal = ({ isOpen, onClose, user, onSave, isSaving }) => {
 // OVERVIEW: PROFILE HERO
 // ─────────────────────────────────────────────────────────────────────────────
 
-const ProfileHero = ({ user, currentUserRole, onEditProfile }) => {
+const ProfileHero = ({ user, isEmailVerified, currentUserRole, onEditProfile }) => {
   const memberSince = user?.metadata?.creationTime
     ? new Date(user.metadata.creationTime).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
     : 'Unknown';
@@ -415,12 +415,12 @@ const ProfileHero = ({ user, currentUserRole, onEditProfile }) => {
                 {isOwner && <Key className="w-3 h-3" aria-hidden="true" />}
                 {roleLabel}
               </span>
-              {user.emailVerified && (
+              {isEmailVerified && (
                 <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md border text-[10px] font-mono font-bold uppercase tracking-widest bg-[#14f195]/8 text-[#14f195] border-[#14f195]/20">
-                  <CheckCircle2 className="w-3 h-3" aria-hidden="true" /> Verified
+                  <CheckCircle2 className="w-3 h-3" aria-hidden="true" /> Verified Email
                 </span>
               )}
-              {!user.emailVerified && (
+              {!isEmailVerified && (
                 <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md border text-[10px] font-mono font-bold uppercase tracking-widest bg-yellow-500/8 text-yellow-400 border-yellow-500/20">
                   <ShieldAlert className="w-3 h-3" aria-hidden="true" /> Unverified Email
                 </span>
@@ -465,7 +465,7 @@ const ProfileHero = ({ user, currentUserRole, onEditProfile }) => {
 // OVERVIEW: ACCOUNT OVERVIEW CARDS
 // ─────────────────────────────────────────────────────────────────────────────
 
-const AccountOverviewCards = ({ user, currentUserRole }) => {
+const AccountOverviewCards = ({ user, isEmailVerified, currentUserRole }) => {
   const memberSince = user?.metadata?.creationTime
     ? new Date(user.metadata.creationTime).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
     : 'Unknown';
@@ -500,10 +500,10 @@ const AccountOverviewCards = ({ user, currentUserRole }) => {
     },
     {
       label: 'Email Status',
-      value: user.emailVerified ? 'Verified' : 'Unverified',
+      value: isEmailVerified ? 'Verified' : 'Unverified',
       icon: Mail,
-      accent: user.emailVerified ? 'text-[#14f195]' : 'text-yellow-400',
-      note: user.emailVerified ? 'Identity confirmed' : 'Verification pending',
+      accent: isEmailVerified ? 'text-[#14f195]' : 'text-yellow-400',
+      note: isEmailVerified ? 'Identity confirmed' : 'Verification pending',
     },
     {
       label: 'Last Sign-In',
@@ -596,7 +596,7 @@ const PersonalInformation = ({ user, onEditProfile }) => (
 // OVERVIEW: SECURITY SNAPSHOT
 // ─────────────────────────────────────────────────────────────────────────────
 
-const SecuritySnapshot = ({ user, onNavigateToSecurity }) => {
+const SecuritySnapshot = ({ user, isEmailVerified, onNavigateToSecurity }) => {
   const provider = user.providerData?.[0]?.providerId || 'password';
   const providerLabel = provider === 'password' ? 'Email / Password' : provider === 'google.com' ? 'Google OAuth' : provider;
   const hasPasswordAuth = user.providerData?.some((p) => p.providerId === 'password');
@@ -612,7 +612,7 @@ const SecuritySnapshot = ({ user, onNavigateToSecurity }) => {
 
       <div className="px-6 py-2">
         <InfoRow icon={Lock}        label="Auth Method"          value={providerLabel} />
-        <InfoRow icon={Mail}        label="Email Verification"   value={user.emailVerified ? 'Verified' : 'Not Verified'} />
+        <InfoRow icon={Mail}        label="Email Verification"   value={isEmailVerified ? 'Verified' : 'Not Verified'} />
         <InfoRow icon={Key}         label="Password Auth"        value={hasPasswordAuth ? 'Enabled' : 'Not Configured'} />
         <InfoRow icon={Clock}       label="Last Auth Activity"   value={
           user.metadata?.lastSignInTime
@@ -742,14 +742,14 @@ const RecentActivity = () => (
 // OVERVIEW TAB — assembled from sections above
 // ─────────────────────────────────────────────────────────────────────────────
 
-const OverviewTab = ({ user, currentUserRole, onEditProfile, onNavigateToSecurity, onNavigateToUsers }) => (
+const OverviewTab = ({ user, isEmailVerified, currentUserRole, onEditProfile, onNavigateToSecurity, onNavigateToUsers }) => (
   <div className="space-y-8 animate-in fade-in duration-300">
     {/* A. Profile Hero */}
-    <ProfileHero user={user} currentUserRole={currentUserRole} onEditProfile={onEditProfile} />
+    <ProfileHero user={user} isEmailVerified={isEmailVerified} currentUserRole={currentUserRole} onEditProfile={onEditProfile} />
 
     {/* B. Account Overview Cards */}
     <PageSection title="Account Overview" subtitle="Real-time authentication metadata">
-      <AccountOverviewCards user={user} currentUserRole={currentUserRole} />
+      <AccountOverviewCards user={user} isEmailVerified={isEmailVerified} currentUserRole={currentUserRole} />
     </PageSection>
 
     {/* C. Personal Information */}
@@ -761,7 +761,7 @@ const OverviewTab = ({ user, currentUserRole, onEditProfile, onNavigateToSecurit
     <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
       {/* D. Security Snapshot */}
       <PageSection title="Security Snapshot">
-        <SecuritySnapshot user={user} onNavigateToSecurity={onNavigateToSecurity} />
+        <SecuritySnapshot user={user} isEmailVerified={isEmailVerified} onNavigateToSecurity={onNavigateToSecurity} />
       </PageSection>
 
       {/* E. Admin Access */}
@@ -778,11 +778,111 @@ const OverviewTab = ({ user, currentUserRole, onEditProfile, onNavigateToSecurit
 );
 
 // ─────────────────────────────────────────────────────────────────────────────
+// SECURITY: EMAIL VERIFICATION CARD
+// ─────────────────────────────────────────────────────────────────────────────
+
+const EmailVerificationCard = ({ user, isEmailVerified, refreshUser }) => {
+  const [isSending, setIsSending] = useState(false);
+  const [isChecking, setIsChecking] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    let timer;
+    if (cooldown > 0) {
+      timer = setTimeout(() => setCooldown(c => c - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [cooldown]);
+
+  const handleSendVerification = async () => {
+    setIsSending(true);
+    try {
+      await sendEmailVerification(user);
+      toast.success('Verification email sent successfully.');
+      setCooldown(60);
+    } catch (err) {
+      if (err.code === 'auth/too-many-requests') {
+        toast.error('Too many requests. Please try again later.');
+      } else {
+        toast.error('Failed to send verification email.');
+      }
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  const handleCheckAgain = async () => {
+    setIsChecking(true);
+    try {
+      await refreshUser();
+      // wait a tiny bit to ensure state reflects 
+      // but actually useAuth sets state. We can check user.emailVerified directly since it mutated.
+      if (user.emailVerified) {
+        toast.success('Email is verified.');
+      } else {
+        toast.error('Email is still unverified.');
+      }
+    } catch (err) {
+      toast.error('Failed to check verification status.');
+    } finally {
+      setIsChecking(false);
+    }
+  };
+
+  return (
+    <div className="bg-[#0a0f1c] border border-[#1e293b] p-6 rounded-2xl space-y-5">
+      <h3 className="text-white font-bold mb-1 flex items-center gap-2">
+        {isEmailVerified ? (
+          <CheckCircle2 className="w-5 h-5 text-[#14f195]" aria-hidden="true" />
+        ) : (
+          <ShieldAlert className="w-5 h-5 text-yellow-400" aria-hidden="true" />
+        )}
+        Email Verification
+      </h3>
+      
+      {isEmailVerified ? (
+        <div className="bg-[#14f195]/10 border border-[#14f195]/20 rounded-xl p-4">
+          <p className="text-sm font-bold text-[#14f195] mb-1">VERIFIED EMAIL</p>
+          <p className="text-xs text-[#14f195]/80 font-mono">Your email address is verified.</p>
+        </div>
+      ) : (
+        <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4">
+          <p className="text-sm font-bold text-yellow-400 mb-1">UNVERIFIED EMAIL</p>
+          <p className="text-xs text-yellow-400/80 font-mono">Your email address has not been verified yet.</p>
+        </div>
+      )}
+
+      {!isEmailVerified && (
+        <div className="pt-2 flex flex-wrap gap-3">
+          <button
+            onClick={handleSendVerification}
+            disabled={isSending || cooldown > 0}
+            aria-label="Send Verification Email"
+            className="px-4 py-2 bg-[#1e293b] hover:bg-[#334155] text-white text-xs font-bold rounded-lg transition-all disabled:opacity-50 border border-[#334155]"
+          >
+            {isSending ? 'Sending...' : cooldown > 0 ? `Resend available in ${cooldown}s` : 'Send Verification Email'}
+          </button>
+          
+          <button
+            onClick={handleCheckAgain}
+            disabled={isChecking}
+            aria-label="Check verification again"
+            className="px-4 py-2 bg-transparent hover:bg-[#1e293b] text-gray-400 hover:text-white text-xs font-bold rounded-lg transition-all disabled:opacity-50 border border-[#334155]"
+          >
+            {isChecking ? 'Checking...' : 'Check Again'}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
 // ACCOUNT CENTER (main page)
 // ─────────────────────────────────────────────────────────────────────────────
 
 const AccountCenter = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, isEmailVerified, refreshUser } = useAuth();
   const { data: adminData, subscribe: subscribeAdmin } = useFirestoreSingleDoc('admins', user?.uid);
   const currentUserRole = adminData?.role || 'viewer';
 
@@ -943,6 +1043,7 @@ const AccountCenter = () => {
           {activeTab === 'overview' && (
             <OverviewTab
               user={user}
+              isEmailVerified={isEmailVerified}
               currentUserRole={currentUserRole}
               onEditProfile={() => setIsEditorOpen(true)}
               onNavigateToSecurity={() => setActiveTab('security')}
@@ -968,48 +1069,52 @@ const AccountCenter = () => {
                 <p className="text-gray-400 text-sm">Manage your Firebase authentication credentials.</p>
               </div>
 
-              <form onSubmit={handlePasswordUpdate} className="space-y-6 max-w-lg">
-                <div className="bg-[#0a0f1c] border border-[#1e293b] p-6 rounded-2xl space-y-5">
-                  <h3 className="text-white font-bold mb-4 flex items-center gap-2">
-                    <Shield className="w-5 h-5 text-[#14f195]" aria-hidden="true" /> Update Password
-                  </h3>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                <EmailVerificationCard user={user} isEmailVerified={isEmailVerified} refreshUser={refreshUser} />
 
-                  <InputField
-                    label="CURRENT PASSWORD"
-                    type="password"
-                    name="currentPassword"
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    isMonospace
-                  />
-                  <InputField
-                    label="NEW PASSWORD"
-                    type="password"
-                    name="newPassword"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    isMonospace
-                  />
-                  <InputField
-                    label="CONFIRM NEW PASSWORD"
-                    type="password"
-                    name="confirmPassword"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    isMonospace
-                  />
+                <form onSubmit={handlePasswordUpdate} className="space-y-6">
+                  <div className="bg-[#0a0f1c] border border-[#1e293b] p-6 rounded-2xl space-y-5">
+                    <h3 className="text-white font-bold mb-4 flex items-center gap-2">
+                      <Shield className="w-5 h-5 text-[#14f195]" aria-hidden="true" /> Update Password
+                    </h3>
 
-                  <div className="pt-4">
-                    <button
-                      type="submit"
-                      disabled={isUpdatingPassword || !currentPassword || !newPassword || !confirmPassword}
-                      className="px-6 py-2.5 bg-[#1e293b] hover:bg-[#334155] text-white text-sm font-bold rounded-lg transition-all disabled:opacity-50 border border-[#334155]"
-                    >
-                      {isUpdatingPassword ? 'Updating...' : 'Update Password'}
-                    </button>
+                    <InputField
+                      label="CURRENT PASSWORD"
+                      type="password"
+                      name="currentPassword"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      isMonospace
+                    />
+                    <InputField
+                      label="NEW PASSWORD"
+                      type="password"
+                      name="newPassword"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      isMonospace
+                    />
+                    <InputField
+                      label="CONFIRM NEW PASSWORD"
+                      type="password"
+                      name="confirmPassword"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      isMonospace
+                    />
+
+                    <div className="pt-4">
+                      <button
+                        type="submit"
+                        disabled={isUpdatingPassword || !currentPassword || !newPassword || !confirmPassword}
+                        className="px-6 py-2.5 bg-[#1e293b] hover:bg-[#334155] text-white text-sm font-bold rounded-lg transition-all disabled:opacity-50 border border-[#334155]"
+                      >
+                        {isUpdatingPassword ? 'Updating...' : 'Update Password'}
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </form>
+                </form>
+              </div>
             </div>
           )}
 

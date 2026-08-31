@@ -27,7 +27,10 @@ const AirplaneSocial = () => {
         };
 
         document.addEventListener('click', handleClickOutside);
-        useEffect(() => {
+        return () => document.removeEventListener('click', handleClickOutside);
+    }, []);
+
+    useEffect(() => {
         const unsubscribe = subscribe();
         return () => {
             if (unsubscribe) unsubscribe();
@@ -49,9 +52,6 @@ const AirplaneSocial = () => {
     if (loading || error || !socialsData || socialsData.length === 0) {
         return null;
     }
-
-    return () => document.removeEventListener('click', handleClickOutside);
-    }, []);
 
     return (
         <div className="airplane-social-wrapper fixed left-4 bottom-4 md:left-[30px] md:bottom-[30px] z-50">

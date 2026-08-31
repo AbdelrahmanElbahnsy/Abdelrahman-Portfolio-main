@@ -37,7 +37,7 @@ function Home({ splashDone = true }) {
 
   return (
     <div 
-      className="page-wrapper min-h-screen flex flex-col relative portfolio-theme-root" 
+      className="page-wrapper min-h-screen flex flex-col relative portfolio-theme-root bg-[var(--theme-bg)] text-[var(--theme-text)] transition-colors duration-500" 
       dir={language === 'ar' ? 'rtl' : 'ltr'}
     >
       {/* Global Animated Background */}

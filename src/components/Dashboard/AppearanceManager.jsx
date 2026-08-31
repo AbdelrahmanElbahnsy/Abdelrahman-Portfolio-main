@@ -63,8 +63,18 @@ const AppearanceManager = ({ currentUserRole }) => {
     
     setIsSaving(true);
     try {
+      // Strictly sanitize payload to ensure no unsupported/undefined fields are passed to Firestore
+      const sanitizedPayload = {
+        theme: draftSettings.theme || 'dark',
+        language: draftSettings.language || 'en',
+        primaryColor: draftSettings.primaryColor || '#c8a26e',
+        backgroundColor: draftSettings.backgroundColor || '#0A1121',
+        surfaceColor: draftSettings.surfaceColor || 'rgba(16, 26, 46, 0.7)',
+        textColor: draftSettings.textColor || '#ffffff',
+      };
+
       // settings/appearance
-      await crudService.set('settings', 'appearance', draftSettings);
+      await crudService.set('settings', 'appearance', sanitizedPayload);
       toast.success('Portfolio appearance updated successfully!');
       setIsDirty(false);
     } catch (err) {

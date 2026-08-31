@@ -6,7 +6,7 @@ import {
   Filter, Calendar, Clock, Lock, Mail, ShieldCheck,
   Eye, Trash2, MoreVertical, LockOpen, RefreshCw,
   Globe, Fingerprint, ChevronDown, Copy, Check,
-  WifiOff, UserX, Info
+  WifiOff, UserX, Info, Circle
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -967,10 +967,11 @@ const UsersManager = ({ currentUserRole }) => {
             <table className="w-full min-w-[760px] text-left border-collapse">
               <thead>
                 <tr className="border-b border-[#1e293b] bg-[#0d1321]">
-                  {['User', 'Role', 'Status', 'Auth', 'Joined', 'Last Sign-In', 'Actions'].map(h => (
+                  {['User', 'Role', 'Status', 'Auth', 'Verification', 'Joined', 'Last Sign-In', 'Actions'].map(h => (
                     <th key={h} className={`px-5 py-3.5 text-[10px] font-mono font-bold text-gray-500 uppercase tracking-widest ${
                       h === 'Joined' ? 'hidden sm:table-cell' : 
                       h === 'Last Sign-In' ? 'hidden lg:table-cell' : 
+                      h === 'Verification' ? 'hidden md:table-cell' :
                       h === 'Actions' ? 'text-right' : ''
                     }`}>{h}</th>
                   ))}
@@ -1015,6 +1016,18 @@ const UsersManager = ({ currentUserRole }) => {
                         <span className={getProviderBadge(u.providerData)}>
                           {getProviderLabel(u.providerData)}
                         </span>
+                      </td>
+                      {/* Verification */}
+                      <td className="px-5 py-3.5 hidden md:table-cell">
+                        {u.emailVerified ? (
+                           <span className="inline-flex items-center gap-1.5 text-[11px] font-mono font-bold text-[#14f195]">
+                             <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" /> Verified
+                           </span>
+                        ) : (
+                           <span className="inline-flex items-center gap-1.5 text-[11px] font-mono font-bold text-gray-400">
+                             <Circle className="w-3.5 h-3.5" aria-hidden="true" /> Unverified
+                           </span>
+                        )}
                       </td>
                       {/* Joined */}
                       <td className="px-5 py-3.5 hidden sm:table-cell">

@@ -143,6 +143,25 @@ html {}
     radial-gradient(circle at 90% 100%, rgba(73,142,155,0.045) 0%, transparent 50%);
 }
 
+/* Portfolio Appearance Configuration Mapping */
+.portfolio-theme-root {
+  /* Override standard theme variables with Firestore values (falling back to standard theme) */
+  --theme-bg: var(--portfolio-background, var(--clr-bg));
+  --theme-surface: var(--portfolio-surface, rgba(15, 20, 30, 0.5));
+  --theme-text: var(--portfolio-text, #ffffff);
+  --theme-accent: var(--portfolio-primary, var(--clr-accent));
+  --theme-nav-active-bg: var(--portfolio-primary, var(--clr-accent));
+}
+
+.portfolio-light-mode.portfolio-theme-root,
+.portfolio-light-mode .portfolio-theme-root {
+  --theme-bg: var(--portfolio-background, #F3F0E8);
+  --theme-surface: var(--portfolio-surface, #FAF8F3);
+  --theme-text: var(--portfolio-text, #172231);
+  --theme-accent: var(--portfolio-primary, #C9A15A);
+  --theme-nav-active-bg: var(--portfolio-primary, #C9A15A);
+}
+
 /* Exceptions - things that should remain white even in light mode */
 
 @layer base {

@@ -2,6 +2,12 @@ import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 
+const OWNER_EMAILS = [
+  "abdelrahmanelbahnsy5@gmail.com",
+  "abdelrahmanelbahnsy3@gmail.com",
+  "abdelrahmanelbahnsy19@gmail.com",
+];
+
 // Helper to initialize and retrieve Firebase Admin securely
 const initFirebaseAdmin = () => {
   if (getApps().length === 0) {
@@ -41,6 +47,9 @@ const verifyTokenAndRole = async (req, db, auth) => {
   
   if (!decodedToken?.uid) throw new Error('Unauthorized');
 
+  const normalizedEmail = (decodedToken.email || '').trim().toLowerCase();
+  const isOfficialOwner = OWNER_EMAILS.includes(normalizedEmail);
+
   let adminDoc;
   try {
     adminDoc = await db.collection('admins').doc(decodedToken.uid).get();
@@ -48,13 +57,32 @@ const verifyTokenAndRole = async (req, db, auth) => {
     throw new Error('Firestore lookup failed');
   }
 
+  // Auto-resolve official owners if they don't exist or have wrong role
+  if (isOfficialOwner) {
+    if (!adminDoc || !adminDoc.exists || adminDoc.data()?.role !== 'owner') {
+      try {
+        await db.collection('admins').doc(decodedToken.uid).set({ role: 'owner', createdAt: FieldValue.serverTimestamp() }, { merge: true });
+      } catch (err) {
+         console.error('Failed to auto-resolve owner role in Firestore:', err);
+      }
+    }
+    return { uid: decodedToken.uid, email: decodedToken.email, role: 'owner' };
+  }
+
   if (!adminDoc || !adminDoc.exists) throw new Error('Forbidden');
 
   const userData = adminDoc.data();
+  let resolvedRole = userData?.role || 'viewer';
+  
+  // Ensure non-official owners cannot be owners, just in case
+  if (resolvedRole === 'owner' && !isOfficialOwner) {
+    resolvedRole = 'admin'; // Fallback
+  }
+
   return {
     uid: decodedToken.uid,
     email: decodedToken.email,
-    role: userData?.role || 'viewer',
+    role: resolvedRole,
   };
 };
 
@@ -101,18 +129,27 @@ export default async function handler(req, res) {
         });
       }
 
-      const users = (listUsersResult?.users || []).map(user => ({
-        uid: user?.uid,
-        email: user?.email,
-        displayName: user?.displayName || '',
-        photoURL: user?.photoURL || '',
-        emailVerified: user?.emailVerified,
-        disabled: user?.disabled,
-        creationTime: user?.metadata?.creationTime,
-        lastSignInTime: user?.metadata?.lastSignInTime,
-        providerData: (user?.providerData || []).map(p => ({ providerId: p.providerId })),
-        role: rolesMap[user?.uid] || 'unassigned'
-      }));
+      const users = (listUsersResult?.users || []).map(user => {
+        const normalizedEmail = (user?.email || '').trim().toLowerCase();
+        const isOfficialOwner = OWNER_EMAILS.includes(normalizedEmail);
+        let role = rolesMap[user?.uid] || 'unassigned';
+        
+        if (isOfficialOwner) role = 'owner';
+        else if (role === 'owner') role = 'admin'; // Strip invalid owners
+
+        return {
+          uid: user?.uid,
+          email: user?.email,
+          displayName: user?.displayName || '',
+          photoURL: user?.photoURL || '',
+          emailVerified: user?.emailVerified,
+          disabled: user?.disabled,
+          creationTime: user?.metadata?.creationTime,
+          lastSignInTime: user?.metadata?.lastSignInTime,
+          providerData: (user?.providerData || []).map(p => ({ providerId: p.providerId })),
+          role
+        };
+      });
 
       return res.status(200).json({ success: true, users });
     }
@@ -123,10 +160,8 @@ export default async function handler(req, res) {
         return res.status(403).json({ success: false, error: { message: 'Forbidden' } });
       }
 
-      const { action, email, password, displayName, role } = req.body || {};
+      const { email, password, displayName, role } = req.body || {};
 
-
-      // CREATE USER ACTION
       if (!email || !password || !role) {
         return res.status(400).json({ success: false, error: { message: 'Invalid request fields' } });
       }
@@ -166,16 +201,20 @@ export default async function handler(req, res) {
       const { uid, role, disabled, displayName } = req.body || {};
       if (!uid) return res.status(400).json({ success: false, error: { message: 'User ID is required' } });
 
-      let targetDoc;
+      let targetDoc, targetAuthRecord;
       try {
         targetDoc = await db.collection('admins').doc(uid).get();
+        targetAuthRecord = await auth.getUser(uid);
       } catch (err) {
         console.error('API Diagnostic Error [PATCH GET]:', err);
-        return res.status(500).json({ success: false, error: { message: 'Firestore lookup failed' } });
+        return res.status(500).json({ success: false, error: { message: 'Lookup failed' } });
       }
       
-      if (!targetDoc || !targetDoc.exists) return res.status(404).json({ success: false, error: { message: 'User not found' } });
-      const targetRole = targetDoc.data()?.role;
+      if (!targetDoc || !targetDoc.exists || !targetAuthRecord) return res.status(404).json({ success: false, error: { message: 'User not found' } });
+      
+      const normalizedTargetEmail = (targetAuthRecord.email || '').trim().toLowerCase();
+      const isTargetOfficialOwner = OWNER_EMAILS.includes(normalizedTargetEmail);
+      const targetRole = isTargetOfficialOwner ? 'owner' : targetDoc.data()?.role;
 
       // --- Security Constraints ---
       if (targetRole === 'owner') {
@@ -204,7 +243,7 @@ export default async function handler(req, res) {
         if (Object.keys(authUpdates).length > 0) {
           await auth.updateUser(uid, authUpdates);
         }
-        if (role) {
+        if (role && role !== targetRole) {
           await db.collection('admins').doc(uid).set({ role }, { merge: true });
         }
       } catch (err) {
@@ -224,15 +263,18 @@ export default async function handler(req, res) {
       const { uid } = req.query || {}; 
       if (!uid) return res.status(400).json({ success: false, error: { message: 'User ID is required' } });
 
-      let targetDoc;
+      let targetDoc, targetAuthRecord;
       try {
         targetDoc = await db.collection('admins').doc(uid).get();
+        targetAuthRecord = await auth.getUser(uid);
       } catch (err) {
         console.error('API Diagnostic Error [DELETE GET]:', err);
-        return res.status(500).json({ success: false, error: { message: 'Firestore lookup failed' } });
+        return res.status(500).json({ success: false, error: { message: 'Lookup failed' } });
       }
 
-      const targetRole = targetDoc?.exists ? targetDoc.data().role : null;
+      const normalizedTargetEmail = (targetAuthRecord?.email || '').trim().toLowerCase();
+      const isTargetOfficialOwner = OWNER_EMAILS.includes(normalizedTargetEmail);
+      const targetRole = isTargetOfficialOwner ? 'owner' : (targetDoc?.exists ? targetDoc.data().role : null);
 
       // Security Constraints
       if (targetRole === 'owner') {

@@ -68,8 +68,9 @@ const AppearanceManager = ({ currentUserRole }) => {
       toast.success('Portfolio appearance updated successfully!');
       setIsDirty(false);
     } catch (err) {
-      console.error(err);
-      toast.error('Failed to save appearance settings.');
+      console.error('Firebase Save Error:', err);
+      // Temporarily expose the exact Firebase error code/message to the UI
+      toast.error(`Error [${err.code || 'UNKNOWN'}]: ${err.message || 'Failed to save settings'}`);
     } finally {
       setIsSaving(false);
     }

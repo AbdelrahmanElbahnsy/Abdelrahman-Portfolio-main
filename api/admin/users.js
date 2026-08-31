@@ -110,6 +110,7 @@ export default async function handler(req, res) {
         disabled: user?.disabled,
         creationTime: user?.metadata?.creationTime,
         lastSignInTime: user?.metadata?.lastSignInTime,
+        providerData: (user?.providerData || []).map(p => ({ providerId: p.providerId })),
         role: rolesMap[user?.uid] || 'unassigned'
       }));
 
@@ -124,46 +125,18 @@ export default async function handler(req, res) {
 
       const { action, email, password, displayName, role } = req.body || {};
 
-      // RESET PASSWORD ACTION
-      if (action === 'reset_password') {
-        const { targetEmail } = req.body || {};
-        if (!targetEmail) return res.status(400).json({ success: false, error: { message: 'Target email required' } });
-        
-        let targetUser;
-        try {
-          targetUser = await auth.getUserByEmail(targetEmail);
-        } catch(err) {
-          return res.status(404).json({ success: false, error: { message: 'User not found' } });
-        }
-
-        // We can optionally verify the role of targetUser before allowing reset.
-        let targetDoc;
-        try { targetDoc = await db.collection('admins').doc(targetUser.uid).get(); } catch (err) {}
-        const targetRole = targetDoc?.exists ? targetDoc.data().role : null;
-
-        if (targetRole === 'owner' && caller.role !== 'owner') {
-          return res.status(403).json({ success: false, error: { message: 'Admins cannot reset the Owner password' } });
-        }
-
-        try {
-          const link = await auth.generatePasswordResetLink(targetEmail);
-          // Normally we'd email this link using SendGrid, etc.
-          // Because we don't have an SMTP server, we return the link safely for the Admin ONLY to copy/send.
-          // Note: Returning the link to an authorized Admin is standard for SaaS admin panels that lack SMTP.
-          return res.status(200).json({ success: true, link, message: 'Password reset link generated securely.' });
-        } catch (err) {
-          console.error('API Diagnostic Error [Reset Link]:', err);
-          return res.status(500).json({ success: false, error: { message: 'Failed to generate reset link' } });
-        }
-      }
 
       // CREATE USER ACTION
       if (!email || !password || !role) {
         return res.status(400).json({ success: false, error: { message: 'Invalid request fields' } });
       }
 
-      if (caller.role === 'admin' && (role === 'owner' || role === 'admin')) {
-        return res.status(403).json({ success: false, error: { message: 'Admins cannot create Owner or Admin accounts' } });
+      if (role === 'owner') {
+        return res.status(403).json({ success: false, error: { message: 'Owner role cannot be assigned through User Management.' } });
+      }
+
+      if (caller.role === 'admin' && role === 'admin') {
+        return res.status(403).json({ success: false, error: { message: 'Admins cannot create Admin accounts' } });
       }
 
       let userRecord;
@@ -211,8 +184,11 @@ export default async function handler(req, res) {
         if (disabled === true) return res.status(403).json({ success: false, error: { message: 'Owner cannot be disabled' } });
       }
 
+      if (role === 'owner' && targetRole !== 'owner') {
+        return res.status(403).json({ success: false, error: { message: 'Owner role cannot be assigned through User Management.' } });
+      }
+
       if (caller.role === 'admin') {
-        if (role === 'owner') return res.status(403).json({ success: false, error: { message: 'Cannot promote to Owner' } });
         // Admins modifying other admins
         if (targetRole === 'admin' && caller.uid !== uid) {
            return res.status(403).json({ success: false, error: { message: 'Admins cannot modify other Admins' } });

@@ -64,7 +64,7 @@ const AppearanceManager = ({ currentUserRole }) => {
     setIsSaving(true);
     try {
       // settings/appearance
-      await crudService.updateDoc('settings', 'appearance', draftSettings);
+      await crudService.set('settings', 'appearance', draftSettings);
       toast.success('Portfolio appearance updated successfully!');
       setIsDirty(false);
     } catch (err) {

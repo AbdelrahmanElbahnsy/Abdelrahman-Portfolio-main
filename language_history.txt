@@ -1,0 +1,242 @@
+commit edee8101ac6d0784ac1906df710002d27359997c
+Author: Abdelrahman Elbahnsy <abdelrahmanelbahnsy3@gmail.com>
+Date:   Tue Sep 1 16:00:29 2026 +0300
+
+    Backup before full cleanup
+
+diff --git a/src/i18n/LanguageContext.jsx b/src/i18n/LanguageContext.jsx
+index 11fc11f..30903c8 100644
+--- a/src/i18n/LanguageContext.jsx
++++ b/src/i18n/LanguageContext.jsx
+@@ -7,26 +7,17 @@ const LanguageContext = createContext();
+ export const LanguageProvider = ({ children }) => {
+   const { activeSettings } = useAppearance();
+   
+-  // Default to English, but if activeSettings is loading, we can check localStorage for FOUC
+-  const [language, setLanguage] = useState(() => {
++  // Try to bootstrap from localStorage for FOUC if activeSettings isn't ready
++  const language = activeSettings?.language || (() => {
+     try {
+       const cached = localStorage.getItem('portfolio-language');
+       return cached === 'ar' ? 'ar' : 'en';
+     } catch(e) {
+       return 'en';
+     }
+-  });
++  })();
+ 
+-  useEffect(() => {
+-    if (activeSettings?.language) {
+-      setLanguage(activeSettings.language);
+-      document.documentElement.lang = activeSettings.language;
+-    }
+-  }, [activeSettings]);
+-
+-  // We keep toggleLanguage for local override if necessary, but strictly AdminOS should change it.
+-  // Actually, toggleLanguage is no longer used in the public portfolio because there's no language switcher!
+-  // AdminOS handles language switching through Firestore.
++  // AdminOS handles language switching through Firestore, so no manual toggle here.
+   const toggleLanguage = () => {};
+ 
+   const t = (key) => getTranslation(key, language);
+
+commit ab7b35a39e1b0b640924a085dd393677a23b6ab1
+Author: Abdelrahman Elbahnsy <abdelrahmanelbahnsy3@gmail.com>
+Date:   Tue Sep 1 14:59:06 2026 +0300
+
+    Backup before full cleanup
+
+diff --git a/src/i18n/LanguageContext.jsx b/src/i18n/LanguageContext.jsx
+index 1157ca4..11fc11f 100644
+--- a/src/i18n/LanguageContext.jsx
++++ b/src/i18n/LanguageContext.jsx
+@@ -1,43 +1,33 @@
+-import React, { createContext, useContext, useState, useEffect } from 'react';
++import React, { createContext, useContext, useEffect, useState } from 'react';
+ import { getTranslation } from './translations';
++import { useAppearance } from '../context/AppearanceContext';
+ 
+ const LanguageContext = createContext();
+ 
+ export const LanguageProvider = ({ children }) => {
+-  const [language, setLanguage] = useState('en');
++  const { activeSettings } = useAppearance();
++  
++  // Default to English, but if activeSettings is loading, we can check localStorage for FOUC
++  const [language, setLanguage] = useState(() => {
++    try {
++      const cached = localStorage.getItem('portfolio-language');
++      return cached === 'ar' ? 'ar' : 'en';
++    } catch(e) {
++      return 'en';
++    }
++  });
+ 
+   useEffect(() => {
+-    const applyLanguage = () => {
+-      const savedLanguage = localStorage.getItem('portfolio-language');
+-      if (savedLanguage === 'ar' || savedLanguage === 'en') {
+-        setLanguage(savedLanguage);
+-        document.documentElement.lang = savedLanguage;
+-      } else {
+-        // Default is en
+-        setLanguage('en');
+-        document.documentElement.lang = 'en';
+-      }
+-      
+-      // Update .portfolio-theme-root dir instead of global html to isolate RTL
+-      const root = document.documentElement;
+-      // Note: In React, we rely on setting standard DOM properties on elements that aren't managed by React
+-      // Here, we update the global language. RTL will be handled in CSS using `:lang(ar)` where needed, 
+-      // or we can explicitly set dir="rtl" on specific containers.
+-    };
+-
+-    applyLanguage();
+-
+-    // Listen for global appearance context changes
+-    window.addEventListener('portfolio-language-updated', applyLanguage);
+-    return () => window.removeEventListener('portfolio-language-updated', applyLanguage);
+-  }, []);
+-
+-  const toggleLanguage = () => {
+-    const newLanguage = language === 'en' ? 'ar' : 'en';
+-    setLanguage(newLanguage);
+-    localStorage.setItem('portfolio-language', newLanguage);
+-    document.documentElement.lang = newLanguage;
+-  };
++    if (activeSettings?.language) {
++      setLanguage(activeSettings.language);
++      document.documentElement.lang = activeSettings.language;
++    }
++  }, [activeSettings]);
++
++  // We keep toggleLanguage for local override if necessary, but strictly AdminOS should change it.
++  // Actually, toggleLanguage is no longer used in the public portfolio because there's no language switcher!
++  // AdminOS handles language switching through Firestore.
++  const toggleLanguage = () => {};
+ 
+   const t = (key) => getTranslation(key, language);
+ 
+
+commit 53ee7ea3d309028f8104ff9ad64efedf4c782979
+Author: Abdelrahman Elbahnsy <abdelrahmanelbahnsy3@gmail.com>
+Date:   Mon Aug 31 00:12:01 2026 +0300
+
+    Backup before full cleanup
+
+diff --git a/src/i18n/LanguageContext.jsx b/src/i18n/LanguageContext.jsx
+index 53d66bc..1157ca4 100644
+--- a/src/i18n/LanguageContext.jsx
++++ b/src/i18n/LanguageContext.jsx
+@@ -7,18 +7,29 @@ export const LanguageProvider = ({ children }) => {
+   const [language, setLanguage] = useState('en');
+ 
+   useEffect(() => {
+-    // Check local storage for saved language
+-    const savedLanguage = localStorage.getItem('portfolio-language');
+-    if (savedLanguage === 'ar' || savedLanguage === 'en') {
+-      setLanguage(savedLanguage);
+-      document.documentElement.lang = savedLanguage;
+-    } else {
+-      // Default is en
+-      setLanguage('en');
+-      document.documentElement.lang = 'en';
+-    }
+-    // Structural layout MUST remain LTR to prevent breaking Swiper and positioning.
+-    document.documentElement.dir = 'ltr'; 
++    const applyLanguage = () => {
++      const savedLanguage = localStorage.getItem('portfolio-language');
++      if (savedLanguage === 'ar' || savedLanguage === 'en') {
++        setLanguage(savedLanguage);
++        document.documentElement.lang = savedLanguage;
++      } else {
++        // Default is en
++        setLanguage('en');
++        document.documentElement.lang = 'en';
++      }
++      
++      // Update .portfolio-theme-root dir instead of global html to isolate RTL
++      const root = document.documentElement;
++      // Note: In React, we rely on setting standard DOM properties on elements that aren't managed by React
++      // Here, we update the global language. RTL will be handled in CSS using `:lang(ar)` where needed, 
++      // or we can explicitly set dir="rtl" on specific containers.
++    };
++
++    applyLanguage();
++
++    // Listen for global appearance context changes
++    window.addEventListener('portfolio-language-updated', applyLanguage);
++    return () => window.removeEventListener('portfolio-language-updated', applyLanguage);
+   }, []);
+ 
+   const toggleLanguage = () => {
+@@ -26,8 +37,6 @@ export const LanguageProvider = ({ children }) => {
+     setLanguage(newLanguage);
+     localStorage.setItem('portfolio-language', newLanguage);
+     document.documentElement.lang = newLanguage;
+-    // Structural layout MUST remain LTR to prevent breaking Swiper and positioning.
+-    document.documentElement.dir = 'ltr';
+   };
+ 
+   const t = (key) => getTranslation(key, language);
+
+commit 4e5c410b8e39a4b4a9a3bbcce8ee6e961ea6d6fe
+Author: Abdelrahman Elbahnsy <abdelrahmanelbahnsy3@gmail.com>
+Date:   Mon Aug 10 23:25:41 2026 +0300
+
+    Backup before full cleanup
+
+diff --git a/src/i18n/LanguageContext.jsx b/src/i18n/LanguageContext.jsx
+new file mode 100644
+index 0000000..53d66bc
+--- /dev/null
++++ b/src/i18n/LanguageContext.jsx
+@@ -0,0 +1,48 @@
++import React, { createContext, useContext, useState, useEffect } from 'react';
++import { getTranslation } from './translations';
++
++const LanguageContext = createContext();
++
++export const LanguageProvider = ({ children }) => {
++  const [language, setLanguage] = useState('en');
++
++  useEffect(() => {
++    // Check local storage for saved language
++    const savedLanguage = localStorage.getItem('portfolio-language');
++    if (savedLanguage === 'ar' || savedLanguage === 'en') {
++      setLanguage(savedLanguage);
++      document.documentElement.lang = savedLanguage;
++    } else {
++      // Default is en
++      setLanguage('en');
++      document.documentElement.lang = 'en';
++    }
++    // Structural layout MUST remain LTR to prevent breaking Swiper and positioning.
++    document.documentElement.dir = 'ltr'; 
++  }, []);
++
++  const toggleLanguage = () => {
++    const newLanguage = language === 'en' ? 'ar' : 'en';
++    setLanguage(newLanguage);
++    localStorage.setItem('portfolio-language', newLanguage);
++    document.documentElement.lang = newLanguage;
++    // Structural layout MUST remain LTR to prevent breaking Swiper and positioning.
++    document.documentElement.dir = 'ltr';
++  };
++
++  const t = (key) => getTranslation(key, language);
++
++  return (
++    <LanguageContext.Provider value={{ language, toggleLanguage, t }}>
++      {children}
++    </LanguageContext.Provider>
++  );
++};
++
++export const useLanguage = () => {
++  const context = useContext(LanguageContext);
++  if (context === undefined) {
++    throw new Error('useLanguage must be used within a LanguageProvider');
++  }
++  return context;
++};

@@ -1,24 +1,14 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext } from 'react';
 import { getTranslation } from './translations';
-import { useAppearance } from '../context/AppearanceContext';
+import { useVisitorPreferences } from '../context/VisitorPreferencesContext';
 
 const LanguageContext = createContext();
 
 export const LanguageProvider = ({ children }) => {
-  const { activeSettings } = useAppearance();
+  const { effectiveLanguage, toggleVisitorLanguage } = useVisitorPreferences();
   
-  // Try to bootstrap from localStorage for FOUC if activeSettings isn't ready
-  const language = activeSettings?.language || (() => {
-    try {
-      const cached = localStorage.getItem('portfolio-language');
-      return cached === 'ar' ? 'ar' : 'en';
-    } catch(e) {
-      return 'en';
-    }
-  })();
-
-  // AdminOS handles language switching through Firestore, so no manual toggle here.
-  const toggleLanguage = () => {};
+  const language = effectiveLanguage;
+  const toggleLanguage = toggleVisitorLanguage;
 
   const t = (key) => getTranslation(key, language);
 

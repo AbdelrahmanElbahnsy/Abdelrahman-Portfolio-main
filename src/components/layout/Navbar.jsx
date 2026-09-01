@@ -5,11 +5,13 @@ import { personalInfo, socialLinks } from '../../data/portfolioData';
 import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
 import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { useVisitorPreferences } from '../../context/VisitorPreferencesContext';
 
 const Navbar = ({ splashDone = true }) => {
     const { data: profileData, loading: profileLoading, error: profileError, subscribe: subscribeProfile } = useFirestoreSingleDoc('profile', 'main');
     const { data: navbarItemsData, loading: navLoading, error: navError, subscribe: subscribeNavbar } = useFirestoreCrud('navbarItems', { orderByField: 'order', orderDirection: 'asc' });
     const { language, toggleLanguage, t } = useLanguage();
+    const { effectiveTheme, toggleVisitorTheme: toggleTheme } = useVisitorPreferences();
 
     useEffect(() => {
         const unsubscribeProfile = subscribeProfile();
@@ -359,6 +361,25 @@ const Navbar = ({ splashDone = true }) => {
 
                         {/* Right Region: Action Buttons */}
                         <div className="flex items-center justify-end shrink-0 gap-3">
+                            <button
+                                onClick={toggleLanguage}
+                                className="flex w-10 h-10 items-center justify-center bg-[var(--theme-nav-btn-bg)] rounded-full hover:bg-[var(--theme-nav-btn-hover)] transition-all shrink-0 text-[var(--theme-nav-text)] font-black text-xs focus:outline-none"
+                                aria-label="Toggle Language"
+                            >
+                                <span className="flex items-center gap-1">
+                                    <i className="fas fa-globe"></i>
+                                    {language === 'en' ? 'AR' : 'EN'}
+                                </span>
+                            </button>
+
+                            <button
+                                onClick={toggleTheme}
+                                className="flex w-10 h-10 items-center justify-center bg-[var(--theme-nav-btn-bg)] rounded-full hover:bg-[var(--theme-nav-btn-hover)] transition-all shrink-0 text-[var(--theme-nav-text)] focus:outline-none"
+                                aria-label={effectiveTheme === 'dark' ? "Switch to light mode" : "Switch to dark mode"}
+                            >
+                                <i className={`fas ${effectiveTheme === 'dark' ? 'fa-sun' : 'fa-moon'} text-base`}></i>
+                            </button>
+
                             <button
                                 onClick={toggleMenu}
                                 className="xl:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 focus:outline-none z-[1001] bg-[var(--theme-nav-btn-bg)] rounded-full hover:bg-[var(--theme-nav-btn-hover)] transition-all shrink-0"

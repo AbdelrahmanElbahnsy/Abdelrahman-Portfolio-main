@@ -20,6 +20,7 @@ import { crudService } from './cms/services/crudService'
 
 import { LanguageProvider } from './i18n/LanguageContext'
 import { AppearanceProvider } from './context/AppearanceContext'
+import { VisitorPreferencesProvider } from './context/VisitorPreferencesContext'
 
 if (import.meta.env.DEV) {
   window.crudService = crudService;
@@ -29,11 +30,13 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
       <AppearanceProvider>
-        <LanguageProvider>
-          <AuthProvider>
-            <App />
-          </AuthProvider>
-        </LanguageProvider>
+        <VisitorPreferencesProvider>
+          <LanguageProvider>
+            <AuthProvider>
+              <App />
+            </AuthProvider>
+          </LanguageProvider>
+        </VisitorPreferencesProvider>
       </AppearanceProvider>
     </BrowserRouter>
   </React.StrictMode>

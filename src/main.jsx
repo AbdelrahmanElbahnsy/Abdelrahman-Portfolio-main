@@ -19,6 +19,7 @@ import App from './App.jsx'
 import { crudService } from './cms/services/crudService'
 
 import { LanguageProvider } from './i18n/LanguageContext'
+import { AppearanceProvider } from './context/AppearanceContext'
 
 if (import.meta.env.DEV) {
   window.crudService = crudService;
@@ -27,11 +28,13 @@ if (import.meta.env.DEV) {
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
-      <LanguageProvider>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </LanguageProvider>
+      <AppearanceProvider>
+        <LanguageProvider>
+          <AuthProvider>
+            <App />
+          </AuthProvider>
+        </LanguageProvider>
+      </AppearanceProvider>
     </BrowserRouter>
   </React.StrictMode>
 )

@@ -1,0 +1,249 @@
+commit d604b2fdb3239ba74c737157890e0d0a52b47fdb
+Author: Abdelrahman Elbahnsy <abdelrahmanelbahnsy3@gmail.com>
+Date:   Tue Sep 1 17:09:56 2026 +0300
+
+    Backup before full cleanup
+
+diff --git a/src/components/layout/Navbar.jsx b/src/components/layout/Navbar.jsx
+index 9dac52b..f2cfa68 100644
+--- a/src/components/layout/Navbar.jsx
++++ b/src/components/layout/Navbar.jsx
+@@ -5,11 +5,13 @@ import { personalInfo, socialLinks } from '../../data/portfolioData';
+ import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
+ import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
+ import { useLanguage } from '../../i18n/LanguageContext';
++import { useVisitorPreferences } from '../../context/VisitorPreferencesContext';
+ 
+ const Navbar = ({ splashDone = true }) => {
+     const { data: profileData, loading: profileLoading, error: profileError, subscribe: subscribeProfile } = useFirestoreSingleDoc('profile', 'main');
+     const { data: navbarItemsData, loading: navLoading, error: navError, subscribe: subscribeNavbar } = useFirestoreCrud('navbarItems', { orderByField: 'order', orderDirection: 'asc' });
+     const { language, toggleLanguage, t } = useLanguage();
++    const { effectiveTheme, toggleVisitorTheme: toggleTheme } = useVisitorPreferences();
+ 
+     useEffect(() => {
+         const unsubscribeProfile = subscribeProfile();
+@@ -359,6 +361,25 @@ const Navbar = ({ splashDone = true }) => {
+ 
+                         {/* Right Region: Action Buttons */}
+                         <div className="flex items-center justify-end shrink-0 gap-3">
++                            <button
++                                onClick={toggleLanguage}
++                                className="flex w-10 h-10 items-center justify-center bg-[var(--theme-nav-btn-bg)] rounded-full hover:bg-[var(--theme-nav-btn-hover)] transition-all shrink-0 text-[var(--theme-nav-text)] font-black text-xs focus:outline-none"
++                                aria-label="Toggle Language"
++                            >
++                                <span className="flex items-center gap-1">
++                                    <i className="fas fa-globe"></i>
++                                    {language === 'en' ? 'AR' : 'EN'}
++                                </span>
++                            </button>
++
++                            <button
++                                onClick={toggleTheme}
++                                className="flex w-10 h-10 items-center justify-center bg-[var(--theme-nav-btn-bg)] rounded-full hover:bg-[var(--theme-nav-btn-hover)] transition-all shrink-0 text-[var(--theme-nav-text)] focus:outline-none"
++                                aria-label={effectiveTheme === 'dark' ? "Switch to light mode" : "Switch to dark mode"}
++                            >
++                                <i className={`fas ${effectiveTheme === 'dark' ? 'fa-sun' : 'fa-moon'} text-base`}></i>
++                            </button>
++
+                             <button
+                                 onClick={toggleMenu}
+                                 className="xl:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 focus:outline-none z-[1001] bg-[var(--theme-nav-btn-bg)] rounded-full hover:bg-[var(--theme-nav-btn-hover)] transition-all shrink-0"
+
+commit edee8101ac6d0784ac1906df710002d27359997c
+Author: Abdelrahman Elbahnsy <abdelrahmanelbahnsy3@gmail.com>
+Date:   Tue Sep 1 16:00:29 2026 +0300
+
+    Backup before full cleanup
+
+diff --git a/src/components/layout/Navbar.jsx b/src/components/layout/Navbar.jsx
+index c9e377f..9dac52b 100644
+--- a/src/components/layout/Navbar.jsx
++++ b/src/components/layout/Navbar.jsx
+@@ -45,25 +45,6 @@ const Navbar = ({ splashDone = true }) => {
+     const [isScrolled, setIsScrolled] = useState(false);
+     const [isMenuOpen, setIsMenuOpen] = useState(false);
+     const [activeSection, setActiveSection] = useState('hero');
+-    const [isDarkMode, setIsDarkMode] = useState(true);
+-
+-    useEffect(() => {
+-        // Hydrate from DOM class set by index.html script
+-        if (typeof document !== 'undefined') {
+-            setIsDarkMode(!document.documentElement.classList.contains('light-theme'));
+-        }
+-    }, []);
+-
+-    const toggleTheme = () => {
+-        const newIsDark = !isDarkMode;
+-        setIsDarkMode(newIsDark);
+-        localStorage.setItem('portfolio-theme', newIsDark ? 'dark' : 'light');
+-        if (!newIsDark) {
+-            document.documentElement.classList.add('light-theme');
+-        } else {
+-            document.documentElement.classList.remove('light-theme');
+-        }
+-    };
+ 
+     const headerRef = useRef(null);
+     const navRef = useRef(null);
+@@ -378,25 +359,6 @@ const Navbar = ({ splashDone = true }) => {
+ 
+                         {/* Right Region: Action Buttons */}
+                         <div className="flex items-center justify-end shrink-0 gap-3">
+-                            <button
+-                                onClick={toggleLanguage}
+-                                className="flex w-10 h-10 items-center justify-center bg-[var(--theme-nav-btn-bg)] rounded-full hover:bg-[var(--theme-nav-btn-hover)] transition-all shrink-0 text-[var(--theme-nav-text)] font-black text-xs focus:outline-none"
+-                                aria-label="Toggle Language"
+-                            >
+-                                <span className="flex items-center gap-1">
+-                                    <i className="fas fa-globe"></i>
+-                                    {language === 'en' ? 'AR' : 'EN'}
+-                                </span>
+-                            </button>
+-
+-                            <button
+-                                onClick={toggleTheme}
+-                                className="flex w-10 h-10 items-center justify-center bg-[var(--theme-nav-btn-bg)] rounded-full hover:bg-[var(--theme-nav-btn-hover)] transition-all shrink-0 text-[var(--theme-nav-text)] focus:outline-none"
+-                                aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+-                            >
+-                                <i className={`fas ${isDarkMode ? 'fa-sun' : 'fa-moon'} text-base`}></i>
+-                            </button>
+-
+                             <button
+                                 onClick={toggleMenu}
+                                 className="xl:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 focus:outline-none z-[1001] bg-[var(--theme-nav-btn-bg)] rounded-full hover:bg-[var(--theme-nav-btn-hover)] transition-all shrink-0"
+
+commit 791812d7a5ecdf07986b73b85dd29fd8cd016895
+Author: Abdelrahman Elbahnsy <abdelrahmanelbahnsy3@gmail.com>
+Date:   Wed Aug 26 16:33:31 2026 +0300
+
+    Backup before full cleanup
+
+diff --git a/src/components/layout/Navbar.jsx b/src/components/layout/Navbar.jsx
+index fe400f7..c9e377f 100644
+--- a/src/components/layout/Navbar.jsx
++++ b/src/components/layout/Navbar.jsx
+@@ -7,8 +7,8 @@ import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
+ import { useLanguage } from '../../i18n/LanguageContext';
+ 
+ const Navbar = ({ splashDone = true }) => {
+-    const { data: profileData, subscribe: subscribeProfile } = useFirestoreSingleDoc('profile', 'main');
+-    const { data: navbarItemsData, subscribe: subscribeNavbar } = useFirestoreCrud('navbarItems', { orderByField: 'order', orderDirection: 'asc' });
++    const { data: profileData, loading: profileLoading, error: profileError, subscribe: subscribeProfile } = useFirestoreSingleDoc('profile', 'main');
++    const { data: navbarItemsData, loading: navLoading, error: navError, subscribe: subscribeNavbar } = useFirestoreCrud('navbarItems', { orderByField: 'order', orderDirection: 'asc' });
+     const { language, toggleLanguage, t } = useLanguage();
+ 
+     useEffect(() => {
+@@ -20,16 +20,27 @@ const Navbar = ({ splashDone = true }) => {
+         };
+     }, [subscribeProfile, subscribeNavbar]);
+ 
+-    const fallbackFirstName = personalInfo.firstName || 'Abdelrahman';
+-    const fallbackLastName = personalInfo.lastName || 'El-bahnsy';
+-
+-    let firstName = fallbackFirstName;
+-    let lastName = fallbackLastName;
++    let firstName = '';
++    let lastName = '';
++    let firstNameAr = '';
++    let lastNameAr = '';
+     
+     if (profileData?.fullName) {
+         const nameParts = profileData.fullName.split(' ');
+-        firstName = nameParts[0] || fallbackFirstName;
+-        lastName = nameParts.slice(1).join(' ') || fallbackLastName;
++        firstName = nameParts[0] || '';
++        lastName = nameParts.slice(1).join(' ') || '';
++    } else if (profileData?.firstName || profileData?.lastName) {
++        firstName = profileData.firstName || '';
++        lastName = profileData.lastName || '';
++    }
++
++    if (profileData?.fullNameAr) {
++        const nameParts = profileData.fullNameAr.split(' ');
++        firstNameAr = nameParts[0] || '';
++        lastNameAr = nameParts.slice(1).join(' ') || '';
++    } else if (profileData?.firstNameAr || profileData?.lastNameAr) {
++        firstNameAr = profileData.firstNameAr || '';
++        lastNameAr = profileData.lastNameAr || '';
+     }
+     const [isScrolled, setIsScrolled] = useState(false);
+     const [isMenuOpen, setIsMenuOpen] = useState(false);
+@@ -60,33 +71,23 @@ const Navbar = ({ splashDone = true }) => {
+     const menuItemsRef = useRef(null);
+     const isScrollingRef = useRef(false);
+ 
+-    const defaultNavLinks = [
+-        { name: 'Home', href: '#home', id: 'hero', icon: 'fas fa-home' },
+-        { name: 'About', href: '#about', id: 'about', icon: 'fas fa-user' },
+-        { name: 'Skills', href: '#skills', id: 'skills', icon: 'fas fa-tools' },
+-        { name: 'Projects', href: '#projects', id: 'projects', icon: 'fas fa-project-diagram' },
+-        { name: 'Certifications', href: '#certifications', id: 'certifications', icon: 'fas fa-certificate' },
+-        { name: 'Journey', href: '#journey', id: 'journey', icon: 'fas fa-route' },
+-    ];
+-
+     const navLinks = React.useMemo(() => {
+-        const sourceData = (!navbarItemsData || navbarItemsData.length === 0) ? defaultNavLinks : navbarItemsData;
++        const sourceData = navbarItemsData || [];
+         const desiredOrder = ['#home', '#hero', '#about', '#skills', '#projects', '#certifications', '#journey'];
+         
+         return sourceData
+             .filter(item => item.href !== '#contact')
+             .map(item => {
+-                const fallbackLink = defaultNavLinks.find(link => link.href === item.href) || {};
+-                const href = item.href || fallbackLink.href || '#';
++                const href = item.href || '#';
+                 const cleanHash = href.replace('#', '').toLowerCase();
+-                const id = cleanHash === 'home' ? 'hero' : cleanHash || fallbackLink.id || '';
++                const id = cleanHash === 'home' ? 'hero' : cleanHash || '';
+                 
+-                const englishName = fallbackLink.name || item.name || item.label || 'Untitled';
++                const englishName = item.name || item.label || 'Untitled';
+                 return {
+-                    name: language === 'ar' ? (item.labelAr || item.nameAr || t(fallbackLink.name || englishName)) : englishName,
++                    name: language === 'ar' ? (item.labelAr || item.nameAr || englishName) : englishName,
+                     href: href,
+                     id: id,
+-                    icon: item.icon || fallbackLink.icon || 'fas fa-circle'
++                    icon: item.icon || 'fas fa-circle'
+                 };
+             })
+             .sort((a, b) => {
+@@ -324,21 +325,34 @@ const Navbar = ({ splashDone = true }) => {
+                         {/* Left Region: Logo */}
+                         <div className="flex items-center shrink-0 min-w-0">
+                             <a href="#hero" className="logo flex items-center gap-1 group min-w-0" onClick={(e) => handleNavClick(e, 'hero')} dir="ltr" style={{ overflowWrap: 'anywhere' }}>
+-                                {language === 'ar' ? (
++                                {profileLoading ? (
++                                    <div className="flex items-center gap-2 opacity-60">
++                                        <span className="text-[var(--theme-accent)] font-black text-lg sm:text-xl xl:text-2xl">&lt;</span>
++                                        <div className="h-4 sm:h-5 w-16 sm:w-20 bg-[var(--theme-border-strong)] rounded animate-pulse"></div>
++                                        <span className="text-[var(--theme-accent)] hidden md:inline font-black text-lg sm:text-xl xl:text-2xl">/</span>
++                                        <div className="h-4 sm:h-5 w-20 sm:w-24 bg-[var(--theme-border-strong)] rounded animate-pulse hidden md:block"></div>
++                                        <span className="text-[var(--theme-accent)] font-black text-lg sm:text-xl xl:text-2xl">&gt;</span>
++                                    </div>
++                                ) : profileError || !profileData ? (
++                                    <div className="flex items-center gap-1 text-[var(--theme-text-muted)] text-sm font-mono">
++                                        <i className="fas fa-exclamation-triangle text-red-500"></i>
++                                        <span className="hidden sm:inline">DATA_ERR</span>
++                                    </div>
++                                ) : language === 'ar' ? (
+                                     /* Arabic navbar logo — LTR outer, RTL name text */
+                                     <span className={`font-black tracking-tighter text-[var(--theme-nav-text)] transition-all duration-500 ${isScrolled ? 'text-base sm:text-lg xl:text-xl' : 'text-lg sm:text-xl xl:text-2xl'}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '2px', whiteSpace: 'nowrap' }}>
+                                         <span className="text-[var(--theme-accent)]">&lt; </span>
+                                         <span dir="rtl" style={{ unicodeBidi: 'isolate', whiteSpace: 'nowrap' }}>
+-                                            {profileData?.firstNameAr || personalInfo.firstNameAr}
++                                            {firstNameAr}
+                                             <span className="text-[var(--theme-accent)] hidden md:inline"> / </span>
+-                                            <span className="hidden md:inline">{profileData?.lastNameAr || personalInfo.lastNameAr}</span>
++                                            <span className="hidden md:inline">{lastNameAr}</span>
+                                         </span>
+                                         <span className="text-[var(--theme-accent)]"> &gt;</span>
+                                     </span>
+                                 ) : (
+                                     /* English navbar logo */
+                                     <span className={`font-black tracking-tighter text-[var(--theme-nav-text)] transition-all duration-500 ${isScrolled ? 'text-base sm:text-lg xl:text-xl' : 'text-lg sm:text-xl xl:text-2xl'}`} style={{ whiteSpace: 'normal', wordBreak: 'keep-all' }}>
+-                                        <span className="text-[var(--theme-accent)]">&lt;</span>{firstName.charAt(0)}<span className="hidden md:inline">{firstName.slice(1).toUpperCase()}</span><span className="text-[var(--theme-accent)] hidden md:inline">/</span>{lastName.charAt(0)}<span className="hidden md:inline" style={{ whiteSpace: 'nowrap' }}>{lastName.slice(1).toUpperCase()}</span><span className="text-[var(--theme-accent)]">&gt;</span>
++                                        <span className="text-[var(--theme-accent)]">&lt;</span>{firstName ? firstName.charAt(0) : ''}<span className="hidden md:inline">{firstName ? firstName.slice(1).toUpperCase() : ''}</span><span className="text-[var(--theme-accent)] hidden md:inline">/</span>{lastName ? lastName.charAt(0) : ''}<span className="hidden md:inline" style={{ whiteSpace: 'nowrap' }}>{lastName ? lastName.slice(1).toUpperCase() : ''}</span><span className="text-[var(--theme-accent)]">&gt;</span>
+                                     </span>
+                                 )}
+                             </a>

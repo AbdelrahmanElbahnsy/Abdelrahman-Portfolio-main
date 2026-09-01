@@ -21,31 +21,36 @@ const Footer = () => {
         };
     }, [subscribeProfile, subscribeHero]);
 
-    let firstName = '';
-    let lastName = '';
-    let firstNameAr = '';
-    let lastNameAr = '';
+    const fallbackFirstName = personalInfo.firstName;
+    const fallbackLastName = personalInfo.lastName;
+    const fallbackFirstNameAr = personalInfo.firstNameAr;
+    const fallbackLastNameAr = personalInfo.lastNameAr;
+
+    let firstName = fallbackFirstName;
+    let lastName = fallbackLastName;
+    let firstNameAr = fallbackFirstNameAr;
+    let lastNameAr = fallbackLastNameAr;
     
     if (profileData?.fullName) {
         const nameParts = profileData.fullName.split(' ');
-        firstName = nameParts[0] || '';
-        lastName = nameParts.slice(1).join(' ') || '';
+        firstName = nameParts[0] || fallbackFirstName;
+        lastName = nameParts.slice(1).join(' ') || fallbackLastName;
     } else if (profileData?.firstName || profileData?.lastName) {
-        firstName = profileData.firstName || '';
-        lastName = profileData.lastName || '';
+        firstName = profileData.firstName || fallbackFirstName;
+        lastName = profileData.lastName || fallbackLastName;
     }
 
     if (profileData?.fullNameAr) {
         const nameParts = profileData.fullNameAr.split(' ');
-        firstNameAr = nameParts[0] || '';
-        lastNameAr = nameParts.slice(1).join(' ') || '';
+        firstNameAr = nameParts[0] || fallbackFirstNameAr;
+        lastNameAr = nameParts.slice(1).join(' ') || fallbackLastNameAr;
     } else if (profileData?.firstNameAr || profileData?.lastNameAr) {
-        firstNameAr = profileData.firstNameAr || '';
-        lastNameAr = profileData.lastNameAr || '';
+        firstNameAr = profileData.firstNameAr || fallbackFirstNameAr;
+        lastNameAr = profileData.lastNameAr || fallbackLastNameAr;
     }
     
-    const footerTagline = language === 'ar' ? (profileData?.footerTaglineAr || profileData?.footerTagline || '') : (profileData?.footerTagline || '');
-    const availabilityStatus = language === 'ar' ? (heroData?.availabilityStatusAr || heroData?.availabilityStatus || '') : (heroData?.availabilityStatus || '');
+    const footerTagline = language === 'ar' ? (profileData?.footerTaglineAr || personalInfo.footerTaglineAr || profileData?.footerTagline || personalInfo.footerTagline) : (profileData?.footerTagline || personalInfo.footerTagline);
+    const availabilityStatus = language === 'ar' ? (heroData?.availabilityStatusAr || personalInfo.availabilityStatusAr || heroData?.availabilityStatus || personalInfo.availabilityStatus) : (heroData?.availabilityStatus || personalInfo.availabilityStatus);
     const copyrightYear = new Date().getFullYear();
     const footerRef = useRef(null);
 
@@ -86,20 +91,7 @@ const Footer = () => {
                 <div className="footer-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 px-8 md:px-0">
                     <div className="footer-col footer-brand space-y-6">
                         <a href="#" className="logo text-lg sm:text-2xl font-black text-[var(--theme-text)] flex items-center gap-1 flex-wrap" dir="ltr">
-                            {profileLoading ? (
-                                <div className="flex items-center gap-2 opacity-60">
-                                    <span className="logo-code text-[var(--theme-accent)]">&lt; </span>
-                                    <div className="h-6 w-20 bg-[var(--theme-border-strong)] rounded animate-pulse"></div>
-                                    <span className="logo-code text-[var(--theme-accent)]"> / </span>
-                                    <div className="h-6 w-24 bg-[var(--theme-border-strong)] rounded animate-pulse hidden sm:block"></div>
-                                    <span className="logo-code text-[var(--theme-accent)]"> &gt;</span>
-                                </div>
-                            ) : profileError || !profileData ? (
-                                <div className="flex items-center gap-2 text-[var(--theme-text-muted)] text-sm font-mono">
-                                    <i className="fas fa-exclamation-triangle text-red-500"></i>
-                                    <span>DATA_ERR</span>
-                                </div>
-                            ) : language === 'ar' ? (
+                            {language === 'ar' ? (
                                 /* Arabic: render as a single RTL unit, never split */
                                 <span dir="ltr" style={{ display: 'inline-flex', alignItems: 'center', gap: '2px' }}>
                                     <span className="logo-code text-[var(--theme-accent)]">&lt; </span>
@@ -121,24 +113,13 @@ const Footer = () => {
                                 </span>
                             )}
                         </a>
-                        <div className="footer-desc text-[var(--theme-text-secondary)] max-w-xs leading-relaxed text-left rtl:text-right" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-                            {profileLoading ? (
-                                <div className="space-y-2 w-full mt-2">
-                                    <div className="h-4 w-3/4 bg-[var(--theme-border)] rounded animate-pulse"></div>
-                                    <div className="h-4 w-1/2 bg-[var(--theme-border)] rounded animate-pulse"></div>
-                                </div>
-                            ) : (
-                                footerTagline
-                            )}
+                        <p className="footer-desc text-[var(--theme-text-secondary)] max-w-xs leading-relaxed text-left rtl:text-right" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                            {footerTagline}
+                        </p>
+                        <div className="status-badge inline-flex items-center gap-2 px-3 py-1 bg-[rgba(39,201,63,0.1)] border border-[rgba(39,201,63,0.2)] rounded-full text-[10px] font-bold text-[#27c93f] uppercase tracking-widest">
+                            <span className="status-dot w-2 h-2 rounded-full bg-[#27c93f] animate-pulse"></span>
+                            {t(availabilityStatus)}
                         </div>
-                        {heroLoading ? (
-                            <div className="h-6 w-32 bg-[var(--theme-border-strong)] rounded-full animate-pulse"></div>
-                        ) : heroError || !heroData ? null : (
-                            <div className="status-badge inline-flex items-center gap-2 px-3 py-1 bg-[rgba(39,201,63,0.1)] border border-[rgba(39,201,63,0.2)] rounded-full text-[10px] font-bold text-[#27c93f] uppercase tracking-widest">
-                                <span className="status-dot w-2 h-2 rounded-full bg-[#27c93f] animate-pulse"></span>
-                                {t(availabilityStatus)}
-                            </div>
-                        )}
                     </div>
 
                     <div className="footer-col footer-nav">

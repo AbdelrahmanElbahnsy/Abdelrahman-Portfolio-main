@@ -2,14 +2,14 @@ import React, { useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
-import { personalInfo } from '../../data/portfolioData';
+import { about as fallbackAbout, personalInfo } from '../../data/portfolioData';
 import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
 import { useLanguage } from '../../i18n/LanguageContext';
 
 const About = () => {
     const { t, language } = useLanguage();
     const { data: firestoreData, loading, error, subscribe } = useFirestoreSingleDoc('about', 'main');
-
+    
     React.useEffect(() => {
         const unsubscribe = subscribe();
         return () => {
@@ -18,17 +18,18 @@ const About = () => {
     }, [subscribe]);
     
     const about = React.useMemo(() => {
-        if (!firestoreData) return null;
+        if (!firestoreData || !firestoreData.title) return fallbackAbout;
         
-        let paragraphs = [];
-        let badges = [];
-        let terminalItems = [];
+        let paragraphs = fallbackAbout.paragraphs;
+        let badges = fallbackAbout.badges;
+        let terminalItems = fallbackAbout.terminalItems;
         
         try { if (firestoreData.paragraphsJson) paragraphs = JSON.parse(firestoreData.paragraphsJson); } catch(e) {}
         try { if (firestoreData.badgesJson) badges = JSON.parse(firestoreData.badgesJson); } catch(e) {}
         try { if (firestoreData.terminalItemsJson) terminalItems = JSON.parse(firestoreData.terminalItemsJson); } catch(e) {}
 
         return {
+            ...fallbackAbout,
             ...firestoreData,
             paragraphs,
             badges,
@@ -36,12 +37,22 @@ const About = () => {
         };
     }, [firestoreData]);
     
-    const subtitle = language === 'ar' ? (about?.subtitleAr || '') : (about?.subtitle || '');
-    const title = language === 'ar' ? (about?.titleAr || '') : (about?.title || '');
-    const lead = language === 'ar' ? (about?.leadAr || '') : (about?.lead || '');
-    const paragraphs = language === 'ar' && about?.paragraphsAr ? about.paragraphsAr : (about?.paragraphs || []);
-    const badges = about?.badges || [];
-    const terminalItems = about?.terminalItems || [];
+    const { 
+        subtitle: rawSubtitle, 
+        title: rawTitle, 
+        lead: rawLead, 
+        paragraphs: rawParagraphs, 
+        badges: rawBadges, 
+        terminalItems: rawTerminalItems,
+        subtitleAr, titleAr, leadAr
+    } = about;
+
+    const subtitle = language === 'ar' ? (about.subtitleAr || rawSubtitle) : rawSubtitle;
+    const title = language === 'ar' ? (about.titleAr || rawTitle) : rawTitle;
+    const lead = language === 'ar' ? (about.leadAr || rawLead) : rawLead;
+    const paragraphs = language === 'ar' && about.paragraphsAr ? about.paragraphsAr : (Array.isArray(rawParagraphs) ? rawParagraphs : fallbackAbout.paragraphs);
+    const badges = Array.isArray(rawBadges) ? rawBadges : fallbackAbout.badges;
+    const terminalItems = Array.isArray(rawTerminalItems) ? rawTerminalItems : fallbackAbout.terminalItems;
     const sectionRef = useRef(null);
     const headerRef = useRef(null);
     const terminalRef = useRef(null);
@@ -91,7 +102,7 @@ const About = () => {
                 tl.to(badgeEls, { opacity: 1, scale: 1, y: 0, duration: 0.4, stagger: 0.05, ease: 'back.out(1.7)' }, '-=0.1');
             }
         },
-        { scope: sectionRef, dependencies: [] },
+        { scope: sectionRef, dependencies: [loading] },
     );
 
     return (
@@ -113,11 +124,6 @@ const About = () => {
                             <i className="fas fa-exclamation-triangle text-3xl mb-3"></i>
                             <p>{t('Failed to load about section')}</p>
                             <p className="text-sm opacity-80 mt-2">{error}</p>
-                        </div>
-                    ) : !about ? (
-                        <div className="col-span-1 md:col-span-2 flex flex-col items-center justify-center text-[var(--theme-text-muted)] bg-[var(--theme-surface)] p-8 rounded-3xl border border-[var(--theme-border)] shadow-inner min-h-[400px]">
-                            <i className="fas fa-folder-open text-4xl mb-4 opacity-50"></i>
-                            <p>{t('No about information found.')}</p>
                         </div>
                     ) : (
                         <>

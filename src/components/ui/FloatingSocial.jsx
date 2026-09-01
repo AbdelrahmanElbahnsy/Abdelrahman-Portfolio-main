@@ -1,9 +1,10 @@
 import React from 'react';
 import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
 import { useEffect } from 'react';
+import { socialLinks } from '../../data/portfolioData';
 
 const FloatingSocial = () => {
-  const { data: socialsData, loading, error, subscribe } = useFirestoreCrud('socials', { orderByField: 'order', orderDirection: 'asc' });
+  const { data: firestoreData, loading, error, subscribe } = useFirestoreCrud('socials', { orderByField: 'order', orderDirection: 'asc' });
 
   useEffect(() => {
     const unsubscribe = subscribe();
@@ -12,9 +13,7 @@ const FloatingSocial = () => {
     };
   }, [subscribe]);
 
-  if (loading || error || !socialsData || socialsData.length === 0) {
-      return null;
-  }
+  const socialsData = (firestoreData && firestoreData.length > 0) ? firestoreData : socialLinks.floating;
 
   return (
     <div className="fixed left-6 bottom-0 z-40 hidden xl:flex flex-col items-center gap-6 animate-fadeIn">
@@ -29,7 +28,7 @@ const FloatingSocial = () => {
             title={social.platform || social.label}
           >
             <i className={`${social.icon} text-lg`}></i>
-            <span className="absolute left-14 px-3 py-1 rounded bg-[var(--theme-accent)] text-black text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">
+            <span className="absolute left-14 px-3 py-1 rounded bg-[var(--theme-accent)] text-black text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl rtl:left-auto rtl:right-14">
               {social.platform || social.label}
             </span>
           </a>

@@ -9,6 +9,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import ProjectModal from '../ui/ProjectModal';
 import ProjectCard from '../ui/ProjectCard';
+import { projects as localProjects } from '../../data/portfolioData';
 import { normalizeProjectTechnologies } from '../../utils/projectTechnologies';
 import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -49,8 +50,9 @@ const Projects = () => {
   }, [subscribe]);
 
   const projects = useMemo(() => {
-    if (!firestoreProjects) return [];
-    return firestoreProjects.map(proj => {
+    const dataToUse = (firestoreProjects && firestoreProjects.length > 0) ? firestoreProjects : localProjects;
+    
+    return dataToUse.map(proj => {
       return {
         ...proj,
         github: proj.github || '#',
@@ -122,11 +124,6 @@ const Projects = () => {
               <i className="fas fa-exclamation-triangle text-3xl mb-3"></i>
               <p>{t('Failed to load projects')}</p>
               <p className="text-sm opacity-80 mt-2">{error}</p>
-            </div>
-          ) : projects.length === 0 ? (
-            <div className="flex flex-col items-center justify-center text-[var(--theme-text-muted)] bg-[var(--theme-surface)] p-8 rounded-3xl border border-[var(--theme-border)] shadow-inner min-h-[400px]">
-              <i className="fas fa-folder-open text-4xl mb-4 opacity-50"></i>
-              <p>{t('No projects found.')}</p>
             </div>
           ) : (
             <div className="relative group/projects-slider projects-swiper-container pt-4 px-2 md:px-16">

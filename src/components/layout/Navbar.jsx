@@ -302,83 +302,81 @@ const Navbar = ({ splashDone = true }) => {
 
     return (
         <>
-            <header ref={headerRef} className={`sticky top-0 left-0 w-full z-[50] transition-all duration-700 ${isScrolled ? 'pt-2 sm:pt-4' : 'pt-4 sm:pt-8'}`}>
-                <div className={`mx-auto transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isScrolled ? 'max-w-[1240px] px-4 sm:px-8' : 'page-container px-4'}`}>
-                    <nav ref={navRef} className={`w-full box-border flex flex-nowrap items-center justify-between gap-2 sm:gap-4 px-3 sm:px-4 xl:px-6 py-2.5 rounded-full border backdrop-blur-[18px] transition-all duration-700 ${isScrolled ? 'bg-[var(--theme-nav-bg)] border-[var(--theme-nav-border)] shadow-[var(--theme-nav-shadow)]' : 'bg-transparent border-transparent'}`}>
+            <header ref={headerRef} className={`sticky top-0 left-0 w-full z-[50] transition-all duration-700 ${isScrolled ? 'pt-4' : 'pt-8'}`}>
+                <div className={`mx-auto transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isScrolled ? 'max-w-[1240px] px-8' : 'page-container px-4'}`}>
+                    <nav ref={navRef} className={`flex items-center justify-between px-6 py-2.5 rounded-full border backdrop-blur-[18px] transition-all duration-700 ${isScrolled ? 'bg-[var(--theme-nav-bg)] border-[var(--theme-nav-border)] shadow-[var(--theme-nav-shadow)]' : 'bg-transparent border-transparent'}`}>
                         {/* Left Region: Logo */}
-                        <div className="flex items-center shrink-0 min-w-0">
-                            <a href="#hero" className="logo flex items-center gap-1 group min-w-0" onClick={(e) => handleNavClick(e, 'hero')} dir="ltr" style={{ overflowWrap: 'anywhere' }}>
-                                {profileLoading ? (
-                                    <div className="flex items-center gap-2 opacity-60">
-                                        <span className="text-[var(--theme-accent)] font-black text-lg sm:text-xl xl:text-2xl">&lt;</span>
-                                        <div className="h-4 sm:h-5 w-16 sm:w-20 bg-[var(--theme-border-strong)] rounded animate-pulse"></div>
-                                        <span className="text-[var(--theme-accent)] hidden md:inline font-black text-lg sm:text-xl xl:text-2xl">/</span>
-                                        <div className="h-4 sm:h-5 w-20 sm:w-24 bg-[var(--theme-border-strong)] rounded animate-pulse hidden md:block"></div>
-                                        <span className="text-[var(--theme-accent)] font-black text-lg sm:text-xl xl:text-2xl">&gt;</span>
-                                    </div>
-                                ) : profileError || !profileData ? (
-                                    <div className="flex items-center gap-1 text-[var(--theme-text-muted)] text-sm font-mono">
-                                        <i className="fas fa-exclamation-triangle text-red-500"></i>
-                                        <span className="hidden sm:inline">DATA_ERR</span>
-                                    </div>
-                                ) : language === 'ar' ? (
-                                    /* Arabic navbar logo — LTR outer, RTL name text */
-                                    <span className={`font-black tracking-tighter text-[var(--theme-nav-text)] transition-all duration-500 ${isScrolled ? 'text-base sm:text-lg xl:text-xl' : 'text-lg sm:text-xl xl:text-2xl'}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '2px', whiteSpace: 'nowrap' }}>
-                                        <span className="text-[var(--theme-accent)]">&lt; </span>
-                                        <span dir="rtl" style={{ unicodeBidi: 'isolate', whiteSpace: 'nowrap' }}>
-                                            {firstNameAr}
-                                            <span className="text-[var(--theme-accent)] hidden md:inline"> / </span>
-                                            <span className="hidden md:inline">{lastNameAr}</span>
-                                        </span>
-                                        <span className="text-[var(--theme-accent)]"> &gt;</span>
+                        <a href="#hero" className="logo flex items-center gap-2 group shrink-0" onClick={(e) => handleNavClick(e, 'hero')} dir="ltr">
+                            {profileLoading ? (
+                                <div className="flex items-center gap-2 opacity-60">
+                                    <span className="text-[var(--theme-accent)] font-black text-xl sm:text-2xl">&lt;</span>
+                                    <div className="h-5 w-20 bg-[var(--theme-border-strong)] rounded animate-pulse"></div>
+                                    <span className="text-[var(--theme-accent)] hidden md:inline font-black text-xl sm:text-2xl">/</span>
+                                    <div className="h-5 w-24 bg-[var(--theme-border-strong)] rounded animate-pulse hidden md:block"></div>
+                                    <span className="text-[var(--theme-accent)] font-black text-xl sm:text-2xl">&gt;</span>
+                                </div>
+                            ) : profileError || !profileData ? (
+                                <div className="flex items-center gap-1 text-[var(--theme-text-muted)] text-sm font-mono">
+                                    <i className="fas fa-exclamation-triangle text-red-500"></i>
+                                    <span className="hidden sm:inline">DATA_ERR</span>
+                                </div>
+                            ) : language === 'ar' ? (
+                                /* Arabic navbar logo — LTR outer, RTL name text */
+                                <span className={`font-black tracking-tighter text-[var(--theme-nav-text)] transition-all duration-500 ${isScrolled ? 'text-xl' : 'text-2xl'}`}>
+                                    <span className="text-[var(--theme-accent)]">&lt; </span>
+                                    <span dir="rtl">
+                                        {firstNameAr}
+                                        <span className="text-[var(--theme-accent)] hidden md:inline"> / </span>
+                                        <span className="hidden md:inline">{lastNameAr}</span>
                                     </span>
-                                ) : (
-                                    /* English navbar logo */
-                                    <span className={`font-black tracking-tighter text-[var(--theme-nav-text)] transition-all duration-500 ${isScrolled ? 'text-base sm:text-lg xl:text-xl' : 'text-lg sm:text-xl xl:text-2xl'}`} style={{ whiteSpace: 'normal', wordBreak: 'keep-all' }}>
-                                        <span className="text-[var(--theme-accent)]">&lt;</span>{firstName ? firstName.charAt(0) : ''}<span className="hidden md:inline">{firstName ? firstName.slice(1).toUpperCase() : ''}</span><span className="text-[var(--theme-accent)] hidden md:inline">/</span>{lastName ? lastName.charAt(0) : ''}<span className="hidden md:inline" style={{ whiteSpace: 'nowrap' }}>{lastName ? lastName.slice(1).toUpperCase() : ''}</span><span className="text-[var(--theme-accent)]">&gt;</span>
-                                    </span>
-                                )}
-                            </a>
-                        </div>
+                                    <span className="text-[var(--theme-accent)]"> &gt;</span>
+                                </span>
+                            ) : (
+                                /* English navbar logo */
+                                <span className={`font-black tracking-tighter text-[var(--theme-nav-text)] transition-all duration-500 ${isScrolled ? 'text-xl' : 'text-2xl'}`}>
+                                    <span className="text-[var(--theme-accent)]">&lt;</span>{firstName ? firstName.charAt(0) : ''}<span className="hidden md:inline">{firstName ? firstName.slice(1).toUpperCase() : ''}</span><span className="text-[var(--theme-accent)] hidden md:inline">/</span>{lastName ? lastName.charAt(0) : ''}<span className="hidden md:inline">{lastName ? lastName.slice(1).toUpperCase() : ''}</span><span className="text-[var(--theme-accent)]">&gt;</span>
+                                </span>
+                            )}
+                        </a>
 
                         {/* Center Region: Navigation Links */}
-                        <div className="hidden xl:flex justify-center px-4 min-w-0 shrink">
-                            <ul className="flex flex-nowrap items-center justify-center gap-1 2xl:gap-2">
-                                {navLinks.map((link, idx) => (
-                                    <li key={idx} className="flex items-center shrink-0">
-                                        <a
-                                            href={link.href}
-                                            onClick={(e) => handleNavClick(e, link.id)}
-                                            className={`flex items-center justify-center gap-1.5 px-2.5 2xl:px-4 py-2.5 rounded-full text-[10px] 2xl:text-[11px] font-black uppercase tracking-[0.12em] transition-all duration-300 ${activeSection === link.id ? 'bg-[var(--theme-nav-active-bg)] text-[var(--theme-nav-active-text)] shadow-[var(--theme-nav-active-shadow)]' : 'text-[var(--theme-nav-text-dim)] hover:text-[var(--theme-nav-text)] hover:bg-[var(--theme-nav-hover-bg)]'}`}
-                                        >
-                                            <i className={`${link.icon} ${activeSection === link.id ? 'opacity-100 scale-110' : 'opacity-70'}`}></i>
-                                            <span>{link.name}</span>
-                                        </a>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
+                        <ul className="hidden xl:flex items-center gap-1 2xl:gap-2">
+                            {navLinks.map((link, idx) => (
+                                <li key={idx}>
+                                    <a
+                                        href={link.href}
+                                        onClick={(e) => handleNavClick(e, link.id)}
+                                        className={`flex items-center gap-2.5 px-4 py-2 rounded-full text-[11px] font-black uppercase tracking-[0.12em] transition-all duration-300 ${activeSection === link.id ? 'bg-[var(--theme-nav-active-bg)] text-[var(--theme-nav-active-text)] shadow-[var(--theme-nav-active-shadow)]' : 'text-[var(--theme-nav-text-dim)] hover:text-[var(--theme-nav-text)] hover:bg-[var(--theme-nav-hover-bg)]'}`}
+                                    >
+                                        <i className={`${link.icon} ${activeSection === link.id ? 'opacity-100 scale-110' : 'opacity-70'}`}></i>
+                                        <span>{link.name}</span>
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
 
                         {/* Right Region: Action Buttons */}
-                        <div className="flex items-center justify-end shrink-0 gap-3 min-w-max">
-                            <button
-                                onClick={toggleLanguage}
-                                className="flex w-10 h-10 items-center justify-center bg-[var(--theme-nav-btn-bg)] rounded-full hover:bg-[var(--theme-nav-btn-hover)] transition-all shrink-0 text-[var(--theme-nav-text)] font-black text-xs focus:outline-none"
-                                aria-label="Toggle Language"
-                            >
-                                <span className="flex items-center gap-1">
-                                    <i className="fas fa-globe"></i>
-                                    {language === 'en' ? 'AR' : 'EN'}
-                                </span>
-                            </button>
+                        <div className="flex items-center gap-3 shrink-0">
+                            <div className="flex items-center gap-1.5">
+                                <button
+                                    onClick={toggleLanguage}
+                                    className="flex w-10 h-10 items-center justify-center bg-[var(--theme-nav-btn-bg)] rounded-full hover:bg-[var(--theme-nav-btn-hover)] transition-all shrink-0 text-[var(--theme-nav-text)] font-black text-xs focus:outline-none"
+                                    aria-label="Toggle Language"
+                                >
+                                    <span className="flex items-center gap-1">
+                                        <i className="fas fa-globe"></i>
+                                        {language === 'en' ? 'AR' : 'EN'}
+                                    </span>
+                                </button>
 
-                            <button
-                                onClick={toggleTheme}
-                                className="flex w-10 h-10 items-center justify-center bg-[var(--theme-nav-btn-bg)] rounded-full hover:bg-[var(--theme-nav-btn-hover)] transition-all shrink-0 text-[var(--theme-nav-text)] focus:outline-none"
-                                aria-label={effectiveTheme === 'dark' ? "Switch to light mode" : "Switch to dark mode"}
-                            >
-                                <i className={`fas ${effectiveTheme === 'dark' ? 'fa-sun' : 'fa-moon'} text-base`}></i>
-                            </button>
+                                <button
+                                    onClick={toggleTheme}
+                                    className="flex w-10 h-10 items-center justify-center bg-[var(--theme-nav-btn-bg)] rounded-full hover:bg-[var(--theme-nav-btn-hover)] transition-all shrink-0 text-[var(--theme-nav-text)] focus:outline-none"
+                                    aria-label={effectiveTheme === 'dark' ? "Switch to light mode" : "Switch to dark mode"}
+                                >
+                                    <i className={`fas ${effectiveTheme === 'dark' ? 'fa-sun' : 'fa-moon'} text-base`}></i>
+                                </button>
+                            </div>
 
                             <button
                                 onClick={toggleMenu}
@@ -393,7 +391,7 @@ const Navbar = ({ splashDone = true }) => {
                             <a
                                 href="#contact"
                                 onClick={(e) => handleNavClick(e, 'contact')}
-                                className={`hidden md:flex items-center shrink-0 gap-2 2xl:gap-2.5 px-4 2xl:px-6 py-2.5 text-[10px] 2xl:text-[11px] font-black uppercase tracking-widest rounded-full transition-all duration-500 ${activeSection === 'contact' ? 'bg-[var(--theme-nav-contact-active-bg)] text-[var(--theme-nav-contact-active-text)] ring-2 ring-[var(--theme-nav-contact-active-ring)]' : 'bg-[var(--theme-accent)] text-black'}`}
+                                className={`hidden md:flex items-center gap-2.5 px-4 md:px-6 py-2.5 text-[11px] font-black uppercase tracking-widest rounded-full transition-all duration-500 ${activeSection === 'contact' ? 'bg-[var(--theme-nav-contact-active-bg)] text-[var(--theme-nav-contact-active-text)] ring-2 ring-[var(--theme-nav-contact-active-ring)]' : 'bg-[var(--theme-accent)] text-black'}`}
                             >
                                 <i className="fas fa-paper-plane text-xs rtl:rotate-180"></i>
                                 <span className="hidden md:inline">{t('Contact')}</span>
@@ -406,7 +404,7 @@ const Navbar = ({ splashDone = true }) => {
             {/* Mobile Menu Overlay */}
             <div
                 ref={menuOverlayRef}
-                className="fixed inset-0 z-[999] bg-[#0a0c10]/98 backdrop-blur-2xl lg:hidden"
+                className="fixed inset-0 z-[999] bg-[var(--theme-bg)]/98 backdrop-blur-2xl xl:hidden"
                 style={{ opacity: 0, transform: 'translateY(-100%)', pointerEvents: 'none' }}
             >
                 <div ref={menuItemsRef} className="mobile-menu-content h-full flex flex-col justify-between p-12 py-32 relative z-10">

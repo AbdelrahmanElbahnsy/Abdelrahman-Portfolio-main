@@ -45,25 +45,6 @@ const Navbar = ({ splashDone = true }) => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [activeSection, setActiveSection] = useState('hero');
-    const [isDarkMode, setIsDarkMode] = useState(true);
-
-    useEffect(() => {
-        // Hydrate from DOM class set by index.html script
-        if (typeof document !== 'undefined') {
-            setIsDarkMode(!document.documentElement.classList.contains('light-theme'));
-        }
-    }, []);
-
-    const toggleTheme = () => {
-        const newIsDark = !isDarkMode;
-        setIsDarkMode(newIsDark);
-        localStorage.setItem('portfolio-theme', newIsDark ? 'dark' : 'light');
-        if (!newIsDark) {
-            document.documentElement.classList.add('light-theme');
-        } else {
-            document.documentElement.classList.remove('light-theme');
-        }
-    };
 
     const headerRef = useRef(null);
     const navRef = useRef(null);
@@ -378,25 +359,6 @@ const Navbar = ({ splashDone = true }) => {
 
                         {/* Right Region: Action Buttons */}
                         <div className="flex items-center justify-end shrink-0 gap-3">
-                            <button
-                                onClick={toggleLanguage}
-                                className="flex w-10 h-10 items-center justify-center bg-[var(--theme-nav-btn-bg)] rounded-full hover:bg-[var(--theme-nav-btn-hover)] transition-all shrink-0 text-[var(--theme-nav-text)] font-black text-xs focus:outline-none"
-                                aria-label="Toggle Language"
-                            >
-                                <span className="flex items-center gap-1">
-                                    <i className="fas fa-globe"></i>
-                                    {language === 'en' ? 'AR' : 'EN'}
-                                </span>
-                            </button>
-
-                            <button
-                                onClick={toggleTheme}
-                                className="flex w-10 h-10 items-center justify-center bg-[var(--theme-nav-btn-bg)] rounded-full hover:bg-[var(--theme-nav-btn-hover)] transition-all shrink-0 text-[var(--theme-nav-text)] focus:outline-none"
-                                aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
-                            >
-                                <i className={`fas ${isDarkMode ? 'fa-sun' : 'fa-moon'} text-base`}></i>
-                            </button>
-
                             <button
                                 onClick={toggleMenu}
                                 className="xl:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 focus:outline-none z-[1001] bg-[var(--theme-nav-btn-bg)] rounded-full hover:bg-[var(--theme-nav-btn-hover)] transition-all shrink-0"

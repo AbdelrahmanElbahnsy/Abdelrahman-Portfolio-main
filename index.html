@@ -75,20 +75,18 @@
             if (legacyLang === 'ar') lang = 'ar';
           }
           
-          // We apply the FOUC settings to the body temporarily.
-          // The React app will override this properly on .portfolio-theme-root.
-          if (theme === 'light') {
-            document.body.setAttribute('data-portfolio-theme', 'light');
-          }
-          
-          if (lang === 'ar') {
-            document.documentElement.lang = 'ar';
-            // We do NOT set dir="rtl" on documentElement to protect AdminOS completely.
-            // dir="rtl" will be set on .portfolio-theme-root by React.
-            document.body.setAttribute('dir', 'rtl');
-          } else {
-            document.documentElement.lang = 'en';
-            document.body.setAttribute('dir', 'ltr');
+          // We apply the FOUC settings to the #root temporarily.
+          // The React app will override this properly on .portfolio-theme-root inside #root.
+          var rootEl = document.getElementById('root');
+          if (rootEl) {
+            if (theme === 'light') {
+              rootEl.setAttribute('data-portfolio-theme', 'light');
+            }
+            if (lang === 'ar') {
+              rootEl.setAttribute('dir', 'rtl');
+            } else {
+              rootEl.setAttribute('dir', 'ltr');
+            }
           }
         } catch (e) {}
       })();

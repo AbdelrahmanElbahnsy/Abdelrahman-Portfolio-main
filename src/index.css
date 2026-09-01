@@ -98,8 +98,6 @@ html {}
   --theme-nav-contact-active-ring: #ffffff;
 }
 
-}
-
 /* Portfolio Appearance Configuration Mapping */
 .portfolio-theme-root {
   /* Override standard theme variables with Firestore values (falling back to standard theme) */

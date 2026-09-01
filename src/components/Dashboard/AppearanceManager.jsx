@@ -255,7 +255,8 @@ const AppearanceManager = ({ currentUserRole }) => {
             
             {/* The actual preview window - isolates CSS variables and dir */}
             <div 
-              className={`portfolio-theme-root w-full h-[450px] overflow-hidden relative ${draftSettings.theme === 'light' ? 'portfolio-light-mode light-theme' : ''}`}
+              className={`portfolio-theme-root w-full h-[450px] overflow-hidden relative`}
+              data-portfolio-theme={draftSettings.theme || 'dark'}
               dir={isRtl ? 'rtl' : 'ltr'}
               style={{
                 '--portfolio-primary': draftSettings.primaryColor,

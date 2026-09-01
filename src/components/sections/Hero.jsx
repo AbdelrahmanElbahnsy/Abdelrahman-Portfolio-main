@@ -276,7 +276,7 @@ const Hero = ({ splashDone = true }) => {
                     </div>
 
                     <div className="hero-right flex justify-start lg:justify-center items-start lg:items-center w-full min-w-0 mt-4 lg:mt-0">
-                        <div ref={portraitRef} className="relative w-[min(92vw,420px)] lg:w-[min(100%,520px)] mx-auto lg:mx-0 lg:ms-auto hero-portrait group">
+                        <div ref={portraitRef} className="relative w-[min(92vw,420px)] lg:w-[min(100%,520px)] mx-auto lg:mx-0 lg:ml-auto hero-portrait group">
                             <div className="portrait-frame relative w-full h-auto rounded-[30px] overflow-hidden border border-[var(--theme-border-strong)] shadow-[var(--theme-shadow-strong)] bg-gradient-to-b from-[var(--theme-surface)] to-[var(--theme-surface-soft)] flex justify-center">
                                 <img
                                     src={portrait}

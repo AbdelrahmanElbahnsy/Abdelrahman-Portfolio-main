@@ -38,15 +38,16 @@ const Journey = () => {
     const description = language === 'ar' ? (defaultJourney.descriptionAr || rawDescription) : rawDescription;
 
     const phases = React.useMemo(() => {
-        if (!firestoreData) return [];
-        return firestoreData.map((doc, idx) => {
+        const dataToUse = (firestoreData && firestoreData.length > 0) ? firestoreData : defaultJourney.phases;
+        return dataToUse.map((doc, idx) => {
+            const defaultPhase = defaultJourney.phases.find(p => p.title === doc.title) || defaultJourney.phases[idx] || {};
             return {
                 phase: doc.phase || doc.order || (idx + 1),
-                title: doc.title || '',
-                description: doc.description || '',
-                titleAr: doc.titleAr || null,
-                descriptionAr: doc.descriptionAr || null,
-                tags: doc.technologies ? doc.technologies.split(',').map(t => t.trim()) : (doc.tags || [])
+                title: doc.title || defaultPhase.title || '',
+                description: doc.description || defaultPhase.description || '',
+                titleAr: doc.titleAr || defaultPhase.titleAr || null,
+                descriptionAr: doc.descriptionAr || defaultPhase.descriptionAr || null,
+                tags: doc.technologies ? doc.technologies.split(',').map(t => t.trim()) : (doc.tags || defaultPhase.tags || [])
             };
         });
     }, [firestoreData]);
@@ -144,11 +145,6 @@ const Journey = () => {
                                 <i className="fas fa-exclamation-triangle text-3xl mb-3"></i>
                                 <p>{t('Failed to load journey')}</p>
                                 <p className="text-sm opacity-80 mt-2">{error}</p>
-                            </div>
-                        ) : phases.length === 0 ? (
-                            <div className="flex flex-col items-center justify-center text-[var(--theme-text-muted)] bg-[var(--theme-surface)] p-8 rounded-3xl border border-[var(--theme-border)] shadow-inner min-h-[400px]">
-                                <i className="fas fa-folder-open text-4xl mb-4 opacity-50"></i>
-                                <p>{t('No journey milestones found.')}</p>
                             </div>
                         ) : (
                             <>

@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
 import { useMagneticEffect } from '../../hooks/useMagneticEffect';
+import { socialLinks } from '../../data/portfolioData';
 
 const AirplaneSocial = () => {
-    const { data: socialsData, loading, error, subscribe } = useFirestoreCrud('socials', { orderByField: 'order', orderDirection: 'asc' });
+    const { data: firestoreData, loading, error, subscribe } = useFirestoreCrud('socials', { orderByField: 'order', orderDirection: 'asc' });
     const [isActive, setIsActive] = useState(false);
     const menuRef = useRef(null);
     const triggerRef = useRef(null);
@@ -49,9 +50,7 @@ const AirplaneSocial = () => {
         youtube: '#FF0000',
     };
 
-    if (loading || error || !socialsData || socialsData.length === 0) {
-        return null;
-    }
+    const socialsData = (firestoreData && firestoreData.length > 0) ? firestoreData : socialLinks.airplane;
 
     return (
         <div className="airplane-social-wrapper fixed left-4 bottom-4 md:left-[30px] md:bottom-[30px] z-50">
@@ -68,12 +67,12 @@ const AirplaneSocial = () => {
                     return (
                         <a
                             key={idx}
-                            href={social.url || social.link}
+                            href={social.url || social.link || social.href}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="group relative flex items-center h-12"
                         >
-                            <div className="absolute left-16 opacity-0 group-hover:opacity-100 group-hover:left-14 transition-all duration-300 pointer-events-none">
+                            <div className="absolute left-16 opacity-0 group-hover:opacity-100 group-hover:left-14 transition-all duration-300 pointer-events-none rtl:left-auto rtl:right-16 rtl:group-hover:right-14">
                                 <span 
                                     className="px-3 py-1.5 rounded-lg border border-white/10 text-white text-[10px] font-bold tracking-widest uppercase whitespace-nowrap shadow-2xl backdrop-blur-md"
                                     style={{ backgroundColor: color }}
@@ -105,7 +104,7 @@ const AirplaneSocial = () => {
                 aria-label={isActive ? "Close Menu" : "Open Social Menu"}
             >
                 <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <i className={`fas ${isActive ? 'fa-times' : 'fa-paper-plane'} text-white text-xl transition-all duration-500 ${!isActive && 'group-hover:-translate-y-1 group-hover:translate-x-1'}`}></i>
+                <i className={`fas ${isActive ? 'fa-times' : 'fa-paper-plane'} text-white text-xl transition-all duration-500 ${!isActive && 'group-hover:-translate-y-1 group-hover:translate-x-1 rtl:group-hover:-translate-x-1'}`}></i>
 
                 {!isActive && (
                     <div className="absolute -inset-1 bg-[var(--theme-accent)] rounded-full opacity-20 group-hover:opacity-40 animate-pulse blur-md"></div>

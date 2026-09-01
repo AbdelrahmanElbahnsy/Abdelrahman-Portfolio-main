@@ -7,7 +7,7 @@ import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
 import { useLanguage } from '../../i18n/LanguageContext';
 
 const Contact = () => {
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
     const [status, setStatus] = useState("READY");
     const [logLines, setLogLines] = useState([]);
     const [finalSuccess, setFinalSuccess] = useState(false);
@@ -56,9 +56,9 @@ const Contact = () => {
     }, [subscribe]);
 
     const contactData = React.useMemo(() => {
-        if (!firestoreData) return null;
+        if (!firestoreData) return contact;
         
-        const mergedChannels = (firestoreData.channels || []).map(ch => {
+        const mergedChannels = contact.channels.map(ch => {
             if (ch.label === 'Email' && firestoreData.email) return { ...ch, value: firestoreData.email, link: `mailto:${firestoreData.email}` };
             if (ch.label === 'Phone' && firestoreData.phone) return { ...ch, value: firestoreData.phone, link: `tel:${firestoreData.phone.replace(/[^0-9+]/g, '')}` };
             if (ch.label === 'Location' && firestoreData.location) return { ...ch, value: firestoreData.location };
@@ -66,20 +66,16 @@ const Contact = () => {
         });
 
         return {
+            ...contact,
             ...firestoreData,
             channels: mergedChannels,
-            opportunities: firestoreData.opportunities || [],
-            formSubjects: firestoreData.formSubjects || [],
+            opportunities: firestoreData.opportunities || contact.opportunities,
+            formSubjects: firestoreData.formSubjects || contact.formSubjects,
             emailjs: contact.emailjs // Always fallback to local config for API keys
         };
     }, [firestoreData]);
-    
-    const subtitle = contactData?.subtitle || '';
-    const title = contactData?.title || '';
-    const channels = contactData?.channels || [];
-    const formSubjects = contactData?.formSubjects || [];
-    const opportunities = contactData?.opportunities || [];
-    const emailjsConfig = contactData?.emailjs || contact.emailjs;
+
+    const { subtitle, title, channels, formSubjects, opportunities, emailjs: emailjsConfig } = contactData;
     const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || emailjsConfig.SERVICE_ID;
     const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || emailjsConfig.TEMPLATE_ID;
     const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || emailjsConfig.PUBLIC_KEY;
@@ -176,29 +172,11 @@ const Contact = () => {
         <section id="contact" className="section" ref={sectionRef}>
             <div className="container mx-auto px-4 sm:px-8">
                 <div ref={headerRef} className="section-header text-center mb-16">
-                    <h3 className="section-subtitle font-mono text-[var(--theme-accent)] mb-2 tracking-wider uppercase">{t(subtitle)}</h3>
+                    <span className="section-subtitle text-[var(--theme-accent)] font-mono uppercase tracking-widest text-sm mb-2 block">{t(subtitle)}</span>
                     <h2 className="section-title text-2xl sm:text-3xl md:text-5xl font-black mb-4 text-[var(--theme-text)]">{t(title)}</h2>
                 </div>
 
-                {loading ? (
-                    <div className="flex flex-col items-center justify-center text-[var(--theme-accent)] min-h-[400px]">
-                        <i className="fas fa-spinner fa-spin text-4xl mb-4"></i>
-                        <p>{t('Loading contact information...')}</p>
-                    </div>
-                ) : error ? (
-                    <div className="flex flex-col items-center justify-center text-red-500 bg-red-500/10 p-6 rounded-2xl border border-red-500/20 min-h-[400px]">
-                        <i className="fas fa-exclamation-triangle text-3xl mb-3"></i>
-                        <p>{t('Failed to load contact information')}</p>
-                        <p className="text-sm opacity-80 mt-2">{error}</p>
-                    </div>
-                ) : !contactData ? (
-                    <div className="flex flex-col items-center justify-center text-[var(--theme-text-muted)] bg-[var(--theme-surface)] p-8 rounded-3xl border border-[var(--theme-border)] shadow-inner min-h-[400px]">
-                        <i className="fas fa-folder-open text-4xl mb-4 opacity-50"></i>
-                        <p>{t('No contact information found.')}</p>
-                    </div>
-                ) : (
-                    <>
-                        <div className="contact-grid grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div className="contact-grid grid grid-cols-1 lg:grid-cols-2 gap-12">
                     <div ref={leftRef} className="contact-left">
                         <div className="contact-info-wrapper space-y-8">
                             <div className="channels-section bg-[var(--theme-surface-elevated)] border border-[var(--theme-border)] p-6 sm:p-8 rounded-2xl">
@@ -358,8 +336,6 @@ const Contact = () => {
                         ))}
                     </div>
                 </div>
-                    </>
-                )}
             </div>
         </section>
     );

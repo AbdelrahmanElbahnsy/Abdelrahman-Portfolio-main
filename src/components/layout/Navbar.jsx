@@ -8,7 +8,7 @@ import { useLanguage } from '../../i18n/LanguageContext';
 import { useVisitorPreferences } from '../../context/VisitorPreferencesContext';
 
 const Navbar = ({ splashDone = true }) => {
-    const { data: profileData, loading: profileLoading, error: profileError, subscribe: subscribeProfile } = useFirestoreSingleDoc('profile', 'main');
+    const { data: profileData, subscribe: subscribeProfile } = useFirestoreSingleDoc('profile', 'main');
     const { data: navbarItemsData, subscribe: subscribeNavbar } = useFirestoreCrud('navbarItems', { orderByField: 'order', orderDirection: 'asc' });
     const { language, toggleLanguage, t } = useLanguage();
     const { effectiveTheme, toggleVisitorTheme: toggleTheme } = useVisitorPreferences();
@@ -324,20 +324,7 @@ const Navbar = ({ splashDone = true }) => {
                         {/* Left Region: Logo */}
                         <div className="flex items-center shrink-0 min-w-0">
                             <a href="#hero" className="logo flex items-center gap-1 group min-w-0" onClick={(e) => handleNavClick(e, 'hero')} dir="ltr" style={{ overflowWrap: 'anywhere' }}>
-                                {profileLoading ? (
-                                    <div className="flex items-center gap-2 opacity-60">
-                                        <span className="text-[var(--theme-accent)] font-black text-xl sm:text-2xl">&lt;</span>
-                                        <div className="h-5 w-20 bg-[var(--theme-border-strong)] rounded animate-pulse"></div>
-                                        <span className="text-[var(--theme-accent)] hidden md:inline font-black text-xl sm:text-2xl">/</span>
-                                        <div className="h-5 w-24 bg-[var(--theme-border-strong)] rounded animate-pulse hidden md:block"></div>
-                                        <span className="text-[var(--theme-accent)] font-black text-xl sm:text-2xl">&gt;</span>
-                                    </div>
-                                ) : profileError ? (
-                                    <div className="flex items-center gap-1 text-[var(--theme-text-muted)] text-sm font-mono">
-                                        <i className="fas fa-exclamation-triangle text-red-500"></i>
-                                        <span className="hidden sm:inline">DATA_ERR</span>
-                                    </div>
-                                ) : language === 'ar' ? (
+                                {language === 'ar' ? (
                                     /* Arabic navbar logo — LTR outer, RTL name text */
                                     <span className={`font-black tracking-tighter text-[var(--theme-nav-text)] transition-all duration-500 ${isScrolled ? 'text-base sm:text-lg xl:text-xl' : 'text-lg sm:text-xl xl:text-2xl'}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '2px', whiteSpace: 'nowrap' }}>
                                         <span className="text-[var(--theme-accent)]">&lt; </span>

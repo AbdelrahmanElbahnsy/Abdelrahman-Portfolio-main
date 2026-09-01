@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, lazy, Suspense } from 'react';
 import { useLanguage } from '../i18n/LanguageContext';
+import { useAppearance } from '../context/AppearanceContext';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import Hero from '../components/sections/Hero';
@@ -18,6 +19,7 @@ const Contact = lazy(() => import('../components/sections/Contact'));
 
 function Home({ splashDone = true }) {
   const { language } = useLanguage();
+  const { activeSettings } = useAppearance();
   const hasTrackedVisitRef = useRef(false);
   const mainRef = useRef(null);
 
@@ -35,10 +37,19 @@ function Home({ splashDone = true }) {
     }
   }, []);
 
+  const themeStyle = activeSettings ? {
+    '--portfolio-primary': activeSettings.primaryColor,
+    '--portfolio-background': activeSettings.backgroundColor,
+    '--portfolio-surface': activeSettings.surfaceColor,
+    '--portfolio-text': activeSettings.textColor,
+  } : {};
+
   return (
     <div 
       className="page-wrapper min-h-screen flex flex-col relative portfolio-theme-root bg-[var(--theme-bg)] text-[var(--theme-text)] transition-colors duration-500" 
       dir={language === 'ar' ? 'rtl' : 'ltr'}
+      data-portfolio-theme={activeSettings?.theme || 'dark'}
+      style={themeStyle}
     >
       {/* Global Animated Background */}
       <AnimatedBackground />

@@ -98,7 +98,8 @@ const Certifications = () => {
                         </div>
                     ) : (
                         <Swiper
-                            dir="ltr"
+                            dir={language === 'ar' ? 'rtl' : 'ltr'}
+                            key={language}
                             effect={'coverflow'}
                             grabCursor={true}
                             centeredSlides={true}

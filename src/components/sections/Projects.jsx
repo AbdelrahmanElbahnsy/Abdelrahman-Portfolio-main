@@ -23,11 +23,11 @@ const getProjectRepo = (project) => {
 
 const getProjectKey = (project, index) => project.id ?? getProjectRepo(project) ?? `project-${index}`;
 
-const normalizeProject = (project, index) => ({
+const normalizeProject = (project, index, t) => ({
   ...project,
   id: getProjectKey(project, index),
-  title: project.title || 'Untitled Project',
-  description: project.description || project.desc || 'No description available.',
+  title: project.title || (t ? t('Untitled Project') : 'Untitled Project'),
+  description: project.description || project.desc || (t ? t('No description available.') : 'No description available.'),
   image: typeof project.image === 'string' ? project.image.trim() : '/portfolio-preview.png',
   repo: getProjectRepo(project),
   technologies: normalizeProjectTechnologies(project),
@@ -58,16 +58,16 @@ const Projects = () => {
         image: proj.image || null,
         tags: proj.tags || []
       };
-    }).map(normalizeProject);
-  }, [firestoreProjects]);
+    }).map((proj, idx) => normalizeProject(proj, idx, t));
+  }, [firestoreProjects, t]);
 
   const handleOpenProject = useCallback((project) => setSelectedProject(project), []);
   const handleCloseProject = useCallback(() => setSelectedProject(null), []);
 
   const activeProject = useMemo(() => {
     if (!selectedProject) return null;
-    return projects.find((p) => p.id === selectedProject.id) ?? normalizeProject(selectedProject);
-  }, [selectedProject, projects]);
+    return projects.find((p) => p.id === selectedProject.id) ?? normalizeProject(selectedProject, 0, t);
+  }, [selectedProject, projects, t]);
 
   useGSAP(
     () => {
@@ -146,7 +146,8 @@ const Projects = () => {
               </button>
 
               <Swiper
-                  dir="ltr"
+                  dir={language === 'ar' ? 'rtl' : 'ltr'}
+                  key={language}
                   modules={[Navigation, Pagination, Keyboard, Autoplay]}
                   spaceBetween={30}
                   slidesPerView={1}

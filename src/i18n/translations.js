@@ -15,13 +15,26 @@ export const translations = {
     'Certifications': 'الشهادات',
     'Journey': 'المسيرة المهنية',
     'Contact': 'تواصل معي',
-
     // ─── Global / UI ────────────────────────────────────────────
     'Download CV': 'تحميل السيرة الذاتية',
     'View Details': 'عرض التفاصيل',
     'Repository': 'الكود المصدري',
     'View Credentials': 'عرض الشهادة',
     "Let's Connect": 'لنتواصل معاً',
+    'Loading...': 'جاري التحميل...',
+    'Loading projects...': 'جاري تحميل المشاريع...',
+    'Failed to load projects': 'فشل تحميل المشاريع',
+    'No projects found.': 'لم يتم العثور على مشاريع.',
+    'Loading skills...': 'جاري تحميل المهارات...',
+    'Failed to load skills': 'فشل تحميل المهارات',
+    'No skills found.': 'لم يتم العثور على مهارات.',
+    'Loading certifications...': 'جاري تحميل الشهادات...',
+    'Failed to load certifications': 'فشل تحميل الشهادات',
+    'No certifications found.': 'لم يتم العثور على شهادات.',
+    'Untitled Project': 'مشروع بدون عنوان',
+    'No description available.': 'لا يوجد وصف متاح.',
+    'DevOps Toolchain': 'أدوات DevOps',
+    'Core Tools': 'الأدوات الأساسية',
 
     // ─── Hero ───────────────────────────────────────────────────
     'Cloud & DevOps Engineer': 'مهندس Cloud وDevOps',

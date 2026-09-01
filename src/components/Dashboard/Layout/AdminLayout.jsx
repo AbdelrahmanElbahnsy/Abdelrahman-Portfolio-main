@@ -78,7 +78,7 @@ const AdminLayoutContent = () => {
   const currentTitle = pathTitleMap[location.pathname] || 'Dashboard';
 
   return (
-    <div className="bg-cms-background text-white flex h-screen overflow-hidden">
+    <div className="bg-cms-background text-white flex h-screen overflow-hidden" dir="ltr">
       <Toaster position="top-right" toastOptions={{ style: { background: '#111827', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' } }} />
       
       <GlobalSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />

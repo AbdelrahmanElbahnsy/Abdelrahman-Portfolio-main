@@ -48,26 +48,47 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" media="print" onload="this.media='all'">
 
 
-    <!-- Theme Initialization to Prevent FOUC -->
+    <!-- Theme Initialization to Prevent FOUC for Public Portfolio ONLY -->
     <script>
       (function() {
         try {
-          var theme = localStorage.getItem('portfolio-theme');
-          if (theme === 'light') {
-            document.documentElement.classList.add('light-theme');
-          } else if (theme !== 'dark' && window.matchMedia('(prefers-color-scheme: light)').matches) {
-            document.documentElement.classList.add('light-theme');
+          // AdminOS paths start with /admin
+          if (window.location.pathname.startsWith('/admin')) {
+            return;
+          }
+
+          var cacheStr = localStorage.getItem('portfolio-appearance-cache');
+          var theme = 'dark';
+          var lang = 'en';
+
+          if (cacheStr) {
+            try {
+              var cache = JSON.parse(cacheStr);
+              if (cache.theme) theme = cache.theme;
+              if (cache.language) lang = cache.language;
+            } catch (e) {}
+          } else {
+            // Fallback for first-time visitors
+            var legacyTheme = localStorage.getItem('portfolio-theme');
+            if (legacyTheme === 'light') theme = 'light';
+            var legacyLang = localStorage.getItem('portfolio-language');
+            if (legacyLang === 'ar') lang = 'ar';
           }
           
-          var lang = localStorage.getItem('portfolio-language');
+          // We apply the FOUC settings to the body temporarily.
+          // The React app will override this properly on .portfolio-theme-root.
+          if (theme === 'light') {
+            document.body.setAttribute('data-portfolio-theme', 'light');
+          }
+          
           if (lang === 'ar') {
             document.documentElement.lang = 'ar';
-            // IMPORTANT: dir MUST remain 'ltr' at all times.
-            // Structural layout depends on LTR. RTL is applied locally to text only.
-            document.documentElement.dir = 'ltr';
+            // We do NOT set dir="rtl" on documentElement to protect AdminOS completely.
+            // dir="rtl" will be set on .portfolio-theme-root by React.
+            document.body.setAttribute('dir', 'rtl');
           } else {
             document.documentElement.lang = 'en';
-            document.documentElement.dir = 'ltr';
+            document.body.setAttribute('dir', 'ltr');
           }
         } catch (e) {}
       })();

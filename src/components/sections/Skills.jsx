@@ -169,7 +169,8 @@ const Skills = () => {
                                 </button>
 
                                 <Swiper
-                                    dir="ltr"
+                                    dir={language === 'ar' ? 'rtl' : 'ltr'}
+                                    key={language}
                                     modules={[Pagination, Autoplay, Navigation, Keyboard]}
                                     slidesPerView={1}
                                     spaceBetween={24}
@@ -205,7 +206,7 @@ const Skills = () => {
                                                     </div>
                                                     <div className="text-left rtl:text-right" dir={language === 'ar' ? 'rtl' : 'ltr'}>
                                                         <h3 className="text-xl md:text-2xl font-bold text-[var(--theme-text)] mb-1 tracking-tight leading-tight">{language === 'ar' ? (card.titleAr || t(card.title)) : card.title}</h3>
-                                                        <p className="text-[10px] md:text-xs font-mono text-[var(--theme-accent)] tracking-widest uppercase">{card.skills.length} Core Tools</p>
+                                                        <p className="text-[10px] md:text-xs font-mono text-[var(--theme-accent)] tracking-widest uppercase">{card.skills.length} {t('Core Tools')}</p>
                                                     </div>
                                                 </div>
 

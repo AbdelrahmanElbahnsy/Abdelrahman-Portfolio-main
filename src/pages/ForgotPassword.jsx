@@ -32,7 +32,7 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0a0f1c] text-white px-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-[#0a0f1c] text-white px-4 relative overflow-hidden" dir="ltr">
       <Toaster position="top-right" toastOptions={{ style: { background: '#131b2c', color: '#fff', border: '1px solid #1e293b' } }} />
 
       <motion.div 

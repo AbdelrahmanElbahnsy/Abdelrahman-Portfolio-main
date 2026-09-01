@@ -6,7 +6,16 @@ const AppearanceContext = createContext();
 export const AppearanceProvider = ({ children }) => {
   const { data: appearanceSettings, subscribe } = useFirestoreSingleDoc('settings', 'appearance');
   
-  const [activeSettings, setActiveSettings] = useState(null);
+  const [activeSettings, setActiveSettings] = useState(() => {
+    // Try to bootstrap from localStorage for FOUC prevention
+    try {
+      const cached = localStorage.getItem('portfolio-appearance-cache');
+      if (cached) {
+        return JSON.parse(cached);
+      }
+    } catch (e) {}
+    return null;
+  });
 
   useEffect(() => {
     const unsubscribe = subscribe();
@@ -19,51 +28,17 @@ export const AppearanceProvider = ({ children }) => {
     if (appearanceSettings) {
       setActiveSettings(appearanceSettings);
       
-      // Update LanguageContext based on global settings if present
+      try {
+        localStorage.setItem('portfolio-appearance-cache', JSON.stringify(appearanceSettings));
+      } catch(e) {}
+      
+      // We still update language cache for LanguageContext if it needs it independently, 
+      // though LanguageContext should ideally also consume from AppearanceContext directly.
       if (appearanceSettings.language) {
         localStorage.setItem('portfolio-language', appearanceSettings.language);
-        // We let LanguageContext handle the actual translation via a window event or direct update
-        window.dispatchEvent(new Event('portfolio-language-updated'));
       }
     }
   }, [appearanceSettings]);
-
-  useEffect(() => {
-    if (!activeSettings) return;
-
-    const root = document.documentElement;
-
-    if (activeSettings.primaryColor) {
-      root.style.setProperty('--portfolio-primary', activeSettings.primaryColor);
-    } else {
-      root.style.removeProperty('--portfolio-primary');
-    }
-
-    if (activeSettings.backgroundColor) {
-      root.style.setProperty('--portfolio-background', activeSettings.backgroundColor);
-    } else {
-      root.style.removeProperty('--portfolio-background');
-    }
-
-    if (activeSettings.surfaceColor) {
-      root.style.setProperty('--portfolio-surface', activeSettings.surfaceColor);
-    } else {
-      root.style.removeProperty('--portfolio-surface');
-    }
-
-    if (activeSettings.textColor) {
-      root.style.setProperty('--portfolio-text', activeSettings.textColor);
-    } else {
-      root.style.removeProperty('--portfolio-text');
-    }
-    
-    if (activeSettings.theme === 'light') {
-      root.classList.add('portfolio-light-mode');
-    } else {
-      root.classList.remove('portfolio-light-mode');
-    }
-
-  }, [activeSettings]);
 
   return (
     <AppearanceContext.Provider value={{ activeSettings, setActiveSettings }}>

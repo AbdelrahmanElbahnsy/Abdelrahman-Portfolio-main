@@ -98,49 +98,6 @@ html {}
   --theme-nav-contact-active-ring: #ffffff;
 }
 
-.light-theme {
-  /* Premium Light Theme */
-  --theme-bg: #F3F0E8;
-  --theme-bg-secondary: #E9E5DA;
-  --theme-surface: #FAF8F3;
-  --theme-surface-elevated: #FFFFFF;
-  --theme-surface-soft: rgba(255, 255, 255, 0.58);
-  
-  --theme-text: #172231;
-  --theme-text-secondary: #596779;
-  --theme-text-muted: #7A8695;
-  --theme-btn-text: #172231;
-  
-  --theme-border: rgba(23, 34, 49, 0.11);
-  --theme-border-strong: rgba(23, 34, 49, 0.20);
-  --theme-border-gold: rgba(201, 161, 90, 0.35);
-  
-  --theme-accent: #C9A15A;
-  --theme-accent-hover: #B78B48;
-  --theme-accent-soft: rgba(201, 161, 90, 0.12);
-  
-  --theme-shadow: 0 12px 35px rgba(23, 34, 49, 0.08);
-  --theme-shadow-strong: 0 20px 50px rgba(23, 34, 49, 0.13);
-  
-  --theme-nav-bg: rgba(250, 248, 243, 0.88);
-  --theme-nav-border: rgba(23, 34, 49, 0.12);
-  --theme-nav-shadow: 0 8px 25px rgba(23, 34, 49, 0.06);
-  --theme-nav-text: #172231;
-  --theme-nav-text-dim: #596779;
-  --theme-nav-hover-bg: rgba(23, 34, 49, 0.05);
-  --theme-nav-active-bg: #C9A15A;
-  --theme-nav-active-text: #172231;
-  --theme-nav-active-shadow: 0 4px 15px rgba(201, 161, 90, 0.2);
-  --theme-nav-btn-bg: #E9E5DA;
-  --theme-nav-btn-hover: #D9D5CA;
-  --theme-nav-contact-active-bg: #172231;
-  --theme-nav-contact-active-text: #ffffff;
-  --theme-nav-contact-active-ring: #172231;
-  /* Subtle atmospheric background */
-  background-color: var(--theme-bg);
-  background-image: 
-    radial-gradient(circle at 10% 0%, rgba(201,161,90,0.07) 0%, transparent 50%),
-    radial-gradient(circle at 90% 100%, rgba(73,142,155,0.045) 0%, transparent 50%);
 }
 
 /* Portfolio Appearance Configuration Mapping */
@@ -153,8 +110,7 @@ html {}
   --theme-nav-active-bg: var(--portfolio-primary, var(--clr-accent));
 }
 
-.portfolio-light-mode.portfolio-theme-root,
-.portfolio-light-mode .portfolio-theme-root {
+.portfolio-theme-root[data-portfolio-theme="light"] {
   --theme-bg: var(--portfolio-background, #F3F0E8);
   --theme-surface: var(--portfolio-surface, #FAF8F3);
   --theme-text: var(--portfolio-text, #172231);

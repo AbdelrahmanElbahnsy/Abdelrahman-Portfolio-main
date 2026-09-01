@@ -1,43 +1,33 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { getTranslation } from './translations';
+import { useAppearance } from '../context/AppearanceContext';
 
 const LanguageContext = createContext();
 
 export const LanguageProvider = ({ children }) => {
-  const [language, setLanguage] = useState('en');
+  const { activeSettings } = useAppearance();
+  
+  // Default to English, but if activeSettings is loading, we can check localStorage for FOUC
+  const [language, setLanguage] = useState(() => {
+    try {
+      const cached = localStorage.getItem('portfolio-language');
+      return cached === 'ar' ? 'ar' : 'en';
+    } catch(e) {
+      return 'en';
+    }
+  });
 
   useEffect(() => {
-    const applyLanguage = () => {
-      const savedLanguage = localStorage.getItem('portfolio-language');
-      if (savedLanguage === 'ar' || savedLanguage === 'en') {
-        setLanguage(savedLanguage);
-        document.documentElement.lang = savedLanguage;
-      } else {
-        // Default is en
-        setLanguage('en');
-        document.documentElement.lang = 'en';
-      }
-      
-      // Update .portfolio-theme-root dir instead of global html to isolate RTL
-      const root = document.documentElement;
-      // Note: In React, we rely on setting standard DOM properties on elements that aren't managed by React
-      // Here, we update the global language. RTL will be handled in CSS using `:lang(ar)` where needed, 
-      // or we can explicitly set dir="rtl" on specific containers.
-    };
+    if (activeSettings?.language) {
+      setLanguage(activeSettings.language);
+      document.documentElement.lang = activeSettings.language;
+    }
+  }, [activeSettings]);
 
-    applyLanguage();
-
-    // Listen for global appearance context changes
-    window.addEventListener('portfolio-language-updated', applyLanguage);
-    return () => window.removeEventListener('portfolio-language-updated', applyLanguage);
-  }, []);
-
-  const toggleLanguage = () => {
-    const newLanguage = language === 'en' ? 'ar' : 'en';
-    setLanguage(newLanguage);
-    localStorage.setItem('portfolio-language', newLanguage);
-    document.documentElement.lang = newLanguage;
-  };
+  // We keep toggleLanguage for local override if necessary, but strictly AdminOS should change it.
+  // Actually, toggleLanguage is no longer used in the public portfolio because there's no language switcher!
+  // AdminOS handles language switching through Firestore.
+  const toggleLanguage = () => {};
 
   const t = (key) => getTranslation(key, language);
 

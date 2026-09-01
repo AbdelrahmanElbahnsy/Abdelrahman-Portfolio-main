@@ -1,0 +1,143 @@
+commit ab7b35a39e1b0b640924a085dd393677a23b6ab1
+Author: Abdelrahman Elbahnsy <abdelrahmanelbahnsy3@gmail.com>
+Date:   Tue Sep 1 14:59:06 2026 +0300
+
+    Backup before full cleanup
+
+commit 791812d7a5ecdf07986b73b85dd29fd8cd016895
+Author: Abdelrahman Elbahnsy <abdelrahmanelbahnsy3@gmail.com>
+Date:   Wed Aug 26 16:33:31 2026 +0300
+
+    Backup before full cleanup
+
+commit de671a93ca907bce97b48ff7937baf67f982a7e4
+Author: Abdelrahman Elbahnsy <abdelrahmanelbahnsy3@gmail.com>
+Date:   Tue Aug 11 00:36:15 2026 +0300
+
+    Backup before full cleanup
+
+commit 4e5c410b8e39a4b4a9a3bbcce8ee6e961ea6d6fe
+Author: Abdelrahman Elbahnsy <abdelrahmanelbahnsy3@gmail.com>
+Date:   Mon Aug 10 23:25:41 2026 +0300
+
+    Backup before full cleanup
+
+commit db19fafae4c4690de77de3add4e34fca31bb5fec
+Author: Abdelrahman Elbahnsy <abdelrahmanelbahnsy3@gmail.com>
+Date:   Tue Aug 4 16:17:26 2026 +0300
+
+    Backup before full cleanup
+
+commit ec0b9164ebaebfaa0d9fd0ff9113ec8b25ba3d85
+Author: Abdelrahman Elbahnsy <abdelrahmanelbahnsy3@gmail.com>
+Date:   Tue Aug 4 15:33:47 2026 +0300
+
+    Backup before full cleanup
+
+commit a09e521d5f5e575ee1c84f36c466d51d9f582e6d
+Merge: 9f4bb38 3aef124
+Author: Ameen <shehaaa4@gmail.com>
+Date:   Sat Jul 18 00:03:04 2026 +0300
+
+    Merge pull request #5 from AbdelrahmanElbahnsy/opramize/perfmance
+    
+    Opramize/perfmance
+
+commit cf32f11e60656fd1f312c862d1035c583b544328
+Author: ameen <shehaaa4@gmail.com>
+Date:   Fri Jul 17 22:47:03 2026 +0300
+
+    refactor: replace GSAP infinite scroll with Swiper.js in Toolchain and adjust card heights in Certifications
+
+commit b780c412327ff101705c38e54a596c70025a2e3a
+Author: ameen <shehaaa4@gmail.com>
+Date:   Fri Jul 17 22:38:16 2026 +0300
+
+    refactor: update certification swiper coverflow effect and standardize slide dimensions using CSS classes
+
+commit dde2b22b256f0a350b5e3b2a614bea484c54e774
+Author: ameen <shehaaa4@gmail.com>
+Date:   Fri Jul 17 22:31:25 2026 +0300
+
+    feat: duplicate certifications list for infinite loop and enable pointer events on active slide buttons
+
+commit 11780f432c945289916c02ddf52929499c65fe20
+Author: ameen <shehaaa4@gmail.com>
+Date:   Fri Jul 17 22:29:16 2026 +0300
+
+    feat: update certifications section with 3D coverflow effect and GSAP scroll animations
+
+commit 1974ec4513e6d142c92c3d4b3d11e44bfc5e7dc8
+Merge: 2c48f23 0099251
+Author: Ameen <shehaaa4@gmail.com>
+Date:   Wed Jul 15 21:19:47 2026 +0300
+
+    Merge pull request #3 from AbdelrahmanElbahnsy/opramize/perfmance
+    
+    Opramize/perfmance
+
+commit 0099251921b6d978221134f12ae5bb660c3885bf
+Author: ameen <shehaaa4@gmail.com>
+Date:   Wed Jul 15 21:19:16 2026 +0300
+
+    style: adjust swiper layouts and responsiveness for skills, certifications, and hero sections
+
+commit 3782694fc69c2b9f99d675b784d02d9d9090cdcb
+Author: ameen <shehaaa4@gmail.com>
+Date:   Wed Jul 15 21:07:43 2026 +0300
+
+    refactor: improve performance by removing background blur effects and optimizing scroll and image rendering.
+
+commit 2c48f23c7c066097ce49960e7fb82d351d6ad649
+Merge: 2e5c0d3 2984ca6
+Author: Ameen <shehaaa4@gmail.com>
+Date:   Sun Jul 5 00:20:13 2026 +0300
+
+    Merge pull request #2 from AbdelrahmanElbahnsy/feat/ameen
+    
+    Feat/ameen
+
+commit c115f12bb7c0050069dd78df2fc235a302a77ad7
+Author: ameenmv <shehaaa4@gmail.com>
+Date:   Sat Jul 4 23:20:51 2026 +0300
+
+    feat: add animated particle background and modular sections including About, Certifications, Hero, Toolchain, and ScrollToTop components
+
+commit d19fa77dbab8d520cae268136f66e749ec02e9dc
+Author: ameenmv <shehaaa4@gmail.com>
+Date:   Sat Jul 4 23:15:36 2026 +0300
+
+    feat: implement initial portfolio components and GSAP-powered animations
+
+commit 2e5c0d38912b8b8cbf110407bf8ace1ff6b43140
+Merge: 52c8f5f 0bb841c
+Author: Ameen <shehaaa4@gmail.com>
+Date:   Sat Jul 4 23:13:09 2026 +0300
+
+    Merge pull request #1 from AbdelrahmanElbahnsy/feat/ameen
+    
+    feat : redesing and add some animation on the website from ameenmv
+
+commit 0bb841c8998b1e98b7a731c82c8e6e8b47152dde
+Author: ameenmv <shehaaa4@gmail.com>
+Date:   Sat Jul 4 23:04:38 2026 +0300
+
+    feat : redesing and add some animation on the website from ameenmv
+
+commit a33aa96b9ff468e7c4fbd855049eb6ccf7a9f2a2
+Author: Abdelrahman Elbahnsy <abdelrahmanelbahnsy3@gmail.com>
+Date:   Sat Jun 27 18:05:38 2026 +0300
+
+    Initial portfolio
+
+commit d286a3f5e7b76df77ced1c13465a6ab285cf1b5f
+Author: Ahmed Hamed <ahmed@example.com>
+Date:   Thu Apr 16 13:04:21 2026 +0200
+
+    add technologies feature + edit projects + UI improvements
+
+commit 9b55d5193caaaa50fd37ac62747d6ae7ddf9b288
+Author: Ahmed Hamed <ahmed@example.com>
+Date:   Thu Mar 26 11:27:59 2026 +0200
+
+    first commit

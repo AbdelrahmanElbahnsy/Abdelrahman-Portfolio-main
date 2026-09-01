@@ -1,0 +1,1674 @@
+commit ab7b35a39e1b0b640924a085dd393677a23b6ab1
+Author: Abdelrahman Elbahnsy <abdelrahmanelbahnsy3@gmail.com>
+Date:   Tue Sep 1 14:59:06 2026 +0300
+
+    Backup before full cleanup
+
+diff --git a/src/components/sections/Skills.jsx b/src/components/sections/Skills.jsx
+index 1e8d529..407fe26 100644
+--- a/src/components/sections/Skills.jsx
++++ b/src/components/sections/Skills.jsx
+@@ -169,7 +169,8 @@ const Skills = () => {
+                                 </button>
+ 
+                                 <Swiper
+-                                    dir="ltr"
++                                    dir={language === 'ar' ? 'rtl' : 'ltr'}
++                                    key={language}
+                                     modules={[Pagination, Autoplay, Navigation, Keyboard]}
+                                     slidesPerView={1}
+                                     spaceBetween={24}
+@@ -205,7 +206,7 @@ const Skills = () => {
+                                                     </div>
+                                                     <div className="text-left rtl:text-right" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                                                         <h3 className="text-xl md:text-2xl font-bold text-[var(--theme-text)] mb-1 tracking-tight leading-tight">{language === 'ar' ? (card.titleAr || t(card.title)) : card.title}</h3>
+-                                                        <p className="text-[10px] md:text-xs font-mono text-[var(--theme-accent)] tracking-widest uppercase">{card.skills.length} Core Tools</p>
++                                                        <p className="text-[10px] md:text-xs font-mono text-[var(--theme-accent)] tracking-widest uppercase">{card.skills.length} {t('Core Tools')}</p>
+                                                     </div>
+                                                 </div>
+ 
+
+commit 7e68a90f26bf2c64e237b4f2b87fabf3c40632d8
+Author: Abdelrahman Elbahnsy <abdelrahmanelbahnsy3@gmail.com>
+Date:   Mon Aug 31 18:27:19 2026 +0300
+
+    Backup before full cleanup
+
+diff --git a/src/components/sections/Skills.jsx b/src/components/sections/Skills.jsx
+index cf304a2..1e8d529 100644
+--- a/src/components/sections/Skills.jsx
++++ b/src/components/sections/Skills.jsx
+@@ -1,4 +1,4 @@
+-import React, { useRef } from 'react';
++import React, { useRef, useEffect } from 'react';
+ import { Swiper, SwiperSlide } from 'swiper/react';
+ import { Pagination, Autoplay, Navigation, Keyboard } from 'swiper/modules';
+ import 'swiper/css';
+
+commit 791812d7a5ecdf07986b73b85dd29fd8cd016895
+Author: Abdelrahman Elbahnsy <abdelrahmanelbahnsy3@gmail.com>
+Date:   Wed Aug 26 16:33:31 2026 +0300
+
+    Backup before full cleanup
+
+diff --git a/src/components/sections/Skills.jsx b/src/components/sections/Skills.jsx
+index 202811b..cf304a2 100644
+--- a/src/components/sections/Skills.jsx
++++ b/src/components/sections/Skills.jsx
+@@ -2,7 +2,6 @@ import React, { useRef } from 'react';
+ import { Swiper, SwiperSlide } from 'swiper/react';
+ import { Pagination, Autoplay, Navigation, Keyboard } from 'swiper/modules';
+ import 'swiper/css';
+-import 'swiper/css/pagination';
+ import gsap from 'gsap';
+ import { ScrollTrigger } from 'gsap/ScrollTrigger';
+ import { useGSAP } from '@gsap/react';
+@@ -16,38 +15,29 @@ gsap.registerPlugin(ScrollTrigger);
+ 
+ const Skills = () => {
+     const { t, language } = useLanguage();
+-    const { data: firestoreData, subscribe } = useFirestoreCrud('skills');
+-    
+-    React.useEffect(() => {
++    const { data: firestoreData, loading, error, subscribe } = useFirestoreCrud('skills');
++
++    useEffect(() => {
+         const unsubscribe = subscribe();
+         return () => {
+             if (unsubscribe) unsubscribe();
+         };
+     }, [subscribe]);
+ 
+-    const skillsData = firestoreData && firestoreData.length > 0
+-        ? {
+-            subtitle: fallbackSkills.subtitle,
+-            title: fallbackSkills.title,
+-            description: fallbackSkills.description,
+-            ...transformSkills(firestoreData)
+-          }
+-        : fallbackSkills;
+-
+-    const { 
+-        subtitle: rawSubtitle, 
+-        title: rawTitle, 
+-        description: rawDescription, 
+-        circularSkills: rawCircular, 
+-        categories: rawCategories,
+-        subtitleAr, titleAr, descriptionAr
+-    } = skillsData;
++    const skillsData = React.useMemo(() => {
++        if (!firestoreData) return null;
++        const transformed = transformSkills(firestoreData);
++        return {
++            circularSkills: transformed.circularSkills || [],
++            categories: transformed.categories || [],
++        };
++    }, [firestoreData]);
+ 
+-    const subtitle = language === 'ar' ? (subtitleAr || rawSubtitle) : rawSubtitle;
+-    const title = language === 'ar' ? (titleAr || rawTitle) : rawTitle;
+-    const description = language === 'ar' ? (descriptionAr || rawDescription) : rawDescription;
+-    const circularSkills = Array.isArray(rawCircular) ? rawCircular : fallbackSkills.circularSkills;
+-    const categories = Array.isArray(rawCategories) ? rawCategories : fallbackSkills.categories;
++    const subtitle = language === 'ar' ? (fallbackSkills.subtitleAr) : (fallbackSkills.subtitle);
++    const title = language === 'ar' ? (fallbackSkills.titleAr) : (fallbackSkills.title);
++    const description = language === 'ar' ? (fallbackSkills.descriptionAr) : (fallbackSkills.description);
++    const circularSkills = skillsData?.circularSkills || [];
++    const categories = skillsData?.categories || [];
+     const sectionRef = useRef(null);
+     const headerRef = useRef(null);
+     const circularRef = useRef(null);
+@@ -114,125 +104,145 @@ const Skills = () => {
+                     </p>
+                 </div>
+ 
+-                {/* Circular Skills Row */}
+-                <div ref={circularRef} className="skills-circular-row flex flex-wrap justify-center gap-10 md:gap-16 mb-24">
+-                    {circularSkills.map((skill, idx) => (
+-                        <div key={idx} className="circular-skill-item group flex flex-col items-center cursor-pointer" data-percent={skill.percent}>
+-                            <div className="relative w-32 h-32 md:w-36 md:h-36 flex items-center justify-center bg-[var(--theme-surface)] rounded-full border border-[var(--theme-border)] group-hover:border-[var(--theme-accent)] shadow-[var(--theme-shadow)] transition-colors duration-500">
+-                                <svg className="absolute inset-0 w-full h-full rotate-[-90deg]">
+-                                    {/* Background Circle */}
+-                                    <circle cx="50%" cy="50%" r="58" fill="transparent" stroke="var(--theme-border-strong)" strokeWidth="6" />
+-                                    {/* Progress Circle */}
+-                                    <circle className="progress-ring-circle transition-none" cx="50%" cy="50%" r="58" fill="transparent" stroke="var(--theme-accent)" strokeWidth="6" strokeDasharray="364.42" strokeDashoffset="364.42" strokeLinecap="round" />
+-                                </svg>
+-                                <div className="absolute inset-2 md:inset-3 bg-[var(--theme-bg)] rounded-full flex items-center justify-center z-10 shadow-[var(--theme-shadow-strong)] group-hover:scale-110 transition-transform duration-500">
+-                                    {skill.icon?.trim().toLowerCase() === 'simicrosoftazure' ? (
+-                                        <SiMicrosoftazure className="text-3xl md:text-4xl text-[var(--theme-accent)] group-hover:text-[var(--theme-text)] transition-colors" />
+-                                    ) : (
+-                                        <i className={`${skill.icon} text-3xl md:text-4xl text-[var(--theme-accent)] group-hover:text-[var(--theme-text)] transition-colors`}></i>
+-                                    )}
++                {loading ? (
++                    <div className="flex flex-col items-center justify-center text-[var(--theme-accent)] min-h-[400px]">
++                        <i className="fas fa-spinner fa-spin text-4xl mb-4"></i>
++                        <p>{t('Loading skills...')}</p>
++                    </div>
++                ) : error ? (
++                    <div className="flex flex-col items-center justify-center text-red-500 bg-red-500/10 p-6 rounded-2xl border border-red-500/20 min-h-[400px]">
++                        <i className="fas fa-exclamation-triangle text-3xl mb-3"></i>
++                        <p>{t('Failed to load skills')}</p>
++                        <p className="text-sm opacity-80 mt-2">{error}</p>
++                    </div>
++                ) : circularSkills.length === 0 && categories.length === 0 ? (
++                    <div className="flex flex-col items-center justify-center text-[var(--theme-text-muted)] bg-[var(--theme-surface)] p-8 rounded-3xl border border-[var(--theme-border)] shadow-inner min-h-[400px]">
++                        <i className="fas fa-folder-open text-4xl mb-4 opacity-50"></i>
++                        <p>{t('No skills found.')}</p>
++                    </div>
++                ) : (
++                    <>
++                        {/* Circular Skills Row */}
++                        <div ref={circularRef} className="skills-circular-row flex flex-wrap justify-center gap-10 md:gap-16 mb-24">
++                            {circularSkills.map((skill, idx) => (
++                                <div key={idx} className="circular-skill-item group flex flex-col items-center cursor-pointer" data-percent={skill.percent}>
++                                    <div className="relative w-32 h-32 md:w-36 md:h-36 flex items-center justify-center bg-[var(--theme-surface)] rounded-full border border-[var(--theme-border)] group-hover:border-[var(--theme-accent)] shadow-[var(--theme-shadow)] transition-colors duration-500">
++                                        <svg className="absolute inset-0 w-full h-full rotate-[-90deg]">
++                                            {/* Background Circle */}
++                                            <circle cx="50%" cy="50%" r="58" fill="transparent" stroke="var(--theme-border-strong)" strokeWidth="6" />
++                                            {/* Progress Circle */}
++                                            <circle className="progress-ring-circle transition-none" cx="50%" cy="50%" r="58" fill="transparent" stroke="var(--theme-accent)" strokeWidth="6" strokeDasharray="364.42" strokeDashoffset="364.42" strokeLinecap="round" />
++                                        </svg>
++                                        <div className="absolute inset-2 md:inset-3 bg-[var(--theme-bg)] rounded-full flex items-center justify-center z-10 shadow-[var(--theme-shadow-strong)] group-hover:scale-110 transition-transform duration-500">
++                                            {skill.icon?.trim().toLowerCase() === 'simicrosoftazure' ? (
++                                                <SiMicrosoftazure className="text-3xl md:text-4xl text-[var(--theme-accent)] group-hover:text-[var(--theme-text)] transition-colors" />
++                                            ) : (
++                                                <i className={`${skill.icon} text-3xl md:text-4xl text-[var(--theme-accent)] group-hover:text-[var(--theme-text)] transition-colors`}></i>
++                                            )}
++                                        </div>
++                                        {/* Glow effect */}
++                                        <div className="absolute inset-0 rounded-full bg-[var(--theme-accent)] opacity-0 group-hover:opacity-10 blur-xl transition-opacity duration-500 pointer-events-none"></div>
++                                    </div>
++                                    <div className="text-center mt-6">
++                                        <h4 className="text-lg font-bold text-[var(--theme-text)] group-hover:text-[var(--theme-accent)] transition-colors" dir={language === 'ar' ? 'rtl' : 'ltr'}>{language === 'ar' ? (skill.labelAr || t(skill.label)) : skill.label}</h4>
++                                        <p className="text-sm text-[var(--theme-text-muted)] mt-1" dir={language === 'ar' ? 'rtl' : 'ltr'}>{language === 'ar' ? (skill.subAr || t(skill.sub)) : skill.sub}</p>
++                                    </div>
+                                 </div>
+-                                {/* Glow effect */}
+-                                <div className="absolute inset-0 rounded-full bg-[var(--theme-accent)] opacity-0 group-hover:opacity-10 blur-xl transition-opacity duration-500 pointer-events-none"></div>
+-                            </div>
+-                            <div className="text-center mt-6">
+-                                <h4 className="text-lg font-bold text-[var(--theme-text)] group-hover:text-[var(--theme-accent)] transition-colors" dir={language === 'ar' ? 'rtl' : 'ltr'}>{language === 'ar' ? (skill.labelAr || t(skill.label)) : skill.label}</h4>
+-                                <p className="text-sm text-[var(--theme-text-muted)] mt-1" dir={language === 'ar' ? 'rtl' : 'ltr'}>{language === 'ar' ? (skill.subAr || t(skill.sub)) : skill.sub}</p>
+-                            </div>
++                            ))}
+                         </div>
+-                    ))}
+-                </div>
+ 
+-                {/* Swiper Cards Section */}
+-                <div className="skills-swiper-container pt-4 px-2 md:px-16">
+-                    <div className="relative group/carousel">
+-                        {/* Custom Navigation Arrows for Better UX */}
+-                        <button 
+-                            className="skills-swiper-prev absolute top-auto -bottom-[68px] left-1/2 -translate-x-[120px] rtl:left-auto rtl:right-1/2 rtl:translate-x-[120px] translate-y-0 md:top-1/2 md:bottom-auto md:-left-16 rtl:md:-left-auto rtl:md:-right-16 md:translate-x-0 md:-translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full border border-[var(--theme-border-gold)] bg-[var(--theme-surface-elevated)] text-[var(--theme-accent)] hover:bg-[var(--theme-accent)] hover:text-[var(--theme-bg)] flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg focus:outline-none cursor-pointer backdrop-blur-md"
+-                            aria-label="Previous slide"
+-                        >
+-                            <i className="fas fa-chevron-left text-xl rtl:rotate-180"></i>
+-                        </button>
+-                        <button 
+-                            className="skills-swiper-next absolute top-auto -bottom-[68px] right-1/2 translate-x-[120px] rtl:right-auto rtl:left-1/2 rtl:-translate-x-[120px] translate-y-0 md:top-1/2 md:bottom-auto md:-right-16 rtl:md:-right-auto rtl:md:-left-16 md:translate-x-0 md:-translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full border border-[var(--theme-border-gold)] bg-[var(--theme-surface-elevated)] text-[var(--theme-accent)] hover:bg-[var(--theme-accent)] hover:text-[var(--theme-bg)] flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg focus:outline-none cursor-pointer backdrop-blur-md"
+-                            aria-label="Next slide"
+-                        >
+-                            <i className="fas fa-chevron-right text-xl rtl:rotate-180"></i>
+-                        </button>
++                        {/* Swiper Cards Section */}
++                        <div className="skills-swiper-container pt-4 px-2 md:px-16">
++                            <div className="relative group/carousel">
++                                {/* Custom Navigation Arrows for Better UX */}
++                                <button 
++                                    className="skills-swiper-prev absolute top-auto -bottom-[68px] left-1/2 -translate-x-[120px] rtl:left-auto rtl:right-1/2 rtl:translate-x-[120px] translate-y-0 md:top-1/2 md:bottom-auto md:-left-16 rtl:md:-left-auto rtl:md:-right-16 md:translate-x-0 md:-translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full border border-[var(--theme-border-gold)] bg-[var(--theme-surface-elevated)] text-[var(--theme-accent)] hover:bg-[var(--theme-accent)] hover:text-[var(--theme-bg)] flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg focus:outline-none cursor-pointer backdrop-blur-md"
++                                    aria-label="Previous slide"
++                                >
++                                    <i className="fas fa-chevron-left text-xl rtl:rotate-180"></i>
++                                </button>
++                                <button 
++                                    className="skills-swiper-next absolute top-auto -bottom-[68px] right-1/2 translate-x-[120px] rtl:right-auto rtl:left-1/2 rtl:-translate-x-[120px] translate-y-0 md:top-1/2 md:bottom-auto md:-right-16 rtl:md:-right-auto rtl:md:-left-16 md:translate-x-0 md:-translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full border border-[var(--theme-border-gold)] bg-[var(--theme-surface-elevated)] text-[var(--theme-accent)] hover:bg-[var(--theme-accent)] hover:text-[var(--theme-bg)] flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg focus:outline-none cursor-pointer backdrop-blur-md"
++                                    aria-label="Next slide"
++                                >
++                                    <i className="fas fa-chevron-right text-xl rtl:rotate-180"></i>
++                                </button>
+ 
+-                        <Swiper
+-                            dir="ltr"
+-                            modules={[Pagination, Autoplay, Navigation, Keyboard]}
+-                            slidesPerView={1}
+-                            spaceBetween={24}
+-                            loop={true}
+-                            pagination={{ clickable: true, el: '.skills-pagination', dynamicBullets: true }}
+-                            autoplay={{ delay: 4000, disableOnInteraction: false, pauseOnMouseEnter: true }}
+-                            navigation={{
+-                                nextEl: '.skills-swiper-next',
+-                                prevEl: '.skills-swiper-prev',
+-                            }}
+-                            keyboard={{ enabled: true, onlyInViewport: true }}
+-                            breakpoints={{
+-                                768: { slidesPerView: 2, spaceBetween: 30 },
+-                                1024: { slidesPerView: 3, spaceBetween: 40 }
+-                            }}
+-                            className="skills-swiper overflow-visible py-8 px-4 md:px-0"
+-                        >
+-                            {categories.map((card, idx) => (
+-                                <SwiperSlide key={idx} style={{ height: 'auto', boxSizing: 'border-box' }} className="!h-auto box-border">
+-                                    <div className="skill-card w-full h-full box-border flex flex-col relative p-8 md:p-10 rounded-3xl bg-[var(--theme-surface-elevated)] border border-[var(--theme-border)] hover:border-[var(--theme-accent)] hover:shadow-[var(--theme-shadow-strong)] shadow-[var(--theme-shadow)] transition-all duration-500 group overflow-hidden min-h-[380px]">
+-                                        
+-                                        {/* Top Glow Highlight */}
+-                                        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[var(--theme-accent)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+-                                        
+-                                        {/* Card Header */}
+-                                        <div className="flex items-center gap-4 mb-8 relative z-10">
+-                                            <div className="w-16 h-16 flex items-center justify-center bg-[var(--theme-accent-soft)] border border-[var(--theme-border-gold)] rounded-2xl text-2xl text-[var(--theme-accent)] group-hover:scale-110 group-hover:bg-[var(--theme-accent)] group-hover:text-[var(--theme-bg)] transition-all duration-500 flex-shrink-0">
+-                                                {card.icon?.trim().toLowerCase() === 'simicrosoftazure' ? (
+-                                                    <SiMicrosoftazure />
+-                                                ) : (
+-                                                    <i className={card.icon}></i>
+-                                                )}
+-                                            </div>
+-                                            <div className="text-left rtl:text-right" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+-                                                <h3 className="text-xl md:text-2xl font-bold text-[var(--theme-text)] mb-1 tracking-tight leading-tight">{language === 'ar' ? (card.titleAr || t(card.title)) : card.title}</h3>
+-                                                <p className="text-[10px] md:text-xs font-mono text-[var(--theme-accent)] tracking-widest uppercase">{card.skills.length} Core Tools</p>
+-                                            </div>
+-                                        </div>
+-
+-                                        {/* Progress Bars */}
+-                                        <div className="space-y-6 relative z-10 flex-grow flex flex-col justify-end">
+-                                            {card.skills.map((metric, midx) => (
+-                                                <div key={midx} className="skill-item group/item">
+-                                                    <div className="flex justify-between items-end mb-2.5">
+-                                                        <span className="text-[var(--theme-text-secondary)] font-medium text-sm group-hover/item:text-[var(--theme-text)] transition-colors text-left rtl:text-right w-full" dir={language === 'ar' ? 'rtl' : 'ltr'}>{language === 'ar' ? (metric.nameAr || t(metric.name)) : metric.name}</span>
+-                                                        <span className="text-[var(--theme-accent-hover)] font-bold font-mono text-sm">{metric.percent}%</span>
++                                <Swiper
++                                    dir="ltr"
++                                    modules={[Pagination, Autoplay, Navigation, Keyboard]}
++                                    slidesPerView={1}
++                                    spaceBetween={24}
++                                    loop={true}
++                                    pagination={{ clickable: true, el: '.skills-pagination', dynamicBullets: true }}
++                                    autoplay={{ delay: 4000, disableOnInteraction: false, pauseOnMouseEnter: true }}
++                                    navigation={{
++                                        nextEl: '.skills-swiper-next',
++                                        prevEl: '.skills-swiper-prev',
++                                    }}
++                                    keyboard={{ enabled: true, onlyInViewport: true }}
++                                    breakpoints={{
++                                        768: { slidesPerView: 2, spaceBetween: 30 },
++                                        1024: { slidesPerView: 3, spaceBetween: 40 }
++                                    }}
++                                    className="skills-swiper overflow-visible py-8 px-4 md:px-0"
++                                >
++                                    {categories.map((card, idx) => (
++                                        <SwiperSlide key={idx} style={{ height: 'auto', boxSizing: 'border-box' }} className="!h-auto box-border">
++                                            <div className="skill-card w-full h-full box-border flex flex-col relative p-8 md:p-10 rounded-3xl bg-[var(--theme-surface-elevated)] border border-[var(--theme-border)] hover:border-[var(--theme-accent)] hover:shadow-[var(--theme-shadow-strong)] shadow-[var(--theme-shadow)] transition-all duration-500 group overflow-hidden min-h-[380px]">
++                                                
++                                                {/* Top Glow Highlight */}
++                                                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[var(--theme-accent)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
++                                                
++                                                {/* Card Header */}
++                                                <div className="flex items-center gap-4 mb-8 relative z-10">
++                                                    <div className="w-16 h-16 flex items-center justify-center bg-[var(--theme-accent-soft)] border border-[var(--theme-border-gold)] rounded-2xl text-2xl text-[var(--theme-accent)] group-hover:scale-110 group-hover:bg-[var(--theme-accent)] group-hover:text-[var(--theme-bg)] transition-all duration-500 flex-shrink-0">
++                                                        {card.icon?.trim().toLowerCase() === 'simicrosoftazure' ? (
++                                                            <SiMicrosoftazure />
++                                                        ) : (
++                                                            <i className={card.icon}></i>
++                                                        )}
+                                                     </div>
+-                                                    <div className="h-2 w-full bg-[var(--theme-border)] rounded-full overflow-hidden">
+-                                                        <div 
+-                                                            className="skill-progress-bar h-full bg-gradient-to-r from-[var(--theme-accent-hover)] to-[var(--theme-accent)] rounded-full relative"
+-                                                            style={{ width: `${metric.percent}%` }}
+-                                                        >
+-                                                            {/* Glow tip */}
+-                                                            <div className="absolute top-0 right-0 bottom-0 w-6 bg-white opacity-30 blur-[2px] rounded-full"></div>
+-                                                        </div>
++                                                    <div className="text-left rtl:text-right" dir={language === 'ar' ? 'rtl' : 'ltr'}>
++                                                        <h3 className="text-xl md:text-2xl font-bold text-[var(--theme-text)] mb-1 tracking-tight leading-tight">{language === 'ar' ? (card.titleAr || t(card.title)) : card.title}</h3>
++                                                        <p className="text-[10px] md:text-xs font-mono text-[var(--theme-accent)] tracking-widest uppercase">{card.skills.length} Core Tools</p>
+                                                     </div>
+                                                 </div>
+-                                            ))}
+-                                        </div>
+ 
+-                                        {/* Background Subtle Gradient */}
+-                                        <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-[var(--theme-accent)] opacity-[0.03] blur-3xl rounded-full group-hover:opacity-[0.08] transition-opacity duration-700 pointer-events-none"></div>
+-                                    </div>
+-                                </SwiperSlide>
+-                            ))}
+-                        </Swiper>
+-                    </div>
+-                    
+-                    {/* Pagination */}
+-                    <div className="skills-pagination mt-10 flex justify-center gap-2"></div>
+-                </div>
++                                                {/* Progress Bars */}
++                                                <div className="space-y-6 relative z-10 flex-grow flex flex-col justify-end">
++                                                    {card.skills.map((metric, midx) => (
++                                                        <div key={midx} className="skill-item group/item">
++                                                            <div className="flex justify-between items-end mb-2.5">
++                                                                <span className="text-[var(--theme-text-secondary)] font-medium text-sm group-hover/item:text-[var(--theme-text)] transition-colors text-left rtl:text-right w-full" dir={language === 'ar' ? 'rtl' : 'ltr'}>{language === 'ar' ? (metric.nameAr || t(metric.name)) : metric.name}</span>
++                                                                <span className="text-[var(--theme-accent-hover)] font-bold font-mono text-sm">{metric.percent}%</span>
++                                                            </div>
++                                                            <div className="h-2 w-full bg-[var(--theme-border)] rounded-full overflow-hidden">
++                                                                <div 
++                                                                    className="skill-progress-bar h-full bg-gradient-to-r from-[var(--theme-accent-hover)] to-[var(--theme-accent)] rounded-full relative"
++                                                                    style={{ width: `${metric.percent}%` }}
++                                                                >
++                                                                    {/* Glow tip */}
++                                                                    <div className="absolute top-0 right-0 bottom-0 w-6 bg-white opacity-30 blur-[2px] rounded-full"></div>
++                                                                </div>
++                                                            </div>
++                                                        </div>
++                                                    ))}
++                                                </div>
++
++                                                {/* Background Subtle Gradient */}
++                                                <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-[var(--theme-accent)] opacity-[0.03] blur-3xl rounded-full group-hover:opacity-[0.08] transition-opacity duration-700 pointer-events-none"></div>
++                                            </div>
++                                        </SwiperSlide>
++                                    ))}
++                                </Swiper>
++                            </div>
++                            
++                            {/* Pagination */}
++                            <div className="skills-pagination mt-10 flex justify-center gap-2"></div>
++                        </div>
++                    </>
++                )}
+             </div>
+ 
+             <style dangerouslySetInnerHTML={{ __html: `
+
+commit 4e5c410b8e39a4b4a9a3bbcce8ee6e961ea6d6fe
+Author: Abdelrahman Elbahnsy <abdelrahmanelbahnsy3@gmail.com>
+Date:   Mon Aug 10 23:25:41 2026 +0300
+
+    Backup before full cleanup
+
+diff --git a/src/components/sections/Skills.jsx b/src/components/sections/Skills.jsx
+index e4b8d7e..202811b 100644
+--- a/src/components/sections/Skills.jsx
++++ b/src/components/sections/Skills.jsx
+@@ -10,10 +10,12 @@ import { skills as fallbackSkills } from '../../data/portfolioData';
+ import { SiMicrosoftazure } from 'react-icons/si';
+ import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
+ import { transformSkills } from '../../cms/utils/transformSkills';
++import { useLanguage } from '../../i18n/LanguageContext';
+ 
+ gsap.registerPlugin(ScrollTrigger);
+ 
+ const Skills = () => {
++    const { t, language } = useLanguage();
+     const { data: firestoreData, subscribe } = useFirestoreCrud('skills');
+     
+     React.useEffect(() => {
+@@ -32,7 +34,20 @@ const Skills = () => {
+           }
+         : fallbackSkills;
+ 
+-    const { subtitle, title, description, circularSkills, categories } = skillsData;
++    const { 
++        subtitle: rawSubtitle, 
++        title: rawTitle, 
++        description: rawDescription, 
++        circularSkills: rawCircular, 
++        categories: rawCategories,
++        subtitleAr, titleAr, descriptionAr
++    } = skillsData;
++
++    const subtitle = language === 'ar' ? (subtitleAr || rawSubtitle) : rawSubtitle;
++    const title = language === 'ar' ? (titleAr || rawTitle) : rawTitle;
++    const description = language === 'ar' ? (descriptionAr || rawDescription) : rawDescription;
++    const circularSkills = Array.isArray(rawCircular) ? rawCircular : fallbackSkills.circularSkills;
++    const categories = Array.isArray(rawCategories) ? rawCategories : fallbackSkills.categories;
+     const sectionRef = useRef(null);
+     const headerRef = useRef(null);
+     const circularRef = useRef(null);
+@@ -88,13 +103,13 @@ const Skills = () => {
+             <div className="container mx-auto px-4 md:px-8">
+                 {/* Header */}
+                 <div ref={headerRef} className="section-header text-center mb-12 md:mb-16">
+-                    <span className="section-subtitle text-[var(--clr-accent)] font-mono uppercase tracking-widest text-sm mb-3 block">
++                    <span className="section-subtitle text-[var(--theme-accent)] font-mono uppercase tracking-widest text-sm mb-3 block">
+                         {subtitle}
+                     </span>
+                     <h2 className="section-title text-4xl md:text-5xl lg:text-6xl font-black mb-6 tracking-tight">
+                         {title}
+                     </h2>
+-                    <p className="section-desc text-gray-400 max-w-2xl mx-auto text-lg leading-relaxed">
++                    <p className="section-desc text-[var(--theme-text-secondary)] max-w-2xl mx-auto text-lg leading-relaxed">
+                         {description}
+                     </p>
+                 </div>
+@@ -103,26 +118,26 @@ const Skills = () => {
+                 <div ref={circularRef} className="skills-circular-row flex flex-wrap justify-center gap-10 md:gap-16 mb-24">
+                     {circularSkills.map((skill, idx) => (
+                         <div key={idx} className="circular-skill-item group flex flex-col items-center cursor-pointer" data-percent={skill.percent}>
+-                            <div className="relative w-32 h-32 md:w-36 md:h-36 flex items-center justify-center bg-[rgba(15,20,30,0.5)] rounded-full shadow-[inset_0_4px_20px_rgba(0,0,0,0.5)] border border-[rgba(255,255,255,0.02)] group-hover:border-[rgba(200,162,110,0.3)] transition-colors duration-500">
++                            <div className="relative w-32 h-32 md:w-36 md:h-36 flex items-center justify-center bg-[var(--theme-surface)] rounded-full border border-[var(--theme-border)] group-hover:border-[var(--theme-accent)] shadow-[var(--theme-shadow)] transition-colors duration-500">
+                                 <svg className="absolute inset-0 w-full h-full rotate-[-90deg]">
+                                     {/* Background Circle */}
+-                                    <circle cx="50%" cy="50%" r="58" fill="transparent" stroke="rgba(255,255,255,0.03)" strokeWidth="6" />
++                                    <circle cx="50%" cy="50%" r="58" fill="transparent" stroke="var(--theme-border-strong)" strokeWidth="6" />
+                                     {/* Progress Circle */}
+-                                    <circle className="progress-ring-circle transition-none" cx="50%" cy="50%" r="58" fill="transparent" stroke="var(--clr-accent)" strokeWidth="6" strokeDasharray="364.42" strokeDashoffset="364.42" strokeLinecap="round" />
++                                    <circle className="progress-ring-circle transition-none" cx="50%" cy="50%" r="58" fill="transparent" stroke="var(--theme-accent)" strokeWidth="6" strokeDasharray="364.42" strokeDashoffset="364.42" strokeLinecap="round" />
+                                 </svg>
+-                                <div className="absolute inset-2 md:inset-3 bg-[rgba(10,15,25,0.8)] rounded-full flex items-center justify-center z-10 shadow-[0_4px_15px_rgba(0,0,0,0.3)] group-hover:scale-110 transition-transform duration-500">
+-                                    {skill.icon === 'SiMicrosoftazure' ? (
+-                                        <SiMicrosoftazure className="text-3xl md:text-4xl text-[var(--clr-accent)] group-hover:text-white transition-colors" />
++                                <div className="absolute inset-2 md:inset-3 bg-[var(--theme-bg)] rounded-full flex items-center justify-center z-10 shadow-[var(--theme-shadow-strong)] group-hover:scale-110 transition-transform duration-500">
++                                    {skill.icon?.trim().toLowerCase() === 'simicrosoftazure' ? (
++                                        <SiMicrosoftazure className="text-3xl md:text-4xl text-[var(--theme-accent)] group-hover:text-[var(--theme-text)] transition-colors" />
+                                     ) : (
+-                                        <i className={`${skill.icon} text-3xl md:text-4xl text-[var(--clr-accent)] group-hover:text-white transition-colors`}></i>
++                                        <i className={`${skill.icon} text-3xl md:text-4xl text-[var(--theme-accent)] group-hover:text-[var(--theme-text)] transition-colors`}></i>
+                                     )}
+                                 </div>
+                                 {/* Glow effect */}
+-                                <div className="absolute inset-0 rounded-full bg-[var(--clr-accent)] opacity-0 group-hover:opacity-10 blur-xl transition-opacity duration-500 pointer-events-none"></div>
++                                <div className="absolute inset-0 rounded-full bg-[var(--theme-accent)] opacity-0 group-hover:opacity-10 blur-xl transition-opacity duration-500 pointer-events-none"></div>
+                             </div>
+                             <div className="text-center mt-6">
+-                                <h4 className="text-lg font-bold text-white group-hover:text-[var(--clr-accent)] transition-colors">{skill.label}</h4>
+-                                <p className="text-sm text-gray-500 mt-1">{skill.sub}</p>
++                                <h4 className="text-lg font-bold text-[var(--theme-text)] group-hover:text-[var(--theme-accent)] transition-colors" dir={language === 'ar' ? 'rtl' : 'ltr'}>{language === 'ar' ? (skill.labelAr || t(skill.label)) : skill.label}</h4>
++                                <p className="text-sm text-[var(--theme-text-muted)] mt-1" dir={language === 'ar' ? 'rtl' : 'ltr'}>{language === 'ar' ? (skill.subAr || t(skill.sub)) : skill.sub}</p>
+                             </div>
+                         </div>
+                     ))}
+@@ -133,19 +148,20 @@ const Skills = () => {
+                     <div className="relative group/carousel">
+                         {/* Custom Navigation Arrows for Better UX */}
+                         <button 
+-                            className="skills-swiper-prev absolute top-auto -bottom-[68px] left-1/2 -translate-x-[120px] translate-y-0 md:top-1/2 md:bottom-auto md:-left-16 md:translate-x-0 md:-translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full border border-[rgba(200,162,110,0.2)] bg-[rgba(15,20,30,0.95)] text-[var(--clr-accent)] hover:bg-[var(--clr-accent)] hover:text-black flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg focus:outline-none cursor-pointer backdrop-blur-md"
++                            className="skills-swiper-prev absolute top-auto -bottom-[68px] left-1/2 -translate-x-[120px] rtl:left-auto rtl:right-1/2 rtl:translate-x-[120px] translate-y-0 md:top-1/2 md:bottom-auto md:-left-16 rtl:md:-left-auto rtl:md:-right-16 md:translate-x-0 md:-translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full border border-[var(--theme-border-gold)] bg-[var(--theme-surface-elevated)] text-[var(--theme-accent)] hover:bg-[var(--theme-accent)] hover:text-[var(--theme-bg)] flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg focus:outline-none cursor-pointer backdrop-blur-md"
+                             aria-label="Previous slide"
+                         >
+-                            <i className="fas fa-chevron-left text-xl"></i>
++                            <i className="fas fa-chevron-left text-xl rtl:rotate-180"></i>
+                         </button>
+                         <button 
+-                            className="skills-swiper-next absolute top-auto -bottom-[68px] right-1/2 translate-x-[120px] translate-y-0 md:top-1/2 md:bottom-auto md:-right-16 md:translate-x-0 md:-translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full border border-[rgba(200,162,110,0.2)] bg-[rgba(15,20,30,0.95)] text-[var(--clr-accent)] hover:bg-[var(--clr-accent)] hover:text-black flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg focus:outline-none cursor-pointer backdrop-blur-md"
++                            className="skills-swiper-next absolute top-auto -bottom-[68px] right-1/2 translate-x-[120px] rtl:right-auto rtl:left-1/2 rtl:-translate-x-[120px] translate-y-0 md:top-1/2 md:bottom-auto md:-right-16 rtl:md:-right-auto rtl:md:-left-16 md:translate-x-0 md:-translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full border border-[var(--theme-border-gold)] bg-[var(--theme-surface-elevated)] text-[var(--theme-accent)] hover:bg-[var(--theme-accent)] hover:text-[var(--theme-bg)] flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg focus:outline-none cursor-pointer backdrop-blur-md"
+                             aria-label="Next slide"
+                         >
+-                            <i className="fas fa-chevron-right text-xl"></i>
++                            <i className="fas fa-chevron-right text-xl rtl:rotate-180"></i>
+                         </button>
+ 
+                         <Swiper
++                            dir="ltr"
+                             modules={[Pagination, Autoplay, Navigation, Keyboard]}
+                             slidesPerView={1}
+                             spaceBetween={24}
+@@ -164,38 +180,38 @@ const Skills = () => {
+                             className="skills-swiper overflow-visible py-8 px-4 md:px-0"
+                         >
+                             {categories.map((card, idx) => (
+-                                <SwiperSlide key={idx} className="!h-auto">
+-                                    <div className="skill-card h-full relative p-8 md:p-10 rounded-3xl bg-gradient-to-br from-[rgba(25,30,45,0.6)] to-[rgba(10,15,25,0.9)] border border-[rgba(255,255,255,0.05)] hover:border-[rgba(200,162,110,0.4)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] transition-all duration-500 group overflow-hidden">
++                                <SwiperSlide key={idx} style={{ height: 'auto', boxSizing: 'border-box' }} className="!h-auto box-border">
++                                    <div className="skill-card w-full h-full box-border flex flex-col relative p-8 md:p-10 rounded-3xl bg-[var(--theme-surface-elevated)] border border-[var(--theme-border)] hover:border-[var(--theme-accent)] hover:shadow-[var(--theme-shadow-strong)] shadow-[var(--theme-shadow)] transition-all duration-500 group overflow-hidden min-h-[380px]">
+                                         
+                                         {/* Top Glow Highlight */}
+-                                        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[var(--clr-accent)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
++                                        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[var(--theme-accent)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                         
+                                         {/* Card Header */}
+                                         <div className="flex items-center gap-4 mb-8 relative z-10">
+-                                            <div className="w-16 h-16 flex items-center justify-center bg-[rgba(200,162,110,0.05)] border border-[rgba(200,162,110,0.1)] rounded-2xl text-2xl text-[var(--clr-accent)] group-hover:scale-110 group-hover:bg-[var(--clr-accent)] group-hover:text-black group-hover:shadow-[0_0_20px_rgba(200,162,110,0.4)] transition-all duration-500 flex-shrink-0">
+-                                                {card.icon === 'SiMicrosoftazure' ? (
++                                            <div className="w-16 h-16 flex items-center justify-center bg-[var(--theme-accent-soft)] border border-[var(--theme-border-gold)] rounded-2xl text-2xl text-[var(--theme-accent)] group-hover:scale-110 group-hover:bg-[var(--theme-accent)] group-hover:text-[var(--theme-bg)] transition-all duration-500 flex-shrink-0">
++                                                {card.icon?.trim().toLowerCase() === 'simicrosoftazure' ? (
+                                                     <SiMicrosoftazure />
+                                                 ) : (
+                                                     <i className={card.icon}></i>
+                                                 )}
+                                             </div>
+-                                            <div>
+-                                                <h3 className="text-xl md:text-2xl font-bold text-white mb-1 tracking-tight leading-tight">{card.title}</h3>
+-                                                <p className="text-[10px] md:text-xs font-mono text-[var(--clr-accent)] tracking-widest uppercase">{card.skills.length} Core Tools</p>
++                                            <div className="text-left rtl:text-right" dir={language === 'ar' ? 'rtl' : 'ltr'}>
++                                                <h3 className="text-xl md:text-2xl font-bold text-[var(--theme-text)] mb-1 tracking-tight leading-tight">{language === 'ar' ? (card.titleAr || t(card.title)) : card.title}</h3>
++                                                <p className="text-[10px] md:text-xs font-mono text-[var(--theme-accent)] tracking-widest uppercase">{card.skills.length} Core Tools</p>
+                                             </div>
+                                         </div>
+ 
+                                         {/* Progress Bars */}
+-                                        <div className="space-y-6 relative z-10">
++                                        <div className="space-y-6 relative z-10 flex-grow flex flex-col justify-end">
+                                             {card.skills.map((metric, midx) => (
+                                                 <div key={midx} className="skill-item group/item">
+                                                     <div className="flex justify-between items-end mb-2.5">
+-                                                        <span className="text-gray-300 font-medium text-sm group-hover/item:text-white transition-colors">{metric.name}</span>
+-                                                        <span className="text-[var(--clr-accent)] font-bold font-mono text-sm">{metric.percent}%</span>
++                                                        <span className="text-[var(--theme-text-secondary)] font-medium text-sm group-hover/item:text-[var(--theme-text)] transition-colors text-left rtl:text-right w-full" dir={language === 'ar' ? 'rtl' : 'ltr'}>{language === 'ar' ? (metric.nameAr || t(metric.name)) : metric.name}</span>
++                                                        <span className="text-[var(--theme-accent-hover)] font-bold font-mono text-sm">{metric.percent}%</span>
+                                                     </div>
+-                                                    <div className="h-2 w-full bg-[rgba(0,0,0,0.5)] rounded-full overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]">
++                                                    <div className="h-2 w-full bg-[var(--theme-border)] rounded-full overflow-hidden">
+                                                         <div 
+-                                                            className="skill-progress-bar h-full bg-gradient-to-r from-[rgba(200,162,110,0.6)] to-[var(--clr-accent)] rounded-full relative"
++                                                            className="skill-progress-bar h-full bg-gradient-to-r from-[var(--theme-accent-hover)] to-[var(--theme-accent)] rounded-full relative"
+                                                             style={{ width: `${metric.percent}%` }}
+                                                         >
+                                                             {/* Glow tip */}
+@@ -207,7 +223,7 @@ const Skills = () => {
+                                         </div>
+ 
+                                         {/* Background Subtle Gradient */}
+-                                        <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-[var(--clr-accent)] opacity-[0.03] blur-3xl rounded-full group-hover:opacity-[0.08] transition-opacity duration-700 pointer-events-none"></div>
++                                        <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-[var(--theme-accent)] opacity-[0.03] blur-3xl rounded-full group-hover:opacity-[0.08] transition-opacity duration-700 pointer-events-none"></div>
+                                     </div>
+                                 </SwiperSlide>
+                             ))}
+@@ -221,17 +237,16 @@ const Skills = () => {
+ 
+             <style dangerouslySetInnerHTML={{ __html: `
+                 .skills-pagination .swiper-pagination-bullet {
+-                    background: rgba(255,255,255,0.2);
++                    background: var(--theme-border-strong);
+                     opacity: 1;
+                     transition: all 0.3s ease;
+                     width: 8px;
+                     height: 8px;
+                 }
+                 .skills-pagination .swiper-pagination-bullet-active {
+-                    background: var(--clr-accent);
++                    background: var(--theme-accent);
+                     width: 24px;
+                     border-radius: 4px;
+-                    box-shadow: 0 0 10px rgba(200,162,110,0.4);
+                 }
+             ` }} />
+         </section>
+
+commit 3afaa6f4c94f695e8c1db60c968f67a89f366602
+Author: Abdelrahman Elbahnsy <abdelrahmanelbahnsy3@gmail.com>
+Date:   Sun Aug 9 22:21:56 2026 +0300
+
+    Backup before full cleanup
+
+diff --git a/src/components/sections/Skills.jsx b/src/components/sections/Skills.jsx
+index 14c841c..e4b8d7e 100644
+--- a/src/components/sections/Skills.jsx
++++ b/src/components/sections/Skills.jsx
+@@ -173,7 +173,11 @@ const Skills = () => {
+                                         {/* Card Header */}
+                                         <div className="flex items-center gap-4 mb-8 relative z-10">
+                                             <div className="w-16 h-16 flex items-center justify-center bg-[rgba(200,162,110,0.05)] border border-[rgba(200,162,110,0.1)] rounded-2xl text-2xl text-[var(--clr-accent)] group-hover:scale-110 group-hover:bg-[var(--clr-accent)] group-hover:text-black group-hover:shadow-[0_0_20px_rgba(200,162,110,0.4)] transition-all duration-500 flex-shrink-0">
+-                                                <i className={card.icon}></i>
++                                                {card.icon === 'SiMicrosoftazure' ? (
++                                                    <SiMicrosoftazure />
++                                                ) : (
++                                                    <i className={card.icon}></i>
++                                                )}
+                                             </div>
+                                             <div>
+                                                 <h3 className="text-xl md:text-2xl font-bold text-white mb-1 tracking-tight leading-tight">{card.title}</h3>
+
+commit db19fafae4c4690de77de3add4e34fca31bb5fec
+Author: Abdelrahman Elbahnsy <abdelrahmanelbahnsy3@gmail.com>
+Date:   Tue Aug 4 16:17:26 2026 +0300
+
+    Backup before full cleanup
+
+diff --git a/src/components/sections/Skills.jsx b/src/components/sections/Skills.jsx
+index 02a0791..14c841c 100644
+--- a/src/components/sections/Skills.jsx
++++ b/src/components/sections/Skills.jsx
+@@ -1,4 +1,4 @@
+-import React, { useRef, useEffect } from 'react';
++import React, { useRef } from 'react';
+ import { Swiper, SwiperSlide } from 'swiper/react';
+ import { Pagination, Autoplay, Navigation, Keyboard } from 'swiper/modules';
+ import 'swiper/css';
+@@ -6,6 +6,7 @@ import 'swiper/css/pagination';
+ import gsap from 'gsap';
+ import { ScrollTrigger } from 'gsap/ScrollTrigger';
+ import { useGSAP } from '@gsap/react';
++import { skills as fallbackSkills } from '../../data/portfolioData';
+ import { SiMicrosoftazure } from 'react-icons/si';
+ import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
+ import { transformSkills } from '../../cms/utils/transformSkills';
+@@ -13,32 +14,31 @@ import { transformSkills } from '../../cms/utils/transformSkills';
+ gsap.registerPlugin(ScrollTrigger);
+ 
+ const Skills = () => {
+-    const sectionRef = useRef(null);
+-    const headerRef = useRef(null);
+-    const circularRef = useRef(null);
+-    const { data: firestoreData, loading, subscribe } = useFirestoreCrud('skills');
++    const { data: firestoreData, subscribe } = useFirestoreCrud('skills');
+     
+-    // Subscribe to realtime updates on mount
+-    useEffect(() => {
++    React.useEffect(() => {
+         const unsubscribe = subscribe();
+         return () => {
+             if (unsubscribe) unsubscribe();
+         };
+     }, [subscribe]);
+ 
+-    const subtitle = 'Expertise';
+-    const title = 'Skills & Technologies';
+-    const description = 'A comprehensive toolkit for building and managing modern cloud infrastructure.';
++    const skillsData = firestoreData && firestoreData.length > 0
++        ? {
++            subtitle: fallbackSkills.subtitle,
++            title: fallbackSkills.title,
++            description: fallbackSkills.description,
++            ...transformSkills(firestoreData)
++          }
++        : fallbackSkills;
+ 
+-    // Use Firestore data if available, otherwise empty state
+-    const { circularSkills, categories } = firestoreData && firestoreData.length > 0
+-        ? transformSkills(firestoreData)
+-        : { circularSkills: [], categories: [] };
++    const { subtitle, title, description, circularSkills, categories } = skillsData;
++    const sectionRef = useRef(null);
++    const headerRef = useRef(null);
++    const circularRef = useRef(null);
+ 
+     useGSAP(
+         () => {
+-            if (loading) return; // Wait until loading is done
+-            
+             const subtitleEl = headerRef.current?.querySelector('.section-subtitle');
+             const titleEl = headerRef.current?.querySelector('.section-title');
+             const descEl = headerRef.current?.querySelector('.section-desc');
+@@ -80,7 +80,7 @@ const Skills = () => {
+                 }, '-=0.1');
+             }
+         },
+-        { scope: sectionRef, dependencies: [circularSkills, categories, loading] }
++        { scope: sectionRef }
+     );
+ 
+     return (
+
+commit ec0b9164ebaebfaa0d9fd0ff9113ec8b25ba3d85
+Author: Abdelrahman Elbahnsy <abdelrahmanelbahnsy3@gmail.com>
+Date:   Tue Aug 4 15:33:47 2026 +0300
+
+    Backup before full cleanup
+
+diff --git a/src/components/sections/Skills.jsx b/src/components/sections/Skills.jsx
+index 6e3e8fd..02a0791 100644
+--- a/src/components/sections/Skills.jsx
++++ b/src/components/sections/Skills.jsx
+@@ -6,7 +6,6 @@ import 'swiper/css/pagination';
+ import gsap from 'gsap';
+ import { ScrollTrigger } from 'gsap/ScrollTrigger';
+ import { useGSAP } from '@gsap/react';
+-import { skills as fallbackSkills } from '../../data/portfolioData';
+ import { SiMicrosoftazure } from 'react-icons/si';
+ import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
+ import { transformSkills } from '../../cms/utils/transformSkills';
+@@ -27,12 +26,14 @@ const Skills = () => {
+         };
+     }, [subscribe]);
+ 
+-    const { subtitle, title, description } = fallbackSkills;
++    const subtitle = 'Expertise';
++    const title = 'Skills & Technologies';
++    const description = 'A comprehensive toolkit for building and managing modern cloud infrastructure.';
+ 
+-    // Use Firestore data if available, otherwise fallback to static data
++    // Use Firestore data if available, otherwise empty state
+     const { circularSkills, categories } = firestoreData && firestoreData.length > 0
+         ? transformSkills(firestoreData)
+-        : fallbackSkills;
++        : { circularSkills: [], categories: [] };
+ 
+     useGSAP(
+         () => {
+
+commit b1c375b2c7eb5cc27330e71b430b6304055fa089
+Author: Abdelrahman Elbahnsy <abdelrahmanelbahnsy3@gmail.com>
+Date:   Sun Aug 2 22:35:52 2026 +0300
+
+    Backup before full cleanup
+
+diff --git a/src/components/sections/Skills.jsx b/src/components/sections/Skills.jsx
+index 4a073fa..6e3e8fd 100644
+--- a/src/components/sections/Skills.jsx
++++ b/src/components/sections/Skills.jsx
+@@ -1,4 +1,4 @@
+-import React, { useRef } from 'react';
++import React, { useRef, useEffect } from 'react';
+ import { Swiper, SwiperSlide } from 'swiper/react';
+ import { Pagination, Autoplay, Navigation, Keyboard } from 'swiper/modules';
+ import 'swiper/css';
+@@ -6,8 +6,10 @@ import 'swiper/css/pagination';
+ import gsap from 'gsap';
+ import { ScrollTrigger } from 'gsap/ScrollTrigger';
+ import { useGSAP } from '@gsap/react';
+-import { skills } from '../../data/portfolioData';
++import { skills as fallbackSkills } from '../../data/portfolioData';
+ import { SiMicrosoftazure } from 'react-icons/si';
++import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
++import { transformSkills } from '../../cms/utils/transformSkills';
+ 
+ gsap.registerPlugin(ScrollTrigger);
+ 
+@@ -15,10 +17,27 @@ const Skills = () => {
+     const sectionRef = useRef(null);
+     const headerRef = useRef(null);
+     const circularRef = useRef(null);
+-    const { subtitle, title, description, circularSkills, categories } = skills;
++    const { data: firestoreData, loading, subscribe } = useFirestoreCrud('skills');
++    
++    // Subscribe to realtime updates on mount
++    useEffect(() => {
++        const unsubscribe = subscribe();
++        return () => {
++            if (unsubscribe) unsubscribe();
++        };
++    }, [subscribe]);
++
++    const { subtitle, title, description } = fallbackSkills;
++
++    // Use Firestore data if available, otherwise fallback to static data
++    const { circularSkills, categories } = firestoreData && firestoreData.length > 0
++        ? transformSkills(firestoreData)
++        : fallbackSkills;
+ 
+     useGSAP(
+         () => {
++            if (loading) return; // Wait until loading is done
++            
+             const subtitleEl = headerRef.current?.querySelector('.section-subtitle');
+             const titleEl = headerRef.current?.querySelector('.section-title');
+             const descEl = headerRef.current?.querySelector('.section-desc');
+@@ -60,7 +79,7 @@ const Skills = () => {
+                 }, '-=0.1');
+             }
+         },
+-        { scope: sectionRef }
++        { scope: sectionRef, dependencies: [circularSkills, categories, loading] }
+     );
+ 
+     return (
+
+commit 2d8e60c5fcddf611c6f40d6c3f5773c2a7636559
+Author: Abdelrahman Elbahnsy <abdelrahmanelbahnsy3@gmail.com>
+Date:   Sat Aug 1 22:05:19 2026 +0300
+
+    Refine portfolio UI, responsive improvements and bug fixes
+
+diff --git a/src/components/sections/Skills.jsx b/src/components/sections/Skills.jsx
+index 656d072..4a073fa 100644
+--- a/src/components/sections/Skills.jsx
++++ b/src/components/sections/Skills.jsx
+@@ -64,10 +64,10 @@ const Skills = () => {
+     );
+ 
+     return (
+-        <section id="skills" className="section relative overflow-hidden" ref={sectionRef}>
++        <section id="skills" className="section relative !overflow-visible" ref={sectionRef}>
+             <div className="container mx-auto px-4 md:px-8">
+                 {/* Header */}
+-                <div ref={headerRef} className="section-header text-center mb-20">
++                <div ref={headerRef} className="section-header text-center mb-12 md:mb-16">
+                     <span className="section-subtitle text-[var(--clr-accent)] font-mono uppercase tracking-widest text-sm mb-3 block">
+                         {subtitle}
+                     </span>
+@@ -109,17 +109,17 @@ const Skills = () => {
+                 </div>
+ 
+                 {/* Swiper Cards Section */}
+-                <div className="skills-swiper-container pb-12 pt-4 px-2 md:px-16">
++                <div className="skills-swiper-container pt-4 px-2 md:px-16">
+                     <div className="relative group/carousel">
+                         {/* Custom Navigation Arrows for Better UX */}
+                         <button 
+-                            className="skills-swiper-prev absolute left-0 md:-left-16 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full border border-[rgba(200,162,110,0.2)] bg-[rgba(15,20,30,0.95)] text-[var(--clr-accent)] hover:bg-[var(--clr-accent)] hover:text-black flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg focus:outline-none cursor-pointer backdrop-blur-md"
++                            className="skills-swiper-prev absolute top-auto -bottom-[68px] left-1/2 -translate-x-[120px] translate-y-0 md:top-1/2 md:bottom-auto md:-left-16 md:translate-x-0 md:-translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full border border-[rgba(200,162,110,0.2)] bg-[rgba(15,20,30,0.95)] text-[var(--clr-accent)] hover:bg-[var(--clr-accent)] hover:text-black flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg focus:outline-none cursor-pointer backdrop-blur-md"
+                             aria-label="Previous slide"
+                         >
+                             <i className="fas fa-chevron-left text-xl"></i>
+                         </button>
+                         <button 
+-                            className="skills-swiper-next absolute right-0 md:-right-16 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full border border-[rgba(200,162,110,0.2)] bg-[rgba(15,20,30,0.95)] text-[var(--clr-accent)] hover:bg-[var(--clr-accent)] hover:text-black flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg focus:outline-none cursor-pointer backdrop-blur-md"
++                            className="skills-swiper-next absolute top-auto -bottom-[68px] right-1/2 translate-x-[120px] translate-y-0 md:top-1/2 md:bottom-auto md:-right-16 md:translate-x-0 md:-translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full border border-[rgba(200,162,110,0.2)] bg-[rgba(15,20,30,0.95)] text-[var(--clr-accent)] hover:bg-[var(--clr-accent)] hover:text-black flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg focus:outline-none cursor-pointer backdrop-blur-md"
+                             aria-label="Next slide"
+                         >
+                             <i className="fas fa-chevron-right text-xl"></i>
+
+commit 40ad3d93a9348b78a63f1def2db9559da5107d46
+Author: ameen <shehaaa4@gmail.com>
+Date:   Fri Jul 17 23:08:46 2026 +0300
+
+    refactor: enhance Skills section with updated GSAP animations and redesigned UI components
+
+diff --git a/src/components/sections/Skills.jsx b/src/components/sections/Skills.jsx
+index 4d41944..656d072 100644
+--- a/src/components/sections/Skills.jsx
++++ b/src/components/sections/Skills.jsx
+@@ -9,6 +9,8 @@ import { useGSAP } from '@gsap/react';
+ import { skills } from '../../data/portfolioData';
+ import { SiMicrosoftazure } from 'react-icons/si';
+ 
++gsap.registerPlugin(ScrollTrigger);
++
+ const Skills = () => {
+     const sectionRef = useRef(null);
+     const headerRef = useRef(null);
+@@ -23,7 +25,7 @@ const Skills = () => {
+             const skillItems = circularRef.current?.querySelectorAll('.circular-skill-item');
+ 
+             gsap.set([subtitleEl, titleEl, descEl].filter(Boolean), { opacity: 0, y: 30 });
+-            if (skillItems?.length) gsap.set(skillItems, { opacity: 0, y: 20, scale: 0.85 });
++            if (skillItems?.length) gsap.set(skillItems, { opacity: 0, y: 30, scale: 0.9 });
+ 
+             const tl = gsap.timeline({
+                 defaults: { ease: 'power3.out' },
+@@ -36,98 +38,100 @@ const Skills = () => {
+ 
+             tl.to(subtitleEl, { opacity: 1, y: 0, duration: 0.4 })
+               .to(titleEl, { opacity: 1, y: 0, duration: 0.5 }, '-=0.15')
+-              .to(descEl, { opacity: 1, y: 0, duration: 0.4 }, '-=0.2')
++              .to(descEl, { opacity: 1, y: 0, duration: 0.4 }, '-=0.2');
+ 
+             if (skillItems?.length) {
+                 tl.to(skillItems, {
+                     opacity: 1, y: 0, scale: 1,
+-                    duration: 0.5, stagger: 0.08,
+-                    ease: 'back.out(1.4)',
++                    duration: 0.6, stagger: 0.1,
++                    ease: 'back.out(1.2)',
+                     onComplete: () => {
+                         skillItems.forEach((item, idx) => {
+                             const circle = item.querySelector('.progress-ring-circle');
+                             const percent = parseFloat(item.dataset.percent || '0');
+-                            const radius = circle?.r?.baseVal?.value || 54;
++                            const radius = circle?.r?.baseVal?.value || 58;
+                             const circumference = 2 * Math.PI * radius;
+                             const offset = circumference - (percent / 100) * circumference;
+                             if (circle) {
+-                                gsap.to(circle, { strokeDashoffset: offset, duration: 0.8, delay: idx * 0.06, ease: 'power3.out' });
++                                gsap.to(circle, { strokeDashoffset: offset, duration: 1.2, delay: idx * 0.1, ease: 'power3.out' });
+                             }
+                         });
+                     },
+                 }, '-=0.1');
+             }
+-
+-            const progressBars = sectionRef.current?.querySelectorAll('.skill-progress-bar');
+-            if (progressBars?.length) {
+-                progressBars.forEach((bar) => {
+-                    const targetWidth = bar.style.getPropertyValue('--target-width');
+-                    gsap.to(bar, {
+-                        width: targetWidth, duration: 0.8, ease: 'power3.out',
+-                        scrollTrigger: { trigger: bar, start: 'top 90%', toggleActions: 'play none none none' },
+-                    });
+-                });
+-            }
+         },
+-        { scope: sectionRef, dependencies: [] },
++        { scope: sectionRef }
+     );
+ 
+     return (
+-        <section id="skills" className="section" ref={sectionRef}>
+-            <div className="container mx-auto px-8">
+-                <div ref={headerRef} className="section-header text-center mb-16">
+-                    <span className="section-subtitle text-[var(--clr-accent)] font-mono uppercase tracking-widest text-sm mb-2 block">{subtitle}</span>
+-                    <h2 className="section-title text-4xl md:text-5xl font-black mb-4">{title}</h2>
+-                    <p className="section-desc text-[var(--clr-text-dim)] max-w-2xl mx-auto">{description}</p>
++        <section id="skills" className="section relative overflow-hidden" ref={sectionRef}>
++            <div className="container mx-auto px-4 md:px-8">
++                {/* Header */}
++                <div ref={headerRef} className="section-header text-center mb-20">
++                    <span className="section-subtitle text-[var(--clr-accent)] font-mono uppercase tracking-widest text-sm mb-3 block">
++                        {subtitle}
++                    </span>
++                    <h2 className="section-title text-4xl md:text-5xl lg:text-6xl font-black mb-6 tracking-tight">
++                        {title}
++                    </h2>
++                    <p className="section-desc text-gray-400 max-w-2xl mx-auto text-lg leading-relaxed">
++                        {description}
++                    </p>
+                 </div>
+ 
+-                <div ref={circularRef} className="skills-circular-row flex flex-wrap justify-center gap-12 mb-20">
++                {/* Circular Skills Row */}
++                <div ref={circularRef} className="skills-circular-row flex flex-wrap justify-center gap-10 md:gap-16 mb-24">
+                     {circularSkills.map((skill, idx) => (
+-                        <div key={idx} className="circular-skill-item group" data-percent={skill.percent}>
+-                            <div className="circle-box relative w-[120px] h-[120px] flex items-center justify-center">
+-                                <svg className="progress-ring rotate-[-90deg]" width="120" height="120">
+-                                    <circle className="progress-ring-bg" cx="60" cy="60" r="54" fill="transparent" stroke="rgba(255,255,255,0.05)" strokeWidth="8" />
+-                                    <circle className="progress-ring-circle transition-none" cx="60" cy="60" r="54" fill="transparent" stroke="var(--clr-accent)" strokeWidth="8" strokeDasharray="339.292" strokeDashoffset="339.292" />
++                        <div key={idx} className="circular-skill-item group flex flex-col items-center cursor-pointer" data-percent={skill.percent}>
++                            <div className="relative w-32 h-32 md:w-36 md:h-36 flex items-center justify-center bg-[rgba(15,20,30,0.5)] rounded-full shadow-[inset_0_4px_20px_rgba(0,0,0,0.5)] border border-[rgba(255,255,255,0.02)] group-hover:border-[rgba(200,162,110,0.3)] transition-colors duration-500">
++                                <svg className="absolute inset-0 w-full h-full rotate-[-90deg]">
++                                    {/* Background Circle */}
++                                    <circle cx="50%" cy="50%" r="58" fill="transparent" stroke="rgba(255,255,255,0.03)" strokeWidth="6" />
++                                    {/* Progress Circle */}
++                                    <circle className="progress-ring-circle transition-none" cx="50%" cy="50%" r="58" fill="transparent" stroke="var(--clr-accent)" strokeWidth="6" strokeDasharray="364.42" strokeDashoffset="364.42" strokeLinecap="round" />
+                                 </svg>
+-                                <div className="skill-icon absolute text-3xl text-[var(--clr-accent)] transition-transform duration-300 group-hover:scale-125 flex items-center justify-center">
++                                <div className="absolute inset-2 md:inset-3 bg-[rgba(10,15,25,0.8)] rounded-full flex items-center justify-center z-10 shadow-[0_4px_15px_rgba(0,0,0,0.3)] group-hover:scale-110 transition-transform duration-500">
+                                     {skill.icon === 'SiMicrosoftazure' ? (
+-                                        <SiMicrosoftazure />
++                                        <SiMicrosoftazure className="text-3xl md:text-4xl text-[var(--clr-accent)] group-hover:text-white transition-colors" />
+                                     ) : (
+-                                        <i className={skill.icon}></i>
++                                        <i className={`${skill.icon} text-3xl md:text-4xl text-[var(--clr-accent)] group-hover:text-white transition-colors`}></i>
+                                     )}
+                                 </div>
++                                {/* Glow effect */}
++                                <div className="absolute inset-0 rounded-full bg-[var(--clr-accent)] opacity-0 group-hover:opacity-10 blur-xl transition-opacity duration-500 pointer-events-none"></div>
+                             </div>
+-                            <div className="skill-info-circular text-center mt-4">
+-                                <h4 className="text-lg font-bold">{skill.label}</h4>
+-                                <p className="text-xs text-[var(--clr-text-dim)]">{skill.sub}</p>
++                            <div className="text-center mt-6">
++                                <h4 className="text-lg font-bold text-white group-hover:text-[var(--clr-accent)] transition-colors">{skill.label}</h4>
++                                <p className="text-sm text-gray-500 mt-1">{skill.sub}</p>
+                             </div>
+                         </div>
+                     ))}
+                 </div>
+ 
++                {/* Swiper Cards Section */}
+                 <div className="skills-swiper-container pb-12 pt-4 px-2 md:px-16">
+                     <div className="relative group/carousel">
+-                        {/* Navigation Arrows */}
++                        {/* Custom Navigation Arrows for Better UX */}
+                         <button 
+-                            className="skills-swiper-prev absolute left-0 md:-left-16 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(200,162,110,0.4)] bg-[rgba(10,15,30,0.95)] text-[rgba(200,162,110,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(200,162,110,0.25)] hover:shadow-[0_0_20px_rgba(200,162,110,0.55)] focus:outline-none cursor-pointer"
++                            className="skills-swiper-prev absolute left-0 md:-left-16 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full border border-[rgba(200,162,110,0.2)] bg-[rgba(15,20,30,0.95)] text-[var(--clr-accent)] hover:bg-[var(--clr-accent)] hover:text-black flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg focus:outline-none cursor-pointer backdrop-blur-md"
+                             aria-label="Previous slide"
+                         >
+-                            <i className="fas fa-chevron-left text-xl md:text-2xl drop-shadow-[0_0_3px_rgba(200,162,110,0.4)]"></i>
++                            <i className="fas fa-chevron-left text-xl"></i>
+                         </button>
+                         <button 
+-                            className="skills-swiper-next absolute right-0 md:-right-16 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(200,162,110,0.4)] bg-[rgba(10,15,30,0.95)] text-[rgba(200,162,110,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(200,162,110,0.25)] hover:shadow-[0_0_20px_rgba(200,162,110,0.55)] focus:outline-none cursor-pointer"
++                            className="skills-swiper-next absolute right-0 md:-right-16 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full border border-[rgba(200,162,110,0.2)] bg-[rgba(15,20,30,0.95)] text-[var(--clr-accent)] hover:bg-[var(--clr-accent)] hover:text-black flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg focus:outline-none cursor-pointer backdrop-blur-md"
+                             aria-label="Next slide"
+                         >
+-                            <i className="fas fa-chevron-right text-xl md:text-2xl drop-shadow-[0_0_3px_rgba(200,162,110,0.4)]"></i>
++                            <i className="fas fa-chevron-right text-xl"></i>
+                         </button>
+ 
+                         <Swiper
+                             modules={[Pagination, Autoplay, Navigation, Keyboard]}
+                             slidesPerView={1}
+-                            spaceBetween={20}
++                            spaceBetween={24}
+                             loop={true}
+-                            pagination={{ clickable: true, el: '.skills-pagination' }}
+-                            autoplay={{ delay: 3500, disableOnInteraction: false }}
++                            pagination={{ clickable: true, el: '.skills-pagination', dynamicBullets: true }}
++                            autoplay={{ delay: 4000, disableOnInteraction: false, pauseOnMouseEnter: true }}
+                             navigation={{
+                                 nextEl: '.skills-swiper-next',
+                                 prevEl: '.skills-swiper-prev',
+@@ -137,62 +141,73 @@ const Skills = () => {
+                                 768: { slidesPerView: 2, spaceBetween: 30 },
+                                 1024: { slidesPerView: 3, spaceBetween: 40 }
+                             }}
+-                            className="skills-swiper overflow-hidden py-8 px-12 md:px-0"
++                            className="skills-swiper overflow-visible py-8 px-4 md:px-0"
+                         >
+                             {categories.map((card, idx) => (
+                                 <SwiperSlide key={idx} className="!h-auto">
+-                                    <div className="skill-card card h-full border border-[var(--clr-card-border)] bg-[var(--clr-card-bg)] p-8 rounded-xl hover:border-[var(--clr-accent)] transition-all duration-300">
+-                                        <div className="skill-card-header flex items-center gap-4 mb-6">
+-                                            <div className="skill-card-icon w-12 h-12 flex items-center justify-center bg-[rgba(200,162,110,0.1)] rounded-lg text-2xl text-[var(--clr-accent)]">
++                                    <div className="skill-card h-full relative p-8 md:p-10 rounded-3xl bg-gradient-to-br from-[rgba(25,30,45,0.6)] to-[rgba(10,15,25,0.9)] border border-[rgba(255,255,255,0.05)] hover:border-[rgba(200,162,110,0.4)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] transition-all duration-500 group overflow-hidden">
++                                        
++                                        {/* Top Glow Highlight */}
++                                        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[var(--clr-accent)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
++                                        
++                                        {/* Card Header */}
++                                        <div className="flex items-center gap-4 mb-8 relative z-10">
++                                            <div className="w-16 h-16 flex items-center justify-center bg-[rgba(200,162,110,0.05)] border border-[rgba(200,162,110,0.1)] rounded-2xl text-2xl text-[var(--clr-accent)] group-hover:scale-110 group-hover:bg-[var(--clr-accent)] group-hover:text-black group-hover:shadow-[0_0_20px_rgba(200,162,110,0.4)] transition-all duration-500 flex-shrink-0">
+                                                 <i className={card.icon}></i>
+                                             </div>
+                                             <div>
+-                                                <h3 className="skill-card-title text-xl font-bold">{card.title}</h3>
+-                                                <p className="skill-card-subtitle text-xs text-[var(--clr-text-dim)] uppercase tracking-wider">{card.skills.length} Tools</p>
++                                                <h3 className="text-xl md:text-2xl font-bold text-white mb-1 tracking-tight leading-tight">{card.title}</h3>
++                                                <p className="text-[10px] md:text-xs font-mono text-[var(--clr-accent)] tracking-widest uppercase">{card.skills.length} Core Tools</p>
+                                             </div>
+                                         </div>
+-                                        <div className="skill-card-body space-y-4">
++
++                                        {/* Progress Bars */}
++                                        <div className="space-y-6 relative z-10">
+                                             {card.skills.map((metric, midx) => (
+-                                                <div key={midx} className="skill-item">
+-                                                    <div className="skill-metric flex justify-between text-sm mb-1">
+-                                                        <span className="skill-metric-label text-[var(--clr-text-dim)]">{metric.name}</span>
+-                                                        <span className="skill-metric-percent font-bold">{metric.percent}%</span>
++                                                <div key={midx} className="skill-item group/item">
++                                                    <div className="flex justify-between items-end mb-2.5">
++                                                        <span className="text-gray-300 font-medium text-sm group-hover/item:text-white transition-colors">{metric.name}</span>
++                                                        <span className="text-[var(--clr-accent)] font-bold font-mono text-sm">{metric.percent}%</span>
+                                                     </div>
+-                                                    <div className="skill-progress h-1 bg-[rgba(255,255,255,0.05)] rounded-full overflow-hidden">
+-                                                        <div
+-                                                            className="skill-progress-bar h-full bg-[var(--clr-accent)] rounded-full"
+-                                                            style={{ width: '0%', '--target-width': `${metric.percent}%` }}
+-                                                        ></div>
++                                                    <div className="h-2 w-full bg-[rgba(0,0,0,0.5)] rounded-full overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]">
++                                                        <div 
++                                                            className="skill-progress-bar h-full bg-gradient-to-r from-[rgba(200,162,110,0.6)] to-[var(--clr-accent)] rounded-full relative"
++                                                            style={{ width: `${metric.percent}%` }}
++                                                        >
++                                                            {/* Glow tip */}
++                                                            <div className="absolute top-0 right-0 bottom-0 w-6 bg-white opacity-30 blur-[2px] rounded-full"></div>
++                                                        </div>
+                                                     </div>
+                                                 </div>
+                                             ))}
+                                         </div>
++
++                                        {/* Background Subtle Gradient */}
++                                        <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-[var(--clr-accent)] opacity-[0.03] blur-3xl rounded-full group-hover:opacity-[0.08] transition-opacity duration-700 pointer-events-none"></div>
+                                     </div>
+                                 </SwiperSlide>
+                             ))}
+                         </Swiper>
+                     </div>
+-                    <div className="skills-pagination mt-8 flex justify-center"></div>
++                    
++                    {/* Pagination */}
++                    <div className="skills-pagination mt-10 flex justify-center gap-2"></div>
+                 </div>
+             </div>
+ 
+             <style dangerouslySetInnerHTML={{ __html: `
+-                .circular-skill-item .circle-box {
+-                    transition: transform 0.3s ease;
+-                }
+-                .circular-skill-item:hover .circle-box {
+-                    transform: scale(1.05);
+-                }
+                 .skills-pagination .swiper-pagination-bullet {
+-                    background: var(--clr-text-dim);
+-                    opacity: 0.3;
++                    background: rgba(255,255,255,0.2);
++                    opacity: 1;
+                     transition: all 0.3s ease;
++                    width: 8px;
++                    height: 8px;
+                 }
+                 .skills-pagination .swiper-pagination-bullet-active {
+                     background: var(--clr-accent);
+-                    opacity: 1;
+-                    width: 25px;
+-                    border-radius: 5px;
++                    width: 24px;
++                    border-radius: 4px;
++                    box-shadow: 0 0 10px rgba(200,162,110,0.4);
+                 }
+             ` }} />
+         </section>
+
+commit 0099251921b6d978221134f12ae5bb660c3885bf
+Author: ameen <shehaaa4@gmail.com>
+Date:   Wed Jul 15 21:19:16 2026 +0300
+
+    style: adjust swiper layouts and responsiveness for skills, certifications, and hero sections
+
+diff --git a/src/components/sections/Skills.jsx b/src/components/sections/Skills.jsx
+index 8d52d19..4d41944 100644
+--- a/src/components/sections/Skills.jsx
++++ b/src/components/sections/Skills.jsx
+@@ -105,17 +105,17 @@ const Skills = () => {
+                     ))}
+                 </div>
+ 
+-                <div className="skills-swiper-container pb-12 pt-4">
++                <div className="skills-swiper-container pb-12 pt-4 px-2 md:px-16">
+                     <div className="relative group/carousel">
+                         {/* Navigation Arrows */}
+                         <button 
+-                            className="skills-swiper-prev absolute left-2 md:-left-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(200,162,110,0.4)] bg-[rgba(10,15,30,0.95)] text-[rgba(200,162,110,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(200,162,110,0.25)] hover:shadow-[0_0_20px_rgba(200,162,110,0.55)] focus:outline-none cursor-pointer"
++                            className="skills-swiper-prev absolute left-0 md:-left-16 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(200,162,110,0.4)] bg-[rgba(10,15,30,0.95)] text-[rgba(200,162,110,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(200,162,110,0.25)] hover:shadow-[0_0_20px_rgba(200,162,110,0.55)] focus:outline-none cursor-pointer"
+                             aria-label="Previous slide"
+                         >
+                             <i className="fas fa-chevron-left text-xl md:text-2xl drop-shadow-[0_0_3px_rgba(200,162,110,0.4)]"></i>
+                         </button>
+                         <button 
+-                            className="skills-swiper-next absolute right-2 md:-right-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(200,162,110,0.4)] bg-[rgba(10,15,30,0.95)] text-[rgba(200,162,110,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(200,162,110,0.25)] hover:shadow-[0_0_20px_rgba(200,162,110,0.55)] focus:outline-none cursor-pointer"
++                            className="skills-swiper-next absolute right-0 md:-right-16 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(200,162,110,0.4)] bg-[rgba(10,15,30,0.95)] text-[rgba(200,162,110,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(200,162,110,0.25)] hover:shadow-[0_0_20px_rgba(200,162,110,0.55)] focus:outline-none cursor-pointer"
+                             aria-label="Next slide"
+                         >
+                             <i className="fas fa-chevron-right text-xl md:text-2xl drop-shadow-[0_0_3px_rgba(200,162,110,0.4)]"></i>
+@@ -137,7 +137,7 @@ const Skills = () => {
+                                 768: { slidesPerView: 2, spaceBetween: 30 },
+                                 1024: { slidesPerView: 3, spaceBetween: 40 }
+                             }}
+-                            className="skills-swiper !overflow-visible px-14 md:px-0"
++                            className="skills-swiper overflow-hidden py-8 px-12 md:px-0"
+                         >
+                             {categories.map((card, idx) => (
+                                 <SwiperSlide key={idx} className="!h-auto">
+
+commit 3782694fc69c2b9f99d675b784d02d9d9090cdcb
+Author: ameen <shehaaa4@gmail.com>
+Date:   Wed Jul 15 21:07:43 2026 +0300
+
+    refactor: improve performance by removing background blur effects and optimizing scroll and image rendering.
+
+diff --git a/src/components/sections/Skills.jsx b/src/components/sections/Skills.jsx
+index 3b9403f..8d52d19 100644
+--- a/src/components/sections/Skills.jsx
++++ b/src/components/sections/Skills.jsx
+@@ -109,13 +109,13 @@ const Skills = () => {
+                     <div className="relative group/carousel">
+                         {/* Navigation Arrows */}
+                         <button 
+-                            className="skills-swiper-prev absolute left-2 md:-left-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(200,162,110,0.4)] bg-[rgba(10,15,30,0.75)] backdrop-blur-md text-[rgba(200,162,110,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(200,162,110,0.25)] hover:shadow-[0_0_20px_rgba(200,162,110,0.55)] focus:outline-none cursor-pointer"
++                            className="skills-swiper-prev absolute left-2 md:-left-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(200,162,110,0.4)] bg-[rgba(10,15,30,0.95)] text-[rgba(200,162,110,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(200,162,110,0.25)] hover:shadow-[0_0_20px_rgba(200,162,110,0.55)] focus:outline-none cursor-pointer"
+                             aria-label="Previous slide"
+                         >
+                             <i className="fas fa-chevron-left text-xl md:text-2xl drop-shadow-[0_0_3px_rgba(200,162,110,0.4)]"></i>
+                         </button>
+                         <button 
+-                            className="skills-swiper-next absolute right-2 md:-right-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(200,162,110,0.4)] bg-[rgba(10,15,30,0.75)] backdrop-blur-md text-[rgba(200,162,110,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(200,162,110,0.25)] hover:shadow-[0_0_20px_rgba(200,162,110,0.55)] focus:outline-none cursor-pointer"
++                            className="skills-swiper-next absolute right-2 md:-right-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(200,162,110,0.4)] bg-[rgba(10,15,30,0.95)] text-[rgba(200,162,110,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(200,162,110,0.25)] hover:shadow-[0_0_20px_rgba(200,162,110,0.55)] focus:outline-none cursor-pointer"
+                             aria-label="Next slide"
+                         >
+                             <i className="fas fa-chevron-right text-xl md:text-2xl drop-shadow-[0_0_3px_rgba(200,162,110,0.4)]"></i>
+@@ -141,7 +141,7 @@ const Skills = () => {
+                         >
+                             {categories.map((card, idx) => (
+                                 <SwiperSlide key={idx} className="!h-auto">
+-                                    <div className="skill-card card h-full border border-[var(--clr-card-border)] bg-[var(--clr-card-bg)] backdrop-blur-md p-8 rounded-xl hover:border-[var(--clr-accent)] transition-all duration-300">
++                                    <div className="skill-card card h-full border border-[var(--clr-card-border)] bg-[var(--clr-card-bg)] p-8 rounded-xl hover:border-[var(--clr-accent)] transition-all duration-300">
+                                         <div className="skill-card-header flex items-center gap-4 mb-6">
+                                             <div className="skill-card-icon w-12 h-12 flex items-center justify-center bg-[rgba(200,162,110,0.1)] rounded-lg text-2xl text-[var(--clr-accent)]">
+                                                 <i className={card.icon}></i>
+
+commit d19fa77dbab8d520cae268136f66e749ec02e9dc
+Author: ameenmv <shehaaa4@gmail.com>
+Date:   Sat Jul 4 23:15:36 2026 +0300
+
+    feat: implement initial portfolio components and GSAP-powered animations
+
+diff --git a/src/components/sections/Skills.jsx b/src/components/sections/Skills.jsx
+index 71c57f4..3b9403f 100644
+--- a/src/components/sections/Skills.jsx
++++ b/src/components/sections/Skills.jsx
+@@ -109,16 +109,16 @@ const Skills = () => {
+                     <div className="relative group/carousel">
+                         {/* Navigation Arrows */}
+                         <button 
+-                            className="skills-swiper-prev absolute left-2 md:-left-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(0,210,255,0.4)] bg-[rgba(10,15,30,0.75)] backdrop-blur-md text-[rgba(0,210,255,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(0,210,255,0.25)] hover:shadow-[0_0_20px_rgba(0,210,255,0.55)] focus:outline-none cursor-pointer"
++                            className="skills-swiper-prev absolute left-2 md:-left-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(200,162,110,0.4)] bg-[rgba(10,15,30,0.75)] backdrop-blur-md text-[rgba(200,162,110,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(200,162,110,0.25)] hover:shadow-[0_0_20px_rgba(200,162,110,0.55)] focus:outline-none cursor-pointer"
+                             aria-label="Previous slide"
+                         >
+-                            <i className="fas fa-chevron-left text-xl md:text-2xl drop-shadow-[0_0_3px_rgba(0,210,255,0.4)]"></i>
++                            <i className="fas fa-chevron-left text-xl md:text-2xl drop-shadow-[0_0_3px_rgba(200,162,110,0.4)]"></i>
+                         </button>
+                         <button 
+-                            className="skills-swiper-next absolute right-2 md:-right-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(0,210,255,0.4)] bg-[rgba(10,15,30,0.75)] backdrop-blur-md text-[rgba(0,210,255,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(0,210,255,0.25)] hover:shadow-[0_0_20px_rgba(0,210,255,0.55)] focus:outline-none cursor-pointer"
++                            className="skills-swiper-next absolute right-2 md:-right-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(200,162,110,0.4)] bg-[rgba(10,15,30,0.75)] backdrop-blur-md text-[rgba(200,162,110,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(200,162,110,0.25)] hover:shadow-[0_0_20px_rgba(200,162,110,0.55)] focus:outline-none cursor-pointer"
+                             aria-label="Next slide"
+                         >
+-                            <i className="fas fa-chevron-right text-xl md:text-2xl drop-shadow-[0_0_3px_rgba(0,210,255,0.4)]"></i>
++                            <i className="fas fa-chevron-right text-xl md:text-2xl drop-shadow-[0_0_3px_rgba(200,162,110,0.4)]"></i>
+                         </button>
+ 
+                         <Swiper
+@@ -143,7 +143,7 @@ const Skills = () => {
+                                 <SwiperSlide key={idx} className="!h-auto">
+                                     <div className="skill-card card h-full border border-[var(--clr-card-border)] bg-[var(--clr-card-bg)] backdrop-blur-md p-8 rounded-xl hover:border-[var(--clr-accent)] transition-all duration-300">
+                                         <div className="skill-card-header flex items-center gap-4 mb-6">
+-                                            <div className="skill-card-icon w-12 h-12 flex items-center justify-center bg-[rgba(0,210,255,0.1)] rounded-lg text-2xl text-[var(--clr-accent)]">
++                                            <div className="skill-card-icon w-12 h-12 flex items-center justify-center bg-[rgba(200,162,110,0.1)] rounded-lg text-2xl text-[var(--clr-accent)]">
+                                                 <i className={card.icon}></i>
+                                             </div>
+                                             <div>
+
+commit 0bb841c8998b1e98b7a731c82c8e6e8b47152dde
+Author: ameenmv <shehaaa4@gmail.com>
+Date:   Sat Jul 4 23:04:38 2026 +0300
+
+    feat : redesing and add some animation on the website from ameenmv
+
+diff --git a/src/components/sections/Skills.jsx b/src/components/sections/Skills.jsx
+index 6899662..71c57f4 100644
+--- a/src/components/sections/Skills.jsx
++++ b/src/components/sections/Skills.jsx
+@@ -1,59 +1,93 @@
+-import React, { useEffect, useRef } from 'react';
++import React, { useRef } from 'react';
+ import { Swiper, SwiperSlide } from 'swiper/react';
+ import { Pagination, Autoplay, Navigation, Keyboard } from 'swiper/modules';
+ import 'swiper/css';
+ import 'swiper/css/pagination';
++import gsap from 'gsap';
++import { ScrollTrigger } from 'gsap/ScrollTrigger';
++import { useGSAP } from '@gsap/react';
+ import { skills } from '../../data/portfolioData';
+ import { SiMicrosoftazure } from 'react-icons/si';
+ 
+ const Skills = () => {
+     const sectionRef = useRef(null);
++    const headerRef = useRef(null);
++    const circularRef = useRef(null);
+     const { subtitle, title, description, circularSkills, categories } = skills;
+ 
+-    useEffect(() => {
+-        const skillsObserver = new IntersectionObserver((entries) => {
+-            entries.forEach(entry => {
+-                if (entry.isIntersecting) {
+-                    const items = entry.target.querySelectorAll('.circular-skill-item');
+-                    items.forEach((item, idx) => {
+-                        setTimeout(() => {
+-                            item.classList.add('reveal');
++    useGSAP(
++        () => {
++            const subtitleEl = headerRef.current?.querySelector('.section-subtitle');
++            const titleEl = headerRef.current?.querySelector('.section-title');
++            const descEl = headerRef.current?.querySelector('.section-desc');
++            const skillItems = circularRef.current?.querySelectorAll('.circular-skill-item');
++
++            gsap.set([subtitleEl, titleEl, descEl].filter(Boolean), { opacity: 0, y: 30 });
++            if (skillItems?.length) gsap.set(skillItems, { opacity: 0, y: 20, scale: 0.85 });
++
++            const tl = gsap.timeline({
++                defaults: { ease: 'power3.out' },
++                scrollTrigger: {
++                    trigger: sectionRef.current,
++                    start: 'top 80%',
++                    toggleActions: 'play none none none',
++                },
++            });
++
++            tl.to(subtitleEl, { opacity: 1, y: 0, duration: 0.4 })
++              .to(titleEl, { opacity: 1, y: 0, duration: 0.5 }, '-=0.15')
++              .to(descEl, { opacity: 1, y: 0, duration: 0.4 }, '-=0.2')
++
++            if (skillItems?.length) {
++                tl.to(skillItems, {
++                    opacity: 1, y: 0, scale: 1,
++                    duration: 0.5, stagger: 0.08,
++                    ease: 'back.out(1.4)',
++                    onComplete: () => {
++                        skillItems.forEach((item, idx) => {
+                             const circle = item.querySelector('.progress-ring-circle');
+                             const percent = parseFloat(item.dataset.percent || '0');
+-                            const radius = circle.r.baseVal.value;
++                            const radius = circle?.r?.baseVal?.value || 54;
+                             const circumference = 2 * Math.PI * radius;
+                             const offset = circumference - (percent / 100) * circumference;
+-                            circle.style.strokeDashoffset = offset;
+-                        }, idx * 180);
+-                    });
+-                    skillsObserver.unobserve(entry.target);
+-                }
+-            });
+-        }, { threshold: 0.2 });
+-
+-        if (sectionRef.current) {
+-            skillsObserver.observe(sectionRef.current);
+-        }
++                            if (circle) {
++                                gsap.to(circle, { strokeDashoffset: offset, duration: 0.8, delay: idx * 0.06, ease: 'power3.out' });
++                            }
++                        });
++                    },
++                }, '-=0.1');
++            }
+ 
+-        return () => skillsObserver.disconnect();
+-    }, []);
++            const progressBars = sectionRef.current?.querySelectorAll('.skill-progress-bar');
++            if (progressBars?.length) {
++                progressBars.forEach((bar) => {
++                    const targetWidth = bar.style.getPropertyValue('--target-width');
++                    gsap.to(bar, {
++                        width: targetWidth, duration: 0.8, ease: 'power3.out',
++                        scrollTrigger: { trigger: bar, start: 'top 90%', toggleActions: 'play none none none' },
++                    });
++                });
++            }
++        },
++        { scope: sectionRef, dependencies: [] },
++    );
+ 
+     return (
+         <section id="skills" className="section" ref={sectionRef}>
+             <div className="container mx-auto px-8">
+-                <div className="section-header animate-up text-center mb-16">
++                <div ref={headerRef} className="section-header text-center mb-16">
+                     <span className="section-subtitle text-[var(--clr-accent)] font-mono uppercase tracking-widest text-sm mb-2 block">{subtitle}</span>
+                     <h2 className="section-title text-4xl md:text-5xl font-black mb-4">{title}</h2>
+                     <p className="section-desc text-[var(--clr-text-dim)] max-w-2xl mx-auto">{description}</p>
+                 </div>
+ 
+-                <div className="skills-circular-row flex flex-wrap justify-center gap-12 mb-20">
++                <div ref={circularRef} className="skills-circular-row flex flex-wrap justify-center gap-12 mb-20">
+                     {circularSkills.map((skill, idx) => (
+                         <div key={idx} className="circular-skill-item group" data-percent={skill.percent}>
+                             <div className="circle-box relative w-[120px] h-[120px] flex items-center justify-center">
+                                 <svg className="progress-ring rotate-[-90deg]" width="120" height="120">
+                                     <circle className="progress-ring-bg" cx="60" cy="60" r="54" fill="transparent" stroke="rgba(255,255,255,0.05)" strokeWidth="8" />
+-                                    <circle className="progress-ring-circle transition-all duration-1000 ease-out" cx="60" cy="60" r="54" fill="transparent" stroke="var(--clr-accent)" strokeWidth="8" strokeDasharray="339.292" strokeDashoffset="339.292" />
++                                    <circle className="progress-ring-circle transition-none" cx="60" cy="60" r="54" fill="transparent" stroke="var(--clr-accent)" strokeWidth="8" strokeDasharray="339.292" strokeDashoffset="339.292" />
+                                 </svg>
+                                 <div className="skill-icon absolute text-3xl text-[var(--clr-accent)] transition-transform duration-300 group-hover:scale-125 flex items-center justify-center">
+                                     {skill.icon === 'SiMicrosoftazure' ? (
+@@ -126,19 +160,8 @@ const Skills = () => {
+                                                     </div>
+                                                     <div className="skill-progress h-1 bg-[rgba(255,255,255,0.05)] rounded-full overflow-hidden">
+                                                         <div
+-                                                            className="skill-progress-bar h-full bg-[var(--clr-accent)] transition-all duration-1000 ease-in-out"
++                                                            className="skill-progress-bar h-full bg-[var(--clr-accent)] rounded-full"
+                                                             style={{ width: '0%', '--target-width': `${metric.percent}%` }}
+-                                                            ref={(el) => {
+-                                                                if (el) {
+-                                                                    const observer = new IntersectionObserver((entries) => {
+-                                                                        if (entries[0].isIntersecting) {
+-                                                                            el.style.width = el.style.getPropertyValue('--target-width');
+-                                                                            observer.disconnect();
+-                                                                        }
+-                                                                    });
+-                                                                    observer.observe(el);
+-                                                                }
+-                                                            }}
+                                                         ></div>
+                                                     </div>
+                                                 </div>
+
+commit a33aa96b9ff468e7c4fbd855049eb6ccf7a9f2a2
+Author: Abdelrahman Elbahnsy <abdelrahmanelbahnsy3@gmail.com>
+Date:   Sat Jun 27 18:05:38 2026 +0300
+
+    Initial portfolio
+
+diff --git a/src/components/sections/Skills.jsx b/src/components/sections/Skills.jsx
+index a7dd305..6899662 100644
+--- a/src/components/sections/Skills.jsx
++++ b/src/components/sections/Skills.jsx
+@@ -1,11 +1,14 @@
+ import React, { useEffect, useRef } from 'react';
+ import { Swiper, SwiperSlide } from 'swiper/react';
+-import { Pagination, Autoplay } from 'swiper/modules';
++import { Pagination, Autoplay, Navigation, Keyboard } from 'swiper/modules';
+ import 'swiper/css';
+ import 'swiper/css/pagination';
++import { skills } from '../../data/portfolioData';
++import { SiMicrosoftazure } from 'react-icons/si';
+ 
+ const Skills = () => {
+     const sectionRef = useRef(null);
++    const { subtitle, title, description, circularSkills, categories } = skills;
+ 
+     useEffect(() => {
+         const skillsObserver = new IntersectionObserver((entries) => {
+@@ -35,110 +38,13 @@ const Skills = () => {
+         return () => skillsObserver.disconnect();
+     }, []);
+ 
+-    const circularSkills = [
+-        { label: 'Cloud', sub: 'AWS Expert', percent: 90, icon: 'fab fa-aws' },
+-        { label: 'Containers', sub: 'Docker + K8s', percent: 88, icon: 'fab fa-docker' },
+-        { label: 'CI/CD', sub: 'Pipelines', percent: 92, icon: 'fas fa-infinity' },
+-        { label: 'IaC', sub: 'Terraform', percent: 85, icon: 'fas fa-code-branch' },
+-        { label: 'Networking', sub: 'CCNA / CCNP', percent: 80, icon: 'fas fa-network-wired' },
+-    ];
+-
+-    const skillCards = [
+-        {
+-            title: 'Cloud Platform',
+-            count: '4 Tools',
+-            icon: 'fab fa-aws',
+-            metrics: [
+-                { label: 'EC2 & VPC', percent: 90 },
+-                { label: 'IAM & Security', percent: 85 },
+-                { label: 'S3 Storage', percent: 88 },
+-                { label: 'Load Balancer', percent: 82 },
+-            ]
+-        },
+-        {
+-            title: 'DevOps & CI/CD',
+-            count: '4 Tools',
+-            icon: 'fas fa-infinity',
+-            metrics: [
+-                { label: 'Jenkins', percent: 88 },
+-                { label: 'GitHub Actions', percent: 85 },
+-                { label: 'CI/CD Pipelines', percent: 90 },
+-                { label: 'Automation', percent: 87 },
+-            ]
+-        },
+-        {
+-            title: 'Containers & Orchestration',
+-            count: '4 Tools',
+-            icon: 'fab fa-docker',
+-            metrics: [
+-                { label: 'Docker', percent: 92 },
+-                { label: 'Docker Compose', percent: 88 },
+-                { label: 'Kubernetes', percent: 85 },
+-                { label: 'Container Security', percent: 80 },
+-            ]
+-        },
+-        {
+-            title: 'Infrastructure as Code',
+-            count: '3 Tools',
+-            icon: 'fas fa-code-branch',
+-            metrics: [
+-                { label: 'Terraform', percent: 87 },
+-                { label: 'Infrastructure Automation', percent: 85 },
+-                { label: 'Provisioning', percent: 83 },
+-            ]
+-        },
+-        {
+-            title: 'Networking',
+-            count: '4 Tools',
+-            icon: 'fas fa-network-wired',
+-            metrics: [
+-                { label: 'Routing & Switching', percent: 92 },
+-                { label: 'TCP/IP', percent: 90 },
+-                { label: 'Network Security', percent: 85 },
+-                { label: 'Load Balancing', percent: 84 },
+-            ]
+-        },
+-        {
+-            title: 'Programming & Scripting',
+-            count: '3 Tools',
+-            icon: 'fas fa-terminal',
+-            metrics: [
+-                { label: 'Python', percent: 85 },
+-                { label: 'Bash', percent: 82 },
+-                { label: 'Shell Scripting', percent: 80 },
+-            ]
+-        },
+-        {
+-            title: 'Operating Systems',
+-            count: '4 Tools',
+-            icon: 'fab fa-linux',
+-            metrics: [
+-                { label: 'Linux Administration', percent: 92 },
+-                { label: 'Windows Server', percent: 85 },
+-                { label: 'System Hardening', percent: 83 },
+-                { label: 'Process Management', percent: 86 },
+-            ]
+-        },
+-        {
+-            title: 'Monitoring & Observability',
+-            count: '4 Tools',
+-            icon: 'fas fa-chart-line',
+-            metrics: [
+-                { label: 'Prometheus', percent: 88 },
+-                { label: 'Grafana', percent: 87 },
+-                { label: 'Logging (ELK / Loki)', percent: 85 },
+-                { label: 'Metrics & Alerting', percent: 86 },
+-            ]
+-        }
+-    ];
+-
+     return (
+         <section id="skills" className="section" ref={sectionRef}>
+             <div className="container mx-auto px-8">
+                 <div className="section-header animate-up text-center mb-16">
+-                    <span className="section-subtitle text-[var(--clr-accent)] font-mono uppercase tracking-widest text-sm mb-2 block">Expertise</span>
+-                    <h2 className="section-title text-4xl md:text-5xl font-black mb-4">Skills & Technologies</h2>
+-                    <p className="section-desc text-[var(--clr-text-dim)] max-w-2xl mx-auto">A comprehensive toolkit for building and managing modern cloud infrastructure.</p>
++                    <span className="section-subtitle text-[var(--clr-accent)] font-mono uppercase tracking-widest text-sm mb-2 block">{subtitle}</span>
++                    <h2 className="section-title text-4xl md:text-5xl font-black mb-4">{title}</h2>
++                    <p className="section-desc text-[var(--clr-text-dim)] max-w-2xl mx-auto">{description}</p>
+                 </div>
+ 
+                 <div className="skills-circular-row flex flex-wrap justify-center gap-12 mb-20">
+@@ -149,8 +55,12 @@ const Skills = () => {
+                                     <circle className="progress-ring-bg" cx="60" cy="60" r="54" fill="transparent" stroke="rgba(255,255,255,0.05)" strokeWidth="8" />
+                                     <circle className="progress-ring-circle transition-all duration-1000 ease-out" cx="60" cy="60" r="54" fill="transparent" stroke="var(--clr-accent)" strokeWidth="8" strokeDasharray="339.292" strokeDashoffset="339.292" />
+                                 </svg>
+-                                <div className="skill-icon absolute text-3xl text-[var(--clr-accent)] transition-transform duration-300 group-hover:scale-125">
+-                                    <i className={skill.icon}></i>
++                                <div className="skill-icon absolute text-3xl text-[var(--clr-accent)] transition-transform duration-300 group-hover:scale-125 flex items-center justify-center">
++                                    {skill.icon === 'SiMicrosoftazure' ? (
++                                        <SiMicrosoftazure />
++                                    ) : (
++                                        <i className={skill.icon}></i>
++                                    )}
+                                 </div>
+                             </div>
+                             <div className="skill-info-circular text-center mt-4">
+@@ -162,62 +72,83 @@ const Skills = () => {
+                 </div>
+ 
+                 <div className="skills-swiper-container pb-12 pt-4">
+-                    <Swiper
+-                        modules={[Pagination, Autoplay]}
+-                        slidesPerView={1}
+-                        spaceBetween={20}
+-                        loop={true}
+-                        pagination={{ clickable: true, el: '.skills-pagination' }}
+-                        autoplay={{ delay: 3500, disableOnInteraction: false }}
+-                        breakpoints={{
+-                            768: { slidesPerView: 2, spaceBetween: 30 },
+-                            1024: { slidesPerView: 3, spaceBetween: 40 }
+-                        }}
+-                        className="skills-swiper !overflow-visible"
+-                    >
+-                        {skillCards.map((card, idx) => (
+-                            <SwiperSlide key={idx} className="!h-auto">
+-                                <div className="skill-card card h-full border border-[var(--clr-card-border)] bg-[var(--clr-card-bg)] backdrop-blur-md p-8 rounded-xl hover:border-[var(--clr-accent)] transition-all duration-300">
+-                                    <div className="skill-card-header flex items-center gap-4 mb-6">
+-                                        <div className="skill-card-icon w-12 h-12 flex items-center justify-center bg-[rgba(0,210,255,0.1)] rounded-lg text-2xl text-[var(--clr-accent)]">
+-                                            <i className={card.icon}></i>
+-                                        </div>
+-                                        <div>
+-                                            <h3 className="skill-card-title text-xl font-bold">{card.title}</h3>
+-                                            <p className="skill-card-subtitle text-xs text-[var(--clr-text-dim)] uppercase tracking-wider">{card.count}</p>
++                    <div className="relative group/carousel">
++                        {/* Navigation Arrows */}
++                        <button 
++                            className="skills-swiper-prev absolute left-2 md:-left-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(0,210,255,0.4)] bg-[rgba(10,15,30,0.75)] backdrop-blur-md text-[rgba(0,210,255,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(0,210,255,0.25)] hover:shadow-[0_0_20px_rgba(0,210,255,0.55)] focus:outline-none cursor-pointer"
++                            aria-label="Previous slide"
++                        >
++                            <i className="fas fa-chevron-left text-xl md:text-2xl drop-shadow-[0_0_3px_rgba(0,210,255,0.4)]"></i>
++                        </button>
++                        <button 
++                            className="skills-swiper-next absolute right-2 md:-right-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full border-[1.5px] border-[rgba(0,210,255,0.4)] bg-[rgba(10,15,30,0.75)] backdrop-blur-md text-[rgba(0,210,255,0.9)] hover:text-white flex items-center justify-center transition-all duration-[250ms] ease-out hover:scale-110 hover:border-[var(--clr-accent)] shadow-[0_0_10px_rgba(0,210,255,0.25)] hover:shadow-[0_0_20px_rgba(0,210,255,0.55)] focus:outline-none cursor-pointer"
++                            aria-label="Next slide"
++                        >
++                            <i className="fas fa-chevron-right text-xl md:text-2xl drop-shadow-[0_0_3px_rgba(0,210,255,0.4)]"></i>
++                        </button>
++
++                        <Swiper
++                            modules={[Pagination, Autoplay, Navigation, Keyboard]}
++                            slidesPerView={1}
++                            spaceBetween={20}
++                            loop={true}
++                            pagination={{ clickable: true, el: '.skills-pagination' }}
++                            autoplay={{ delay: 3500, disableOnInteraction: false }}
++                            navigation={{
++                                nextEl: '.skills-swiper-next',
++                                prevEl: '.skills-swiper-prev',
++                            }}
++                            keyboard={{ enabled: true, onlyInViewport: true }}
++                            breakpoints={{
++                                768: { slidesPerView: 2, spaceBetween: 30 },
++                                1024: { slidesPerView: 3, spaceBetween: 40 }
++                            }}
++                            className="skills-swiper !overflow-visible px-14 md:px-0"
++                        >
++                            {categories.map((card, idx) => (
++                                <SwiperSlide key={idx} className="!h-auto">
++                                    <div className="skill-card card h-full border border-[var(--clr-card-border)] bg-[var(--clr-card-bg)] backdrop-blur-md p-8 rounded-xl hover:border-[var(--clr-accent)] transition-all duration-300">
++                                        <div className="skill-card-header flex items-center gap-4 mb-6">
++                                            <div className="skill-card-icon w-12 h-12 flex items-center justify-center bg-[rgba(0,210,255,0.1)] rounded-lg text-2xl text-[var(--clr-accent)]">
++                                                <i className={card.icon}></i>
++                                            </div>
++                                            <div>
++                                                <h3 className="skill-card-title text-xl font-bold">{card.title}</h3>
++                                                <p className="skill-card-subtitle text-xs text-[var(--clr-text-dim)] uppercase tracking-wider">{card.skills.length} Tools</p>
++                                            </div>
+                                         </div>
+-                                    </div>
+-                                    <div className="skill-card-body space-y-4">
+-                                        {card.metrics.map((m, midx) => (
+-                                            <div key={midx} className="skill-item">
+-                                                <div className="skill-metric flex justify-between text-sm mb-1">
+-                                                    <span className="skill-metric-label text-[var(--clr-text-dim)]">{m.label}</span>
+-                                                    <span className="skill-metric-percent font-bold">{m.percent}%</span>
+-                                                </div>
+-                                                <div className="skill-progress h-1 bg-[rgba(255,255,255,0.05)] rounded-full overflow-hidden">
+-                                                    <div 
+-                                                        className="skill-progress-bar h-full bg-[var(--clr-accent)] transition-all duration-1000 ease-in-out" 
+-                                                        style={{ width: '0%', '--target-width': `${m.percent}%` }}
+-                                                        ref={(el) => {
+-                                                            if (el) {
+-                                                                const observer = new IntersectionObserver((entries) => {
+-                                                                    if (entries[0].isIntersecting) {
+-                                                                        el.style.width = el.style.getPropertyValue('--target-width');
+-                                                                        observer.disconnect();
+-                                                                    }
+-                                                                });
+-                                                                observer.observe(el);
+-                                                            }
+-                                                        }}
+-                                                    ></div>
++                                        <div className="skill-card-body space-y-4">
++                                            {card.skills.map((metric, midx) => (
++                                                <div key={midx} className="skill-item">
++                                                    <div className="skill-metric flex justify-between text-sm mb-1">
++                                                        <span className="skill-metric-label text-[var(--clr-text-dim)]">{metric.name}</span>
++                                                        <span className="skill-metric-percent font-bold">{metric.percent}%</span>
++                                                    </div>
++                                                    <div className="skill-progress h-1 bg-[rgba(255,255,255,0.05)] rounded-full overflow-hidden">
++                                                        <div
++                                                            className="skill-progress-bar h-full bg-[var(--clr-accent)] transition-all duration-1000 ease-in-out"
++                                                            style={{ width: '0%', '--target-width': `${metric.percent}%` }}
++                                                            ref={(el) => {
++                                                                if (el) {
++                                                                    const observer = new IntersectionObserver((entries) => {
++                                                                        if (entries[0].isIntersecting) {
++                                                                            el.style.width = el.style.getPropertyValue('--target-width');
++                                                                            observer.disconnect();
++                                                                        }
++                                                                    });
++                                                                    observer.observe(el);
++                                                                }
++                                                            }}
++                                                        ></div>
++                                                    </div>
+                                                 </div>
+-                                            </div>
+-                                        ))}
++                                            ))}
++                                        </div>
+                                     </div>
+-                                </div>
+-                            </SwiperSlide>
+-                        ))}
+-                    </Swiper>
++                                </SwiperSlide>
++                            ))}
++                        </Swiper>
++                    </div>
+                     <div className="skills-pagination mt-8 flex justify-center"></div>
+                 </div>
+             </div>

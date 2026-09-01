@@ -74,7 +74,7 @@ const Skills = () => {
                         skillItems.forEach((item, idx) => {
                             const circle = item.querySelector('.progress-ring-circle');
                             const percent = parseFloat(item.dataset.percent || '0');
-                            const radius = circle?.r?.baseVal?.value || 58;
+                            const radius = 54;
                             const circumference = 2 * Math.PI * radius;
                             const offset = circumference - (percent / 100) * circumference;
                             if (circle) {
@@ -129,9 +129,9 @@ const Skills = () => {
                                     <div className="relative w-32 h-32 md:w-36 md:h-36 flex items-center justify-center bg-[var(--theme-surface)] rounded-full border border-[var(--theme-border)] group-hover:border-[var(--theme-accent)] shadow-[var(--theme-shadow)] transition-colors duration-500">
                                         <svg className="absolute inset-0 w-full h-full rotate-[-90deg]">
                                             {/* Background Circle */}
-                                            <circle cx="50%" cy="50%" r="58" fill="transparent" stroke="var(--theme-border-strong)" strokeWidth="6" />
+                                            <circle cx="50%" cy="50%" r="54" fill="transparent" stroke="var(--theme-border-strong)" strokeWidth="6" />
                                             {/* Progress Circle */}
-                                            <circle className="progress-ring-circle transition-none" cx="50%" cy="50%" r="58" fill="transparent" stroke="var(--theme-accent)" strokeWidth="6" strokeDasharray="364.42" strokeDashoffset="364.42" strokeLinecap="round" />
+                                            <circle className="progress-ring-circle transition-none" cx="50%" cy="50%" r="54" fill="transparent" stroke="var(--theme-accent)" strokeWidth="6" strokeDasharray="339.292" strokeDashoffset="339.292" strokeLinecap="round" />
                                         </svg>
                                         <div className="absolute inset-2 md:inset-3 bg-[var(--theme-bg)] rounded-full flex items-center justify-center z-10 shadow-[var(--theme-shadow-strong)] group-hover:scale-110 transition-transform duration-500">
                                             {skill.icon?.trim().toLowerCase() === 'simicrosoftazure' ? (

@@ -325,7 +325,7 @@ const Navbar = ({ splashDone = true }) => {
                         <div className="flex items-center shrink-0 min-w-0">
                             <a href="#hero" className="logo flex items-center gap-1 group min-w-0" onClick={(e) => handleNavClick(e, 'hero')} dir="ltr" style={{ overflowWrap: 'anywhere' }}>
                                 {language === 'ar' ? (
-                                    /* Arabic navbar logo — LTR outer, RTL name text */
+                                    /* Arabic navbar logo ظ¤ LTR outer, RTL name text */
                                     <span className={`font-black tracking-tighter text-[var(--theme-nav-text)] transition-all duration-500 ${isScrolled ? 'text-base sm:text-lg xl:text-xl' : 'text-lg sm:text-xl xl:text-2xl'}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '2px', whiteSpace: 'nowrap' }}>
                                         <span className="text-[var(--theme-accent)]">&lt; </span>
                                         <span dir="rtl" style={{ unicodeBidi: 'isolate', whiteSpace: 'nowrap' }}>
@@ -414,7 +414,7 @@ const Navbar = ({ splashDone = true }) => {
             >
                 <div ref={menuItemsRef} className="mobile-menu-content h-full flex flex-col justify-between p-12 py-32 relative z-10">
                     <ul className="flex flex-col gap-5 md:gap-6">
-                        {[...navLinks, { name: language === 'ar' ? 'تواصل معي' : 'Contact', href: '#contact', id: 'contact', icon: 'fas fa-paper-plane' }].map((link, idx) => (
+                        {[...navLinks, { name: language === 'ar' ? '╪ز┘ê╪د╪╡┘ ┘à╪╣┘è' : 'Contact', href: '#contact', id: 'contact', icon: 'fas fa-paper-plane' }].map((link, idx) => (
                             <li key={idx} className="mobile-nav-item">
                                 <a
                                     href={link.href}

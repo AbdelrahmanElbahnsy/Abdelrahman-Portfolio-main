@@ -320,13 +320,13 @@ const Navbar = ({ splashDone = true }) => {
         <>
             <header ref={headerRef} className={`sticky top-0 left-0 w-full z-[1000] transition-all duration-700 ${isScrolled ? 'pt-2 sm:pt-4' : 'pt-4 sm:pt-8'}`}>
                 <div className={`mx-auto transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isScrolled ? 'max-w-[1240px] px-4 sm:px-8' : 'page-container px-4'}`}>
-                    <nav ref={navRef} className={`w-full box-border flex flex-nowrap items-center justify-between gap-2 sm:gap-4 px-3 sm:px-4 xl:px-6 py-2.5 rounded-full border backdrop-blur-[18px] transition-all duration-700 ${isScrolled ? 'bg-[var(--theme-nav-bg)] border-[var(--theme-nav-border)] shadow-[var(--theme-nav-shadow)]' : 'bg-transparent border-transparent'}`}>
+                    <nav ref={navRef} className={`w-full box-border flex flex-nowrap items-center justify-between gap-2 sm:gap-4 px-3 sm:px-4 xl:px-4 2xl:px-6 py-2.5 rounded-full border backdrop-blur-[18px] transition-all duration-700 ${isScrolled ? 'bg-[var(--theme-nav-bg)] border-[var(--theme-nav-border)] shadow-[var(--theme-nav-shadow)]' : 'bg-transparent border-transparent'}`}>
                         {/* Left Region: Logo */}
                         <div className="flex items-center shrink-0 min-w-0">
                             <a href="#hero" className="logo flex items-center gap-1 group min-w-0" onClick={(e) => handleNavClick(e, 'hero')} dir="ltr" style={{ overflowWrap: 'anywhere' }}>
                                 {language === 'ar' ? (
                                     /* Arabic navbar logo — LTR outer, RTL name text */
-                                    <span className={`font-black tracking-tighter text-[var(--theme-nav-text)] transition-all duration-500 ${isScrolled ? 'text-base sm:text-lg xl:text-xl' : 'text-lg sm:text-xl xl:text-2xl'}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '2px', whiteSpace: 'nowrap' }}>
+                                    <span className={`font-black tracking-tighter text-[var(--theme-nav-text)] transition-all duration-500 ${isScrolled ? 'text-base sm:text-lg xl:text-lg 2xl:text-xl' : 'text-lg sm:text-xl xl:text-xl 2xl:text-2xl'}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '2px', whiteSpace: 'nowrap' }}>
                                         <span className="text-[var(--theme-accent)]">&lt; </span>
                                         <span dir="rtl" style={{ unicodeBidi: 'isolate', whiteSpace: 'nowrap' }}>
                                             {firstNameAr}
@@ -337,7 +337,7 @@ const Navbar = ({ splashDone = true }) => {
                                     </span>
                                 ) : (
                                     /* English navbar logo */
-                                    <span className={`font-black tracking-tighter text-[var(--theme-nav-text)] transition-all duration-500 ${isScrolled ? 'text-base sm:text-lg xl:text-xl' : 'text-lg sm:text-xl xl:text-2xl'}`} style={{ whiteSpace: 'normal', wordBreak: 'keep-all' }}>
+                                    <span className={`font-black tracking-tighter text-[var(--theme-nav-text)] transition-all duration-500 ${isScrolled ? 'text-base sm:text-lg xl:text-lg 2xl:text-xl' : 'text-lg sm:text-xl xl:text-xl 2xl:text-2xl'}`} style={{ whiteSpace: 'normal', wordBreak: 'keep-all' }}>
                                         <span className="text-[var(--theme-accent)]">&lt;</span>{firstName ? firstName.charAt(0) : ''}<span className="hidden md:inline">{firstName ? firstName.slice(1).toUpperCase() : ''}</span><span className="text-[var(--theme-accent)] hidden md:inline">/</span>{lastName ? lastName.charAt(0) : ''}<span className="hidden md:inline" style={{ whiteSpace: 'nowrap' }}>{lastName ? lastName.slice(1).toUpperCase() : ''}</span><span className="text-[var(--theme-accent)]">&gt;</span>
                                     </span>
                                 )}
@@ -345,14 +345,14 @@ const Navbar = ({ splashDone = true }) => {
                         </div>
 
                         {/* Center Region: Navigation Links */}
-                        <div className="hidden xl:flex justify-center px-4">
-                            <ul className="flex flex-nowrap items-center justify-center gap-1 2xl:gap-2">
+                        <div className="hidden min-[1300px]:flex justify-center px-1 xl:px-2 2xl:px-4">
+                            <ul className="flex flex-nowrap items-center justify-center gap-0.5 xl:gap-1 2xl:gap-2">
                                 {navLinks.map((link, idx) => (
                                     <li key={idx} className="flex items-center shrink-0">
                                         <a
                                             href={link.href}
                                             onClick={(e) => handleNavClick(e, link.id)}
-                                            className={`flex items-center justify-center gap-1.5 px-2.5 2xl:px-4 py-2.5 rounded-full text-[10px] 2xl:text-[11px] font-black uppercase tracking-[0.12em] transition-all duration-300 ${activeSection === link.id ? 'bg-[var(--theme-nav-active-bg)] text-[var(--theme-nav-active-text)] shadow-[var(--theme-nav-active-shadow)]' : 'text-[var(--theme-nav-text-dim)] hover:text-[var(--theme-nav-text)] hover:bg-[var(--theme-nav-hover-bg)]'}`}
+                                            className={`flex items-center justify-center gap-1 xl:gap-1.5 px-2 xl:px-2.5 2xl:px-4 py-2.5 rounded-full text-[9px] xl:text-[10px] 2xl:text-[11px] font-black uppercase tracking-wider 2xl:tracking-[0.12em] transition-all duration-300 ${activeSection === link.id ? 'bg-[var(--theme-nav-active-bg)] text-[var(--theme-nav-active-text)] shadow-[var(--theme-nav-active-shadow)]' : 'text-[var(--theme-nav-text-dim)] hover:text-[var(--theme-nav-text)] hover:bg-[var(--theme-nav-hover-bg)]'}`}
                                         >
                                             <i className={`${link.icon} ${activeSection === link.id ? 'opacity-100 scale-110' : 'opacity-70'}`}></i>
                                             <span>{link.name}</span>
@@ -363,7 +363,7 @@ const Navbar = ({ splashDone = true }) => {
                         </div>
 
                         {/* Right Region: Action Buttons */}
-                        <div className="flex items-center justify-end shrink-0 gap-3">
+                        <div className="flex items-center justify-end shrink-0 gap-1.5 xl:gap-2 2xl:gap-3">
                             <button
                                 onClick={toggleLanguage}
                                 className="flex w-10 h-10 items-center justify-center bg-[var(--theme-nav-btn-bg)] rounded-full hover:bg-[var(--theme-nav-btn-hover)] transition-all shrink-0 text-[var(--theme-nav-text)] font-black text-xs focus:outline-none"
@@ -385,7 +385,7 @@ const Navbar = ({ splashDone = true }) => {
 
                             <button
                                 onClick={toggleMenu}
-                                className="xl:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 focus:outline-none z-[1001] bg-[var(--theme-nav-btn-bg)] rounded-full hover:bg-[var(--theme-nav-btn-hover)] transition-all shrink-0"
+                                className="min-[1300px]:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 focus:outline-none z-[1001] bg-[var(--theme-nav-btn-bg)] rounded-full hover:bg-[var(--theme-nav-btn-hover)] transition-all shrink-0"
                                 aria-label="Toggle Menu"
                             >
                                 <span className={`w-5 h-0.5 bg-[var(--theme-nav-text)] transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></span>

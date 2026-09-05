@@ -45,6 +45,8 @@ const Skills = () => {
 
     useGSAP(
         () => {
+            if (loading || circularSkills.length === 0) return;
+
             const subtitleEl = headerRef.current?.querySelector('.section-subtitle');
             const titleEl = headerRef.current?.querySelector('.section-title');
             const descEl = headerRef.current?.querySelector('.section-desc');
@@ -86,7 +88,7 @@ const Skills = () => {
                 }, '-=0.1');
             }
         },
-        { scope: sectionRef }
+        { scope: sectionRef, dependencies: [loading, circularSkills, categories] }
     );
 
     return (

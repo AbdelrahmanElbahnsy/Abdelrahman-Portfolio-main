@@ -40,7 +40,7 @@ const ProjectCard = ({ project, onClickDetails }) => {
       ref={cardRef}
       className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--theme-border)] bg-[var(--theme-surface-elevated)] shadow-[var(--theme-shadow)] transition duration-300 hover:-translate-y-1 hover:border-[var(--theme-accent)] hover:shadow-[var(--theme-shadow-strong)]"
     >
-      <div className="relative h-44 overflow-hidden bg-[#060a14]">
+      <div className="relative h-44 overflow-hidden bg-[var(--theme-bg)]">
         <img
           src={imageSrc}
           alt={project?.title || 'Project preview'}
@@ -52,7 +52,7 @@ const ProjectCard = ({ project, onClickDetails }) => {
           height="400"
           className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e17] via-[#0a0e17]/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[var(--theme-bg)] via-[var(--theme-bg)]/30 to-transparent" />
       </div>
 
       <div className="flex flex-1 flex-col p-5">

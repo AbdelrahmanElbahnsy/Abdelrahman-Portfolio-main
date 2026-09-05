@@ -28,7 +28,7 @@ const TechSlider = () => {
     >
       {techItems.map((item, idx) => (
         <SwiperSlide key={idx} className="!w-auto">
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/5 border border-primary/10 text-gray-300 hover:text-primary hover:border-primary transition-all duration-300 hover:-translate-y-1">
+          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/5 border border-primary/10 text-[var(--theme-text-muted)] hover:text-primary hover:border-primary transition-all duration-300 hover:-translate-y-1">
             {item.icon === 'SiMicrosoftazure' ? (
                 <SiMicrosoftazure className="text-primary" />
             ) : (

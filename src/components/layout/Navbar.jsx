@@ -319,14 +319,14 @@ const Navbar = ({ splashDone = true }) => {
     return (
         <>
             <header ref={headerRef} className={`sticky top-0 left-0 w-full z-[1000] transition-all duration-700 ${isScrolled ? 'pt-2 sm:pt-4' : 'pt-4 sm:pt-8'}`}>
-                <div className={`mx-auto transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isScrolled ? 'max-w-[1240px] 2xl:max-w-[1440px] px-4 sm:px-8' : 'page-container px-4'}`}>
+                <div className={`mx-auto transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] max-w-[1240px] 2xl:max-w-[1440px] px-4 sm:px-8`}>
                     <nav ref={navRef} className={`w-full box-border flex flex-nowrap items-center justify-between gap-2 sm:gap-4 px-3 sm:px-4 xl:px-6 py-2.5 rounded-full border backdrop-blur-[18px] transition-all duration-700 ${isScrolled ? 'bg-[var(--theme-nav-bg)] border-[var(--theme-nav-border)] shadow-[var(--theme-nav-shadow)]' : 'bg-transparent border-transparent'}`}>
                         {/* Left Region: Logo */}
                         <div className="flex items-center shrink-0 min-w-0">
                             <a href="#hero" className="logo flex items-center gap-1 group min-w-0" onClick={(e) => handleNavClick(e, 'hero')} dir="ltr" style={{ overflowWrap: 'anywhere' }}>
                                 {language === 'ar' ? (
                                     /* Arabic navbar logo — LTR outer, RTL name text */
-                                    <span className={`font-black tracking-tighter text-[var(--theme-nav-text)] transition-all duration-500 ${isScrolled ? 'text-base sm:text-lg xl:text-xl' : 'text-lg sm:text-xl xl:text-2xl'}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '2px', whiteSpace: 'nowrap' }}>
+                                    <span className={`font-black tracking-tighter text-[var(--theme-nav-text)] transition-all duration-500 ${isScrolled ? 'text-base sm:text-lg xl:text-xl' : 'text-lg sm:text-xl xl:text-xl 2xl:text-[22px]'}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '2px', whiteSpace: 'nowrap' }}>
                                         <span className="text-[var(--theme-accent)]">&lt; </span>
                                         <span dir="rtl" style={{ unicodeBidi: 'isolate', whiteSpace: 'nowrap' }}>
                                             {firstNameAr}
@@ -337,7 +337,7 @@ const Navbar = ({ splashDone = true }) => {
                                     </span>
                                 ) : (
                                     /* English navbar logo */
-                                    <span className={`font-black tracking-tighter text-[var(--theme-nav-text)] transition-all duration-500 ${isScrolled ? 'text-base sm:text-lg xl:text-xl' : 'text-lg sm:text-xl xl:text-2xl'}`} style={{ whiteSpace: 'normal', wordBreak: 'keep-all' }}>
+                                    <span className={`font-black tracking-tighter text-[var(--theme-nav-text)] transition-all duration-500 ${isScrolled ? 'text-base sm:text-lg xl:text-xl' : 'text-lg sm:text-xl xl:text-xl 2xl:text-[22px]'}`} style={{ whiteSpace: 'normal', wordBreak: 'keep-all' }}>
                                         <span className="text-[var(--theme-accent)]">&lt;</span>{firstName ? firstName.charAt(0) : ''}<span className="hidden md:inline">{firstName ? firstName.slice(1).toUpperCase() : ''}</span><span className="text-[var(--theme-accent)] hidden md:inline">/</span>{lastName ? lastName.charAt(0) : ''}<span className="hidden md:inline" style={{ whiteSpace: 'nowrap' }}>{lastName ? lastName.slice(1).toUpperCase() : ''}</span><span className="text-[var(--theme-accent)]">&gt;</span>
                                     </span>
                                 )}

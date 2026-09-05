@@ -409,7 +409,7 @@ const Navbar = ({ splashDone = true }) => {
             {/* Mobile Menu Overlay */}
             <div
                 ref={menuOverlayRef}
-                className="fixed inset-0 z-[999] bg-[#0a0c10]/98 backdrop-blur-2xl lg:hidden"
+                className="fixed inset-0 z-[999] bg-[var(--theme-bg)]/98 backdrop-blur-2xl lg:hidden"
                 style={{ opacity: 0, transform: 'translateY(-100%)', pointerEvents: 'none' }}
             >
                 <div ref={menuItemsRef} className="mobile-menu-content h-full flex flex-col justify-between p-12 py-32 relative z-10">
@@ -419,7 +419,7 @@ const Navbar = ({ splashDone = true }) => {
                                 <a
                                     href={link.href}
                                     onClick={(e) => handleNavClick(e, link.id)}
-                                    className={`flex items-center gap-3.5 md:gap-5 text-[26px] md:text-3xl font-black uppercase tracking-tighter transition-all duration-500 ${activeSection === link.id ? 'text-[var(--theme-accent)]' : 'text-white'}`}
+                                    className={`flex items-center gap-3.5 md:gap-5 text-[26px] md:text-3xl font-black uppercase tracking-tighter transition-all duration-500 ${activeSection === link.id ? 'text-[var(--theme-accent)]' : 'text-[var(--theme-text)]'}`}
                                 >
                                     <i className={`${link.icon} text-[22px] md:text-2xl opacity-70`}></i>
                                     {link.name}
@@ -432,7 +432,7 @@ const Navbar = ({ splashDone = true }) => {
                         <p className="text-[var(--theme-text-dim)] uppercase text-[10px] font-black tracking-[0.2em] mb-6">{t("Let's Connect")}</p>
                         <div className="flex gap-8">
                             {socialLinks.navbarMobile.map((social, idx) => (
-                                <a key={idx} href={social.link} target="_blank" rel="noopener noreferrer" className="text-[35px] md:text-3xl text-white hover:text-[var(--theme-accent)] transition-all relative z-50">
+                                <a key={idx} href={social.link} target="_blank" rel="noopener noreferrer" className="text-[35px] md:text-3xl text-[var(--theme-text)] hover:text-[var(--theme-accent)] transition-all relative z-50">
                                     <i className={social.icon}></i>
                                 </a>
                             ))}

@@ -25,23 +25,24 @@ const Hero = ({ splashDone = true }) => {
 
     const dataSource = firestoreData;
     
-    const badge = language === 'ar' ? (dataSource?.badgeAr || t(dataSource?.badge || '')) : (dataSource?.badge || '');
-    const firstName = dataSource?.firstName || '';
-    const lastName = dataSource?.lastName || '';
-    const fullNameAr = dataSource?.fullNameAr || '';
-    const description = language === 'ar' ? (dataSource?.descriptionAr || t(dataSource?.description || '')) : (dataSource?.description || '');
+    const badge = language === 'ar' ? (dataSource?.badgeAr || personalInfo.badgeAr || t(dataSource?.badge || personalInfo.badge || '')) : (dataSource?.badge || personalInfo.badge || '');
+    const firstName = dataSource?.firstName || personalInfo.firstName || '';
+    const lastName = dataSource?.lastName || personalInfo.lastName || '';
+    const fullNameAr = dataSource?.fullNameAr || personalInfo.fullNameAr || '';
+    const description = language === 'ar' ? (dataSource?.descriptionAr || personalInfo.descriptionAr || t(dataSource?.description || personalInfo.description || '')) : (dataSource?.description || personalInfo.description || '');
 
-    const { portrait, fullName, cvUrl } = dataSource || {};
+    const portrait = dataSource?.portrait || personalInfo.portrait;
+    const fullName = dataSource?.fullName || personalInfo.fullName;
+    const cvUrl = dataSource?.cvUrl || personalInfo.cvUrl;
 
     const translatedRolesStr = useMemo(() => {
-        if (!dataSource) return JSON.stringify([]);
         if (language === 'ar') {
-            const arRoles = dataSource.rolesAr;
+            const arRoles = dataSource?.rolesAr || personalInfo.rolesAr;
             if (arRoles && Array.isArray(arRoles) && arRoles.length > 0) {
                 return JSON.stringify(arRoles);
             }
         }
-        const rolesRaw = dataSource.roles;
+        const rolesRaw = dataSource?.roles || personalInfo.roles;
         const parsedRoles = Array.isArray(rolesRaw) && rolesRaw.length > 0
             ? rolesRaw 
             : (typeof rolesRaw === 'string' && rolesRaw.trim() !== '' ? rolesRaw.split(',').map(r => r.trim()) : []);
@@ -200,8 +201,8 @@ const Hero = ({ splashDone = true }) => {
                         </div>
                         <h1
                             ref={nameRef}
-                            className="hero-name text-[clamp(2rem,8vw,3.5rem)] font-black mb-3 md:mb-5 leading-[1.05] tracking-tight"
-                            dir="ltr"
+                            className="hero-name text-[clamp(2rem,8vw,3.5rem)] font-black mb-3 md:mb-5 leading-[1.05] tracking-tight text-left rtl:text-right"
+                            dir={language === 'ar' ? 'rtl' : 'ltr'}
                         >
                             {language === 'ar' ? (
                                 <span className="hero-name-ar highlight-surname text-[var(--theme-accent)]" dir="rtl" style={{ unicodeBidi: 'isolate' }}>
@@ -215,8 +216,8 @@ const Hero = ({ splashDone = true }) => {
                         </h1>
                         <h2
                             ref={subtitleRef}
-                            className="hero-subtitle text-[clamp(1.1rem,2.5vw,1.5rem)] font-bold mb-4 md:mb-6 min-h-[40px] text-[var(--theme-accent)]"
-                            dir="ltr"
+                            className="hero-subtitle text-[clamp(1.1rem,2.5vw,1.5rem)] font-bold mb-4 md:mb-6 min-h-[40px] text-[var(--theme-accent)] text-left rtl:text-right"
+                            dir={language === 'ar' ? 'rtl' : 'ltr'}
                         >
                             <span className="inline-block" dir="auto">{typedText}</span>
                             <span className="typing-cursor ml-1 animate-[blink-cursor_0.8s_infinite]">

@@ -110,18 +110,18 @@ html {}
 
 .portfolio-theme-root[data-portfolio-theme="light"] {
   /* Premium Light Theme variables restored from GOOD */
-  --theme-bg: var(--portfolio-background, #F3F0E8);
+  --theme-bg: #F3F0E8;
   --theme-bg-secondary: #E9E5DA;
-  --theme-surface: var(--portfolio-surface, #FAF8F3);
+  --theme-surface: #FAF8F3;
   --theme-surface-elevated: #FFFFFF;
   --theme-surface-soft: rgba(255, 255, 255, 0.58);
   
-  --theme-text: var(--portfolio-text, #172231);
+  --theme-text: #172231;
   --theme-text-secondary: #596779;
-  --theme-text-muted: var(--portfolio-muted, #7A8695);
+  --theme-text-muted: #7A8695;
   --theme-btn-text: #172231;
   
-  --theme-border: var(--portfolio-border, rgba(23, 34, 49, 0.11));
+  --theme-border: rgba(23, 34, 49, 0.11);
   --theme-border-strong: rgba(23, 34, 49, 0.20);
   --theme-border-gold: var(--portfolio-primary, rgba(201, 161, 90, 0.35));
   
@@ -133,7 +133,7 @@ html {}
   --theme-shadow-strong: 0 20px 50px rgba(23, 34, 49, 0.13);
   
   --theme-nav-bg: rgba(250, 248, 243, 0.88);
-  --theme-nav-border: var(--portfolio-primary, rgba(23, 34, 49, 0.12));
+  --theme-nav-border: rgba(23, 34, 49, 0.12);
   --theme-nav-shadow: 0 8px 25px rgba(23, 34, 49, 0.06);
   --theme-nav-text: #172231;
   --theme-nav-text-dim: #596779;

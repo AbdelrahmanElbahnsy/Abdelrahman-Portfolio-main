@@ -49,8 +49,8 @@ const CircularSkill = ({ icon, percent, title, subtitle, isVisible, delay }) => 
         </div>
       </div>
       <div className="skill-info-circular">
-        <h4 className="text-white font-bold text-lg mb-1">{title}</h4>
-        <p className="text-gray-500 text-sm">{subtitle}</p>
+        <h4 className="text-[var(--theme-text)] font-bold text-lg mb-1">{title}</h4>
+        <p className="text-[var(--theme-text-muted)] text-sm">{subtitle}</p>
       </div>
     </div>
   );

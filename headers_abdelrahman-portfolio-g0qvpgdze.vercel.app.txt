@@ -1,0 +1,13 @@
+HTTP/1.1 302 Found
+Cache-Control: no-store, max-age=0
+Content-Type: text/plain
+Date: Sat, 05 Sep 2026 16:33:29 GMT
+Location: https://vercel.com/sso-api?url=https%3A%2F%2Fabdelrahman-portfolio-g0qvpgdze.vercel.app%2F&nonce=2f75c65ce07b35a9930a1702b63f0047fead662a92ef6d5de9bfba3be5aad61d
+Server: Vercel
+Set-Cookie: _vercel_sso_nonce=da62b6f2d23c60b9a48fff71cfd2db0cb77771387a63cb2e; Max-Age=3600; Path=/; Secure; HttpOnly; SameSite=Lax
+Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+X-Frame-Options: DENY
+X-Robots-Tag: noindex
+X-Vercel-Id: fra1::fqh95-1788626009637-a895a043e7ab
+Transfer-Encoding: chunked
+

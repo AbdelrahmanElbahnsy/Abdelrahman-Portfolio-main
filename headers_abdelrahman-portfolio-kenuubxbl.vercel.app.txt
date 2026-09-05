@@ -1,0 +1,13 @@
+HTTP/1.1 302 Found
+Cache-Control: no-store, max-age=0
+Content-Type: text/plain
+Date: Sat, 05 Sep 2026 16:33:12 GMT
+Location: https://vercel.com/sso-api?url=https%3A%2F%2Fabdelrahman-portfolio-kenuubxbl.vercel.app%2F&nonce=b7407ea62d0091b6df364b11b518496fc0e77ca85836107b0e46f5f363b75083
+Server: Vercel
+Set-Cookie: _vercel_sso_nonce=383d57fb6647d7ca50528c3fbd3d78f34d5786cebdbd353c; Max-Age=3600; Path=/; Secure; HttpOnly; SameSite=Lax
+Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+X-Frame-Options: DENY
+X-Robots-Tag: noindex
+X-Vercel-Id: fra1::7tcct-1788625992191-408defc2f14e
+Transfer-Encoding: chunked
+

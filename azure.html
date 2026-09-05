@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Abdelrahman El-bahnsy | Cloud & DevOps Engineer Portfolio</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="/assets/abdelrahman.jpeg">
+    <link rel="shortcut icon" href="/assets/abdelrahman.jpeg" type="image/jpeg">
+    <link rel="apple-touch-icon" href="/assets/abdelrahman.jpeg">
+
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="Abdelrahman El-bahnsy | Cloud & DevOps Engineer">
+    <meta name="description"
+        content="Abdelrahman El-bahnsy - Professional Cloud & DevOps Engineer specializing in AWS, Kubernetes, and Infrastructure as Code (IaC). Transforming complex infrastructure into scalable, automated systems.">
+    <meta name="keywords" content="DevOps, Cloud Engineer, AWS, Kubernetes, Terraform, CI/CD, Abdelrahman El-bahnsy, Infrastructure as Code, Linux Admin">
+    <meta name="author" content="Abdelrahman El-bahnsy">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://abdelrahman-el-bahnsy.com/">
+    <meta property="og:title" content="Abdelrahman El-bahnsy | Cloud & DevOps Engineer">
+    <meta property="og:description" content="Specialist in designing, automating, and scaling high-availability cloud infrastructure using AWS, K8s, and IaC.">
+    <meta property="og:image" content="/assets/abdelrahman.jpeg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://abdelrahman-el-bahnsy.com/">
+    <meta property="twitter:title" content="Abdelrahman Elbahnsy | Cloud & DevOps Engineer">
+    <meta property="twitter:description" content="Specialist in designing, automating, and scaling high-availability cloud infrastructure using AWS, K8s, and IaC.">
+    <meta property="twitter:image" content="/assets/abdelrahman.jpeg">
+
+    <!-- Resource Hints -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+
+    <!-- Google Fonts -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto+Mono:wght@400;500&family=Fira+Code:wght@400;500;600&display=swap" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto+Mono:wght@400;500&family=Fira+Code:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" media="print" onload="this.media='all'">
+
+
+    <!-- Theme Initialization to Prevent FOUC for Public Portfolio ONLY -->
+    <script>
+      (function() {
+        try {
+          // AdminOS paths start with /admin
+          if (window.location.pathname.startsWith('/admin')) {
+            return;
+          }
+
+          var cacheStr = localStorage.getItem('portfolio-appearance-cache');
+          var theme = 'dark';
+          var lang = 'en';
+
+          if (cacheStr) {
+            try {
+              var cache = JSON.parse(cacheStr);
+              if (cache.theme) theme = cache.theme;
+              if (cache.language) lang = cache.language;
+            } catch (e) {}
+          } else {
+            // Fallback for first-time visitors
+            var legacyTheme = localStorage.getItem('portfolio-theme');
+            if (legacyTheme === 'light') theme = 'light';
+            var legacyLang = localStorage.getItem('portfolio-language');
+            if (legacyLang === 'ar') lang = 'ar';
+          }
+          
+          // We apply the FOUC settings to the #root temporarily.
+          // The React app will override this properly on .portfolio-theme-root inside #root.
+          var rootEl = document.getElementById('root');
+          if (rootEl) {
+            if (theme === 'light') {
+              rootEl.setAttribute('data-portfolio-theme', 'light');
+            }
+            if (lang === 'ar') {
+              rootEl.setAttribute('dir', 'rtl');
+            } else {
+              rootEl.setAttribute('dir', 'ltr');
+            }
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <script type="module" crossorigin src="/assets/index-C-BMnwit.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-CNC7AqOf.js">
+    <link rel="modulepreload" crossorigin href="/assets/framer-motion-vendor-Bf6DcvWb.js">
+    <link rel="modulepreload" crossorigin href="/assets/react-vendor-D4J29Whr.js">
+    <link rel="modulepreload" crossorigin href="/assets/firebase-vendor-BqPiSWph.js">
+    <link rel="modulepreload" crossorigin href="/assets/firebase-r8FmpNyg.js">
+    <link rel="modulepreload" crossorigin href="/assets/gsap-vendor-B8mmSW9-.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-hJmXazPz.js">
+    <link rel="modulepreload" crossorigin href="/assets/crudService-CDvJSL9X.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BIsGN7Xb.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

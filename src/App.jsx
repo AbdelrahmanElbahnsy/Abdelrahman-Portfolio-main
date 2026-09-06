@@ -2,6 +2,7 @@ import React, { Suspense, lazy, useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './routes/ProtectedRoute';
 import SplashScreen from './components/ui/SplashScreen';
+import PortfolioGate from './components/ui/PortfolioGate';
 
 /* ─── Lazy Imports ───────────────────────────────────────────────────────── */
 const Home = lazy(() => import('./pages/Home'));
@@ -28,7 +29,11 @@ function App() {
       {/* Mount routes unconditionally so they render behind the splash screen */}
       <Suspense fallback={null}>
         <Routes>
-          <Route path="/" element={<Home splashDone={splashDone} />} />
+          <Route path="/" element={
+            <PortfolioGate>
+              <Home splashDone={splashDone} />
+            </PortfolioGate>
+          } />
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route

@@ -123,7 +123,8 @@ export const settingsSchema = {
   fields: [
     { name: 'siteTitle', label: 'Site Title', type: 'text' },
     { name: 'siteDescription', label: 'Site Description', type: 'textarea' },
-    { name: 'theme', label: 'Default Theme', type: 'select', options: ['dark', 'light'] }
+    { name: 'theme', label: 'Default Theme', type: 'select', options: ['dark', 'light'] },
+    { name: 'portfolioEnabled', label: 'Portfolio Enabled', type: 'boolean', defaultValue: true }
   ]
 };
 

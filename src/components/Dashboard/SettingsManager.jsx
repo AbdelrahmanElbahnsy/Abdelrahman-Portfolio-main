@@ -69,7 +69,7 @@ const ConfirmDeleteDialog = ({ isOpen, onClose, onConfirm, title, message }) => 
 
 export default function SettingsManager() {
   const { data: settingsData, setDocData, subscribe } = useFirestoreSingleDoc('settings', 'general');
-  const [formData, setFormData] = useState({ siteTitle: '', siteDescription: '', theme: 'dark' });
+  const [formData, setFormData] = useState({ siteTitle: '', siteDescription: '', theme: 'dark', portfolioEnabled: true });
   const [isSaving, setIsSaving] = useState(false);
   const [healthStatus, setHealthStatus] = useState(null);
   const [isCheckingHealth, setIsCheckingHealth] = useState(false);
@@ -89,7 +89,8 @@ export default function SettingsManager() {
       setFormData({
         siteTitle: settingsData.siteTitle || '',
         siteDescription: settingsData.siteDescription || '',
-        theme: settingsData.theme || 'dark'
+        theme: settingsData.theme || 'dark',
+        portfolioEnabled: settingsData.portfolioEnabled !== false
       });
     }
   }, [settingsData]);
@@ -145,7 +146,8 @@ export default function SettingsManager() {
   const isDirty = settingsData && (
     settingsData.siteTitle !== formData.siteTitle ||
     settingsData.siteDescription !== formData.siteDescription ||
-    settingsData.theme !== formData.theme
+    settingsData.theme !== formData.theme ||
+    (settingsData.portfolioEnabled !== false) !== formData.portfolioEnabled
   );
 
   return (
@@ -198,6 +200,45 @@ export default function SettingsManager() {
                   )}
                   Save Changes
                 </button>
+              </div>
+            </div>
+          </PageSection>
+
+          {/* PORTFOLIO AVAILABILITY */}
+          <PageSection title="Portfolio Availability" subtitle="Public visibility control">
+            <div className="bg-[#0a0f1c] border border-[#1e293b] rounded-2xl p-6">
+              <div className="flex items-center justify-between">
+                <div className="pr-4">
+                  <h3 className="text-white font-bold text-lg mb-1">Portfolio Status</h3>
+                  <p className="text-sm text-gray-400">
+                    {formData.portfolioEnabled 
+                      ? "The public portfolio is currently online and accessible."
+                      : "The public portfolio is offline. Visitors see a maintenance screen."}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setFormData({ ...formData, portfolioEnabled: !formData.portfolioEnabled })}
+                  className={`relative inline-flex h-7 w-14 flex-shrink-0 items-center rounded-full transition-colors ${
+                    formData.portfolioEnabled ? 'bg-[#14f195]' : 'bg-gray-600'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
+                      formData.portfolioEnabled ? 'translate-x-8' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+              <div className="mt-4 pt-4 border-t border-[#1e293b]">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#111] border border-[#222]">
+                  <div className={`w-2 h-2 rounded-full ${formData.portfolioEnabled ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
+                  <span className={`text-xs font-bold uppercase tracking-wider ${formData.portfolioEnabled ? 'text-emerald-500' : 'text-red-500'}`}>
+                    {formData.portfolioEnabled ? 'Portfolio Online' : 'Portfolio Offline'}
+                  </span>
+                </div>
+                <p className="text-xs text-gray-500 mt-3">
+                  Note: Make sure to save changes for the status to update globally.
+                </p>
               </div>
             </div>
           </PageSection>

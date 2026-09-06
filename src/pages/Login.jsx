@@ -80,6 +80,9 @@ const Login = () => {
           >
             <ShieldCheck className="text-[#14f195] w-8 h-8" strokeWidth={1.5} />
           </motion.div>
+          <div className="mb-1">
+            <span className="text-[#14f195] text-[10px] font-bold tracking-[0.2em] uppercase">ABDELRAHMAN EL-BAHNSY</span>
+          </div>
           <h2 className="text-3xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">Admin CMS</h2>
           <p className="text-gray-500 mt-2 text-sm font-medium tracking-wide uppercase">Secure Portal Access</p>
         </div>

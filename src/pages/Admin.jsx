@@ -19,6 +19,7 @@ const JourneyManager = lazy(() => import('../components/Dashboard/JourneyManager
 const CertificationsManager = lazy(() => import('../components/Dashboard/CertificationsManager'));
 const SocialsManager = lazy(() => import('../components/Dashboard/SocialsManager'));
 const NavbarManager = lazy(() => import('../components/Dashboard/NavbarManager'));
+const SettingsManager = lazy(() => import('../components/Dashboard/SettingsManager'));
 
 const SectionSkeleton = () => (
   <div className="w-full space-y-6 animate-pulse">
@@ -76,7 +77,7 @@ const Admin = () => {
           <Route path="appearance" element={<FeatureUnavailable featureName="Appearance" />} />
           <Route path="activity" element={<FeatureUnavailable featureName="Activity Log" />} />
           <Route path="apikeys" element={<FeatureUnavailable featureName="API Keys" />} />
-          <Route path="settings" element={<FeatureUnavailable featureName="Settings" />} />
+          <Route path="settings" element={<SettingsManager />} />
           <Route path="shortcuts" element={<FeatureUnavailable featureName="Keyboard Shortcuts" />} />
           <Route path="media" element={<FeatureUnavailable featureName="Media Library" />} />
           

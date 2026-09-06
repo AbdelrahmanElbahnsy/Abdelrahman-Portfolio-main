@@ -20,8 +20,8 @@ import { chromium } from 'playwright';
     }
   });
 
-  console.log('Navigating to https://abdelrahman-portfolio-azure.vercel.app ...');
-  await page.goto('https://abdelrahman-portfolio-azure.vercel.app', { waitUntil: 'networkidle' });
+  console.log('Navigating to https://abdelrahman-el-bahnsy.vercel.app ...');
+  await page.goto('https://abdelrahman-el-bahnsy.vercel.app', { waitUntil: 'networkidle' });
   
   console.log('Done waiting. Checking content...');
   const bodyHTML = await page.innerHTML('body');

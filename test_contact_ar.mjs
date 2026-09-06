@@ -7,7 +7,7 @@ import { chromium } from 'playwright';
   page.on('console', msg => console.log('BROWSER LOG:', msg.text()));
   page.on('pageerror', err => console.log('PAGE ERROR:', err.message));
 
-  await page.goto('https://abdelrahman-portfolio-azure.vercel.app/#contact', { waitUntil: 'load', timeout: 60000 });
+  await page.goto('https://abdelrahman-el-bahnsy.vercel.app/#contact', { waitUntil: 'load', timeout: 60000 });
   await page.waitForTimeout(2000);
 
   const langBtn = await page.$('button:has(.fa-globe)');

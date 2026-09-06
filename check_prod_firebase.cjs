@@ -1,13 +1,13 @@
 const https = require('https');
 
-https.get('https://abdelrahman-portfolio-azure.vercel.app/', (res) => {
+https.get('https://abdelrahman-el-bahnsy.vercel.app/', (res) => {
   let data = '';
   res.on('data', chunk => data += chunk);
   res.on('end', () => {
     // Find the main js bundle
     const matches = data.match(/src="(\/assets\/index-.*?\.js)"/);
     if(matches && matches[1]) {
-      const bundleUrl = 'https://abdelrahman-portfolio-azure.vercel.app' + matches[1];
+      const bundleUrl = 'https://abdelrahman-el-bahnsy.vercel.app' + matches[1];
       console.log('Bundle URL:', bundleUrl);
       https.get(bundleUrl, (res2) => {
         let bundleData = '';
@@ -24,7 +24,7 @@ https.get('https://abdelrahman-portfolio-azure.vercel.app/', (res) => {
           console.log('Firebase chunks found in HTML:', fbMatches);
           if (fbMatches) {
             fbMatches.forEach(m => {
-                const chunkUrl = 'https://abdelrahman-portfolio-azure.vercel.app' + m.match(/src="([^"]+)"/)[1];
+                const chunkUrl = 'https://abdelrahman-el-bahnsy.vercel.app' + m.match(/src="([^"]+)"/)[1];
                 console.log('Fetching', chunkUrl);
                 https.get(chunkUrl, (res3) => {
                     let chunkData = '';

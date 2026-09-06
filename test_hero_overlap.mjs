@@ -4,7 +4,7 @@ import { chromium } from 'playwright';
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1536, height: 738 } });
   
-  await page.goto('https://abdelrahman-portfolio-azure.vercel.app/#home', { waitUntil: 'load', timeout: 60000 });
+  await page.goto('https://abdelrahman-el-bahnsy.vercel.app/#home', { waitUntil: 'load', timeout: 60000 });
   await page.waitForTimeout(3000); // Wait for GSAP and initial load
 
   // Measure at scrollY = 0

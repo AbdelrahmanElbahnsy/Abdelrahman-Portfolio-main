@@ -3,7 +3,7 @@ import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
 import MaintenanceScreen from './MaintenanceScreen';
 
 export default function PortfolioGate({ children }) {
-  const { data, loading, subscribe } = useFirestoreSingleDoc('settings', 'general');
+  const { data, loading, error, subscribe } = useFirestoreSingleDoc('settings', 'general');
   const [timedOut, setTimedOut] = useState(false);
   const timerRef = useRef(null);
 
@@ -20,14 +20,19 @@ export default function PortfolioGate({ children }) {
     return () => clearTimeout(timerRef.current);
   }, []);
 
-  // If loading and we haven't timed out yet, wait.
+  // If loading and we haven't timed out yet and there's no error, wait.
   // Rendering null keeps the outer App.jsx SplashScreen visible.
-  if (loading && !data && !timedOut) {
+  if (loading && !data && !timedOut && !error) {
     return null;
   }
 
+  // If there is an explicit error or we timed out without loading, fail closed.
+  if (error || (!data && timedOut)) {
+    return <MaintenanceScreen />;
+  }
+
   // Determine enabled state.
-  // If undefined, it defaults to true. If we timed out (fail-open), it renders.
+  // If undefined, it defaults to true.
   const isEnabled = data?.portfolioEnabled !== false;
 
   if (!isEnabled) {

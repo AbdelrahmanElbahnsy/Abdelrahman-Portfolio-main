@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
+import { useAppearance } from '../../context/AppearanceContext';
 import { checkSystemHealth } from '../../utils/systemHealth';
 import toast, { Toaster } from 'react-hot-toast';
 import {
@@ -69,6 +70,7 @@ const ConfirmDeleteDialog = ({ isOpen, onClose, onConfirm, title, message }) => 
 
 export default function SettingsManager() {
   const { data: settingsData, setDocData, subscribe } = useFirestoreSingleDoc('settings', 'general');
+  const { activeSettings, setActiveSettings } = useAppearance();
   const [formData, setFormData] = useState({ siteTitle: '', siteDescription: '', theme: 'dark', portfolioEnabled: true });
   const [isSaving, setIsSaving] = useState(false);
   const [healthStatus, setHealthStatus] = useState(null);
@@ -251,7 +253,10 @@ export default function SettingsManager() {
               </label>
               <div className="grid grid-cols-2 gap-4">
                 <button
-                  onClick={() => setFormData({ ...formData, theme: 'dark' })}
+                  onClick={() => {
+                    setFormData({ ...formData, theme: 'dark' });
+                    if (activeSettings) setActiveSettings({ ...activeSettings, theme: 'dark' });
+                  }}
                   className={`flex flex-col items-center justify-center gap-3 p-4 rounded-xl border transition-all ${
                     formData.theme === 'dark'
                       ? 'bg-[#14f195]/10 border-[#14f195] text-[#14f195]'
@@ -262,7 +267,10 @@ export default function SettingsManager() {
                   <span className="text-sm font-bold">Dark Mode</span>
                 </button>
                 <button
-                  onClick={() => setFormData({ ...formData, theme: 'light' })}
+                  onClick={() => {
+                    setFormData({ ...formData, theme: 'light' });
+                    if (activeSettings) setActiveSettings({ ...activeSettings, theme: 'light' });
+                  }}
                   className={`flex flex-col items-center justify-center gap-3 p-4 rounded-xl border transition-all ${
                     formData.theme === 'light'
                       ? 'bg-[#14f195]/10 border-[#14f195] text-[#14f195]'

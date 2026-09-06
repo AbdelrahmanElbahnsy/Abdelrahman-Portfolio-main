@@ -4,7 +4,8 @@ import { useFirestoreSingleDoc } from '../cms/hooks/useFirestoreSingleDoc';
 const AppearanceContext = createContext();
 
 export const AppearanceProvider = ({ children }) => {
-  const { data: appearanceSettings, subscribe } = useFirestoreSingleDoc('settings', 'appearance');
+  const { data: appearanceSettings, subscribe: subscribeAppearance } = useFirestoreSingleDoc('settings', 'appearance');
+  const { data: generalSettings, subscribe: subscribeGeneral } = useFirestoreSingleDoc('settings', 'general');
   
   const [activeSettings, setActiveSettings] = useState(() => {
     // Try to bootstrap from localStorage for FOUC prevention
@@ -18,27 +19,34 @@ export const AppearanceProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    const unsubscribe = subscribe();
+    const unsubscribeAppearance = subscribeAppearance();
+    const unsubscribeGeneral = subscribeGeneral();
     return () => {
-      if (unsubscribe) unsubscribe();
+      if (unsubscribeAppearance) unsubscribeAppearance();
+      if (unsubscribeGeneral) unsubscribeGeneral();
     };
-  }, [subscribe]);
+  }, [subscribeAppearance, subscribeGeneral]);
 
   useEffect(() => {
-    if (appearanceSettings) {
-      setActiveSettings(appearanceSettings);
+    if (appearanceSettings || generalSettings) {
+      const mergedSettings = { ...appearanceSettings };
+      
+      // Override theme with general settings if it exists
+      if (generalSettings && generalSettings.theme) {
+        mergedSettings.theme = generalSettings.theme;
+      }
+
+      setActiveSettings(mergedSettings);
       
       try {
-        localStorage.setItem('portfolio-appearance-cache', JSON.stringify(appearanceSettings));
+        localStorage.setItem('portfolio-appearance-cache', JSON.stringify(mergedSettings));
       } catch(e) {}
       
-      // We still update language cache for LanguageContext if it needs it independently, 
-      // though LanguageContext should ideally also consume from AppearanceContext directly.
-      if (appearanceSettings.language) {
-        localStorage.setItem('portfolio-language', appearanceSettings.language);
+      if (mergedSettings.language) {
+        localStorage.setItem('portfolio-language', mergedSettings.language);
       }
     }
-  }, [appearanceSettings]);
+  }, [appearanceSettings, generalSettings]);
 
   return (
     <AppearanceContext.Provider value={{ activeSettings, setActiveSettings }}>

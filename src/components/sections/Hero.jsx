@@ -32,7 +32,10 @@ const Hero = ({ splashDone = true }) => {
     const description = language === 'ar' ? (dataSource?.descriptionAr || personalInfo.descriptionAr || t(dataSource?.description || personalInfo.description || '')) : (dataSource?.description || personalInfo.description || '');
 
     const portrait = dataSource?.portrait || personalInfo.portrait;
-    const fullName = dataSource?.fullName || personalInfo.fullName;
+    const fullName = dataSource?.fullName
+        || (dataSource?.firstName && dataSource?.lastName
+            ? `${dataSource.firstName} ${dataSource.lastName}`.trim()
+            : personalInfo.fullName);
     const cvUrl = dataSource?.cvUrl || personalInfo.cvUrl;
 
     const translatedRolesStr = useMemo(() => {
@@ -210,7 +213,7 @@ const Hero = ({ splashDone = true }) => {
                                 </span>
                             ) : (
                                 <span className="hero-name-en highlight-surname text-[var(--theme-accent)]" dir="ltr">
-                                    {(fullName || `${firstName} ${lastName}`)}
+                                    {fullName}
                                 </span>
                             )}
                         </h1>

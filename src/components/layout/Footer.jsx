@@ -154,7 +154,7 @@ const Footer = () => {
                 </div>
 
                 <div className="footer-bottom mt-16 pt-8 border-t border-[var(--theme-border-strong)] text-center text-[var(--theme-text-muted)] text-xs font-mono">
-                    <p>{t('Designed & Built by')} {personalInfo.fullName} &copy; {copyrightYear}</p>
+                    <p>{t('Designed & Built by')} {firstName} {lastName} &copy; {copyrightYear}</p>
                 </div>
             </div>
         </footer>

@@ -65,7 +65,6 @@ const AppearanceManager = ({ currentUserRole }) => {
     try {
       // Strictly sanitize payload to ensure no unsupported/undefined fields are passed to Firestore
       const sanitizedPayload = {
-        theme: draftSettings.theme || 'dark',
         language: draftSettings.language || 'en',
         primaryColor: draftSettings.primaryColor || '#c8a26e',
         backgroundColor: draftSettings.backgroundColor || '#0A1121',
@@ -141,22 +140,7 @@ const AppearanceManager = ({ currentUserRole }) => {
               <Globe className="w-5 h-5 text-[#14f195]" /> General Configuration
             </h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-[11px] font-mono font-bold text-gray-400 mb-3 uppercase tracking-widest">Base Theme</label>
-                <div className="flex bg-[#030814]/50 border border-[#1e293b] rounded-lg p-1">
-                  {['dark', 'light'].map(t => (
-                    <button
-                      key={t}
-                      onClick={() => handleChange('theme', t)}
-                      className={`flex-1 py-2 text-sm font-bold capitalize rounded-md transition-colors ${draftSettings.theme === t ? 'bg-[#1e293b] text-white shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}
-                    >
-                      {t}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
+            <div className="grid grid-cols-1 gap-6">
               <div>
                 <label className="block text-[11px] font-mono font-bold text-gray-400 mb-3 uppercase tracking-widest">Global Language</label>
                 <div className="flex bg-[#030814]/50 border border-[#1e293b] rounded-lg p-1">
@@ -256,7 +240,7 @@ const AppearanceManager = ({ currentUserRole }) => {
             {/* The actual preview window - isolates CSS variables and dir */}
             <div 
               className={`portfolio-theme-root w-full h-[450px] overflow-hidden relative`}
-              data-portfolio-theme={draftSettings.theme || 'dark'}
+              data-portfolio-theme={activeSettings?.theme || 'dark'}
               dir={isRtl ? 'rtl' : 'ltr'}
               style={{
                 '--portfolio-primary': draftSettings.primaryColor,

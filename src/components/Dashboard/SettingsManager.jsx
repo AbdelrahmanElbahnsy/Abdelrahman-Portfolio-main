@@ -169,7 +169,31 @@ export default function SettingsManager() {
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
         <div className="space-y-8">
-          {/* GENERAL PREFERENCES */}
+          {/* GLOBAL HEADER */}
+        <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-bold text-white mb-2 tracking-tight">System Settings</h2>
+            <p className="text-gray-400 text-sm max-w-2xl">
+              Manage your global application preferences, public portfolio availability, and base appearance.
+            </p>
+          </div>
+          <div className="flex items-center gap-3 shrink-0">
+            <button
+              onClick={handleSave}
+              disabled={!isDirty || isSaving}
+              className="px-6 py-2 bg-[#14f195] hover:bg-[#14f195]/90 text-[#0a0f1c] text-sm font-bold rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50"
+            >
+              {isSaving ? (
+                <div className="w-4 h-4 rounded-full border-2 border-[#0a0f1c] border-t-transparent animate-spin" />
+              ) : (
+                <div className="w-4 h-4" /> // placeholder for alignment or an icon
+              )}
+              {isSaving ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
+        </div>
+
+        {/* GENERAL PREFERENCES */}
           <PageSection title="General Preferences" subtitle="Global site identity">
             <div className="bg-[#0a0f1c] border border-[#1e293b] rounded-2xl overflow-hidden p-6 space-y-6">
               <InputField
@@ -189,20 +213,6 @@ export default function SettingsManager() {
                 placeholder="Brief description of the portfolio..."
                 helper="Used for SEO and social sharing descriptions."
               />
-              <div className="flex justify-end pt-2 border-t border-[#1e293b]">
-                <button
-                  onClick={handleSave}
-                  disabled={!isDirty || isSaving}
-                  className="px-6 py-2.5 bg-[#14f195] hover:bg-[#14f195]/90 text-[#0a0f1c] text-sm font-bold rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2 shadow-lg shadow-[#14f195]/10"
-                >
-                  {isSaving ? (
-                    <RefreshCw className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Save className="w-4 h-4" />
-                  )}
-                  Save Changes
-                </button>
-              </div>
             </div>
           </PageSection>
 

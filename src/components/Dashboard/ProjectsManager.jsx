@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
-import { useImageUpload } from '../../cms/hooks/useImageUpload';
+import MediaPicker from '../../cms/components/MediaPicker';
 import { normalizeProjectTechnologies, parseTechnologiesInput } from '../../utils/projectTechnologies';
 import {
   Search, Grid, List as ListIcon, Plus, ExternalLink, GitBranch,
@@ -142,23 +142,19 @@ const EditorDrawer = ({ isOpen, item, projectIndex, projectCount, onClose, onSav
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [techInput,   setTechInput]   = useState('');
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [imageFile,   setImageFile]   = useState(null);
+  const [imageUrl,    setImageUrl]    = useState(initialData.image || '');
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [isSaving,    setIsSaving]    = useState(false);
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [isSuccess,   setIsSuccess]   = useState(false);
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { uploadImage, uploadProgress, resetUploadState } = useImageUpload();
 
-  const existingImage   = initialData.image || '';
-  const previewImageSrc = imageFile ? URL.createObjectURL(imageFile) : existingImage;
   const projectNumber   = String(isEditing ? projectIndex + 1 : projectCount + 1).padStart(2, '0');
 
   // ── Dirty detection ──────────────────────────────────────────────────────
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const isDirty = useMemo(() => {
     if (!isEditing) {
-      return !!(title || description || github || live || techTags.length > 0 || imageFile || status !== 'draft');
+      return !!(title || description || github || live || techTags.length > 0 || imageUrl || status !== 'draft');
     }
     return (
       title !== (initialData.title || '') ||
@@ -167,10 +163,10 @@ const EditorDrawer = ({ isOpen, item, projectIndex, projectCount, onClose, onSav
       live   !== initialLive   ||
       status !== initialData.derivedStatus ||
       JSON.stringify(techTags) !== JSON.stringify(getProjectTags(initialData)) ||
-      imageFile !== null
+      imageUrl !== (initialData.image || '')
     );
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [title, description, github, live, status, techTags, imageFile]);
+  }, [title, description, github, live, status, techTags, imageUrl]);
 
   // ── Handlers ─────────────────────────────────────────────────────────────
   const handleAddTech = () => {
@@ -184,9 +180,6 @@ const EditorDrawer = ({ isOpen, item, projectIndex, projectCount, onClose, onSav
     if (!title.trim()) { toast.error('Project title is required.'); return; }
     setIsSaving(true);
     try {
-      let imageUrl = existingImage;
-      if (imageFile) imageUrl = await uploadImage(imageFile);
-
       const payload = {
         title: title.trim(),
         description: description.trim(),
@@ -200,7 +193,7 @@ const EditorDrawer = ({ isOpen, item, projectIndex, projectCount, onClose, onSav
       await onSave(isEditing ? initialData.id : null, payload);
       setIsSuccess(true);
       toast.success(isEditing ? 'Project updated.' : 'Project created.');
-      setTimeout(() => { onClose(); resetUploadState(); }, 900);
+      setTimeout(() => { onClose(); }, 900);
     } catch {
       toast.error('Failed to save project.');
       setIsSaving(false);
@@ -287,64 +280,11 @@ const EditorDrawer = ({ isOpen, item, projectIndex, projectCount, onClose, onSav
             {/* ── 02 MEDIA ── */}
             <section>
               <DSL n="02" label="MEDIA" />
-              <div
-                className="relative overflow-hidden rounded-lg cursor-pointer group transition-all bg-[#090e17] border border-dashed border-[#1e2d42] hover:border-[#14f195] hover:shadow-[0_0_15px_rgba(20,241,149,0.05)]"
-                style={{ height: '160px' }}
-              >
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={e => { if(e.target.files[0]) setImageFile(e.target.files[0]); }}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                />
-
-                {previewImageSrc ? (
-                  <div className="absolute inset-0">
-                    <img
-                      src={previewImageSrc}
-                      alt="Preview"
-                      className="w-full h-full object-cover transition-opacity duration-300"
-                    />
-                    <div className="absolute inset-0 bg-[#050914]/70 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-3">
-                      <span className="flex items-center gap-2 text-[11px] font-mono font-bold uppercase tracking-widest px-3 py-1.5 rounded bg-[#14f195]/10 text-[#14f195] border border-[#14f195]/30">
-                        <UploadCloud className="w-4 h-4" /> Change Image
-                      </span>
-                      {imageFile && (
-                        <button 
-                          className="text-[10px] font-mono text-red-400 hover:text-red-300 uppercase tracking-widest z-20 relative px-3 py-1.5"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setImageFile(null);
-                          }}
-                        >
-                          Remove
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none gap-2">
-                    <UploadCloud className="w-5 h-5 text-[#4b6385] group-hover:text-[#14f195] transition-colors mb-1" />
-                    <div className="text-[11px] font-semibold text-[#8b9bb4] uppercase tracking-wider group-hover:text-white transition-colors">
-                      PROJECT THUMBNAIL
-                    </div>
-                    <div className="text-[12px] text-[#4b6385]">
-                      Drop image or click to upload
-                    </div>
-                    <div className="font-mono text-[9px] uppercase tracking-widest text-[#4b6385] mt-1">
-                      PNG / JPG · MAX 2MB
-                    </div>
-                  </div>
-                )}
-
-                {uploadProgress > 0 && (
-                  <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#050914]/90 backdrop-blur-sm">
-                    <span className="font-mono font-black text-2xl text-[#14f195]">{uploadProgress}%</span>
-                    <span className="font-mono text-[10px] uppercase tracking-widest mt-1 text-[#8b9bb4]">Uploading</span>
-                  </div>
-                )}
-              </div>
+              <MediaPicker 
+                value={imageUrl} 
+                onChange={setImageUrl} 
+                disabled={isSaving} 
+              />
             </section>
 
             {/* ── 03 STACK ── */}
@@ -463,8 +403,8 @@ const EditorDrawer = ({ isOpen, item, projectIndex, projectCount, onClose, onSav
               <DSL n="06" label="LIVE PREVIEW" />
               <div className="flex gap-4 rounded-lg p-3 bg-[#090e17] border border-[#1e2d42]">
                 <div className="shrink-0 w-24 h-16 sm:w-32 sm:h-20 rounded-md overflow-hidden bg-[#050914] border border-[#1e2d42]">
-                  {previewImageSrc ? (
-                    <img src={previewImageSrc} alt="" className="w-full h-full object-cover" />
+                  {imageUrl ? (
+                    <img src={imageUrl} alt="" className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-[#1e2d42]">
                       <FolderOpen className="w-5 h-5" />

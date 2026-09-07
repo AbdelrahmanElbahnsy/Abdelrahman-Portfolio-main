@@ -128,6 +128,22 @@ export const settingsSchema = {
   ]
 };
 
+export const mediaSchema = {
+  collectionName: 'media',
+  title: 'Media Library',
+  isSingleDoc: false,
+  fields: [
+    { name: 'url', label: 'URL', type: 'url', required: true },
+    { name: 'publicId', label: 'Public ID', type: 'text' },
+    { name: 'format', label: 'Format', type: 'text' },
+    { name: 'bytes', label: 'Size (Bytes)', type: 'number' },
+    { name: 'width', label: 'Width', type: 'number' },
+    { name: 'height', label: 'Height', type: 'number' },
+    { name: 'originalFilename', label: 'Original Filename', type: 'text' },
+    { name: 'resourceType', label: 'Resource Type', type: 'text' }
+  ]
+};
+
 export const schemas = {
   hero: heroSchema,
   about: aboutSchema,
@@ -138,4 +154,5 @@ export const schemas = {
   contact: contactSchema,
   socialLinks: socialLinksSchema,
   settings: settingsSchema,
+  media: mediaSchema,
 };

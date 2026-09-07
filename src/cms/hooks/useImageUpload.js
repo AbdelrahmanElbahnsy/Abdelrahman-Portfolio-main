@@ -1,4 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { useAuth } from '../../hooks/useAuth';
+import { crudService } from '../services/crudService';
 
 /**
  * Generic hook for uploading images to Cloudinary with progress tracking
@@ -7,6 +9,8 @@ export const useImageUpload = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState(null);
+  
+  const { user } = useAuth();
   
   const xhrRef = useRef(null);
   const isMounted = useRef(true);
@@ -57,12 +61,32 @@ export const useImageUpload = () => {
         }
       };
 
-      xhr.onload = () => {
+      xhr.onload = async () => {
         if (!isMounted.current) return;
         setIsUploading(false);
         if (xhr.status === 200) {
           const data = JSON.parse(xhr.responseText);
           if (data.secure_url) {
+            // Write to Firestore Media Ledger
+            try {
+              const payload = {
+                url: data.secure_url,
+                publicId: data.public_id || '',
+                format: data.format || '',
+                bytes: data.bytes || 0,
+                width: data.width || 0,
+                height: data.height || 0,
+                originalFilename: data.original_filename || '',
+                resourceType: data.resource_type || 'image',
+                uploadedBy: user?.uid || 'unknown'
+              };
+              await crudService.create('media', payload);
+            } catch (err) {
+              console.error("Firestore Media Ledger Write Failed:", err);
+              // We intentionally DO NOT fail the overall upload flow if ledger write fails,
+              // to ensure existing CMS functionality remains unbroken.
+            }
+            
             resolve(data.secure_url);
           } else {
             const err = new Error("Upload failed: missing secure_url");

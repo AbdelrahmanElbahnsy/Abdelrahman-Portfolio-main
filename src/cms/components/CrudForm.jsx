@@ -39,10 +39,10 @@ const CrudForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-[#131b2c] rounded-xl border border-[#1e293b] p-6 shadow-xl relative overflow-hidden">
+    <form onSubmit={handleSubmit} className="bg-cms-cards rounded-xl border border-cms-border p-6 shadow-xl relative overflow-hidden">
       {isSubmitting && (
-        <div className="absolute inset-0 z-30 flex items-center justify-center bg-[#0a0f1c]/50 backdrop-blur-sm">
-          <Loader2 className="h-10 w-10 animate-spin text-[#14f195]" />
+        <div className="absolute inset-0 z-30 flex items-center justify-center bg-cms-background/50 backdrop-blur-sm">
+          <Loader2 className="h-10 w-10 animate-spin text-cms-primary" />
         </div>
       )}
 
@@ -54,25 +54,27 @@ const CrudForm = ({
 
           return (
             <div key={field.name} className={field.type === 'textarea' ? 'md:col-span-2' : ''}>
-              <label className="mb-1 block text-sm text-gray-400">
+              <label htmlFor={field.name} className="mb-1 block text-sm text-gray-400">
                 {field.label} {field.required && <span className="text-red-500">*</span>}
               </label>
 
               {field.type === 'textarea' ? (
                 <textarea
+                  id={field.name}
                   name={field.name}
                   value={formData[field.name] || ''}
                   onChange={(e) => handleChange(field.name, e.target.value)}
-                  className="w-full rounded-lg border border-[#1e293b] bg-[#0a0f1c] p-2.5 text-white focus:border-[#14f195] focus:outline-none transition-colors"
+                  className="w-full rounded-lg border border-cms-border bg-cms-background p-2.5 text-white focus:border-cms-primary focus:outline-none transition-colors"
                   rows="4"
                   disabled={isSubmitting || field.readonly}
                 />
               ) : field.type === 'select' ? (
                 <select
+                  id={field.name}
                   name={field.name}
                   value={formData[field.name] || ''}
                   onChange={(e) => handleChange(field.name, e.target.value)}
-                  className="w-full rounded-lg border border-[#1e293b] bg-[#0a0f1c] p-2.5 text-white focus:border-[#14f195] focus:outline-none transition-colors"
+                  className="w-full rounded-lg border border-cms-border bg-cms-background p-2.5 text-white focus:border-cms-primary focus:outline-none transition-colors"
                   disabled={isSubmitting || field.readonly}
                 >
                   <option value="">Select an option</option>
@@ -84,25 +86,27 @@ const CrudForm = ({
                 <label className="flex items-center gap-2 mt-2 cursor-pointer">
                   <input
                     type="checkbox"
+                    id={field.name}
                     name={field.name}
                     checked={!!formData[field.name]}
                     onChange={(e) => handleChange(field.name, e.target.checked)}
-                    className="w-4 h-4 rounded border-[#1e293b] bg-[#0a0f1c] text-[#14f195] focus:ring-[#14f195]"
+                    className="w-4 h-4 rounded border-cms-border bg-cms-background text-cms-primary focus:ring-cms-primary"
                     disabled={isSubmitting || field.readonly}
                   />
                   <span className="text-white text-sm">Enabled</span>
                 </label>
               ) : field.type === 'image' || field.type === 'array' ? (
-                <div className="text-xs text-gray-500 p-3 rounded bg-[#0a0f1c] border border-[#1e293b]">
+                <div className="text-xs text-gray-500 p-3 rounded bg-cms-background border border-cms-border">
                   {field.type} input is custom implemented for this schema.
                 </div>
               ) : (
                 <input
+                  id={field.name}
                   type={field.type === 'number' ? 'number' : field.type === 'email' ? 'email' : field.type === 'url' ? 'url' : field.type === 'date' ? 'date' : 'text'}
                   name={field.name}
                   value={formData[field.name] || ''}
                   onChange={(e) => handleChange(field.name, e.target.value)}
-                  className="w-full rounded-lg border border-[#1e293b] bg-[#0a0f1c] p-2.5 text-white focus:border-[#14f195] focus:outline-none transition-colors"
+                  className="w-full rounded-lg border border-cms-border bg-cms-background p-2.5 text-white focus:border-cms-primary focus:outline-none transition-colors"
                   disabled={isSubmitting || field.readonly}
                 />
               )}
@@ -115,13 +119,13 @@ const CrudForm = ({
         })}
       </div>
 
-      <div className="mt-8 flex justify-end gap-3 border-t border-[#1e293b] pt-6">
+      <div className="mt-8 flex justify-end gap-3 border-t border-cms-border pt-6">
         {onCancel && (
           <button
             type="button"
             onClick={onCancel}
             disabled={isSubmitting}
-            className="flex items-center gap-2 rounded-lg border border-[#1e293b] px-5 py-2.5 font-semibold text-white hover:bg-[#1e293b] transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 rounded-lg border border-cms-border px-5 py-2.5 font-semibold text-white hover:bg-white/5 transition-colors disabled:opacity-50"
           >
             <X className="h-4 w-4" /> Cancel
           </button>
@@ -129,7 +133,7 @@ const CrudForm = ({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex items-center gap-2 rounded-lg bg-[#14f195] px-6 py-2.5 font-bold text-[#0a0f1c] hover:bg-[#10d482] transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 rounded-lg bg-cms-primary px-6 py-2.5 font-bold text-cms-background hover:bg-cms-primary/80 transition-colors disabled:opacity-50"
         >
           {isSubmitting ? (
             <><Loader2 className="h-4 w-4 animate-spin" /> Saving...</>

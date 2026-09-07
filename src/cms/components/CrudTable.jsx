@@ -20,9 +20,9 @@ const CrudTable = ({
   ).slice(0, 3) || [];
 
   return (
-    <div className="overflow-x-auto bg-[#131b2c] rounded-xl border border-[#1e293b] shadow-xl">
+    <div className="overflow-x-auto bg-cms-cards rounded-xl border border-cms-border shadow-xl">
       <table className="w-full text-left text-sm text-gray-300">
-        <thead className="bg-[#0a0f1c] text-xs uppercase text-gray-500 border-b border-[#1e293b]">
+        <thead className="bg-cms-background text-xs uppercase text-gray-500 border-b border-cms-border">
           <tr>
             {displayFields.map((field) => (
               <th key={field.name} className="px-6 py-4 font-medium tracking-wider">
@@ -32,9 +32,9 @@ const CrudTable = ({
             <th className="px-6 py-4 font-medium tracking-wider text-right">Actions</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-[#1e293b]">
+        <tbody className="divide-y divide-cms-border">
           {data.map((item) => (
-            <tr key={item.id} className="hover:bg-[#1e293b]/50 transition-colors group">
+            <tr key={item.id} className="hover:bg-white/5 transition-colors group">
               {displayFields.map((field) => (
                 <td key={field.name} className="px-6 py-4 whitespace-nowrap">
                   {field.type === 'url' && item[field.name] ? (
@@ -42,12 +42,12 @@ const CrudTable = ({
                       href={item[field.name]} 
                       target="_blank" 
                       rel="noreferrer"
-                      className="text-cyan-400 hover:text-cyan-300 flex items-center gap-1"
+                      className="text-cms-primary hover:text-cms-primary/80 flex items-center gap-1"
                     >
                       Link <ExternalLink className="w-3 h-3" />
                     </a>
                   ) : field.type === 'boolean' ? (
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${item[field.name] ? 'bg-green-500/10 text-green-400' : 'bg-gray-500/10 text-gray-400'}`}>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${item[field.name] ? 'bg-cms-success/10 text-cms-success' : 'bg-gray-500/10 text-gray-400'}`}>
                       {item[field.name] ? 'Yes' : 'No'}
                     </span>
                   ) : (
@@ -60,7 +60,8 @@ const CrudTable = ({
                   {onEdit && (
                     <button
                       onClick={() => onEdit(item)}
-                      className="p-2 text-cyan-300 hover:bg-cyan-500/10 hover:text-cyan-200 rounded-lg transition-colors border border-transparent hover:border-cyan-400/20"
+                      aria-label="Edit item"
+                      className="p-2 text-cms-primary hover:bg-cms-primary/10 hover:text-cms-primary/80 rounded-lg transition-colors border border-transparent hover:border-cms-primary/20"
                       title="Edit"
                     >
                       <Pencil className="w-4 h-4"/>
@@ -69,6 +70,7 @@ const CrudTable = ({
                   {onDelete && (
                     <button
                       onClick={() => onDelete(item.id)}
+                      aria-label="Delete item"
                       className="p-2 text-red-500 hover:bg-red-500/10 hover:text-red-400 rounded-lg transition-colors border border-transparent hover:border-red-500/20"
                       title="Delete"
                     >

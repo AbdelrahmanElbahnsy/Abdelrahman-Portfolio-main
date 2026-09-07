@@ -26,8 +26,8 @@ export default function PortfolioGate({ children }) {
     return null;
   }
 
-  // If there is an explicit error or we timed out without loading, fail closed.
-  if (error || (!data && timedOut)) {
+  // If there is an explicit error or we timed out while still loading, fail closed.
+  if (error || (loading && !data && timedOut)) {
     return <MaintenanceScreen />;
   }
 

@@ -21,7 +21,7 @@ const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
-      <div className="bg-[#111827] border border-white/10 p-3 rounded-lg shadow-xl">
+      <div className="bg-cms-cards border border-cms-border p-3 rounded-lg shadow-xl">
         <p className="text-white font-bold mb-1 flex items-center gap-2">
           <span className="w-2 h-2 rounded-full" style={{ backgroundColor: data.color }}></span>
           {data.name}
@@ -116,19 +116,19 @@ const OverviewDashboard = () => {
             {isRefetching && <RefreshCw className="w-5 h-5 text-cms-primary animate-spin" />}
           </h1>
           <div className="flex items-center gap-3 mt-2">
-            <span className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-gray-400">
-              <span className={`w-2 h-2 rounded-full shadow-[0_0_8px_currentColor] ${allSystemsOnline ? 'bg-emerald-400 text-emerald-400' : 'bg-cms-warning text-cms-warning'}`}></span>
+            <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-400">
+              <span className={`w-2 h-2 rounded-full shadow-[0_0_8px_currentColor] ${allSystemsOnline ? 'bg-cms-success text-cms-success' : 'bg-cms-warning text-cms-warning'}`}></span>
               {allSystemsOnline ? 'Operational' : 'Degraded'}
             </span>
             <span className="w-1 h-1 rounded-full bg-gray-600"></span>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">AdminOS v2.0</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-gray-400">AdminOS v2.0</span>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <kbd className="hidden md:flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-500 bg-white/5 border border-white/5 rounded-md">
+          <kbd aria-label="Search hotkey" className="hidden md:flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-gray-500 bg-white/5 border border-white/5 rounded-md">
             <Search className="w-3 h-3"/> Ctrl+K
           </kbd>
-          <button onClick={() => refreshDashboard()} className="flex items-center gap-2 px-4 py-2 bg-cms-primary hover:bg-[#10d482] text-[#0a0f1c] rounded-lg font-bold transition-colors">
+          <button onClick={() => refreshDashboard()} className="flex items-center gap-2 px-4 py-2 bg-cms-primary hover:bg-cms-primary/80 text-cms-background rounded-lg font-bold transition-colors">
             <RefreshCw className={`w-4 h-4 ${isRefetching ? 'animate-spin' : ''}`} /> Sync Now
           </button>
         </div>
@@ -140,18 +140,18 @@ const OverviewDashboard = () => {
         <div onClick={() => setIsHealthModalOpen(true)} className="bg-cms-cards border border-white/5 rounded-xl p-5 hover:border-white/10 transition-colors cursor-pointer group flex flex-col h-full">
           <div className="flex justify-between items-start mb-auto">
             <div>
-              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 group-hover:text-gray-400 transition-colors">Health Score</p>
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 group-hover:text-gray-400 transition-colors">Health Score</p>
               <h3 className="text-3xl font-black text-white tracking-tight flex items-baseline gap-1">
                 {healthScore ?? 100}<span className="text-sm text-gray-500 font-bold">%</span>
               </h3>
             </div>
-            <div className={`p-2 rounded-lg transition-transform group-hover:scale-110 ${healthScore === 100 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-cms-warning/10 text-cms-warning'}`}>
+            <div className={`p-2 rounded-lg transition-transform group-hover:scale-110 ${healthScore === 100 ? 'bg-cms-success/10 text-cms-success' : 'bg-cms-warning/10 text-cms-warning'}`}>
               {healthScore === 100 ? <ShieldCheck className="w-5 h-5" /> : <AlertTriangle className="w-5 h-5" />}
             </div>
           </div>
           <div className="mt-4 flex items-center gap-2">
             <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-              <div className={`h-full rounded-full transition-all duration-1000 ${healthScore === 100 ? 'bg-emerald-400' : 'bg-cms-warning'}`} style={{ width: `${healthScore ?? 100}%` }}></div>
+              <div className={`h-full rounded-full transition-all duration-1000 ${healthScore === 100 ? 'bg-cms-success' : 'bg-cms-warning'}`} style={{ width: `${healthScore ?? 100}%` }}></div>
             </div>
           </div>
         </div>
@@ -160,14 +160,14 @@ const OverviewDashboard = () => {
         <div className="bg-cms-cards border border-white/5 rounded-xl p-5 cursor-default flex flex-col h-full">
           <div className="flex justify-between items-start mb-auto">
             <div>
-              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Storage</p>
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Storage</p>
               <h3 className="text-[13px] font-bold text-gray-400 mt-2">Storage unavailable</h3>
             </div>
             <div className="p-2 rounded-lg bg-blue-500/10 text-blue-400">
               <HardDrive className="w-5 h-5" />
             </div>
           </div>
-          <p className="text-[11px] font-bold uppercase tracking-wider text-gray-500 mt-4 flex items-center gap-2">
+          <p className="text-xs font-bold uppercase tracking-wider text-gray-500 mt-4 flex items-center gap-2">
             {storageStats?.cloudinaryImages || 0} Images <span className="w-1 h-1 rounded-full bg-gray-600"></span> {storageStats?.firestoreDocs || 0} Docs
           </p>
         </div>
@@ -176,14 +176,14 @@ const OverviewDashboard = () => {
         <div className="bg-cms-cards border border-white/5 rounded-xl p-5 hover:border-white/10 transition-colors cursor-pointer group flex flex-col h-full" onClick={() => navigate('/admin/projects')}>
           <div className="flex justify-between items-start mb-auto">
             <div>
-              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Projects</p>
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Projects</p>
               <h3 className="text-3xl font-black text-white tracking-tight">{counts?.projects || 0}</h3>
             </div>
             <div className="p-2 rounded-lg bg-cms-primary/10 text-cms-primary transition-transform group-hover:scale-110">
               <Briefcase className="w-5 h-5" />
             </div>
           </div>
-          <p className="text-[11px] font-bold uppercase tracking-wider text-gray-500 mt-4 flex items-center group-hover:text-cms-primary transition-colors">
+          <p className="text-xs font-bold uppercase tracking-wider text-gray-500 mt-4 flex items-center group-hover:text-cms-primary transition-colors">
             Manage Portfolio <ChevronRight className="w-3 h-3 ml-auto"/>
           </p>
         </div>
@@ -192,14 +192,14 @@ const OverviewDashboard = () => {
         <div className="bg-cms-cards border border-white/5 rounded-xl p-5 hover:border-white/10 transition-colors cursor-pointer group flex flex-col h-full" onClick={() => navigate('/admin/skills')}>
           <div className="flex justify-between items-start mb-auto">
             <div>
-              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Skills</p>
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Skills</p>
               <h3 className="text-3xl font-black text-white tracking-tight">{counts?.skills || 0}</h3>
             </div>
             <div className="p-2 rounded-lg bg-purple-500/10 text-purple-400 transition-transform group-hover:scale-110">
               <Code className="w-5 h-5" />
             </div>
           </div>
-          <p className="text-[11px] font-bold uppercase tracking-wider text-gray-500 mt-4 flex items-center group-hover:text-purple-400 transition-colors">
+          <p className="text-xs font-bold uppercase tracking-wider text-gray-500 mt-4 flex items-center group-hover:text-purple-400 transition-colors">
             Manage Stack <ChevronRight className="w-3 h-3 ml-auto"/>
           </p>
         </div>
@@ -229,7 +229,6 @@ const OverviewDashboard = () => {
                 { label: 'Upload Image', icon: ImageIcon, path: '/admin/media' },
                 { label: 'Settings', icon: Settings, path: '/admin/profile' },
                 { label: 'View Site', icon: ExternalLink, path: '/', external: true },
-                { label: 'Deploy', icon: Cloud, path: '/admin/account' },
               ].map(action => (
                 <button 
                   key={action.label} 
@@ -239,7 +238,7 @@ const OverviewDashboard = () => {
                   className={`flex flex-col items-center justify-center py-3 px-2 border rounded-lg transition-all group ${action.disabled ? 'bg-black/10 border-white/5 opacity-50 cursor-not-allowed' : 'bg-black/20 hover:bg-white/5 border-white/5 hover:border-white/20'}`}
                 >
                   <action.icon className={`w-4 h-4 transition-colors mb-2 ${action.disabled ? 'text-gray-600' : 'text-gray-500 group-hover:text-white'}`} />
-                  <span className={`text-[10px] font-bold uppercase tracking-wider text-center leading-tight ${action.disabled ? 'text-gray-600' : 'text-gray-400 group-hover:text-white'}`}>{action.label}</span>
+                  <span className={`text-xs font-bold uppercase tracking-wider text-center leading-tight ${action.disabled ? 'text-gray-600' : 'text-gray-400 group-hover:text-white'}`}>{action.label}</span>
                 </button>
               ))}
             </div>
@@ -278,6 +277,7 @@ const OverviewDashboard = () => {
                           newSet.add(n.id);
                           setDismissedWarnings(newSet);
                         }}
+                        aria-label="Dismiss warning"
                         className="px-3 py-1.5 hover:bg-white/5 text-gray-500 hover:text-gray-300 text-xs font-bold rounded transition-colors flex items-center gap-1"
                       >
                         <X className="w-3 h-3" />
@@ -301,12 +301,12 @@ const OverviewDashboard = () => {
               </div>
             </motion.div>
           ) : (
-            <motion.div variants={itemVariants} className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-6 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400 shrink-0">
+            <motion.div variants={itemVariants} className="bg-cms-success/5 border border-cms-success/20 rounded-xl p-6 flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-cms-success/10 flex items-center justify-center text-cms-success shrink-0">
                 <CheckCircle2 className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="font-bold text-emerald-400 mb-1">All caught up!</h3>
+                <h3 className="font-bold text-cms-success mb-1">All caught up!</h3>
                 <p className="text-sm text-gray-400">No active warnings or pending tasks.</p>
               </div>
             </motion.div>
@@ -328,7 +328,7 @@ const OverviewDashboard = () => {
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 mb-0.5">
-                        <span className="text-[10px] font-bold text-white bg-white/10 px-1.5 py-0.5 rounded shadow-sm">{item._collection}</span>
+                        <span className="text-xs font-bold text-white bg-white/10 px-1.5 py-0.5 rounded shadow-sm">{item._collection}</span>
                         <p className="text-sm font-bold text-gray-200 truncate group-hover:text-white transition-colors">
                           {item.title || item.name || item.label || item.firstName || (() => {
                             const map = {
@@ -346,7 +346,7 @@ const OverviewDashboard = () => {
                           })()}
                         </p>
                       </div>
-                      <p className="text-[11px] font-medium text-gray-500">
+                      <p className="text-xs font-medium text-gray-500">
                         Updated {item.updatedAt ? formatDistanceToNow(item.updatedAt?.toDate ? item.updatedAt.toDate() : new Date(item.updatedAt)) + ' ago' : 'recently'}
                       </p>
                     </div>
@@ -359,7 +359,7 @@ const OverviewDashboard = () => {
                       Edit
                     </button>
                     {(item.liveLink || item.githubLink) && (
-                      <a href={item.liveLink || item.githubLink} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} className="p-1.5 bg-white/5 hover:bg-white/10 rounded-md text-gray-300 hover:text-white transition-colors">
+                      <a href={item.liveLink || item.githubLink} target="_blank" rel="noreferrer" aria-label="Open external link" onClick={(e) => e.stopPropagation()} className="p-1.5 bg-white/5 hover:bg-white/10 rounded-md text-gray-300 hover:text-white transition-colors">
                         <ExternalLink className="w-4 h-4" />
                       </a>
                     )}
@@ -397,7 +397,7 @@ const OverviewDashboard = () => {
               <h3 className="font-bold text-white flex items-center gap-2">
                 <Activity className="w-4 h-4 text-gray-400" /> System Status
               </h3>
-              <button onClick={handleRefreshSystem} className="p-1.5 hover:bg-white/10 rounded-md transition-colors text-gray-400 hover:text-white tooltip-trigger group relative">
+              <button aria-label="Refresh system status" onClick={handleRefreshSystem} className="p-1.5 hover:bg-white/10 rounded-md transition-colors text-gray-400 hover:text-white tooltip-trigger group relative">
                 <RefreshCw className="w-3.5 h-3.5" />
                 <span className="absolute -top-8 right-0 bg-cms-cards border border-white/10 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Refresh Status</span>
               </button>
@@ -418,7 +418,7 @@ const OverviewDashboard = () => {
                     </div>
                     <div>
                       <p className="text-xs font-bold text-gray-200 group-hover:text-white transition-colors">{info.label}</p>
-                      <p className="text-[10px] text-gray-500 font-mono flex items-center gap-1">
+                      <p className="text-xs text-gray-500 font-mono flex items-center gap-1">
                         {info.status === 'online' ? `${info.latency}ms latency` : 
                          info.status === 'configured' ? 'Configured' :
                          info.status === 'unknown' ? 'Unknown state' :
@@ -427,13 +427,13 @@ const OverviewDashboard = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold text-gray-500 group-hover:text-white transition-colors opacity-0 group-hover:opacity-100">Details</span>
-                    <div className={`w-2 h-2 rounded-full shadow-[0_0_5px_currentColor] ${info.status === 'online' ? 'bg-emerald-500 text-emerald-500' : info.status === 'configured' ? 'bg-blue-500 text-blue-500' : info.status === 'unknown' ? 'bg-gray-500 text-gray-500' : 'bg-red-500 text-red-500'}`}></div>
+                    <span className="text-xs font-bold text-gray-500 group-hover:text-white transition-colors opacity-0 group-hover:opacity-100">Details</span>
+                    <div className={`w-2 h-2 rounded-full shadow-[0_0_5px_currentColor] ${info.status === 'online' ? 'bg-cms-success text-cms-success' : info.status === 'configured' ? 'bg-blue-500 text-blue-500' : info.status === 'unknown' ? 'bg-gray-500 text-gray-500' : 'bg-red-500 text-red-500'}`}></div>
                   </div>
                 </div>
               ))}
             </div>
-            <p className="text-[10px] text-gray-500 text-center font-medium mt-auto">
+            <p className="text-xs text-gray-500 text-center font-medium mt-auto">
               Last checked: {lastChecked.toLocaleTimeString()}
             </p>
           </motion.div>
@@ -471,7 +471,7 @@ const OverviewDashboard = () => {
               </ResponsiveContainer>
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                 <span className="text-xl font-black text-white">{storageStats?.firestoreDocs || 0}</span>
-                <span className="text-[9px] uppercase tracking-wider text-gray-500 font-bold">Docs</span>
+                <span className="text-xs uppercase tracking-wider text-gray-500 font-bold">Docs</span>
               </div>
             </div>
             
@@ -480,7 +480,7 @@ const OverviewDashboard = () => {
                 <button 
                   key={item.name} 
                   onClick={() => navigate(item.path)}
-                  className="flex items-center gap-1.5 text-[10px] font-bold text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 px-2 py-1 rounded transition-colors"
+                  className="flex items-center gap-1.5 text-xs font-bold text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 px-2 py-1 rounded transition-colors"
                 >
                   <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }}></span>
                   {item.name}

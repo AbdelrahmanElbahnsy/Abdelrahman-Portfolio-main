@@ -145,15 +145,20 @@ export default function SettingsManager() {
     }
   };
 
-  const isDirty = settingsData && (
-    settingsData.siteTitle !== formData.siteTitle ||
-    settingsData.siteDescription !== formData.siteDescription ||
-    settingsData.theme !== formData.theme ||
+  const isDirty = settingsData ? (
+    (settingsData.siteTitle || '') !== formData.siteTitle ||
+    (settingsData.siteDescription || '') !== formData.siteDescription ||
+    (settingsData.theme || 'dark') !== formData.theme ||
     (settingsData.portfolioEnabled !== false) !== formData.portfolioEnabled
+  ) : (
+    formData.siteTitle !== '' ||
+    formData.siteDescription !== '' ||
+    formData.theme !== 'dark' ||
+    formData.portfolioEnabled !== true
   );
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in duration-300 pb-12">
+    <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in duration-300 pb-32">
       <Toaster position="top-right" toastOptions={{ style: { background: '#131b2c', color: '#fff', border: '1px solid #1e293b' } }} />
 
       {/* Header */}
@@ -405,6 +410,28 @@ export default function SettingsManager() {
           </PageSection>
         </div>
       </div>
+
+      {isDirty && (
+        <div className="fixed bottom-0 left-0 right-0 lg:left-[240px] xl:left-[280px] bg-[#0a0f1c]/95 backdrop-blur-xl border-t border-[#1e293b] p-4 px-6 flex flex-col sm:flex-row items-center justify-between gap-4 z-50 animate-in slide-in-from-bottom-full duration-300 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+          <div className="flex items-center gap-4 w-full sm:w-auto">
+            <div className="w-10 h-10 rounded-full bg-yellow-500/10 flex items-center justify-center border border-yellow-500/20 shrink-0">
+              <AlertTriangle className="w-5 h-5 text-yellow-500" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-white leading-tight mb-0.5">Unsaved Changes</p>
+              <p className="text-xs text-gray-400">Please save to apply global preferences.</p>
+            </div>
+          </div>
+          <button
+            onClick={handleSave}
+            disabled={isSaving}
+            className="w-full sm:w-auto px-6 py-3 bg-[#14f195] hover:bg-[#14f195]/90 text-[#0a0f1c] text-sm font-black rounded-xl transition-all shadow-[0_0_20px_rgba(20,241,149,0.2)] hover:shadow-[0_0_30px_rgba(20,241,149,0.4)] flex items-center justify-center gap-2 disabled:opacity-50"
+          >
+            {isSaving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            {isSaving ? 'Saving...' : 'Save All Changes'}
+          </button>
+        </div>
+      )}
 
       <ConfirmDeleteDialog
         isOpen={showCacheConfirm}

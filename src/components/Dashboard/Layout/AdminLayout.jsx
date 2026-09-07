@@ -89,7 +89,7 @@ const AdminLayoutContent = () => {
         setIsMobileMenuOpen={setIsMobileMenuOpen}
       />
 
-      <div className={`flex-1 min-w-0 min-h-0 flex flex-col h-full transition-[margin] duration-300 ml-0 ${isCollapsed ? 'md:ml-[80px]' : 'md:ml-[280px]'}`}>
+      <div className={`flex-1 min-w-0 min-h-0 flex flex-col h-full transition-[margin] duration-300 ease-in-out ml-0 ${isCollapsed ? 'md:ml-[80px]' : 'md:ml-[280px]'}`}>
         <Topbar 
           title={currentTitle} 
           onLogout={handleLogout} 
@@ -97,7 +97,7 @@ const AdminLayoutContent = () => {
           onMenuClick={() => setIsMobileMenuOpen(true)}
         />
 
-        <main className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 md:p-8 pb-32 max-w-7xl mx-auto w-full">
+        <main className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 md:p-8 pb-8 md:pb-12 max-w-7xl mx-auto w-full">
           <Outlet />
         </main>
       </div>

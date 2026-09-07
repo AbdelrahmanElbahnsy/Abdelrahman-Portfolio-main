@@ -99,6 +99,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileMenuOpen, setIsMobileMen
       {/* Collapse Toggle */}
       <button 
         onClick={() => setIsCollapsed(!isCollapsed)}
+        aria-label="Toggle sidebar"
         className="hidden md:flex absolute -right-3 top-24 w-6 h-6 bg-cms-cards border border-white/10 rounded-full items-center justify-center text-gray-400 hover:text-white hover:border-cms-primary hover:shadow-glow-primary transition-all z-50"
       >
         <ChevronLeft className={`w-3 h-3 transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`} />
@@ -107,7 +108,6 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileMenuOpen, setIsMobileMen
       {/* Navigation */}
       <nav
         className="flex-1 overflow-y-auto overscroll-contain hide-scrollbar min-h-0 py-6 px-3"
-        style={{ overscrollBehavior: 'contain' }}
       >
         {MENU_GROUPS.map((group, groupIdx) => (
           <div key={groupIdx} className="mb-6 last:mb-0">
@@ -191,35 +191,6 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileMenuOpen, setIsMobileMen
           </div>
         ))}
       </nav>
-
-      {/* Footer System Info */}
-      <div className="p-4 border-t border-white/5 bg-cms-background/30 shrink-0">
-        <AnimatePresence>
-          {!isCollapsed ? (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="flex items-center justify-between px-2"
-            >
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-cms-success animate-pulse shadow-[0_0_8px_#10B981]"></div>
-                <span className="text-xs font-semibold text-gray-400">System Normal</span>
-              </div>
-              <span className="text-[10px] font-mono text-gray-600 border border-white/5 bg-white/5 px-2 py-0.5 rounded">v2.5.0</span>
-            </motion.div>
-          ) : (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="flex justify-center"
-            >
-              <div className="w-2 h-2 rounded-full bg-cms-success animate-pulse shadow-[0_0_8px_#10B981]"></div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
     </aside>
     </>
   );

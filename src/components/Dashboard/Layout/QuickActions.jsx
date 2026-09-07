@@ -13,9 +13,10 @@ const DropdownMenu = ({ isOpen, onClose, anchorRef, items, title }) => {
   useEffect(() => {
     if (isOpen && anchorRef.current) {
       const rect = anchorRef.current.getBoundingClientRect();
+      const safeRight = Math.max(16, window.innerWidth - rect.right);
       setCoords({
         top: rect.bottom + 8,
-        right: window.innerWidth - rect.right
+        right: safeRight
       });
     }
   }, [isOpen, anchorRef]);
@@ -41,7 +42,7 @@ const DropdownMenu = ({ isOpen, onClose, anchorRef, items, title }) => {
         exit={{ opacity: 0, y: -10, scale: 0.95 }}
         transition={{ duration: 0.15, ease: 'easeOut' }}
         style={{ top: coords.top, right: coords.right }}
-        className="fixed w-56 bg-cms-cards/95 backdrop-blur-xl border border-cms-border rounded-xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)] overflow-hidden z-[9999]"
+        className="fixed w-56 max-w-[calc(100vw-32px)] bg-cms-cards/95 backdrop-blur-xl border border-cms-border rounded-xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)] overflow-hidden z-[9999]"
       >
         {title && (
           <div className="p-3 border-b border-cms-border bg-white/[0.01]">
@@ -141,6 +142,7 @@ const QuickActions = () => {
       <button 
         ref={createRef}
         onClick={() => setCreateOpen(!createOpen)}
+        aria-label="Quick Create"
         className={`p-2 rounded-xl transition-colors tooltip-trigger relative group outline-none focus-visible:ring-2 focus-visible:ring-cms-primary ${createOpen ? 'text-cms-primary bg-cms-primary/10' : 'text-gray-400 hover:text-cms-primary hover:bg-cms-primary/10'}`}
       >
         <Plus className="w-4 h-4" />
@@ -149,6 +151,7 @@ const QuickActions = () => {
 
       <button 
         onClick={handleSync}
+        aria-label="Sync Data"
         className={`p-2 text-gray-400 hover:text-cms-secondary hover:bg-cms-secondary/10 rounded-xl transition-colors tooltip-trigger relative group outline-none focus-visible:ring-2 focus-visible:ring-cms-secondary ${isRefetching ? 'text-cms-secondary bg-cms-secondary/10' : ''}`}
       >
         <RefreshCw className={`w-4 h-4 ${isRefetching ? 'animate-spin' : ''}`} />
@@ -158,6 +161,7 @@ const QuickActions = () => {
       <button 
         ref={exportRef}
         onClick={() => setExportOpen(!exportOpen)}
+        aria-label="Export Data"
         className={`p-2 rounded-xl transition-colors tooltip-trigger relative group outline-none focus-visible:ring-2 focus-visible:ring-cms-warning ${exportOpen ? 'text-cms-warning bg-cms-warning/10' : 'text-gray-400 hover:text-cms-warning hover:bg-cms-warning/10'}`}
       >
         <Download className="w-4 h-4" />

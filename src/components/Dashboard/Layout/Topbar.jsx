@@ -2,7 +2,6 @@ import React from 'react';
 import Breadcrumbs from './Breadcrumbs';
 import SearchBar from './SearchBar';
 import QuickActions from './QuickActions';
-import NotificationCenter from './NotificationCenter';
 import UserDropdown from './UserDropdown';
 import { Menu } from 'lucide-react';
 
@@ -13,6 +12,7 @@ const Topbar = ({ title, onLogout, onSearchClick, onMenuClick }) => {
       <div className="flex items-center gap-3 md:flex-1 min-w-0">
         <button 
           onClick={onMenuClick}
+          aria-label="Toggle mobile menu"
           className="md:hidden p-2 -ml-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors shrink-0"
         >
           <Menu className="w-5 h-5" />
@@ -32,8 +32,6 @@ const Topbar = ({ title, onLogout, onSearchClick, onMenuClick }) => {
         <div className="hidden sm:block">
           <QuickActions />
         </div>
-        <div className="hidden sm:block w-px h-6 bg-white/10 mx-1 md:mx-2"></div>
-        <NotificationCenter />
         <UserDropdown onLogout={onLogout} />
       </div>
     </header>

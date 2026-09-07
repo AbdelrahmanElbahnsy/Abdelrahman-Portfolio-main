@@ -4,7 +4,6 @@ import { collection, getDocs, limit, query } from 'firebase/firestore';
 
 export async function checkSystemHealth() {
   const timestamp = new Date().toISOString();
-  const isLocal = !import.meta.env.PROD;
   
   const status = {
     firestore: { status: 'checking', label: 'Firestore DB', latency: 0, lastChecked: timestamp },
@@ -30,15 +29,15 @@ export async function checkSystemHealth() {
   if (cloudinaryName && cloudinaryName.length > 3) {
     status.cloudinary.status = 'configured';
   } else {
-    status.cloudinary.status = 'warning'; 
+    status.cloudinary.status = 'unconfigured'; 
     status.cloudinary.reason = 'Missing VITE_CLOUDINARY_CLOUD_NAME config.';
   }
 
   // 3. Check Vercel
-  status.vercel.status = 'unknown';
+  status.vercel.status = 'unmonitored';
 
   // 4. Check GitHub
-  status.github.status = 'unknown';
+  status.github.status = 'unmonitored';
 
   return status;
 }

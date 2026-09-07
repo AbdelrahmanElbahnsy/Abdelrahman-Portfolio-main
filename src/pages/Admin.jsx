@@ -11,7 +11,6 @@ const SkillsManager = lazy(() => import('../components/Dashboard/SkillsManager')
 const AccountCenter = lazy(() => import('../components/Dashboard/AccountCenter'));
 const GenericListManager = lazy(() => import('../components/Dashboard/GenericListManager'));
 const ContactManager = lazy(() => import('../components/Dashboard/ContactManager'));
-const DeveloperTools = lazy(() => import('../components/Dashboard/DeveloperTools'));
 const FeatureUnavailable = lazy(() => import('../components/Dashboard/FeatureUnavailable'));
 const HeroManager = lazy(() => import('../components/Dashboard/HeroManager'));
 const AboutManager = lazy(() => import('../components/Dashboard/AboutManager'));
@@ -81,10 +80,6 @@ const Admin = () => {
           <Route path="settings" element={<SettingsManager />} />
           <Route path="shortcuts" element={<FeatureUnavailable featureName="Keyboard Shortcuts" />} />
           <Route path="media" element={<MediaManager />} />
-          
-          {import.meta.env.DEV && (
-            <Route path="devtools" element={<DeveloperTools />} />
-          )}
           
           <Route path="*" element={<Navigate to="/admin/overview" replace />} />
         </Route>

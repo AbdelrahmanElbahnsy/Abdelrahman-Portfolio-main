@@ -40,8 +40,7 @@ const MENU_GROUPS = [
     items: [
       { id: 'profile', label: 'Account Center', icon: User, path: '/admin/profile' },
       { id: 'settings', label: 'Settings', icon: Settings, path: '/admin/settings' },
-      { id: 'media', label: 'Media Library', icon: Database, path: '/admin/media' },
-      ...(import.meta.env.DEV ? [{ id: 'devtools', label: 'Developer Tools', icon: Code, path: '/admin/devtools', dev: true }] : [])
+      { id: 'media', label: 'Media Library', icon: Database, path: '/admin/media' }
     ]
   }
 ];

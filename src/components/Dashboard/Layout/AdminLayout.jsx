@@ -72,7 +72,6 @@ const AdminLayoutContent = () => {
     '/admin/apikeys': 'API Keys',
     '/admin/settings': 'Settings',
     '/admin/shortcuts': 'Keyboard Shortcuts',
-    '/admin/devtools': 'Developer Tools',
   };
 
   const currentTitle = pathTitleMap[location.pathname] || 'Dashboard';

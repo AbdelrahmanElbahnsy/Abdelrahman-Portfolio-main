@@ -312,13 +312,13 @@ const Navbar = ({ splashDone = true }) => {
             document.body.style.overflow = 'hidden';
         } else {
             document.body.classList.remove('menu-open');
-            document.body.style.overflow = 'auto';
+            document.body.style.overflow = '';
         }
     };
 
     return (
         <>
-            <header ref={headerRef} className={`sticky top-0 left-0 w-full z-[1000] transition-all duration-700 ${isScrolled ? 'pt-2 sm:pt-4' : 'pt-4 sm:pt-8'}`}>
+            <header ref={headerRef} className={`${isMenuOpen ? 'fixed' : 'sticky'} top-0 left-0 w-full z-[1000] transition-all duration-700 ${isScrolled ? 'pt-2 sm:pt-4' : 'pt-4 sm:pt-8'}`}>
                 <div className={`mx-auto transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] max-w-[1240px] 2xl:max-w-[1440px] px-4 sm:px-8`}>
                     <nav ref={navRef} className={`w-full box-border flex flex-nowrap items-center justify-between gap-2 sm:gap-4 px-3 sm:px-4 xl:px-6 py-2.5 rounded-full border backdrop-blur-[18px] transition-all duration-700 ${isScrolled ? 'bg-[var(--theme-nav-bg)] border-[var(--theme-nav-border)] shadow-[var(--theme-nav-shadow)]' : 'bg-transparent border-transparent'}`}>
                         {/* Left Region: Logo */}

@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { 
   Plus, Search, Edit2, Trash2, ArrowUp, ArrowDown,
-  LayoutGrid, List, X, ExternalLink, Link as LinkIcon
+  LayoutGrid, List, X, ExternalLink, Link as LinkIcon, Loader2, AlertTriangle
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
-import ConfirmDeleteDialog from '../../cms/components/ConfirmDeleteDialog';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // UI COMPONENTS
@@ -17,12 +16,13 @@ const SectionHeader = ({ number, title }) => (
   </div>
 );
 
-const InputField = ({ label, name, value, onChange, required, placeholder, helper, isMonospace, type = 'text' }) => (
+const InputField = ({ id, label, name, value, onChange, required, placeholder, helper, isMonospace, type = 'text' }) => (
   <div className="w-full">
-    <label className="block text-[11px] font-mono font-bold text-gray-400 mb-2 uppercase tracking-widest">
+    <label htmlFor={id} className="block text-[11px] font-mono font-bold text-gray-400 mb-2 uppercase tracking-widest">
       {label} {required && <span className="text-[#14f195]">*</span>}
     </label>
     <input
+      id={id}
       type={type}
       name={name}
       value={value || ''}
@@ -36,25 +36,50 @@ const InputField = ({ label, name, value, onChange, required, placeholder, helpe
 );
 
 // ─────────────────────────────────────────────────────────────────────────────
+// DELETE CONFIRMATION DIALOG
+// ─────────────────────────────────────────────────────────────────────────────
+const DeleteDialog = ({ social, isDeleting, onCancel, onConfirm }) => {
+  if (!social) return null;
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-[#030814]/80 animate-in fade-in">
+      <div className="bg-[#0f1829] border border-[#1a2440] rounded-2xl w-full max-w-[380px] shadow-2xl p-6 text-center animate-in zoom-in-95 duration-150">
+        <div className="w-11 h-11 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto mb-4">
+          <AlertTriangle className="w-5 h-5 text-red-500" />
+        </div>
+        <span className="font-mono text-[10px] text-red-500/70 uppercase tracking-[0.2em] mb-2 block">
+          DELETE SOCIAL LINK
+        </span>
+        <p className="text-gray-400 text-[13px] leading-relaxed mb-1">Are you sure you want to remove:</p>
+        <p className="text-white font-bold text-sm mb-1 px-4 break-words">&ldquo;{social.platform}&rdquo;</p>
+        <p className="text-gray-700 text-[11px] mb-5">This action cannot be undone.</p>
+        <div className="flex gap-2">
+          <button
+            onClick={onCancel}
+            disabled={isDeleting}
+            className="flex-1 px-4 py-2.5 rounded-lg text-gray-400 font-bold text-sm hover:text-white hover:bg-[#1a2440] transition-colors disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={isDeleting}
+            className="flex-1 flex justify-center items-center px-4 py-2.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 font-bold text-sm hover:bg-red-500 hover:text-white hover:border-red-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Delete Link'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
 // EDITOR MODAL
 // ─────────────────────────────────────────────────────────────────────────────
 const SocialEditor = ({ isOpen, onClose, social, onSave, isSaving, nextOrderNumber }) => {
-  const [formData, setFormData] = useState({});
-  const [initialData, setInitialData] = useState({});
-
-  useEffect(() => {
-    if (isOpen) {
-      if (social) {
-        const data = { ...social };
-        setFormData(data);
-        setInitialData(data);
-      } else {
-        const empty = { platform: '', url: '', icon: '', order: '' };
-        setFormData(empty);
-        setInitialData(empty);
-      }
-    }
-  }, [isOpen, social]);
+  const defaultEmpty = { platform: '', url: '', icon: '', order: '' };
+  const [formData, setFormData] = useState(social ? { ...social } : defaultEmpty);
+  const [initialData, setInitialData] = useState(social ? { ...social } : defaultEmpty);
 
   // Handle escape key to close
   useEffect(() => {
@@ -73,8 +98,6 @@ const SocialEditor = ({ isOpen, onClose, social, onSave, isSaving, nextOrderNumb
     const keys = ['platform', 'url', 'icon', 'order'];
     return keys.some(k => (formData[k] || '') !== (initialData[k] || ''));
   }, [formData, initialData]);
-
-  if (!isOpen) return null;
 
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -147,6 +170,7 @@ const SocialEditor = ({ isOpen, onClose, social, onSave, isSaving, nextOrderNumb
             <SectionHeader number="01" title="IDENTITY" />
             <div className="space-y-5">
               <InputField
+                id="social-platform"
                 label="PLATFORM NAME"
                 name="platform"
                 value={formData.platform}
@@ -159,6 +183,7 @@ const SocialEditor = ({ isOpen, onClose, social, onSave, isSaving, nextOrderNumb
             <SectionHeader number="02" title="CONNECTION" />
             <div className="space-y-5">
               <InputField
+                id="social-url"
                 label="PROFILE URL"
                 name="url"
                 value={formData.url}
@@ -173,6 +198,7 @@ const SocialEditor = ({ isOpen, onClose, social, onSave, isSaving, nextOrderNumb
             <SectionHeader number="03" title="PRESENTATION" />
             <div className="space-y-5">
               <InputField
+                id="social-icon"
                 label="ICON CLASS"
                 name="icon"
                 value={formData.icon}
@@ -182,6 +208,7 @@ const SocialEditor = ({ isOpen, onClose, social, onSave, isSaving, nextOrderNumb
                 helper="The exact FontAwesome or React Icon class."
               />
               <InputField
+                id="social-order"
                 label="DISPLAY ORDER"
                 name="order"
                 value={formData.order}
@@ -348,6 +375,7 @@ const SocialsManager = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState('grid');
   const [deletingSocial, setDeletingSocial] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Subscribe to real-time updates
   useEffect(() => {
@@ -373,19 +401,23 @@ const SocialsManager = () => {
   }, []);
 
   const handleDeleteConfirm = useCallback(async () => {
-    if (!deletingSocial) return;
+    if (!deletingSocial || isDeleting) return;
+    setIsDeleting(true);
     try {
       await remove(deletingSocial.id);
       toast.success('Social link deleted');
       setDeletingSocial(null);
     } catch (err) {
       toast.error('Failed to delete social link');
+    } finally {
+      setIsDeleting(false);
     }
-  }, [deletingSocial, remove]);
+  }, [deletingSocial, remove, isDeleting]);
 
   const handleDeleteCancel = useCallback(() => {
+    if (isDeleting) return;
     setDeletingSocial(null);
-  }, []);
+  }, [isDeleting]);
 
   const handleSave = useCallback(async (formData) => {
     setIsSaving(true);
@@ -564,6 +596,7 @@ const SocialsManager = () => {
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
+              aria-label="Clear search"
               className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-500 hover:text-white transition-colors"
             >
               <X className="w-4 h-4" />
@@ -576,6 +609,7 @@ const SocialsManager = () => {
           <div className="bg-[#030814] border border-[#1e293b] rounded-lg p-1 flex">
             <button
               onClick={() => setViewMode('grid')}
+              aria-label="Grid view"
               className={`p-2 rounded-md transition-all ${
                 viewMode === 'grid' 
                   ? 'bg-[#1e293b] text-white shadow-sm' 
@@ -587,6 +621,7 @@ const SocialsManager = () => {
             </button>
             <button
               onClick={() => setViewMode('list')}
+              aria-label="List view"
               className={`p-2 rounded-md transition-all ${
                 viewMode === 'list' 
                   ? 'bg-[#1e293b] text-white shadow-sm' 
@@ -695,6 +730,7 @@ const SocialsManager = () => {
                         <button
                           onClick={() => handleMoveUp(idx)}
                           disabled={idx === 0}
+                          aria-label="Move social up"
                           className="p-1.5 text-gray-400 hover:text-white rounded disabled:opacity-30"
                           title="Move Up"
                         >
@@ -703,6 +739,7 @@ const SocialsManager = () => {
                         <button
                           onClick={() => handleMoveDown(idx)}
                           disabled={idx === items.length - 1}
+                          aria-label="Move social down"
                           className="p-1.5 text-gray-400 hover:text-white rounded disabled:opacity-30"
                           title="Move Down"
                         >
@@ -711,6 +748,7 @@ const SocialsManager = () => {
                         <div className="w-px h-4 bg-[#1e293b] mx-1"></div>
                         <button
                           onClick={() => handleEdit(social)}
+                          aria-label="Edit social"
                           className="p-1.5 text-blue-400/80 hover:text-blue-400 rounded"
                           title="Edit"
                         >
@@ -718,6 +756,7 @@ const SocialsManager = () => {
                         </button>
                         <button
                           onClick={() => handleDeleteRequest(social)}
+                          aria-label="Delete social"
                           className="p-1.5 text-red-400/80 hover:text-red-400 rounded"
                           title="Delete"
                         >
@@ -734,23 +773,23 @@ const SocialsManager = () => {
       )}
 
       {/* ═══ EDITOR MODAL ═══ */}
-      <SocialEditor
-        isOpen={isEditorOpen}
-        onClose={() => { setIsEditorOpen(false); setEditingSocial(null); }}
-        social={editingSocial}
-        onSave={handleSave}
-        isSaving={isSaving}
-        nextOrderNumber={items ? items.length : 0}
-      />
+      {isEditorOpen && (
+        <SocialEditor
+          isOpen={isEditorOpen}
+          onClose={() => { setIsEditorOpen(false); setEditingSocial(null); }}
+          social={editingSocial}
+          onSave={handleSave}
+          isSaving={isSaving}
+          nextOrderNumber={items ? items.length : 0}
+        />
+      )}
 
       {/* ═══ DELETE DIALOG ═══ */}
-      <ConfirmDeleteDialog
-        isOpen={!!deletingSocial}
-        onClose={handleDeleteCancel}
+      <DeleteDialog
+        social={deletingSocial}
+        isDeleting={isDeleting}
+        onCancel={handleDeleteCancel}
         onConfirm={handleDeleteConfirm}
-        title="Delete Social Link"
-        itemName={deletingSocial?.platform || 'this link'}
-        warningMessage="This action cannot be undone. It will remove the social link from the portfolio."
       />
     </div>
   );

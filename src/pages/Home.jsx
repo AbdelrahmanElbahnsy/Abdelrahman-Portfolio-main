@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, lazy, Suspense } from 'react';
+import React, { useEffect, useRef, lazy, Suspense, useState } from 'react';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useAppearance } from '../context/AppearanceContext';
 import { useVisitorPreferences } from '../context/VisitorPreferencesContext';
@@ -17,6 +17,52 @@ const Projects = lazy(() => import('../components/sections/Projects'));
 const Journey = lazy(() => import('../components/sections/Journey'));
 const Certifications = lazy(() => import('../components/sections/Certifications'));
 const Contact = lazy(() => import('../components/sections/Contact'));
+
+const LazySection = ({ id, minHeight = '50vh', children }) => {
+  const [hasMounted, setHasMounted] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash.replace('#', '').toLowerCase();
+      return hash === id || (hash === 'home' && id === 'hero');
+    }
+    return false;
+  });
+  
+  const observerRef = useRef(null);
+
+  useEffect(() => {
+    if (hasMounted) return;
+    
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setHasMounted(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '600px' }
+    );
+    
+    if (observerRef.current) {
+      observer.observe(observerRef.current);
+    }
+    
+    return () => observer.disconnect();
+  }, [hasMounted]);
+
+  return (
+    <div 
+      ref={observerRef} 
+      id={hasMounted ? undefined : id} 
+      style={{ minHeight: hasMounted ? undefined : minHeight }}
+    >
+      {hasMounted ? (
+        <Suspense fallback={<div style={{ minHeight }}></div>}>
+          {children}
+        </Suspense>
+      ) : null}
+    </div>
+  );
+};
 
 function Home({ splashDone = true }) {
   const { language } = useLanguage();
@@ -62,28 +108,40 @@ function Home({ splashDone = true }) {
         <div className="page-container">
           <Hero splashDone={splashDone} />
           
-          <Suspense fallback={<div className="min-h-[50vh]"></div>}>
+          <LazySection id="about">
             <WaveDivider position="bottom" />
             <About />
             <WaveDivider position="bottom" flip />
+          </LazySection>
+
+          <LazySection id="toolchain">
             <Toolchain />
+          </LazySection>
+
+          <LazySection id="skills">
             <Skills />
             <WaveDivider position="bottom" />
-          </Suspense>
+          </LazySection>
         </div>
 
-        <Suspense fallback={<div className="min-h-[50vh]"></div>}>
+        <LazySection id="projects">
           <Projects />
-        </Suspense>
+        </LazySection>
 
-        <Suspense fallback={<div className="min-h-[50vh]"></div>}>
-          <div className="page-container">
+        <div className="page-container">
+          <LazySection id="certifications">
             <Certifications />
             <WaveDivider position="bottom" flip />
+          </LazySection>
+
+          <LazySection id="journey">
             <Journey />
+          </LazySection>
+
+          <LazySection id="contact">
             <Contact />
-          </div>
-        </Suspense>
+          </LazySection>
+        </div>
       </main>
       
       <Footer />

@@ -93,14 +93,17 @@ export const certificationsSchema = {
 };
 
 export const contactSchema = {
-  collectionName: 'content',
-  docId: 'contact',
+  collectionName: 'contact',
+  docId: 'main',
   title: 'Contact Info',
   isSingleDoc: true,
   fields: [
-    { name: 'email', label: 'Contact Email', type: 'email', required: true },
-    { name: 'phone', label: 'Phone Number', type: 'text' },
-    { name: 'location', label: 'Location / Address', type: 'text' }
+    { name: 'email', label: 'Primary Email', type: 'email' },
+    { name: 'phone', label: 'Primary Phone', type: 'text' },
+    { name: 'location', label: 'Primary Location', type: 'text' },
+    { name: 'emails', label: 'Email Addresses', type: 'array' },
+    { name: 'phones', label: 'Phone Numbers', type: 'array' },
+    { name: 'locations', label: 'Locations', type: 'array' }
   ]
 };
 

@@ -24,7 +24,7 @@ const CATEGORY_ICONS = {
   'default': Database
 };
 
-const DeleteDialog = ({ item, onCancel, onConfirm }) => {
+const DeleteDialog = ({ item, isDeleting, onCancel, onConfirm }) => {
   if (!item) return null;
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-[#030814]/80 animate-in fade-in">
@@ -32,7 +32,7 @@ const DeleteDialog = ({ item, onCancel, onConfirm }) => {
         <div className="w-11 h-11 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto mb-4">
           <AlertTriangle className="w-5 h-5 text-red-500" />
         </div>
-        <span className="font-mono text-[9px] text-red-500/70 uppercase tracking-[0.2em] mb-2 block">
+        <span className="font-mono text-[10px] text-red-500/70 uppercase tracking-[0.2em] mb-2 block">
           DELETE SKILL?
         </span>
         <p className="text-gray-400 text-[13px] leading-relaxed mb-1">Permanently delete:</p>
@@ -41,15 +41,17 @@ const DeleteDialog = ({ item, onCancel, onConfirm }) => {
         <div className="flex gap-2">
           <button
             onClick={onCancel}
-            className="flex-1 px-4 py-2 rounded-lg text-gray-400 font-bold text-sm hover:text-white hover:bg-[#1a2440] transition-colors"
+            disabled={isDeleting}
+            className="flex-1 px-4 py-2 rounded-lg text-gray-400 font-bold text-sm hover:text-white hover:bg-[#1a2440] transition-colors disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 px-4 py-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 font-bold text-sm hover:bg-red-500 hover:text-white hover:border-red-500 transition-all"
+            disabled={isDeleting}
+            className="flex-1 px-4 py-2 flex justify-center items-center rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 font-bold text-sm hover:bg-red-500 hover:text-white hover:border-red-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Delete
+            {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Delete'}
           </button>
         </div>
       </div>
@@ -58,8 +60,6 @@ const DeleteDialog = ({ item, onCancel, onConfirm }) => {
 };
 
 const EditorDrawer = ({ isOpen, item, initialCategory, initialIsCircular, availableCategories, skillCount, onClose, onSave }) => {
-  if (!isOpen) return null;
-
   const isEditing = !!item;
   const [name, setName] = useState('');
   const [category, setCategory] = useState('');
@@ -171,7 +171,7 @@ const EditorDrawer = ({ isOpen, item, initialCategory, initialIsCircular, availa
                 {name || (isEditing ? (item.name || 'Untitled') : 'Untitled Skill')}
               </h2>
             </div>
-            <button onClick={() => !isSaving && onClose()} disabled={isSaving} className="w-8 h-8 flex items-center justify-center rounded-md transition-all hover:bg-[#1e2d42] text-[#8b9bb4] hover:text-white disabled:opacity-30">
+            <button aria-label="Close editor" onClick={() => !isSaving && onClose()} disabled={isSaving} className="w-8 h-8 flex items-center justify-center rounded-md transition-all hover:bg-[#1e2d42] text-[#8b9bb4] hover:text-white disabled:opacity-30">
               <X className="w-4 h-4" />
             </button>
           </div>
@@ -187,8 +187,8 @@ const EditorDrawer = ({ isOpen, item, initialCategory, initialIsCircular, availa
               </div>
               <div className="space-y-5">
                 <div>
-                  <label className="block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5">Skill Name <span className="text-[#14f195]">*</span></label>
-                  <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. VM & VNet" className={iCls} />
+                  <label htmlFor="skill-name" className="block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5">Skill Name <span className="text-[#14f195]">*</span></label>
+                  <input id="skill-name" type="text" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. VM & VNet" className={iCls} />
                 </div>
                 
                 <div>
@@ -213,10 +213,10 @@ const EditorDrawer = ({ isOpen, item, initialCategory, initialIsCircular, availa
 
                 {!isCircular ? (
                   <div>
-                    <label className="block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5">Category <span className="text-[#14f195]">*</span></label>
+                    <label htmlFor="skill-category" className="block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5">Category <span className="text-[#14f195]">*</span></label>
                     {!showNewCategory ? (
                       <div className="flex gap-2">
-                        <select value={category} onChange={e => {
+                        <select id="skill-category" value={category} onChange={e => {
                           if (e.target.value === 'ADD_NEW') {
                             setShowNewCategory(true);
                             setCategory('');
@@ -233,15 +233,15 @@ const EditorDrawer = ({ isOpen, item, initialCategory, initialIsCircular, availa
                       </div>
                     ) : (
                       <div className="flex gap-2">
-                        <input type="text" value={category} onChange={e => setCategory(e.target.value)} placeholder="e.g. Cloud Platform" className={iCls} />
+                        <input id="skill-category" type="text" value={category} onChange={e => setCategory(e.target.value)} placeholder="e.g. Cloud Platform" className={iCls} />
                         <button onClick={() => setShowNewCategory(false)} className="px-4 bg-[#1e2d42] text-white rounded-lg text-xs font-bold hover:bg-gray-600">Back</button>
                       </div>
                     )}
                   </div>
                 ) : (
                   <div>
-                    <label className="block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5">Circular Subtitle</label>
-                    <input type="text" value={circularSub} onChange={e => setCircularSub(e.target.value)} placeholder="e.g. Azure Expert" className={iCls} />
+                    <label htmlFor="skill-circular-sub" className="block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5">Circular Subtitle</label>
+                    <input id="skill-circular-sub" type="text" value={circularSub} onChange={e => setCircularSub(e.target.value)} placeholder="e.g. Azure Expert" className={iCls} />
                   </div>
                 )}
               </div>
@@ -264,7 +264,8 @@ const EditorDrawer = ({ isOpen, item, initialCategory, initialIsCircular, availa
                       className="flex-1 h-2 bg-[#090e17] rounded-full appearance-none accent-[#14f195] cursor-pointer" 
                     />
                     <div className="flex items-center gap-3 w-28 shrink-0">
-                      <input type="number" min="0" max="100" value={percent} onChange={e => setPercent(e.target.value)} className={`${iCls} text-center font-mono`} />
+                      <label htmlFor="skill-percent" className="sr-only">Proficiency Percentage</label>
+                      <input id="skill-percent" type="number" min="0" max="100" value={percent} onChange={e => setPercent(e.target.value)} className={`${iCls} text-center font-mono`} />
                       <span className="text-gray-400 font-bold">%</span>
                     </div>
                   </div>
@@ -280,12 +281,12 @@ const EditorDrawer = ({ isOpen, item, initialCategory, initialIsCircular, availa
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5">Icon Name (React Icons / FontAwesome)</label>
-                  <input type="text" value={categoryIcon} onChange={e => setCategoryIcon(e.target.value)} placeholder="e.g. SiMicrosoftazure or fas fa-server" className={iCls} />
+                  <label htmlFor="skill-icon" className="block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5">Icon Name (React Icons / FontAwesome)</label>
+                  <input id="skill-icon" type="text" value={categoryIcon} onChange={e => setCategoryIcon(e.target.value)} placeholder="e.g. SiMicrosoftazure or fas fa-server" className={iCls} />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5">Display Order</label>
-                  <input type="number" value={order} onChange={e => setOrder(e.target.value)} className={`${iCls} w-32`} />
+                  <label htmlFor="skill-order" className="block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5">Display Order</label>
+                  <input id="skill-order" type="number" value={order} onChange={e => setOrder(e.target.value)} className={`${iCls} w-32`} />
                 </div>
               </div>
             </section>
@@ -310,7 +311,7 @@ const EditorDrawer = ({ isOpen, item, initialCategory, initialIsCircular, availa
                   <>
                     <div className="flex items-start justify-between mb-4">
                       <div>
-                        <span className="font-mono text-[9px] uppercase tracking-widest text-[#4b6385]">{category || 'Category'}</span>
+                        <span className="font-mono text-[10px] uppercase tracking-widest text-[#4b6385]">{category || 'Category'}</span>
                         <h3 className="text-white font-bold text-[15px] mt-0.5">{name || 'Skill Name'}</h3>
                       </div>
                       <div className="w-8 h-8 rounded-md bg-[#0b1320] border border-[#1e2d42] flex items-center justify-center text-[#14f195]">
@@ -359,6 +360,7 @@ export default function SkillsManager() {
   const [searchQuery, setSearchQuery] = useState('');
   const [editorState, setEditorState] = useState({ isOpen: false, item: null, initialCategory: '', initialIsCircular: false });
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const availableCategories = useMemo(() => {
     if (!rawSkills) return [];
@@ -429,6 +431,7 @@ export default function SkillsManager() {
 
   const handleDeleteConfirm = async () => {
     if (!deleteTarget) return;
+    setIsDeleting(true);
     try {
       await remove(deleteTarget.id);
       await fetchAll();
@@ -436,6 +439,7 @@ export default function SkillsManager() {
     } catch {
       toast.error('Failed to delete skill.');
     } finally {
+      setIsDeleting(false);
       setDeleteTarget(null);
     }
   };
@@ -467,11 +471,11 @@ export default function SkillsManager() {
         <div className="flex items-start justify-between mb-4">
           <div>
             {skill.isCircular ? (
-              <span className="font-mono text-[9px] uppercase tracking-[0.2em] mb-1 block text-[#14f195]">
+              <span className="font-mono text-[10px] uppercase tracking-[0.2em] mb-1 block text-[#14f195]">
                 CIRCULAR
               </span>
             ) : (
-              <span className={`font-mono text-[9px] uppercase tracking-[0.2em] mb-1 block ${accentColor}`}>
+              <span className={`font-mono text-[10px] uppercase tracking-[0.2em] mb-1 block ${accentColor}`}>
                 {skill.category || 'Uncategorized'}
               </span>
             )}
@@ -493,13 +497,13 @@ export default function SkillsManager() {
             <div className="h-full bg-gradient-to-r from-gray-700 to-white group-hover:to-[#14f195] rounded-full transition-all duration-300" style={{ width: `${Math.min(100, Math.max(0, skill.percent || 0))}%` }} />
           </div>
           <div className="pt-4 border-t border-[#1a2440] flex justify-between items-center">
-            <span className="text-[9px] font-mono text-gray-600">ORDER: {skill.order}</span>
+            <span className="text-[10px] font-mono text-gray-600">ORDER: {skill.order}</span>
             <div className="flex gap-2">
-              <button onClick={() => openEditor(skill)} className="text-gray-500 hover:text-white transition-colors flex items-center gap-1.5 text-[11px] font-semibold">
+              <button aria-label="Edit skill" onClick={() => openEditor(skill)} className="text-gray-500 hover:text-white transition-colors flex items-center gap-1.5 text-[11px] font-semibold">
                 <Edit2 className="w-3.5 h-3.5" /> Edit
               </button>
               <span className="text-[#1a2440]">|</span>
-              <button onClick={() => setDeleteTarget(skill)} className="text-gray-500 hover:text-red-400 transition-colors flex items-center gap-1.5 text-[11px] font-semibold">
+              <button aria-label="Delete skill" onClick={() => setDeleteTarget(skill)} className="text-gray-500 hover:text-red-400 transition-colors flex items-center gap-1.5 text-[11px] font-semibold">
                 <Trash2 className="w-3.5 h-3.5" /> Delete
               </button>
             </div>
@@ -550,7 +554,7 @@ export default function SkillsManager() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-500" />
               <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search library..." className="w-full h-8 pl-9 pr-8 bg-[#050914] border border-[#1a2440] rounded-md text-[13px] text-white placeholder:text-gray-600 focus:border-[#14f195]/40 focus:outline-none transition-colors" />
               {searchQuery && (
-                <button onClick={() => setSearchQuery('')} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
+                <button aria-label="Clear search" onClick={() => setSearchQuery('')} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
                   <X className="w-3.5 h-3.5" />
                 </button>
               )}
@@ -615,17 +619,19 @@ export default function SkillsManager() {
         </div>
       )}
 
-      <EditorDrawer 
-        isOpen={editorState.isOpen} 
-        item={editorState.item} 
-        initialCategory={editorState.initialCategory} 
-        initialIsCircular={editorState.initialIsCircular} 
-        availableCategories={availableCategories}
-        skillCount={rawSkills?.length || 0} 
-        onClose={closeEditor} 
-        onSave={handleSave} 
-      />
-      <DeleteDialog item={deleteTarget} onCancel={() => setDeleteTarget(null)} onConfirm={handleDeleteConfirm} />
+      {editorState.isOpen && (
+        <EditorDrawer 
+          isOpen={editorState.isOpen} 
+          item={editorState.item} 
+          initialCategory={editorState.initialCategory} 
+          initialIsCircular={editorState.initialIsCircular} 
+          availableCategories={availableCategories}
+          skillCount={rawSkills?.length || 0} 
+          onClose={closeEditor} 
+          onSave={handleSave} 
+        />
+      )}
+      <DeleteDialog item={deleteTarget} isDeleting={isDeleting} onCancel={() => setDeleteTarget(null)} onConfirm={handleDeleteConfirm} />
     </div>
   );
 }

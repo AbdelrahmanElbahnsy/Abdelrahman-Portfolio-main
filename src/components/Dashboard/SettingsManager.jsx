@@ -7,7 +7,6 @@ import {
   Settings, Save, Moon, Sun, Trash2, AlertTriangle, 
   RefreshCw, CheckCircle2, ShieldAlert, Server, Globe
 } from 'lucide-react';
-import MigrationSeeder from './UI/MigrationSeeder';
 
 const PageSection = ({ title, subtitle, children, className = '' }) => (
   <section className={`space-y-4 ${className}`}>
@@ -411,8 +410,6 @@ export default function SettingsManager() {
           </PageSection>
         </div>
       </div>
-
-      <MigrationSeeder />
 
       {isDirty && (
         <div className="fixed bottom-0 left-0 right-0 lg:left-[240px] xl:left-[280px] bg-[#0a0f1c]/95 backdrop-blur-xl border-t border-[#1e293b] p-4 px-6 flex flex-col sm:flex-row items-center justify-between gap-4 z-50 animate-in slide-in-from-bottom-full duration-300 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">

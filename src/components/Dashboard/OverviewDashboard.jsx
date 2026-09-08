@@ -421,6 +421,7 @@ const OverviewDashboard = () => {
                       <p className="text-xs text-gray-500 font-mono flex items-center gap-1">
                         {info.status === 'online' ? `${info.latency}ms latency` : 
                          info.status === 'configured' ? 'Configured' :
+                         info.status === 'unmonitored' ? 'Not Monitored' :
                          info.status === 'unknown' ? 'Unknown state' :
                          'Connection Failed'}
                       </p>
@@ -428,7 +429,7 @@ const OverviewDashboard = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold text-gray-500 group-hover:text-white transition-colors opacity-0 group-hover:opacity-100">Details</span>
-                    <div className={`w-2 h-2 rounded-full shadow-[0_0_5px_currentColor] ${info.status === 'online' ? 'bg-cms-success text-cms-success' : info.status === 'configured' ? 'bg-blue-500 text-blue-500' : info.status === 'unknown' ? 'bg-gray-500 text-gray-500' : 'bg-red-500 text-red-500'}`}></div>
+                    <div className={`w-2 h-2 rounded-full shadow-[0_0_5px_currentColor] ${info.status === 'online' ? 'bg-cms-success text-cms-success' : info.status === 'configured' ? 'bg-blue-500 text-blue-500' : info.status === 'unmonitored' || info.status === 'unknown' ? 'bg-gray-500 text-gray-500' : 'bg-red-500 text-red-500'}`}></div>
                   </div>
                 </div>
               ))}

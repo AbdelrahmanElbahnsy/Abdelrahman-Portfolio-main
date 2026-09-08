@@ -85,9 +85,11 @@ const ProjectModal = ({ project, onClose }) => {
     >
       <div
         ref={modalRef}
-        className={`relative w-full max-w-4xl overflow-hidden rounded-2xl border border-[rgba(200,162,110,0.2)] bg-[rgba(10,14,23,0.95)] shadow-[0_30px_100px_-40px_rgba(200,162,110,0.2)] transition-all duration-300 ${isVisible ? 'scale-[0.85] opacity-100' : 'scale-[0.80] opacity-0'}`}
+        className={`relative flex w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-[rgba(200,162,110,0.2)] bg-[rgba(10,14,23,0.95)] shadow-[0_30px_100px_-40px_rgba(200,162,110,0.2)] transition-all duration-300 ${isVisible ? 'scale-[0.85] opacity-100' : 'scale-[0.80] opacity-0'}`}
+        style={{ maxHeight: 'min(90dvh, 90vh)' }}
       >
-        <div className="relative h-64 overflow-hidden bg-slate-950 sm:h-[250px]">
+        {/* Sticky header: image + close button — never scrolls away */}
+        <div className="relative h-40 shrink-0 overflow-hidden bg-slate-950 sm:h-[250px]">
           <img
             src={imageSrc}
             alt={project.title}
@@ -116,7 +118,8 @@ const ProjectModal = ({ project, onClose }) => {
           </button>
         </div>
 
-        <div className="px-6 pb-6 pt-5 sm:px-8 sm:pb-8">
+        {/* Scrollable content body */}
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 pb-6 pt-5 sm:px-8 sm:pb-8">
           <h2 id="project-modal-title" className="text-3xl font-black tracking-tight text-[var(--theme-text)] sm:text-4xl text-left rtl:text-right" dir="auto">
             {t(project.title)}
           </h2>

@@ -1,0 +1,1522 @@
+[
+  {
+    "file": "src\\cms\\components\\CrudTable.jsx",
+    "line": 25,
+    "content": "<thead className=\"bg-cms-background text-xs uppercase text-gray-500 border-b border-cms-border\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AboutManager.jsx",
+    "line": 194,
+    "content": "<span className=\"text-[#14f195] font-mono uppercase tracking-widest text-[10px] mb-2 block\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AboutManager.jsx",
+    "line": 209,
+    "content": "<span className=\"font-mono text-[9px] text-gray-500 uppercase tracking-wider\">{personalInfo.terminalTitle || 'Terminal'}</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AboutManager.jsx",
+    "line": 274,
+    "content": "<div className=\"text-xs font-bold uppercase tracking-wider mr-2\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AboutManager.jsx",
+    "line": 309,
+    "content": "<span className=\"text-[11px] font-bold text-gray-500 uppercase tracking-widest shrink-0\">About Identity</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AboutManager.jsx",
+    "line": 316,
+    "content": "<label className=\"block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2\">Subtitle</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AboutManager.jsx",
+    "line": 326,
+    "content": "<label className=\"block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2\">Section Title</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AboutManager.jsx",
+    "line": 338,
+    "content": "<label className=\"block text-[10px] font-bold text-gray-400 uppercase tracking-wider\">Lead Text</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AboutManager.jsx",
+    "line": 355,
+    "content": "<span className=\"text-[11px] font-bold text-gray-500 uppercase tracking-widest shrink-0\">About Story</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AboutManager.jsx",
+    "line": 370,
+    "content": "<span className=\"w-full sm:w-20 shrink-0 text-[10px] font-bold text-gray-500 uppercase tracking-wider text-center border-b sm:border-b-0 sm:border-r border-[#1e293b] py-2 sm:py-3 bg-[#0f172a]/50\">Prefix</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AboutManager.jsx",
+    "line": 384,
+    "content": "<span className=\"w-full sm:w-20 shrink-0 text-[10px] font-bold text-[#14f195] uppercase tracking-wider text-center border-b sm:border-b-0 sm:border-r border-[#1e293b] py-2 sm:py-3 bg-[#14f195]/5\">Highlight</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AboutManager.jsx",
+    "line": 398,
+    "content": "<span className=\"w-full sm:w-20 shrink-0 text-[10px] font-bold text-gray-500 uppercase tracking-wider text-center border-b sm:border-b-0 sm:border-r border-[#1e293b] py-2 sm:py-3 bg-[#0f172a]/50\">Suffix</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AboutManager.jsx",
+    "line": 438,
+    "content": "<span className=\"text-[11px] font-bold text-gray-500 uppercase tracking-widest shrink-0\">Expertise Badges</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AboutManager.jsx",
+    "line": 486,
+    "content": "<span className=\"text-[11px] font-bold text-gray-500 uppercase tracking-widest shrink-0\">Technical Profile</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AboutManager.jsx",
+    "line": 497,
+    "content": "<div className=\"hidden sm:grid sm:grid-cols-[150px_1fr_80px] gap-3 px-1 pb-2 border-b border-[#1e293b] text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AboutManager.jsx",
+    "line": 540,
+    "content": "<h3 className=\"text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-4\">Live Preview</h3>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AccountCenter.jsx",
+    "line": 75,
+    "content": "<label className=\"block text-[11px] font-mono font-bold text-gray-400 mb-2 uppercase tracking-widest\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AccountCenter.jsx",
+    "line": 92,
+    "content": "<span className=\"text-[10px] font-mono font-bold text-[#14f195]/80 uppercase tracking-widest\">{number} /</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AccountCenter.jsx",
+    "line": 93,
+    "content": "<h3 className=\"text-sm font-bold text-gray-300 uppercase tracking-widest\">{title}</h3>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AccountCenter.jsx",
+    "line": 104,
+    "content": "<p className=\"text-[10px] font-mono font-bold text-gray-500 uppercase tracking-widest mb-0.5\">{label}</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AccountCenter.jsx",
+    "line": 238,
+    "content": "<span className=\"text-[10px] font-mono font-bold uppercase tracking-widest text-[#14f195] mb-1 block\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AccountCenter.jsx",
+    "line": 264,
+    "content": "<label className=\"block text-[11px] font-mono font-bold text-gray-400 uppercase tracking-widest text-center\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AccountCenter.jsx",
+    "line": 314,
+    "content": "<p className=\"text-[10px] font-mono font-bold text-gray-500 uppercase tracking-widest mb-1\">Auth Email</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AccountCenter.jsx",
+    "line": 318,
+    "content": "<p className=\"text-[10px] font-mono font-bold text-gray-500 uppercase tracking-widest mb-1\">Firebase UID</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AccountCenter.jsx",
+    "line": 414,
+    "content": "<span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-[10px] font-mono font-bold uppercase tracking-widest ${roleColor}`}>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AccountCenter.jsx",
+    "line": 419,
+    "content": "<span className=\"inline-flex items-center gap-1 px-2.5 py-1 rounded-md border text-[10px] font-mono font-bold uppercase tracking-widest bg-[#14f195]/8 text-[#14f195] border-[#14f195]/20\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AccountCenter.jsx",
+    "line": 424,
+    "content": "<span className=\"inline-flex items-center gap-1 px-2.5 py-1 rounded-md border text-[10px] font-mono font-bold uppercase tracking-widest bg-yellow-500/8 text-yellow-400 border-yellow-500/20\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AccountCenter.jsx",
+    "line": 436,
+    "content": "<div className=\"flex flex-wrap justify-center sm:justify-start gap-3 sm:gap-5 mt-3 text-[11px] font-mono text-gray-500 uppercase tracking-wider\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AccountCenter.jsx",
+    "line": 534,
+    "content": "<span className=\"text-[10px] font-mono font-bold text-gray-500 uppercase tracking-widest\">{card.label}</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AccountCenter.jsx",
+    "line": 563,
+    "content": "<span className=\"text-[11px] font-mono font-bold text-gray-400 uppercase tracking-widest\">Personal Information</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AccountCenter.jsx",
+    "line": 584,
+    "content": "<p className=\"text-[10px] font-mono font-bold text-gray-500 uppercase tracking-widest mb-1\">Firebase UID</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AccountCenter.jsx",
+    "line": 609,
+    "content": "<span className=\"text-[11px] font-mono font-bold text-gray-400 uppercase tracking-widest\">Security Snapshot</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AccountCenter.jsx",
+    "line": 652,
+    "content": "<span className=\"text-[11px] font-mono font-bold text-gray-400 uppercase tracking-widest\">Admin Access</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AccountCenter.jsx",
+    "line": 659,
+    "content": "<p className=\"text-[10px] font-mono font-bold text-gray-500 uppercase tracking-widest mb-2\">Admin Role</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AccountCenter.jsx",
+    "line": 660,
+    "content": "<span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-sm font-mono font-bold uppercase tracking-wider ${roleColor}`}>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AccountCenter.jsx",
+    "line": 666,
+    "content": "<p className=\"text-[10px] font-mono font-bold text-gray-500 uppercase tracking-widest mb-2\">Access Level</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AccountCenter.jsx",
+    "line": 679,
+    "content": "<p className=\"text-[10px] font-mono font-bold text-gray-500 uppercase tracking-widest mb-3\">Granted Permissions</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AccountCenter.jsx",
+    "line": 720,
+    "content": "<span className=\"text-[11px] font-mono font-bold text-gray-400 uppercase tracking-widest\">Recent Activity</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AccountCenter.jsx",
+    "line": 989,
+    "content": "<p className=\"text-[10px] font-mono font-bold uppercase tracking-widest text-[#14f195] mb-0.5\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AccountCenter.jsx",
+    "line": 1006,
+    "content": "<span className=\"hidden md:block text-[10px] font-mono font-bold uppercase tracking-widest text-gray-500 mb-2 px-3\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AddProject.jsx",
+    "line": 157,
+    "content": "<p className=\"text-sm font-bold uppercase tracking-widest text-white\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AnalyticsDashboard.jsx",
+    "line": 18,
+    "content": "<p className=\"text-gray-400 text-xs font-bold uppercase tracking-wider mb-2\">{dateStr}</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AnalyticsDashboard.jsx",
+    "line": 81,
+    "content": "<p className=\"text-gray-400 font-bold text-sm tracking-wider uppercase animate-pulse\">Loading analytics...</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AnalyticsDashboard.jsx",
+    "line": 118,
+    "content": "<span className=\"flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-gray-400\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AnalyticsDashboard.jsx",
+    "line": 133,
+    "content": "<p className=\"text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 group-hover:text-gray-400 transition-colors\">Lifetime Visits</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AnalyticsDashboard.jsx",
+    "line": 146,
+    "content": "<p className=\"text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 group-hover:text-gray-400 transition-colors\">Visits Today</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AnalyticsDashboard.jsx",
+    "line": 159,
+    "content": "<p className=\"text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 group-hover:text-gray-400 transition-colors\">Last 7 Days</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AnalyticsDashboard.jsx",
+    "line": 172,
+    "content": "<p className=\"text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 group-hover:text-gray-400 transition-colors\">Last 30 Days</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AnalyticsDashboard.jsx",
+    "line": 189,
+    "content": "<p className=\"text-xs text-gray-500 font-bold uppercase tracking-wider\">Daily Visits</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AppearanceManager.jsx",
+    "line": 145,
+    "content": "<label className=\"block text-[11px] font-mono font-bold text-gray-400 mb-3 uppercase tracking-widest\">Global Language</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AppearanceManager.jsx",
+    "line": 172,
+    "content": "<label className=\"block text-[11px] font-mono font-bold text-gray-400 mb-3 uppercase tracking-widest\">Primary Accent Color</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AppearanceManager.jsx",
+    "line": 198,
+    "content": "className=\"w-24 bg-[#030814]/50 border border-[#1e293b] rounded-lg px-3 py-2 text-white font-mono text-xs focus:outline-none focus:border-[#14f195]/50 uppercase\""
+  },
+  {
+    "file": "src\\components\\Dashboard\\AppearanceManager.jsx",
+    "line": 206,
+    "content": "<label className=\"block text-[11px] font-mono font-bold text-gray-400 mb-2 uppercase tracking-widest\">Background</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AppearanceManager.jsx",
+    "line": 213,
+    "content": "<label className=\"block text-[11px] font-mono font-bold text-gray-400 mb-2 uppercase tracking-widest\">Surface/Cards</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AppearanceManager.jsx",
+    "line": 220,
+    "content": "<label className=\"block text-[11px] font-mono font-bold text-gray-400 mb-2 uppercase tracking-widest\">Primary Text</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\AppearanceManager.jsx",
+    "line": 267,
+    "content": "<div className=\"px-3 py-1 border border-[var(--theme-border-gold)] text-[var(--theme-accent)] text-[10px] font-mono rounded-md inline-block uppercase tracking-widest\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\CertificationsManager.jsx",
+    "line": 21,
+    "content": "<span className=\"font-mono text-[10px] text-red-500/70 uppercase tracking-[0.2em] mb-2 block\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\CertificationsManager.jsx",
+    "line": 53,
+    "content": "<span className=\"text-[10px] font-mono text-gray-500 uppercase tracking-widest\">{number} / {title}</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\CertificationsManager.jsx",
+    "line": 63,
+    "content": "<label htmlFor={id} className=\"block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\CertificationsManager.jsx",
+    "line": 160,
+    "content": "<span className=\"text-[10px] font-mono font-bold uppercase tracking-widest text-gray-400 mb-1 block\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\CertificationsManager.jsx",
+    "line": 319,
+    "content": "<span className=\"text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-[#14f195]/80\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\CertificationsManager.jsx",
+    "line": 342,
+    "content": "className=\"inline-flex items-center gap-2 text-[12px] font-bold text-[#14f195]/80 hover:text-[#14f195] uppercase tracking-wider transition-colors\""
+  },
+  {
+    "file": "src\\components\\Dashboard\\CertificationsManager.jsx",
+    "line": 666,
+    "content": "<span className=\"text-[#14f195] font-mono text-sm uppercase tracking-widest font-bold mb-2 block\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\CertificationsManager.jsx",
+    "line": 681,
+    "content": "<span className=\"text-[10px] font-mono font-bold uppercase tracking-widest text-gray-500 block\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\CertificationsManager.jsx",
+    "line": 694,
+    "content": "<span className=\"text-[10px] font-mono font-bold uppercase tracking-widest text-gray-500 block\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\CertificationsManager.jsx",
+    "line": 846,
+    "content": "<div className=\"hidden md:flex items-center gap-4 px-5 py-2 text-[10px] font-mono font-bold uppercase tracking-widest text-gray-600\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ContactManager.jsx",
+    "line": 210,
+    "content": "<h3 className=\"text-[#14f195] font-mono text-sm uppercase tracking-widest font-bold\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ContactManager.jsx",
+    "line": 220,
+    "content": "<label className=\"block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ContactManager.jsx",
+    "line": 234,
+    "content": "<label className=\"block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ContactManager.jsx",
+    "line": 346,
+    "content": "<span className=\"text-xs font-mono text-gray-500 uppercase tracking-widest\">{item.label}</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ContactManager.jsx",
+    "line": 348,
+    "content": "<span className=\"text-[9px] font-bold uppercase tracking-widest bg-[#14f195]/10 text-[#14f195] px-1.5 py-0.5 rounded border border-[#14f195]/20\">Primary</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ContactManager.jsx",
+    "line": 407,
+    "content": "<span className=\"text-[#14f195] font-mono text-sm uppercase tracking-widest font-bold mb-2 block\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ContactManager.jsx",
+    "line": 422,
+    "content": "<div className=\"flex items-center text-amber-500 font-mono text-xs uppercase tracking-widest bg-amber-500/10 px-3 py-1.5 rounded-full border border-amber-500/20\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ContactManager.jsx",
+    "line": 427,
+    "content": "<div className=\"flex items-center text-gray-400 font-mono text-xs uppercase tracking-widest\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ContactManager.jsx",
+    "line": 558,
+    "content": "<span className=\"text-[10px] font-mono text-gray-500 uppercase tracking-widest\">LIVE PREVIEW</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ContactManager.jsx",
+    "line": 563,
+    "content": "<h3 className=\"text-[#14f195] font-mono text-sm uppercase tracking-widest mb-3\">GET IN TOUCH</h3>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ContactManager.jsx",
+    "line": 571,
+    "content": "<h4 className=\"text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ContactManager.jsx",
+    "line": 577,
+    "content": "<div className=\"text-xs font-mono text-gray-500 uppercase tracking-widest mb-1\">{email.label}</div>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ContactManager.jsx",
+    "line": 590,
+    "content": "<h4 className=\"text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ContactManager.jsx",
+    "line": 596,
+    "content": "<div className=\"text-xs font-mono text-gray-500 uppercase tracking-widest mb-1\">{phone.label}</div>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ContactManager.jsx",
+    "line": 609,
+    "content": "<h4 className=\"text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ContactManager.jsx",
+    "line": 615,
+    "content": "<div className=\"text-xs font-mono text-gray-500 uppercase tracking-widest mb-1\">{loc.label}</div>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\HeroManager.jsx",
+    "line": 162,
+    "content": "<div className=\"absolute left-1/2 -translate-x-1/2 text-[9px] text-gray-500 font-medium uppercase tracking-widest hidden sm:block\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\HeroManager.jsx",
+    "line": 248,
+    "content": "<div className=\"flex items-center gap-2 text-xs font-bold uppercase tracking-wider\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\HeroManager.jsx",
+    "line": 301,
+    "content": "<label className=\"block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5\">First Name</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\HeroManager.jsx",
+    "line": 312,
+    "content": "<label className=\"block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5\">Last Name</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\HeroManager.jsx",
+    "line": 323,
+    "content": "<label className=\"block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5\">Professional Title / Badge</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\HeroManager.jsx",
+    "line": 334,
+    "content": "<label className=\"block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5\">Roles / Headlines</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\HeroManager.jsx",
+    "line": 396,
+    "content": "<label className=\"block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2\">Upload New Image</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\HeroManager.jsx",
+    "line": 419,
+    "content": "<label className=\"block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2\">Resume URL</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\HeroManager.jsx",
+    "line": 451,
+    "content": "<label className=\"block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2\">Or Upload Document (PDF)</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\HeroManager.jsx",
+    "line": 472,
+    "content": "<label className=\"block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2\">Button Label</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\JourneyManager.jsx",
+    "line": 19,
+    "content": "<span className=\"font-mono text-[10px] text-red-500/70 uppercase tracking-[0.2em] mb-2 block\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\JourneyManager.jsx",
+    "line": 196,
+    "content": "<span className=\"text-[#14f195] font-mono text-sm uppercase tracking-widest font-bold mb-2 block\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\JourneyManager.jsx",
+    "line": 210,
+    "content": "<span className=\"text-[10px] font-mono font-bold uppercase tracking-widest text-gray-500 block\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\JourneyManager.jsx",
+    "line": 219,
+    "content": "<span className=\"text-[10px] font-mono text-gray-500 uppercase tracking-widest hidden sm:block\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\Layout\\GlobalSearch.jsx",
+    "line": 162,
+    "content": "<span className={`text-xs ${isSelected ? 'text-white/80' : 'text-gray-500'} capitalize`}>{result.type}</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\Layout\\NotificationCenter.jsx",
+    "line": 153,
+    "content": "className={`flex-1 text-[10px] font-bold uppercase tracking-wider py-1 rounded transition-colors ${filter === f ? 'bg-white/10 text-white' : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'}`}"
+  },
+  {
+    "file": "src\\components\\Dashboard\\Layout\\QuickActions.jsx",
+    "line": 49,
+    "content": "<h4 className=\"text-cms-text font-bold text-xs uppercase tracking-wider\">{title}</h4>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\Layout\\UserDropdown.jsx",
+    "line": 76,
+    "content": "<span className=\"text-[9px] font-mono font-bold uppercase tracking-widest text-[#14f195] bg-[#14f195]/10 px-1.5 py-0.5 rounded border border-[#14f195]/20 self-start\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\Layout\\UserDropdown.jsx",
+    "line": 152,
+    "content": "<span className=\"text-[9px] font-mono font-bold uppercase tracking-widest text-[#14f195] leading-none\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\MediaLibraryCore.jsx",
+    "line": 21,
+    "content": "<span className=\"font-mono text-[10px] font-bold text-red-500/70 uppercase tracking-[0.2em] mb-2 block\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\MediaLibraryCore.jsx",
+    "line": 77,
+    "content": "<span className=\"bg-[#14f195]/10 text-[#14f195] border border-[#14f195]/30 px-3 py-1.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-widest flex items-center gap-2\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\MediaLibraryCore.jsx",
+    "line": 96,
+    "content": "<label className=\"block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#4b6385] mb-2\">Original Filename</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\MediaLibraryCore.jsx",
+    "line": 102,
+    "content": "<label className=\"block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#4b6385] mb-1.5 flex items-center gap-1.5\"><Maximize2 className=\"w-3 h-3\" /> Dimensions</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\MediaLibraryCore.jsx",
+    "line": 106,
+    "content": "<label className=\"block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#4b6385] mb-1.5 flex items-center gap-1.5\"><Database className=\"w-3 h-3\" /> File Size</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\MediaLibraryCore.jsx",
+    "line": 112,
+    "content": "<label className=\"block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#4b6385] mb-1.5 flex items-center gap-1.5\"><Clock className=\"w-3 h-3\" /> Uploaded</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\MediaLibraryCore.jsx",
+    "line": 119,
+    "content": "<label className=\"block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#14f195] mb-2\">Secure URL</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\MediaLibraryCore.jsx",
+    "line": 130,
+    "content": "<label className=\"block text-[10px] font-mono font-semibold uppercase tracking-wider text-purple-400 mb-2\">Public ID</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\MediaLibraryCore.jsx",
+    "line": 254,
+    "content": "<span className=\"text-gray-500 font-mono text-[10px] font-bold uppercase tracking-widest\">Fetching Assets...</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\MediaLibraryCore.jsx",
+    "line": 268,
+    "content": "<span className=\"text-[#14f195] font-mono text-[10px] uppercase tracking-[0.2em] font-bold mb-1.5 block flex items-center gap-2\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\MediaLibraryCore.jsx",
+    "line": 300,
+    "content": "<span className=\"text-[10px] font-mono text-gray-500 uppercase tracking-widest font-bold mb-1\">Total Assets</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\MediaLibraryCore.jsx",
+    "line": 305,
+    "content": "<span className=\"text-[10px] font-mono text-gray-500 uppercase tracking-widest font-bold mb-1\">Index Size</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\MediaLibraryCore.jsx",
+    "line": 314,
+    "content": "<span className=\"text-[10px] font-mono text-[#14f195] uppercase tracking-widest font-bold mb-0.5\">Library Index</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\MediaLibraryCore.jsx",
+    "line": 367,
+    "content": "className={`px-4 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all ${"
+  },
+  {
+    "file": "src\\components\\Dashboard\\MediaLibraryCore.jsx",
+    "line": 459,
+    "content": "<p className=\"text-[#4b6385] font-mono text-[9px] uppercase tracking-wider mb-3\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\MediaLibraryCore.jsx",
+    "line": 495,
+    "content": "<th className=\"px-5 py-4 text-[10px] font-mono font-bold text-gray-500 uppercase tracking-widest w-16\">Preview</th>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\MediaLibraryCore.jsx",
+    "line": 496,
+    "content": "<th className=\"px-5 py-4 text-[10px] font-mono font-bold text-gray-500 uppercase tracking-widest\">Details</th>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\MediaLibraryCore.jsx",
+    "line": 497,
+    "content": "<th className=\"px-5 py-4 text-[10px] font-mono font-bold text-gray-500 uppercase tracking-widest hidden sm:table-cell\">Format</th>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\MediaLibraryCore.jsx",
+    "line": 498,
+    "content": "<th className=\"px-5 py-4 text-[10px] font-mono font-bold text-gray-500 uppercase tracking-widest hidden md:table-cell\">Dimensions</th>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\MediaLibraryCore.jsx",
+    "line": 499,
+    "content": "<th className=\"px-5 py-4 text-[10px] font-mono font-bold text-gray-500 uppercase tracking-widest hidden lg:table-cell\">Size</th>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\MediaLibraryCore.jsx",
+    "line": 500,
+    "content": "<th className=\"px-5 py-4 text-[10px] font-mono font-bold text-gray-500 uppercase tracking-widest text-right\">Actions</th>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\MediaLibraryCore.jsx",
+    "line": 526,
+    "content": "<span className=\"bg-[#14f195]/10 text-[#14f195] border border-[#14f195]/20 px-2 py-1 rounded text-[9px] font-mono font-bold uppercase tracking-widest\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\MediaPickerModal.jsx",
+    "line": 19,
+    "content": "<p className=\"text-[#4b6385] text-[10px] font-mono uppercase tracking-wider\">Choose an asset from your library</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\Modals\\AnalyticsIntegrationModal.jsx",
+    "line": 79,
+    "content": "<p className=\"text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 px-2\">Providers</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\Modals\\AnalyticsIntegrationModal.jsx",
+    "line": 108,
+    "content": "<h4 className=\"text-sm font-bold text-gray-400 uppercase tracking-wider mb-2\">Why it's useful</h4>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\Modals\\AnalyticsIntegrationModal.jsx",
+    "line": 115,
+    "content": "<h4 className=\"text-sm font-bold text-gray-400 uppercase tracking-wider mb-2\">How to configure</h4>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\Modals\\SystemDiagnosticsModal.jsx",
+    "line": 61,
+    "content": "<h2 className=\"text-sm font-bold text-gray-400 uppercase tracking-wider\">Services</h2>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\Modals\\SystemDiagnosticsModal.jsx",
+    "line": 140,
+    "content": "<p className=\"text-sm font-bold text-gray-500 uppercase tracking-wider mb-2\">Ping Latency</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\NavbarManager.jsx",
+    "line": 15,
+    "content": "<span className=\"text-[10px] font-mono font-bold text-[#14f195]/80 uppercase tracking-widest\">{number} /</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\NavbarManager.jsx",
+    "line": 16,
+    "content": "<h3 className=\"text-sm font-bold text-gray-300 uppercase tracking-widest\">{title}</h3>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\NavbarManager.jsx",
+    "line": 22,
+    "content": "<label className=\"block text-[11px] font-mono font-bold text-gray-400 mb-2 uppercase tracking-widest\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\NavbarManager.jsx",
+    "line": 116,
+    "content": "<span className=\"text-[10px] font-mono font-bold uppercase tracking-widest text-gray-400 mb-1 block\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\NavbarManager.jsx",
+    "line": 236,
+    "content": "<span className=\"text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-[#14f195]/80\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\NavbarManager.jsx",
+    "line": 488,
+    "content": "<span className=\"text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-[#14f195]\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\NavbarManager.jsx",
+    "line": 513,
+    "content": "<span className=\"text-[10px] font-mono font-bold text-gray-400 uppercase tracking-widest block mb-2\">Total Links</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\NavbarManager.jsx",
+    "line": 517,
+    "content": "<span className=\"text-[10px] font-mono font-bold text-gray-400 uppercase tracking-widest block mb-2\">Active Targets</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\NavbarManager.jsx",
+    "line": 521,
+    "content": "<span className=\"text-[10px] font-mono font-bold text-gray-400 uppercase tracking-widest block mb-2\">Highest Order</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\NavbarManager.jsx",
+    "line": 626,
+    "content": "<th className=\"p-4 text-[10px] font-mono font-bold text-gray-400 uppercase tracking-widest w-16 text-center\">Ord</th>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\NavbarManager.jsx",
+    "line": 627,
+    "content": "<th className=\"p-4 text-[10px] font-mono font-bold text-gray-400 uppercase tracking-widest\">Label</th>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\NavbarManager.jsx",
+    "line": 628,
+    "content": "<th className=\"p-4 text-[10px] font-mono font-bold text-gray-400 uppercase tracking-widest\">Target</th>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\NavbarManager.jsx",
+    "line": 629,
+    "content": "<th className=\"p-4 text-[10px] font-mono font-bold text-gray-400 uppercase tracking-widest text-right\">Actions</th>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\OverviewDashboard.jsx",
+    "line": 119,
+    "content": "<span className=\"flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-400\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\OverviewDashboard.jsx",
+    "line": 124,
+    "content": "<span className=\"text-xs font-bold uppercase tracking-wider text-gray-400\">AdminOS v2.0</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\OverviewDashboard.jsx",
+    "line": 128,
+    "content": "<kbd aria-label=\"Search hotkey\" className=\"hidden md:flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-gray-500 bg-white/5 border border-white/5 rounded-md\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\OverviewDashboard.jsx",
+    "line": 143,
+    "content": "<p className=\"text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 group-hover:text-gray-400 transition-colors\">Health Score</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\OverviewDashboard.jsx",
+    "line": 163,
+    "content": "<p className=\"text-xs font-bold text-gray-500 uppercase tracking-wider mb-1\">Storage</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\OverviewDashboard.jsx",
+    "line": 170,
+    "content": "<p className=\"text-xs font-bold uppercase tracking-wider text-gray-500 mt-4 flex items-center gap-2\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\OverviewDashboard.jsx",
+    "line": 179,
+    "content": "<p className=\"text-xs font-bold text-gray-500 uppercase tracking-wider mb-1\">Projects</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\OverviewDashboard.jsx",
+    "line": 186,
+    "content": "<p className=\"text-xs font-bold uppercase tracking-wider text-gray-500 mt-4 flex items-center group-hover:text-cms-primary transition-colors\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\OverviewDashboard.jsx",
+    "line": 195,
+    "content": "<p className=\"text-xs font-bold text-gray-500 uppercase tracking-wider mb-1\">Skills</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\OverviewDashboard.jsx",
+    "line": 202,
+    "content": "<p className=\"text-xs font-bold uppercase tracking-wider text-gray-500 mt-4 flex items-center group-hover:text-purple-400 transition-colors\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\OverviewDashboard.jsx",
+    "line": 241,
+    "content": "<span className={`text-xs font-bold uppercase tracking-wider text-center leading-tight ${action.disabled ? 'text-gray-600' : 'text-gray-400 group-hover:text-white'}`}>{action.label}</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\OverviewDashboard.jsx",
+    "line": 475,
+    "content": "<span className=\"text-xs uppercase tracking-wider text-gray-500 font-bold\">Docs</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ProjectList.jsx",
+    "line": 44,
+    "content": "<span className=\"text-[10px] text-gray-500 uppercase tracking-wider flex items-center gap-1\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ProjectsManager.jsx",
+    "line": 57,
+    "content": "<span className=\"font-mono text-[10px] text-gray-700 uppercase tracking-widest leading-tight text-center\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ProjectsManager.jsx",
+    "line": 71,
+    "content": "<span className=\"font-mono text-[10px] text-gray-700 uppercase tracking-[0.18em]\">PROJECT</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ProjectsManager.jsx",
+    "line": 72,
+    "content": "<span className=\"font-mono text-[10px] text-gray-800 uppercase tracking-[0.12em] -mt-1.5\">PREVIEW</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ProjectsManager.jsx",
+    "line": 84,
+    "content": "<span className={`inline-flex items-center gap-1.5 font-mono font-bold uppercase tracking-widest rounded border text-[10px] px-2 py-0.5 whitespace-nowrap ${"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ProjectsManager.jsx",
+    "line": 106,
+    "content": "className=\"text-[10px] font-mono text-gray-500 bg-[#131b2c] border border-[#1e293b] px-1.5 py-0.5 rounded leading-none uppercase tracking-wider\""
+  },
+  {
+    "file": "src\\components\\Dashboard\\ProjectsManager.jsx",
+    "line": 215,
+    "content": "<span className=\"text-[#14f195] font-mono text-xs uppercase font-bold tracking-wider\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ProjectsManager.jsx",
+    "line": 218,
+    "content": "<span className=\"text-[#4b6385] font-mono text-xs uppercase tracking-wider\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ProjectsManager.jsx",
+    "line": 300,
+    "content": "className=\"inline-flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider rounded px-2 py-1 bg-[#090e17] border border-[#1e2d42] text-[#c0d0e0] group hover:border-[#14f195]/50 hover:text-[#14f195] transition-all\""
+  },
+  {
+    "file": "src\\components\\Dashboard\\ProjectsManager.jsx",
+    "line": 377,
+    "content": "className=\"flex-1 flex items-center justify-center gap-2 py-2 rounded-[5px] text-[11px] font-mono font-semibold uppercase tracking-widest transition-all\""
+  },
+  {
+    "file": "src\\components\\Dashboard\\ProjectsManager.jsx",
+    "line": 414,
+    "content": "className=\"shrink-0 text-[10px] font-mono font-bold uppercase tracking-widest px-1.5 py-0.5 rounded\""
+  },
+  {
+    "file": "src\\components\\Dashboard\\ProjectsManager.jsx",
+    "line": 430,
+    "content": "className=\"text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-[#050914] border border-[#1e2d42] text-[#8b9bb4]\""
+  },
+  {
+    "file": "src\\components\\Dashboard\\ProjectsManager.jsx",
+    "line": 449,
+    "content": "className=\"flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest font-semibold\""
+  },
+  {
+    "file": "src\\components\\Dashboard\\ProjectsManager.jsx",
+    "line": 505,
+    "content": "<span className=\"font-mono text-[11px] font-semibold uppercase tracking-widest text-[#8b9bb4]\">{label}</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ProjectsManager.jsx",
+    "line": 511,
+    "content": "<label htmlFor={htmlFor} className=\"block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ProjectsManager.jsx",
+    "line": 527,
+    "content": "<span className=\"font-mono text-[10px] text-red-500/70 uppercase tracking-[0.2em] mb-2 block\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ProjectsManager.jsx",
+    "line": 641,
+    "content": "<span className=\"text-gray-700 font-mono text-[10px] uppercase tracking-widest\">Loading…</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ProjectsManager.jsx",
+    "line": 655,
+    "content": "<span className=\"text-[#14f195] font-mono text-[10px] uppercase tracking-[0.2em] font-bold mb-1.5 block\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ProjectsManager.jsx",
+    "line": 683,
+    "content": "<span className=\"text-gray-700 font-mono text-[10px] uppercase tracking-widest hidden md:block\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ProjectsManager.jsx",
+    "line": 725,
+    "content": "className={`px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-widest transition-colors ${"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ProjectsManager.jsx",
+    "line": 769,
+    "content": "<h3 className=\"text-sm font-black text-white mb-2 uppercase tracking-wider\">No Projects Found</h3>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ProjectsManager.jsx",
+    "line": 775,
+    "content": "className=\"text-[#14f195] font-bold text-sm font-mono uppercase tracking-widest hover:text-[#10d482] transition-colors\""
+  },
+  {
+    "file": "src\\components\\Dashboard\\ProjectsManager.jsx",
+    "line": 782,
+    "content": "<h3 className=\"text-sm font-black text-white mb-2 uppercase tracking-wider\">Project Library is Empty</h3>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ProjectsManager.jsx",
+    "line": 804,
+    "content": "<span key={col} className=\"text-[10px] font-mono text-gray-700 uppercase tracking-[0.14em]\">{col}</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\ProjectsManager.jsx",
+    "line": 991,
+    "content": "<span className=\"text-gray-600 font-mono text-[10px] uppercase tracking-widest\">{label}</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SettingsManager.jsx",
+    "line": 23,
+    "content": "<label className=\"block text-[11px] font-mono font-bold text-gray-400 mb-2 uppercase tracking-widest\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SettingsManager.jsx",
+    "line": 252,
+    "content": "<span className={`text-xs font-bold uppercase tracking-wider ${formData.portfolioEnabled ? 'text-emerald-500' : 'text-red-500'}`}>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SettingsManager.jsx",
+    "line": 266,
+    "content": "<label className=\"block text-[11px] font-mono font-bold text-gray-400 mb-4 uppercase tracking-widest\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SettingsManager.jsx",
+    "line": 320,
+    "content": "<span className={`text-[10px] font-mono font-bold uppercase tracking-widest px-2 py-0.5 rounded border ${"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SettingsManager.jsx",
+    "line": 355,
+    "content": "<span className={`text-[10px] font-mono font-bold uppercase tracking-widest px-2 py-0.5 rounded border ${"
+  },
+  {
+    "file": "src\\components\\Dashboard\\Sidebar.jsx",
+    "line": 120,
+    "content": "className=\"px-4 mb-2 text-xs font-bold uppercase tracking-widest text-gray-500\""
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 35,
+    "content": "<span className=\"font-mono text-[10px] text-red-500/70 uppercase tracking-[0.2em] mb-2 block\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 163,
+    "content": "<span className=\"text-[#14f195] font-mono text-[10px] uppercase font-bold tracking-wider\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 166,
+    "content": "<span className=\"text-[#4b6385] font-mono text-[10px] uppercase tracking-wider\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 185,
+    "content": "<span className=\"font-mono text-[11px] font-semibold uppercase tracking-widest text-[#8b9bb4]\">IDENTITY</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 190,
+    "content": "<label htmlFor=\"skill-name\" className=\"block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5\">Skill Name <span className=\"text-[#14f195]\">*</span></label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 195,
+    "content": "<label className=\"block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-2.5\">Placement</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 216,
+    "content": "<label htmlFor=\"skill-category\" className=\"block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5\">Category <span className=\"text-[#14f195]\">*</span></label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 243,
+    "content": "<label htmlFor=\"skill-circular-sub\" className=\"block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5\">Circular Subtitle</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 253,
+    "content": "<span className=\"font-mono text-[11px] font-semibold uppercase tracking-widest text-[#8b9bb4]\">PROFICIENCY</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 279,
+    "content": "<span className=\"font-mono text-[11px] font-semibold uppercase tracking-widest text-[#8b9bb4]\">PRESENTATION</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 284,
+    "content": "<label htmlFor=\"skill-icon\" className=\"block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5\">Icon Name (React Icons / FontAwesome)</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 288,
+    "content": "<label htmlFor=\"skill-order\" className=\"block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5\">Display Order</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 297,
+    "content": "<span className=\"font-mono text-[11px] font-semibold uppercase tracking-widest text-[#8b9bb4]\">LIVE PREVIEW</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 314,
+    "content": "<span className=\"font-mono text-[10px] uppercase tracking-widest text-[#4b6385]\">{category || 'Category'}</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 322,
+    "content": "<span className=\"text-[10px] font-mono font-bold uppercase tracking-widest text-[#8b9bb4]\">PROFICIENCY</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 336,
+    "content": "<span className=\"flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest font-semibold\" style={{ color: isDirty ? '#f59e0b' : '#4b6385' }}>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 458,
+    "content": "<span className=\"text-gray-700 font-mono text-[10px] uppercase tracking-widest\">Loading…</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 474,
+    "content": "<span className=\"font-mono text-[10px] uppercase tracking-[0.2em] mb-1 block text-[#14f195]\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 478,
+    "content": "<span className={`font-mono text-[10px] uppercase tracking-[0.2em] mb-1 block ${accentColor}`}>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 493,
+    "content": "<span className=\"text-[10px] font-mono font-bold uppercase tracking-widest text-[#8b9bb4]\">PROFICIENCY</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 521,
+    "content": "<span className=\"text-[#14f195] font-mono text-[10px] uppercase tracking-[0.2em] font-bold mb-1.5 block\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 539,
+    "content": "<span className=\"text-gray-500 font-mono text-[10px] uppercase tracking-widest\">TOTAL SKILLS</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 544,
+    "content": "<span className=\"text-gray-500 font-mono text-[10px] uppercase tracking-widest\">CATEGORIES</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 549,
+    "content": "<span className=\"text-gray-500 font-mono text-[10px] uppercase tracking-widest\">CIRCULAR</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 571,
+    "content": "<span className=\"font-mono text-[11px] uppercase tracking-widest text-gray-500 mb-1\">NO SKILLS FOUND</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 581,
+    "content": "<h2 className=\"text-lg font-bold text-white uppercase tracking-wide\">TOP CIRCULAR SKILLS</h2>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 584,
+    "content": "<button onClick={() => openEditor(null, '', true)} className=\"flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#1a2440]/50 hover:bg-[#1a2440] text-gray-300 text-[11px] font-bold uppercase tracking-wider transition-colors\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 600,
+    "content": "<h2 className=\"text-lg font-bold text-white uppercase tracking-wide flex items-center gap-3\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SkillsManager.jsx",
+    "line": 608,
+    "content": "<button onClick={() => openEditor(null, cat.title, false)} className=\"flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#1a2440]/50 hover:bg-[#1a2440] text-gray-300 text-[11px] font-bold uppercase tracking-wider transition-colors\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SocialsManager.jsx",
+    "line": 14,
+    "content": "<span className=\"text-[10px] font-mono font-bold text-[#14f195]/80 uppercase tracking-widest\">{number} /</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SocialsManager.jsx",
+    "line": 15,
+    "content": "<h3 className=\"text-sm font-bold text-gray-300 uppercase tracking-widest\">{title}</h3>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SocialsManager.jsx",
+    "line": 21,
+    "content": "<label htmlFor={id} className=\"block text-[11px] font-mono font-bold text-gray-400 mb-2 uppercase tracking-widest\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SocialsManager.jsx",
+    "line": 49,
+    "content": "<span className=\"font-mono text-[10px] text-red-500/70 uppercase tracking-[0.2em] mb-2 block\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SocialsManager.jsx",
+    "line": 139,
+    "content": "<span className=\"text-[10px] font-mono font-bold uppercase tracking-widest text-gray-400 mb-1 block\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SocialsManager.jsx",
+    "line": 272,
+    "content": "<span className=\"text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-[#14f195]/80\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SocialsManager.jsx",
+    "line": 306,
+    "content": "className=\"inline-flex items-center gap-2 text-[12px] font-bold text-[#14f195]/80 hover:text-[#14f195] uppercase tracking-wider transition-colors\""
+  },
+  {
+    "file": "src\\components\\Dashboard\\SocialsManager.jsx",
+    "line": 545,
+    "content": "<span className=\"text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-[#14f195]\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SocialsManager.jsx",
+    "line": 570,
+    "content": "<span className=\"text-[10px] font-mono font-bold text-gray-400 uppercase tracking-widest block mb-2\">Total Connections</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SocialsManager.jsx",
+    "line": 574,
+    "content": "<span className=\"text-[10px] font-mono font-bold text-gray-400 uppercase tracking-widest block mb-2\">Active Links</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SocialsManager.jsx",
+    "line": 578,
+    "content": "<span className=\"text-[10px] font-mono font-bold text-gray-400 uppercase tracking-widest block mb-2\">Unique Platforms</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SocialsManager.jsx",
+    "line": 686,
+    "content": "<th className=\"p-4 text-[10px] font-mono font-bold text-gray-400 uppercase tracking-widest w-16 text-center\">Ord</th>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SocialsManager.jsx",
+    "line": 687,
+    "content": "<th className=\"p-4 text-[10px] font-mono font-bold text-gray-400 uppercase tracking-widest\">Platform</th>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SocialsManager.jsx",
+    "line": 688,
+    "content": "<th className=\"p-4 text-[10px] font-mono font-bold text-gray-400 uppercase tracking-widest hidden md:table-cell\">URL</th>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\SocialsManager.jsx",
+    "line": 689,
+    "content": "<th className=\"p-4 text-[10px] font-mono font-bold text-gray-400 uppercase tracking-widest text-right\">Actions</th>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UI\\Enterprise\\Feedback\\EnterpriseStatusBadge.jsx",
+    "line": 50,
+    "content": "<span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${style.bg} ${style.border} ${style.text} ${className}`}>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UI\\Enterprise\\State\\EnterpriseLoadingState.jsx",
+    "line": 8,
+    "content": "<p className=\"text-sm font-bold text-gray-400 animate-pulse tracking-wide uppercase\">{message}</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UI\\Enterprise\\Table\\EnterpriseDataTable.jsx",
+    "line": 76,
+    "content": "<thead className=\"text-xs text-gray-500 uppercase bg-black/40 border-b border-white/5 sticky top-0 z-10 backdrop-blur-md\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UI\\ExperienceCard.jsx",
+    "line": 15,
+    "content": "<span className=\"text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-[#14f195]/80\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UI\\ExperienceCard.jsx",
+    "line": 32,
+    "content": "<h4 className=\"text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500 mb-3\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UI\\ExperienceEditor.jsx",
+    "line": 8,
+    "content": "<span className=\"text-[10px] font-mono text-gray-500 uppercase tracking-widest\">{number} / {title}</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UI\\ExperienceEditor.jsx",
+    "line": 15,
+    "content": "<label htmlFor={id} className=\"block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 flex justify-between\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UI\\ExperienceEditor.jsx",
+    "line": 109,
+    "content": "<span className=\"text-[10px] font-mono font-bold uppercase tracking-widest text-gray-400 mb-2 block\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UI\\ExperienceEditor.jsx",
+    "line": 183,
+    "content": "<label htmlFor=\"experience-technologies\" className=\"block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UI\\ExperienceEditor.jsx",
+    "line": 199,
+    "content": "<span className=\"text-[10px] font-mono text-gray-500 uppercase tracking-widest mb-3 block\">TECH STACK PREVIEW</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UI\\ExperienceEditor.jsx",
+    "line": 239,
+    "content": "<span className=\"text-[10px] font-mono text-gray-500 uppercase tracking-widest mb-3 block\">CARD PREVIEW</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 43,
+    "content": "const base = 'inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold border uppercase tracking-wide';"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 184,
+    "content": "<label className=\"block text-[11px] font-mono font-bold text-gray-400 uppercase tracking-widest mb-2\">"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 248,
+    "content": "<span className=\"text-[10px] font-mono font-bold uppercase tracking-widest text-[#14f195] block mb-0.5\">USER PROFILE</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 266,
+    "content": "{isSelf && <span className=\"px-1.5 py-0.5 bg-[#14f195]/10 text-[#14f195] text-[9px] font-mono font-bold uppercase border border-[#14f195]/20 rounded\">You</span>}"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 270,
+    "content": "<span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md border text-[10px] font-mono font-bold uppercase tracking-widest ${ROLE_COLORS[user.role] || ROLE_COLORS.unassigned}`}>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 274,
+    "content": "<span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md border text-[10px] font-mono font-bold uppercase tracking-widest ${user.disabled ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-[#14f195]/8 text-[#14f195] border-[#14f195]/20'}`}>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 291,
+    "content": "<p className=\"text-[10px] font-mono font-bold text-[#14f195] uppercase tracking-widest mb-3 flex items-center gap-2\"><span className=\"text-gray-500\">01 /</span> Identity</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 296,
+    "content": "<p className=\"text-[10px] font-mono text-gray-500 uppercase tracking-wider mb-0.5\">Email</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 303,
+    "content": "<p className=\"text-[10px] font-mono text-gray-500 uppercase tracking-wider mb-0.5\">Firebase UID</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 315,
+    "content": "<p className=\"text-[10px] font-mono font-bold text-[#14f195] uppercase tracking-widest mb-3 flex items-center gap-2\"><span className=\"text-gray-500\">02 /</span> Access & Role</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 318,
+    "content": "<span className=\"text-[10px] font-mono text-gray-500 uppercase tracking-wider\">Role</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 319,
+    "content": "<span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md border text-[10px] font-mono font-bold uppercase ${ROLE_COLORS[user.role] || ROLE_COLORS.unassigned}`}>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 325,
+    "content": "<span className=\"text-[10px] font-mono text-gray-500 uppercase tracking-wider\">Access Level</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 329,
+    "content": "<p className=\"text-[10px] font-mono text-gray-500 uppercase tracking-wider mb-2\">Granted Permissions</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 344,
+    "content": "<p className=\"text-[10px] font-mono font-bold text-[#14f195] uppercase tracking-widest mb-3 flex items-center gap-2\"><span className=\"text-gray-500\">03 /</span> Authentication</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 355,
+    "content": "<span className=\"text-[11px] font-mono text-gray-500 uppercase tracking-wide flex-1\">{label}</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 365,
+    "content": "<p className=\"text-[10px] font-mono font-bold text-[#14f195] uppercase tracking-widest mb-3 flex items-center gap-2\"><span className=\"text-gray-500\">04 /</span> Actions</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 455,
+    "content": "<span className=\"text-[10px] font-mono font-bold uppercase tracking-widest text-[#14f195] mb-1 block\">USER MANAGEMENT</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 471,
+    "content": "<label className=\"block text-[11px] font-mono font-bold text-gray-400 mb-2 uppercase tracking-widest\">{label}</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 478,
+    "content": "<label className=\"block text-[11px] font-mono font-bold text-gray-400 mb-2 uppercase tracking-widest\">ASSIGN ROLE</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 537,
+    "content": "<span className=\"text-[10px] font-mono font-bold uppercase tracking-widest text-[#14f195] block mb-0.5\">EDITING USER</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 564,
+    "content": "<label className=\"block text-[11px] font-mono font-bold text-gray-400 mb-2 uppercase tracking-widest\">Display Name</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 574,
+    "content": "<label className=\"block text-[11px] font-mono font-bold text-gray-400 mb-2 uppercase tracking-widest\">Role</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 595,
+    "content": "<label className=\"block text-[11px] font-mono font-bold text-gray-400 mb-2 uppercase tracking-widest\">Account Status</label>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 863,
+    "content": "<span className=\"text-[10px] font-mono font-bold uppercase tracking-widest text-[#14f195]\">Identity & Access</span>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 886,
+    "content": "<p className={`text-[10px] font-mono font-bold uppercase tracking-wider mb-1.5 ${accent}`}>{label}</p>"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 971,
+    "content": "<th key={h} className={`px-5 py-3.5 text-[10px] font-mono font-bold text-gray-500 uppercase tracking-widest ${"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 992,
+    "content": "{isSelf && <span className=\"bg-[#14f195]/10 text-[#14f195] text-[9px] px-1.5 py-0.5 rounded font-mono uppercase tracking-widest border border-[#14f195]/20 shrink-0\">You</span>}"
+  },
+  {
+    "file": "src\\components\\Dashboard\\UsersManager.jsx",
+    "line": 1000,
+    "content": "<span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md border text-[10px] font-mono font-bold uppercase tracking-widest ${ROLE_COLORS[u.role] || ROLE_COLORS.unassigned}`}>"
+  },
+  {
+    "file": "src\\components\\layout\\Footer.jsx",
+    "line": 119,
+    "content": "<div className=\"status-badge inline-flex items-center gap-2 px-3 py-1 bg-[rgba(39,201,63,0.1)] border border-[rgba(39,201,63,0.2)] rounded-full text-[10px] font-bold text-[#27c93f] uppercase tracking-widest\">"
+  },
+  {
+    "file": "src\\components\\layout\\Navbar.jsx",
+    "line": 349,
+    "content": "className={`flex items-center justify-center gap-1.5 px-2.5 2xl:px-4 py-2.5 rounded-full text-[10px] 2xl:text-[11px] font-black uppercase tracking-[0.12em] transition-all duration-300 ${activeSection === link.id ? 'bg-[var(--theme-nav-active-bg)] text-[var(--theme-nav-active-text)] shadow-[var(--theme-nav-active-shadow)]' : 'text-[var(--theme-nav-text-dim)] hover:text-[var(--theme-nav-text)] hover:bg-[var(--theme-nav-hover-bg)]'}`}"
+  },
+  {
+    "file": "src\\components\\layout\\Navbar.jsx",
+    "line": 393,
+    "content": "className={`hidden md:flex items-center shrink-0 gap-2 2xl:gap-2.5 px-4 2xl:px-6 py-2.5 text-[10px] 2xl:text-[11px] font-black uppercase tracking-widest rounded-full transition-all duration-500 ${activeSection === 'contact' ? 'bg-[var(--theme-nav-contact-active-bg)] text-[var(--theme-nav-contact-active-text)] ring-2 ring-[var(--theme-nav-contact-active-ring)]' : 'bg-[var(--theme-accent)] text-black'}`}"
+  },
+  {
+    "file": "src\\components\\layout\\Navbar.jsx",
+    "line": 416,
+    "content": "className={`flex items-center gap-3.5 md:gap-5 text-[26px] md:text-3xl font-black uppercase tracking-tighter transition-all duration-500 ${activeSection === link.id ? 'text-[var(--theme-accent)]' : 'text-[var(--theme-text)]'}`}"
+  },
+  {
+    "file": "src\\components\\layout\\Navbar.jsx",
+    "line": 426,
+    "content": "<p className=\"text-[var(--theme-text-dim)] uppercase text-[10px] font-black tracking-[0.2em] mb-6\">{t(\"Let's Connect\")}</p>"
+  },
+  {
+    "file": "src\\components\\sections\\About.jsx",
+    "line": 112,
+    "content": "<span className=\"section-subtitle text-[var(--theme-accent)] font-mono uppercase tracking-widest text-sm mb-2 block\">{subtitle}</span>"
+  },
+  {
+    "file": "src\\components\\sections\\About.jsx",
+    "line": 138,
+    "content": "<span className=\"terminal-title font-mono text-xs sm:text-sm text-[var(--theme-text-muted)] uppercase tracking-wider\">{personalInfo.terminalTitle}</span>"
+  },
+  {
+    "file": "src\\components\\sections\\Certifications.jsx",
+    "line": 70,
+    "content": "<span className=\"section-subtitle text-[var(--theme-accent)] font-mono uppercase tracking-widest text-sm mb-4 block\">"
+  },
+  {
+    "file": "src\\components\\sections\\Certifications.jsx",
+    "line": 149,
+    "content": "<div className=\"px-3 py-1 bg-[var(--theme-accent-soft)] border border-[var(--theme-border-gold)] text-[var(--theme-accent)] text-[9px] font-black uppercase tracking-widest rounded-full\">"
+  },
+  {
+    "file": "src\\components\\sections\\Certifications.jsx",
+    "line": 158,
+    "content": "<p className=\"text-sm font-medium text-[var(--theme-accent)] opacity-80 mb-6 uppercase tracking-wider\" dir={language === 'ar' ? 'rtl' : 'ltr'}>"
+  },
+  {
+    "file": "src\\components\\sections\\Contact.jsx",
+    "line": 175,
+    "content": "<span className=\"section-subtitle text-[var(--theme-accent)] font-mono uppercase tracking-widest text-sm mb-2 block\">{t(subtitle)}</span>"
+  },
+  {
+    "file": "src\\components\\sections\\Contact.jsx",
+    "line": 193,
+    "content": "<span className=\"channel-label text-[10px] font-mono uppercase tracking-widest text-[var(--theme-text-muted)] block mb-1\">{t(channel.label)}</span>"
+  },
+  {
+    "file": "src\\components\\sections\\Contact.jsx",
+    "line": 296,
+    "content": "<button type=\"submit\" className=\"terminal-submit-btn w-full py-4 bg-[var(--theme-accent)] text-[var(--theme-btn-text)] font-black uppercase text-sm rounded-xl flex items-center justify-center gap-3 hover:shadow-[0_0_20px_var(--theme-accent-soft)] transition-all flex-row-reverse rtl:flex-row\">"
+  },
+  {
+    "file": "src\\components\\sections\\Journey.jsx",
+    "line": 92,
+    "content": "<span className=\"section-subtitle text-[var(--theme-accent)] font-mono uppercase tracking-widest text-sm mb-4 block\">"
+  },
+  {
+    "file": "src\\components\\sections\\Journey.jsx",
+    "line": 123,
+    "content": "<span className={`text-[10px] uppercase tracking-widest font-mono mr-2 rtl:mr-0 rtl:ml-2 md:mr-3 rtl:md:mr-0 rtl:md:ml-3 transition-opacity ${isActive ? 'opacity-80 md:opacity-100' : 'opacity-40'}`}>"
+  },
+  {
+    "file": "src\\components\\sections\\Journey.jsx",
+    "line": 196,
+    "content": "<span className=\"text-[var(--theme-accent)] font-black text-[11px] uppercase tracking-[0.2em] mb-2 md:mb-4 block text-left rtl:text-right\" dir=\"auto\">"
+  },
+  {
+    "file": "src\\components\\sections\\Journey.jsx",
+    "line": 210,
+    "content": "<span key={tidx} className={`flex items-center justify-center text-center w-full md:w-auto px-2 py-1.5 md:px-4 md:py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${isActive ? 'bg-[var(--theme-surface)] border-[var(--theme-border-strong)] text-[var(--theme-text-secondary)] hover:border-[var(--theme-border-gold)] hover:text-[var(--theme-text)] hover:bg-[var(--theme-accent-soft)]' : 'bg-transparent border-[var(--theme-border)] text-[var(--theme-text-muted)] border'}`}>"
+  },
+  {
+    "file": "src\\components\\sections\\Projects.jsx",
+    "line": 107,
+    "content": "<span className=\"section-subtitle mb-2 block font-mono text-sm font-bold uppercase tracking-widest text-[var(--theme-accent)]\">"
+  },
+  {
+    "file": "src\\components\\sections\\Skills.jsx",
+    "line": 99,
+    "content": "<span className=\"section-subtitle text-[var(--theme-accent)] font-mono uppercase tracking-widest text-sm mb-3 block\">"
+  },
+  {
+    "file": "src\\components\\sections\\Skills.jsx",
+    "line": 212,
+    "content": "<p className=\"text-[10px] md:text-xs font-mono text-[var(--theme-accent)] tracking-widest uppercase\">{card.skills.length} {t('Core Tools')}</p>"
+  },
+  {
+    "file": "src\\components\\sections\\Toolchain.jsx",
+    "line": 43,
+    "content": "<span className=\"text-base md:text-sm font-bold tracking-wider uppercase text-[var(--theme-accent)]\">{t('DevOps Toolchain')}</span>"
+  },
+  {
+    "file": "src\\components\\ui\\AirplaneSocial.jsx",
+    "line": 77,
+    "content": "className=\"px-3 py-1.5 rounded-lg border border-white/10 text-white text-[10px] font-bold tracking-widest uppercase whitespace-nowrap shadow-2xl backdrop-blur-md\""
+  },
+  {
+    "file": "src\\components\\ui\\MaintenanceScreen.jsx",
+    "line": 30,
+    "content": "<span className=\"text-xs font-medium text-emerald-500 uppercase tracking-wider\">Status: Offline</span>"
+  },
+  {
+    "file": "src\\components\\ui\\ProjectModal.jsx",
+    "line": 127,
+    "content": "<div className=\"mb-4 font-mono text-xs uppercase tracking-[0.35em] text-[var(--theme-accent)] opacity-90 text-left\" dir=\"ltr\">"
+  },
+  {
+    "file": "src\\components\\ui\\SplashScreen.jsx",
+    "line": 278,
+    "content": "textTransform: 'uppercase',"
+  },
+  {
+    "file": "src\\components\\ui\\TechTags.jsx",
+    "line": 27,
+    "content": "className=\"rounded border border-[var(--theme-border-gold)] bg-[var(--theme-accent-soft)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--theme-accent)]\""
+  },
+  {
+    "file": "src\\components\\ui\\TechTags.jsx",
+    "line": 34,
+    "content": "<span className=\"rounded border border-[var(--theme-border-gold)] bg-[var(--theme-accent-soft)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--theme-accent)]\">"
+  },
+  {
+    "file": "src\\pages\\ForgotPassword.jsx",
+    "line": 64,
+    "content": "<span className=\"text-[#14f195] text-[10px] font-bold tracking-[0.2em] uppercase\">ABDELRAHMAN EL-BAHNSY</span>"
+  },
+  {
+    "file": "src\\pages\\ForgotPassword.jsx",
+    "line": 67,
+    "content": "<p className=\"text-gray-500 mt-2 text-sm font-medium tracking-wide uppercase\">No worries, we'll send you reset instructions.</p>"
+  },
+  {
+    "file": "src\\pages\\ForgotPassword.jsx",
+    "line": 72,
+    "content": "<label className=\"block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2\">Email Address</label>"
+  },
+  {
+    "file": "src\\pages\\ForgotPassword.jsx",
+    "line": 110,
+    "content": "<Link to=\"/login\" className=\"inline-flex items-center justify-center gap-2 text-xs font-medium text-gray-500 hover:text-[#14f195] transition-colors focus:outline-none focus:underline uppercase tracking-wider\">"
+  },
+  {
+    "file": "src\\pages\\Login.jsx",
+    "line": 84,
+    "content": "<span className=\"text-[#14f195] text-[10px] font-bold tracking-[0.2em] uppercase\">ABDELRAHMAN EL-BAHNSY</span>"
+  },
+  {
+    "file": "src\\pages\\Login.jsx",
+    "line": 87,
+    "content": "<p className=\"text-gray-500 mt-2 text-sm font-medium tracking-wide uppercase\">Secure Portal Access</p>"
+  },
+  {
+    "file": "src\\pages\\Login.jsx",
+    "line": 92,
+    "content": "<label className=\"block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2\">Email Address</label>"
+  },
+  {
+    "file": "src\\pages\\Login.jsx",
+    "line": 110,
+    "content": "<label className=\"block text-xs font-semibold text-gray-400 uppercase tracking-wider\">Password</label>"
+  }
+]

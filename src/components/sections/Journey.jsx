@@ -89,7 +89,7 @@ const Journey = () => {
                     {/* Left Column: Header & Interactive Tabs */}
                     <div className="w-full md:w-[35%] lg:w-[30%] shrink-0">
                         <div ref={headerRef} className="section-header text-left rtl:text-right mb-8 md:mb-12">
-                            <span className="section-subtitle text-[var(--theme-accent)] font-mono uppercase tracking-widest text-sm mb-4 block">
+                            <span className="section-subtitle text-[var(--theme-accent)] font-mono tracking-widest text-sm mb-4 block">
                                 {subtitle}
                             </span>
                             <h2 className="section-title text-3xl sm:text-4xl md:text-5xl font-black mb-6 leading-tight tracking-tight drop-shadow-md text-[var(--theme-text)]">
@@ -120,7 +120,7 @@ const Journey = () => {
                                                 
                                                 {/* Text / Mobile Pill */}
                                                 <div className={`step-text px-5 py-2.5 md:p-0 rounded-full md:rounded-none md:bg-transparent text-sm font-bold origin-left rtl:origin-right flex items-center transition-all duration-300 border md:border-transparent ${isActive ? 'bg-[var(--theme-accent)] border-[var(--theme-accent)] md:bg-transparent text-[var(--theme-bg)] md:text-[var(--theme-text)] scale-[1.02] md:scale-105 md:translate-x-2 rtl:md:-translate-x-2 shadow-[0_0_15px_var(--theme-accent-soft)] md:shadow-none' : 'bg-[var(--theme-surface-elevated)] border-[var(--theme-border)] md:border-transparent md:bg-transparent text-[var(--theme-text-secondary)] group-hover:text-[var(--theme-text)] group-hover:bg-[var(--theme-surface)] md:group-hover:bg-transparent'}`}>
-                                                    <span className={`text-[10px] uppercase tracking-widest font-mono mr-2 rtl:mr-0 rtl:ml-2 md:mr-3 rtl:md:mr-0 rtl:md:ml-3 transition-opacity ${isActive ? 'opacity-80 md:opacity-100' : 'opacity-40'}`}>
+                                                    <span className={`text-[10px] tracking-widest font-mono mr-2 rtl:mr-0 rtl:ml-2 md:mr-3 rtl:md:mr-0 rtl:md:ml-3 transition-opacity ${isActive ? 'opacity-80 md:opacity-100' : 'opacity-40'}`}>
                                                         0{phase.phase}
                                                     </span>
                                                     <span dir={language === 'ar' ? 'rtl' : 'ltr'}>{language === 'ar' ? (phase.titleAr || phase.title) : phase.title}</span>
@@ -193,7 +193,7 @@ const Journey = () => {
                                                     {/* Accent Glow Effect */}
                                                     <div className={`absolute top-0 right-0 rtl:right-auto rtl:left-0 w-64 h-64 bg-[var(--theme-accent)] rounded-full -translate-y-1/2 translate-x-1/2 rtl:-translate-x-1/2 blur-3xl pointer-events-none transition-opacity duration-700 ${isActive ? 'opacity-[0.05]' : 'opacity-0'}`}></div>
 
-                                                    <span className="text-[var(--theme-accent)] font-black text-[11px] uppercase tracking-[0.2em] mb-2 md:mb-4 block text-left rtl:text-right" dir="auto">
+                                                    <span className="text-[var(--theme-accent)] font-black text-[11px] tracking-[0.2em] mb-2 md:mb-4 block text-left rtl:text-right" dir="auto">
                                                         {t('PHASE')} {phase.phase}
                                                     </span>
                                                     
@@ -207,7 +207,7 @@ const Journey = () => {
 
                                                     <div className="grid grid-cols-2 md:flex md:flex-wrap gap-2 md:gap-3" dir="ltr">
                                                         {phase.tags.map((tag, tidx) => (
-                                                            <span key={tidx} className={`flex items-center justify-center text-center w-full md:w-auto px-2 py-1.5 md:px-4 md:py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${isActive ? 'bg-[var(--theme-surface)] border-[var(--theme-border-strong)] text-[var(--theme-text-secondary)] hover:border-[var(--theme-border-gold)] hover:text-[var(--theme-text)] hover:bg-[var(--theme-accent-soft)]' : 'bg-transparent border-[var(--theme-border)] text-[var(--theme-text-muted)] border'}`}>
+                                                            <span key={tidx} className={`flex items-center justify-center text-center w-full md:w-auto px-2 py-1.5 md:px-4 md:py-2 rounded-xl text-[10px] font-black tracking-wider transition-all duration-300 ${isActive ? 'bg-[var(--theme-surface)] border-[var(--theme-border-strong)] text-[var(--theme-text-secondary)] hover:border-[var(--theme-border-gold)] hover:text-[var(--theme-text)] hover:bg-[var(--theme-accent-soft)]' : 'bg-transparent border-[var(--theme-border)] text-[var(--theme-text-muted)] border'}`}>
                                                                 {tag}
                                                             </span>
                                                         ))}

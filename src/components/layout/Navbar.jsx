@@ -346,7 +346,7 @@ const Navbar = ({ splashDone = true }) => {
                                         <a
                                             href={link.href}
                                             onClick={(e) => handleNavClick(e, link.id)}
-                                            className={`flex items-center justify-center gap-1.5 px-2.5 2xl:px-4 py-2.5 rounded-full text-[10px] 2xl:text-[11px] font-black uppercase tracking-[0.12em] transition-all duration-300 ${activeSection === link.id ? 'bg-[var(--theme-nav-active-bg)] text-[var(--theme-nav-active-text)] shadow-[var(--theme-nav-active-shadow)]' : 'text-[var(--theme-nav-text-dim)] hover:text-[var(--theme-nav-text)] hover:bg-[var(--theme-nav-hover-bg)]'}`}
+                                            className={`flex items-center justify-center gap-1.5 px-2.5 2xl:px-4 py-2.5 rounded-full text-[10px] 2xl:text-[11px] font-black tracking-[0.12em] transition-all duration-300 ${activeSection === link.id ? 'bg-[var(--theme-nav-active-bg)] text-[var(--theme-nav-active-text)] shadow-[var(--theme-nav-active-shadow)]' : 'text-[var(--theme-nav-text-dim)] hover:text-[var(--theme-nav-text)] hover:bg-[var(--theme-nav-hover-bg)]'}`}
                                         >
                                             <i className={`${link.icon} ${activeSection === link.id ? 'opacity-100 scale-110' : 'opacity-70'}`}></i>
                                             <span>{link.name}</span>
@@ -390,7 +390,7 @@ const Navbar = ({ splashDone = true }) => {
                             <a
                                 href="#contact"
                                 onClick={(e) => handleNavClick(e, 'contact')}
-                                className={`hidden md:flex items-center shrink-0 gap-2 2xl:gap-2.5 px-4 2xl:px-6 py-2.5 text-[10px] 2xl:text-[11px] font-black uppercase tracking-widest rounded-full transition-all duration-500 ${activeSection === 'contact' ? 'bg-[var(--theme-nav-contact-active-bg)] text-[var(--theme-nav-contact-active-text)] ring-2 ring-[var(--theme-nav-contact-active-ring)]' : 'bg-[var(--theme-accent)] text-black'}`}
+                                className={`hidden md:flex items-center shrink-0 gap-2 2xl:gap-2.5 px-4 2xl:px-6 py-2.5 text-[10px] 2xl:text-[11px] font-black tracking-widest rounded-full transition-all duration-500 ${activeSection === 'contact' ? 'bg-[var(--theme-nav-contact-active-bg)] text-[var(--theme-nav-contact-active-text)] ring-2 ring-[var(--theme-nav-contact-active-ring)]' : 'bg-[var(--theme-accent)] text-black'}`}
                             >
                                 <i className="fas fa-paper-plane text-xs rtl:rotate-180"></i>
                                 <span className="hidden md:inline">{t('Contact')}</span>
@@ -413,7 +413,7 @@ const Navbar = ({ splashDone = true }) => {
                                 <a
                                     href={link.href}
                                     onClick={(e) => handleNavClick(e, link.id)}
-                                    className={`flex items-center gap-3.5 md:gap-5 text-[26px] md:text-3xl font-black uppercase tracking-tighter transition-all duration-500 ${activeSection === link.id ? 'text-[var(--theme-accent)]' : 'text-[var(--theme-text)]'}`}
+                                    className={`flex items-center gap-3.5 md:gap-5 text-[26px] md:text-3xl font-black tracking-tighter transition-all duration-500 ${activeSection === link.id ? 'text-[var(--theme-accent)]' : 'text-[var(--theme-text)]'}`}
                                 >
                                     <i className={`${link.icon} text-[22px] md:text-2xl opacity-70`}></i>
                                     {link.name}

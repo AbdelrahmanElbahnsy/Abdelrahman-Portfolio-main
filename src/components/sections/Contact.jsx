@@ -172,7 +172,7 @@ const Contact = () => {
         <section id="contact" className="section" ref={sectionRef}>
             <div className="container mx-auto px-4 sm:px-8">
                 <div ref={headerRef} className="section-header text-center mb-16">
-                    <span className="section-subtitle text-[var(--theme-accent)] font-mono uppercase tracking-widest text-sm mb-2 block">{t(subtitle)}</span>
+                    <span className="section-subtitle text-[var(--theme-accent)] font-mono tracking-widest text-sm mb-2 block">{t(subtitle)}</span>
                     <h2 className="section-title text-2xl sm:text-3xl md:text-5xl font-black mb-4 text-[var(--theme-text)]">{t(title)}</h2>
                 </div>
 
@@ -190,7 +190,7 @@ const Contact = () => {
                                                 <i className={channel.icon}></i>
                                             </div>
                                             <div className="channel-info min-w-0 flex-1 text-left rtl:text-right">
-                                                <span className="channel-label text-[10px] font-mono uppercase tracking-widest text-[var(--theme-text-muted)] block mb-1">{t(channel.label)}</span>
+                                                <span className="channel-label text-[10px] font-mono tracking-widest text-[var(--theme-text-muted)] block mb-1">{t(channel.label)}</span>
                                                 {channel.link ? (
                                                     <a href={channel.link} className="channel-link font-bold text-[var(--theme-text)] hover:text-[var(--theme-accent)] transition-colors break-words text-sm sm:text-base leading-tight block rtl:text-left rtl:inline-block" style={{ overflowWrap: 'anywhere' }} dir="ltr">{channel.value}</a>
                                                 ) : (

@@ -96,7 +96,7 @@ const Skills = () => {
             <div className="container mx-auto px-4 md:px-8">
                 {/* Header */}
                 <div ref={headerRef} className="section-header text-center mb-12 md:mb-16">
-                    <span className="section-subtitle text-[var(--theme-accent)] font-mono uppercase tracking-widest text-sm mb-3 block">
+                    <span className="section-subtitle text-[var(--theme-accent)] font-mono tracking-widest text-sm mb-3 block">
                         {subtitle}
                     </span>
                     <h2 className="section-title text-4xl md:text-5xl lg:text-6xl font-black mb-6 tracking-tight">
@@ -209,7 +209,7 @@ const Skills = () => {
                                                     </div>
                                                     <div className="text-left rtl:text-right" dir={language === 'ar' ? 'rtl' : 'ltr'}>
                                                         <h3 className="text-xl md:text-2xl font-bold text-[var(--theme-text)] mb-1 tracking-tight leading-tight">{language === 'ar' ? (card.titleAr || t(card.title)) : card.title}</h3>
-                                                        <p className="text-[10px] md:text-xs font-mono text-[var(--theme-accent)] tracking-widest uppercase">{card.skills.length} {t('Core Tools')}</p>
+                                                        <p className="text-[10px] md:text-xs font-mono text-[var(--theme-accent)] tracking-widest">{card.skills.length} {t('Core Tools')}</p>
                                                     </div>
                                                 </div>
 

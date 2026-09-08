@@ -104,7 +104,7 @@ const Projects = () => {
       >
         {/* Header */}
         <div ref={headerRef} className="section-header text-center px-8 mb-16 flex-shrink-0 z-10 relative">
-          <span className="section-subtitle mb-2 block font-mono text-sm font-bold uppercase tracking-widest text-[var(--theme-accent)]">
+          <span className="section-subtitle mb-2 block font-mono text-sm font-bold tracking-widest text-[var(--theme-accent)]">
             [ {t('Projects Architecture')} ]
           </span>
           <h2 className="section-title text-4xl font-black tracking-tight text-[var(--theme-text)] drop-shadow-md md:text-5xl">

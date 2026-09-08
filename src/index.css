@@ -255,7 +255,6 @@ html {}
     background: var(--clr-accent);
     color: #fffefe !important;
     transition: all var(--transition-smooth);
-    text-transform: uppercase;
     letter-spacing: 1px;
     box-shadow: 0 0 20px rgba(200, 162, 110, 0.4);
     text-decoration: none;

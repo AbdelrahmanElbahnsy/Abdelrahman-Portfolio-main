@@ -206,7 +206,7 @@ const AboutManager = () => {
                 <span className="w-2.5 h-2.5 rounded-full bg-[#eab308]"></span>
                 <span className="w-2.5 h-2.5 rounded-full bg-[#22c55e]"></span>
               </div>
-              <span className="font-mono text-[9px] text-gray-500 uppercase tracking-wider">{personalInfo.terminalTitle || 'Terminal'}</span>
+              <span className="font-mono text-[9px] text-gray-500 tracking-wider">{personalInfo.terminalTitle || 'Terminal'}</span>
             </div>
             <div className="p-4 font-mono text-[10px] leading-relaxed">
               <ul className="space-y-2.5">

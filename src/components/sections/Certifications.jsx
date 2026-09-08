@@ -67,7 +67,7 @@ const Certifications = () => {
                 
                 {/* Center Header */}
                 <div ref={headerRef} className="section-header text-center mb-16 max-w-2xl mx-auto">
-                    <span className="section-subtitle text-[var(--theme-accent)] font-mono uppercase tracking-widest text-sm mb-4 block">
+                    <span className="section-subtitle text-[var(--theme-accent)] font-mono tracking-widest text-sm mb-4 block">
                         {t('Validation')}
                     </span>
                     <h2 className="section-title text-4xl sm:text-5xl font-black mb-6 leading-tight tracking-tight drop-shadow-md text-[var(--theme-text)]">
@@ -146,7 +146,7 @@ const Certifications = () => {
                                                         <div className="w-16 h-16 rounded-2xl bg-[var(--theme-accent-soft)] border border-[var(--theme-border-gold)] flex items-center justify-center text-3xl text-[var(--theme-accent)] shadow-inner">
                                                             {cert.icon === 'SiMicrosoftazure' ? <SiMicrosoftazure /> : <i className={cert.icon}></i>}
                                                         </div>
-                                                        <div className="px-3 py-1 bg-[var(--theme-accent-soft)] border border-[var(--theme-border-gold)] text-[var(--theme-accent)] text-[9px] font-black uppercase tracking-widest rounded-full">
+                                                        <div className="px-3 py-1 bg-[var(--theme-accent-soft)] border border-[var(--theme-border-gold)] text-[var(--theme-accent)] text-[9px] font-black tracking-widest rounded-full">
                                                             {t('Verified')}
                                                         </div>
                                                     </div>
@@ -155,7 +155,7 @@ const Certifications = () => {
                                                         {language === 'ar' ? (cert.titleAr || t(cert.title)) : cert.title}
                                                     </h3>
                                                     
-                                                    <p className="text-sm font-medium text-[var(--theme-accent)] opacity-80 mb-6 uppercase tracking-wider" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                                                    <p className="text-sm font-medium text-[var(--theme-accent)] opacity-80 mb-6 tracking-wider" dir={language === 'ar' ? 'rtl' : 'ltr'}>
                                                         {language === 'ar' ? (cert.issuerAr || t(cert.issuer)) : cert.issuer}
                                                     </p>
                                                 </div>

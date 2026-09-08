@@ -311,7 +311,7 @@ const EditorDrawer = ({ isOpen, item, initialCategory, initialIsCircular, availa
                   <>
                     <div className="flex items-start justify-between mb-4">
                       <div>
-                        <span className="font-mono text-[10px] uppercase tracking-widest text-[#4b6385]">{category || 'Category'}</span>
+                        <span className="font-mono text-[10px] tracking-widest text-[#4b6385]">{category || 'Category'}</span>
                         <h3 className="text-white font-bold text-[15px] mt-0.5">{name || 'Skill Name'}</h3>
                       </div>
                       <div className="w-8 h-8 rounded-md bg-[#0b1320] border border-[#1e2d42] flex items-center justify-center text-[#14f195]">

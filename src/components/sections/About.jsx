@@ -109,7 +109,7 @@ const About = () => {
         <section id="about" className="section" ref={sectionRef}>
             <div className="container mx-auto px-4 sm:px-8">
                 <div ref={headerRef} className="section-header mb-16 text-left rtl:text-right">
-                    <span className="section-subtitle text-[var(--theme-accent)] font-mono uppercase tracking-widest text-sm mb-2 block">{subtitle}</span>
+                    <span className="section-subtitle text-[var(--theme-accent)] font-mono tracking-widest text-sm mb-2 block">{subtitle}</span>
                     <h2 className="section-title text-4xl md:text-5xl font-black">{title}</h2>
                 </div>
 
@@ -135,7 +135,7 @@ const About = () => {
                                             <span className="dot yellow w-3.5 h-3.5 rounded-full bg-[#ffbd2e]"></span>
                                             <span className="dot green w-3.5 h-3.5 rounded-full bg-[#27c93f]"></span>
                                         </div>
-                                        <span className="terminal-title font-mono text-xs sm:text-sm text-[var(--theme-text-muted)] uppercase tracking-wider">{personalInfo.terminalTitle}</span>
+                                        <span className="terminal-title font-mono text-xs sm:text-sm text-[var(--theme-text-muted)] tracking-wider">{personalInfo.terminalTitle}</span>
                                     </div>
                                     <div className="terminal-body bg-[var(--theme-surface)] pt-4 pb-6 px-4 sm:px-5 md:pt-5 md:pb-8 md:px-8 flex-col overflow-x-hidden">
                                         <ul className="terminal-list space-y-3 md:space-y-5 font-mono text-xs sm:text-[13px] md:text-base w-full text-left" dir="ltr">

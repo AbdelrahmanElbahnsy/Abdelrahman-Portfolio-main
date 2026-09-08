@@ -343,7 +343,7 @@ const ContactManager = () => {
           </div>
           <div className="overflow-hidden">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-mono text-gray-500 uppercase tracking-widest">{item.label}</span>
+              <span className="text-xs font-mono text-gray-500 tracking-widest">{item.label}</span>
               {item.isPrimary && (
                 <span className="text-[9px] font-bold uppercase tracking-widest bg-[#14f195]/10 text-[#14f195] px-1.5 py-0.5 rounded border border-[#14f195]/20">Primary</span>
               )}
@@ -574,7 +574,7 @@ const ContactManager = () => {
                     <div className="space-y-4">
                       {localData.emails.map(email => (
                         <div key={email.id} className="group">
-                          <div className="text-xs font-mono text-gray-500 uppercase tracking-widest mb-1">{email.label}</div>
+                          <div className="text-xs font-mono text-gray-500 tracking-widest mb-1">{email.label}</div>
                           <div className={`text-base truncate transition-colors duration-200 ${email.isPrimary ? 'text-white' : 'text-gray-400 group-hover:text-gray-300'}`}>
                             {email.value}
                           </div>
@@ -593,7 +593,7 @@ const ContactManager = () => {
                     <div className="space-y-4">
                       {localData.phones.map(phone => (
                         <div key={phone.id} className="group">
-                          <div className="text-xs font-mono text-gray-500 uppercase tracking-widest mb-1">{phone.label}</div>
+                          <div className="text-xs font-mono text-gray-500 tracking-widest mb-1">{phone.label}</div>
                           <div className={`text-base truncate transition-colors duration-200 ${phone.isPrimary ? 'text-white' : 'text-gray-400 group-hover:text-gray-300'}`}>
                             {phone.value}
                           </div>
@@ -612,7 +612,7 @@ const ContactManager = () => {
                     <div className="space-y-4">
                       {localData.locations.map(loc => (
                         <div key={loc.id} className="group">
-                          <div className="text-xs font-mono text-gray-500 uppercase tracking-widest mb-1">{loc.label}</div>
+                          <div className="text-xs font-mono text-gray-500 tracking-widest mb-1">{loc.label}</div>
                           <div className={`text-base truncate transition-colors duration-200 ${loc.isPrimary ? 'text-white' : 'text-gray-400 group-hover:text-gray-300'}`}>
                             {loc.value}
                           </div>

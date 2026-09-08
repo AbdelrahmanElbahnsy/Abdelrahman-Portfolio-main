@@ -113,13 +113,7 @@ const Navbar = ({ splashDone = true }) => {
         } else {
             const target = document.getElementById(id);
             if (target) {
-                const headerOffset = headerRef.current ? headerRef.current.offsetHeight : 80;
-                const elementPosition = target.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.scrollY - headerOffset;
-                window.scrollTo({
-                     top: offsetPosition,
-                     behavior: 'smooth'
-                });
+                target.scrollIntoView({ behavior: 'smooth' });
             }
         }
 

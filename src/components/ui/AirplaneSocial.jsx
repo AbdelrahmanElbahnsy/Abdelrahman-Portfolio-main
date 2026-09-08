@@ -53,7 +53,7 @@ const AirplaneSocial = () => {
     const socialsData = (firestoreData && firestoreData.length > 0) ? firestoreData : socialLinks.airplane;
 
     return (
-        <div className="airplane-social-wrapper fixed left-4 bottom-4 md:left-[30px] md:bottom-[30px] z-50">
+        <div className="airplane-social-wrapper fixed left-3 bottom-3 md:left-[30px] md:bottom-[30px] z-50">
             <div
                 ref={menuRef}
                 className={`flex flex-col gap-4 mb-4 transition-all duration-500 ease-[cubic-bezier(0.68,-0.55,0.265,1.55)] ${
@@ -98,7 +98,7 @@ const AirplaneSocial = () => {
             <button
                 ref={triggerRef}
                 onClick={toggleMenu}
-                className={`group relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 overflow-hidden shadow-2xl ${
+                className={`group relative w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center transition-all duration-500 overflow-hidden shadow-2xl ${
                     isActive ? 'bg-[var(--theme-accent)] rotate-45 shadow-[0_0_30px_rgba(200,162,110,0.4)]' : 'bg-[var(--theme-accent)] hover:bg-[var(--theme-accent-hover)]'
                 }`}
                 aria-label={isActive ? "Close Menu" : "Open Social Menu"}

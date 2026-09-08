@@ -325,15 +325,15 @@ html {}
 
     .floating-social-container,
     .scroll-top-btn {
-      bottom: 15px !important;
+      bottom: 12px !important;
     }
 
     .floating-social-container {
-      left: 15px !important;
+      left: 12px !important;
     }
 
     .scroll-top-btn {
-      right: 15px !important;
+      right: 12px !important;
     }
 
     body.menu-open .floating-social-container,

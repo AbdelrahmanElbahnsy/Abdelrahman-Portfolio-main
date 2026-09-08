@@ -86,9 +86,9 @@ const Footer = () => {
     );
 
     return (
-        <footer id="footer" className="py-7 md:py-8 lg:py-10 bg-[var(--theme-surface)] border-t border-[var(--theme-border-strong)]" ref={footerRef}>
+        <footer id="footer" className="pt-7 pb-24 md:py-8 lg:py-10 bg-[var(--theme-surface)] border-t border-[var(--theme-border-strong)]" ref={footerRef}>
             <div className="page-container">
-                <div className="footer-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 px-8 md:px-0">
+                <div className="footer-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
                     <div className="footer-col footer-brand space-y-6">
                         <a href="#" className="logo text-lg sm:text-2xl font-black text-[var(--theme-text)] flex items-center gap-1 flex-wrap" dir="ltr">
                             {language === 'ar' ? (

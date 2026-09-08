@@ -70,7 +70,7 @@ const ProjectCard = ({ project, onClickDetails }) => {
           </p>
         </div>
 
-        <div className="mt-5 flex items-center justify-between gap-2.5">
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-2.5">
           <button
             type="button"
             onClick={handleOpenDetails}

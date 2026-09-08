@@ -191,7 +191,7 @@ const Hero = ({ splashDone = true }) => {
         <section
             id="hero"
             ref={sectionRef}
-            className="relative flex items-start lg:items-center min-h-[100vh] lg:min-h-[95vh] pt-[120px] md:pt-[140px] pb-24 overflow-hidden bg-transparent"
+            className="relative flex items-start lg:items-center min-h-[100vh] lg:min-h-[95vh] pt-[120px] md:pt-[140px] pb-32 lg:pb-24 overflow-hidden bg-transparent"
         >
             <div className="container px-6 sm:px-8 mx-auto h-full flex flex-col justify-start lg:justify-center">
                 <div className="grid items-center grid-cols-1 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)] gap-8 md:gap-12 lg:gap-[clamp(2rem,5vw,5rem)] hero-grid w-full max-w-full min-w-0" dir="ltr">

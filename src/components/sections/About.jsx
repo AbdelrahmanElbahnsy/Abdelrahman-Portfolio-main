@@ -107,7 +107,7 @@ const About = () => {
 
     return (
         <section id="about" className="section" ref={sectionRef}>
-            <div className="container mx-auto px-8">
+            <div className="container mx-auto px-4 sm:px-8">
                 <div ref={headerRef} className="section-header mb-16 text-left rtl:text-right">
                     <span className="section-subtitle text-[var(--theme-accent)] font-mono uppercase tracking-widest text-sm mb-2 block">{subtitle}</span>
                     <h2 className="section-title text-4xl md:text-5xl font-black">{title}</h2>
@@ -135,19 +135,19 @@ const About = () => {
                                             <span className="dot yellow w-3.5 h-3.5 rounded-full bg-[#ffbd2e]"></span>
                                             <span className="dot green w-3.5 h-3.5 rounded-full bg-[#27c93f]"></span>
                                         </div>
-                                        <span className="terminal-title font-mono text-xs text-[var(--theme-text-muted)] uppercase tracking-wider">{personalInfo.terminalTitle}</span>
+                                        <span className="terminal-title font-mono text-xs sm:text-sm text-[var(--theme-text-muted)] uppercase tracking-wider">{personalInfo.terminalTitle}</span>
                                     </div>
-                                    <div className="terminal-body bg-[var(--theme-surface)] pt-4 pb-6 px-3 sm:px-4 md:pt-5 md:pb-8 md:px-8 flex-col overflow-x-hidden">
-                                        <ul className="terminal-list space-y-3 md:space-y-5 font-mono text-[10px] sm:text-xs md:text-base w-full text-left" dir="ltr">
+                                    <div className="terminal-body bg-[var(--theme-surface)] pt-4 pb-6 px-4 sm:px-5 md:pt-5 md:pb-8 md:px-8 flex-col overflow-x-hidden">
+                                        <ul className="terminal-list space-y-3 md:space-y-5 font-mono text-xs sm:text-[13px] md:text-base w-full text-left" dir="ltr">
                                             {terminalItems.map((item, idx) => (
-                                                <li key={idx} className="term-line flex gap-1.5 sm:gap-2 md:gap-3 items-start">
+                                                <li key={idx} className="term-line flex gap-2 md:gap-3 items-start">
                                                     <span className="term-key text-[var(--theme-accent)] shrink-0">{t(item.key)}:</span>
                                                     <span className="term-value text-[var(--theme-text)] break-words leading-[1.35] md:leading-normal" style={{ overflowWrap: 'anywhere' }}>{t(item.value)}</span>
                                                 </li>
                                             ))}
-                                            <li className="pt-1 flex gap-1.5 sm:gap-2 md:gap-3 items-center mt-1 md:mt-2">
+                                            <li className="pt-1 flex gap-2 md:gap-3 items-center mt-1 md:mt-2">
                                                 <span className="term-key text-[var(--theme-accent)] shrink-0">~</span>
-                                                <span className="text-[var(--theme-accent)] text-xs sm:text-sm md:text-lg" style={{ animation: 'blink-cursor 0.9s infinite' }}>█</span>
+                                                <span className="text-[var(--theme-accent)] text-sm sm:text-base md:text-lg" style={{ animation: 'blink-cursor 0.9s infinite' }}>█</span>
                                             </li>
                                         </ul>
                                     </div>

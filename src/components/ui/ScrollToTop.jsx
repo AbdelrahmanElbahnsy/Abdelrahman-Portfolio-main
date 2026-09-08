@@ -69,8 +69,8 @@ const ScrollToTop = () => {
 
                 @media (max-width: 768px) {
                     .scroll-top-btn {
-                        bottom: 15px;
-                        right: 15px;
+                        bottom: 12px;
+                        right: 12px;
                         width: 44px;
                         height: 44px;
                         font-size: 1rem;

@@ -36,11 +36,11 @@ const Toolchain = () => {
 
     return (
         <section id="toolchain" className="section relative overflow-hidden bg-[rgba(10,10,10,0.3)]" ref={sectionRef}>
-            <div className="container mx-auto px-8 mb-12">
+            <div className="container mx-auto px-5 sm:px-8 mb-12">
                 <div ref={headerRef} className="section-header text-center">
-                    <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-full bg-[var(--theme-accent-soft)] border border-[var(--theme-border-gold)]">
-                        <i className="fas fa-briefcase text-[var(--theme-accent)]"></i>
-                        <span className="text-sm font-bold tracking-wider uppercase text-[var(--theme-accent)]">{t('DevOps Toolchain')}</span>
+                    <div className="inline-flex items-center gap-3 md:gap-2 mb-4 px-6 py-3 md:px-4 md:py-2 rounded-full bg-[var(--theme-accent-soft)] border border-[var(--theme-border-gold)]">
+                        <i className="fas fa-briefcase text-lg md:text-base text-[var(--theme-accent)]"></i>
+                        <span className="text-base md:text-sm font-bold tracking-wider uppercase text-[var(--theme-accent)]">{t('DevOps Toolchain')}</span>
                     </div>
                 </div>
             </div>
@@ -64,9 +64,9 @@ const Toolchain = () => {
                 >
                     {[...row1, ...row1, ...row1].map((tool, idx) => (
                         <SwiperSlide key={`r1-${idx}`} className="!w-auto">
-                            <div className="tool-card flex items-center gap-3 px-6 py-3 rounded-2xl bg-[var(--theme-surface-elevated)] border border-[var(--theme-border)] hover:border-[var(--theme-accent)] hover:bg-[var(--theme-accent-soft)] transition-all duration-300 group cursor-grab active:cursor-grabbing">
-                                <i className={`${tool.icon} text-xl text-[var(--theme-accent)] group-hover:scale-110 transition-transform`}></i>
-                                <span className="text-sm font-medium tracking-tight whitespace-nowrap text-[var(--theme-text)]">{tool.name}</span>
+                            <div className="tool-card flex items-center gap-3 md:gap-3 px-7 py-4 md:px-6 md:py-3 rounded-2xl bg-[var(--theme-surface-elevated)] border border-[var(--theme-border)] hover:border-[var(--theme-accent)] hover:bg-[var(--theme-accent-soft)] transition-all duration-300 group cursor-grab active:cursor-grabbing">
+                                <i className={`${tool.icon} text-2xl md:text-xl text-[var(--theme-accent)] group-hover:scale-110 transition-transform`}></i>
+                                <span className="text-base md:text-sm font-medium tracking-tight whitespace-nowrap text-[var(--theme-text)]">{tool.name}</span>
                             </div>
                         </SwiperSlide>
                     ))}
@@ -91,9 +91,9 @@ const Toolchain = () => {
                 >
                     {[...row2, ...row2, ...row2].map((tool, idx) => (
                         <SwiperSlide key={`r2-${idx}`} className="!w-auto">
-                            <div className="tool-card flex items-center gap-3 px-6 py-3 rounded-2xl bg-[var(--theme-surface-elevated)] border border-[var(--theme-border)] hover:border-[var(--theme-accent)] hover:bg-[var(--theme-accent-soft)] transition-all duration-300 group cursor-grab active:cursor-grabbing">
-                                <i className={`${tool.icon} text-xl text-[var(--theme-accent)] group-hover:scale-110 transition-transform`}></i>
-                                <span className="text-sm font-medium tracking-tight whitespace-nowrap text-[var(--theme-text)]">{tool.name}</span>
+                            <div className="tool-card flex items-center gap-3 md:gap-3 px-7 py-4 md:px-6 md:py-3 rounded-2xl bg-[var(--theme-surface-elevated)] border border-[var(--theme-border)] hover:border-[var(--theme-accent)] hover:bg-[var(--theme-accent-soft)] transition-all duration-300 group cursor-grab active:cursor-grabbing">
+                                <i className={`${tool.icon} text-2xl md:text-xl text-[var(--theme-accent)] group-hover:scale-110 transition-transform`}></i>
+                                <span className="text-base md:text-sm font-medium tracking-tight whitespace-nowrap text-[var(--theme-text)]">{tool.name}</span>
                             </div>
                         </SwiperSlide>
                     ))}

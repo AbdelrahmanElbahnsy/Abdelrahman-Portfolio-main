@@ -491,21 +491,6 @@ html {}
   -webkit-hyphens: none !important;
 }
 
-/* On very narrow mobile, allow the full name to wrap but only between words */
-@media (max-width: 480px) {
-  .hero-name {
-    white-space: normal !important;
-    font-size: clamp(1.5rem, 8vw, 2.4rem) !important;
-    word-break: keep-all !important;
-    hyphens: none !important;
-    -webkit-hyphens: none !important;
-    overflow-wrap: normal !important; /* Break between words only */
-  }
-  .hero-name-en {
-    white-space: normal;
-    word-break: keep-all;
-  }
-}
 
 /* ============================================================
    ARABIC TYPOGRAPHY — proper line-height, no aggressive tracking

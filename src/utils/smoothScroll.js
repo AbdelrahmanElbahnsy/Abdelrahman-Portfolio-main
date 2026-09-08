@@ -3,6 +3,12 @@ import gsap from 'gsap';
 
 let lenisInstance = null;
 
+const rafCallback = (time) => {
+  if (lenisInstance) {
+    lenisInstance.raf(time * 1000);
+  }
+};
+
 /**
  * Initializes Lenis smooth scrolling.
  * Tuned for snappy feel — smooth enough to feel premium,
@@ -23,9 +29,7 @@ export function initLenis() {
   });
 
   // Integrate Lenis with GSAP's ticker to prevent layout thrashing from dual rAF loops
-  gsap.ticker.add((time) => {
-    lenisInstance.raf(time * 1000);
-  });
+  gsap.ticker.add(rafCallback);
   
   gsap.ticker.lagSmoothing(0);
 
@@ -47,4 +51,5 @@ export function destroyLenis() {
     lenisInstance.destroy();
     lenisInstance = null;
   }
+  gsap.ticker.remove(rafCallback);
 }

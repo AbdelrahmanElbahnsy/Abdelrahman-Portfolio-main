@@ -87,17 +87,17 @@ const SystemDiagnosticsModal = ({ isOpen, onClose, initialServiceKey }) => {
           </div>
 
           {/* Main Content */}
-          <div className="flex-1 flex flex-col bg-[#0a0f1c]">
-            <div className="flex items-center justify-between p-6 border-b border-white/5 bg-white/[0.02]">
-              <div className="flex items-center gap-4">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center border ${currentInfo.status === 'online' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : currentInfo.status === 'configured' ? 'bg-blue-500/10 border-blue-500/20 text-blue-400' : currentInfo.status === 'unmonitored' ? 'bg-gray-500/10 border-gray-500/20 text-gray-400' : 'bg-cms-warning/10 border-cms-warning/20 text-cms-warning'}`}>
+          <div className="flex-1 flex flex-col bg-[#0a0f1c] min-w-0">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-6 border-b border-white/5 bg-white/[0.02] gap-4 sm:gap-0 shrink-0">
+              <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                <div className={`shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center border ${currentInfo.status === 'online' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : currentInfo.status === 'configured' ? 'bg-blue-500/10 border-blue-500/20 text-blue-400' : currentInfo.status === 'unmonitored' ? 'bg-gray-500/10 border-gray-500/20 text-gray-400' : 'bg-cms-warning/10 border-cms-warning/20 text-cms-warning'}`}>
                   {getIcon(selectedService)}
                 </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-white">{currentInfo.label} Diagnostics</h2>
-                  <p className="text-sm flex items-center gap-2">
-                    <span className="text-gray-500">Status:</span>
-                    <span className={`font-bold ${currentInfo.status === 'online' ? 'text-emerald-400' : currentInfo.status === 'configured' ? 'text-blue-400' : currentInfo.status === 'unmonitored' ? 'text-gray-400' : 'text-red-400'}`}>
+                <div className="min-w-0 flex-1">
+                  <h2 className="text-lg sm:text-2xl font-bold text-white leading-snug sm:leading-normal break-words">{currentInfo.label} Diagnostics</h2>
+                  <p className="text-xs sm:text-sm flex items-center gap-2 mt-0.5 sm:mt-0">
+                    <span className="text-gray-500 shrink-0">Status:</span>
+                    <span className={`font-bold truncate ${currentInfo.status === 'online' ? 'text-emerald-400' : currentInfo.status === 'configured' ? 'text-blue-400' : currentInfo.status === 'unmonitored' ? 'text-gray-400' : 'text-red-400'}`}>
                       {currentInfo.status === 'online' ? 'Operational' : 
                        currentInfo.status === 'configured' ? 'Configured' :
                        currentInfo.status === 'unconfigured' ? 'Not Configured' :
@@ -107,7 +107,7 @@ const SystemDiagnosticsModal = ({ isOpen, onClose, initialServiceKey }) => {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
                 <button 
                   onClick={fetchDiagnostics}
                   disabled={isRefreshing}

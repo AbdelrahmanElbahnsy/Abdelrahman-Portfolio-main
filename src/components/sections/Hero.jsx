@@ -204,7 +204,7 @@ const Hero = ({ splashDone = true }) => {
                         </div>
                         <h1
                             ref={nameRef}
-                            className="hero-name text-[clamp(2rem,8vw,3.5rem)] font-black mb-3 md:mb-5 leading-[1.05] tracking-tight text-left rtl:text-right"
+                            className="hero-name text-[clamp(1.2rem,7vw,3.5rem)] whitespace-nowrap font-black mb-3 md:mb-5 leading-[1.05] tracking-tight text-left rtl:text-right"
                             dir={language === 'ar' ? 'rtl' : 'ltr'}
                         >
                             {language === 'ar' ? (

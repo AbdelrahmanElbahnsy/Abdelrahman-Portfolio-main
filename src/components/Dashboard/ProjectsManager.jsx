@@ -54,7 +54,7 @@ const ThumbnailPlaceholder = ({ size = 'sm' }) => {
     return (
       <div className="w-full h-full flex flex-col items-center justify-center bg-[#0a0f1c]">
         <FolderOpen className="w-5 h-5 text-gray-700 mb-0.5" />
-        <span className="font-mono text-[7px] text-gray-700 uppercase tracking-widest leading-tight text-center">
+        <span className="font-mono text-[10px] text-gray-700 uppercase tracking-widest leading-tight text-center">
           NO IMAGE
         </span>
       </div>
@@ -69,7 +69,7 @@ const ThumbnailPlaceholder = ({ size = 'sm' }) => {
           ))}
         </div>
         <span className="font-mono text-[10px] text-gray-700 uppercase tracking-[0.18em]">PROJECT</span>
-        <span className="font-mono text-[9px] text-gray-800 uppercase tracking-[0.12em] -mt-1.5">PREVIEW</span>
+        <span className="font-mono text-[10px] text-gray-800 uppercase tracking-[0.12em] -mt-1.5">PREVIEW</span>
       </div>
     </div>
   );
@@ -81,7 +81,7 @@ const ThumbnailPlaceholder = ({ size = 'sm' }) => {
 const StatusBadge = ({ status }) => {
   const isPublished = status === 'published';
   return (
-    <span className={`inline-flex items-center gap-1.5 font-mono font-bold uppercase tracking-widest rounded border text-[9px] px-2 py-0.5 whitespace-nowrap ${
+    <span className={`inline-flex items-center gap-1.5 font-mono font-bold uppercase tracking-widest rounded border text-[10px] px-2 py-0.5 whitespace-nowrap ${
       isPublished
         ? 'bg-[#14f195]/10 text-[#14f195] border-[#14f195]/20'
         : 'bg-amber-400/10 text-amber-400 border-amber-400/20'
@@ -103,13 +103,13 @@ const TechChips = ({ tags, maxVisible = 4 }) => {
       {visible.map((t, i) => (
         <span
           key={i}
-          className="text-[9px] font-mono text-gray-500 bg-[#131b2c] border border-[#1e293b] px-1.5 py-0.5 rounded leading-none uppercase tracking-wider"
+          className="text-[10px] font-mono text-gray-500 bg-[#131b2c] border border-[#1e293b] px-1.5 py-0.5 rounded leading-none uppercase tracking-wider"
         >
           {t}
         </span>
       ))}
       {overflow > 0 && (
-        <span className="text-[9px] font-mono text-gray-700 px-0.5 leading-none">+{overflow}</span>
+        <span className="text-[10px] font-mono text-gray-700 px-0.5 leading-none">+{overflow}</span>
       )}
     </div>
   );
@@ -119,39 +119,26 @@ const TechChips = ({ tags, maxVisible = 4 }) => {
 // EDITOR DRAWER  — IDE-style panel
 // ─────────────────────────────────────────────────────────────────────────────
 const EditorDrawer = ({ isOpen, item, projectIndex, projectCount, onClose, onSave }) => {
-  if (!isOpen) return null;
-
   const isEditing   = !!item;
   const initialData = item || {};
   const initialGithub = getGithubLink(initialData);
   const initialLive   = getLiveLink(initialData);
 
   // ── Form state ──────────────────────────────────────────────────────────
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [title,       setTitle]       = useState(initialData.title || '');
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [description, setDescription] = useState(initialData.description || '');
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [github,      setGithub]      = useState(initialGithub);
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [live,        setLive]        = useState(initialLive);
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [status,      setStatus]      = useState(initialData.derivedStatus || 'draft');
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [techTags,    setTechTags]    = useState(isEditing ? getProjectTags(initialData) : []);
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [techInput,   setTechInput]   = useState('');
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [imageUrl,    setImageUrl]    = useState(initialData.image || '');
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [isSaving,    setIsSaving]    = useState(false);
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [isSuccess,   setIsSuccess]   = useState(false);
 
   const projectNumber   = String(isEditing ? projectIndex + 1 : projectCount + 1).padStart(2, '0');
 
   // ── Dirty detection ──────────────────────────────────────────────────────
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const isDirty = useMemo(() => {
     if (!isEditing) {
       return !!(title || description || github || live || techTags.length > 0 || imageUrl || status !== 'draft');
@@ -225,10 +212,10 @@ const EditorDrawer = ({ isOpen, item, projectIndex, projectCount, onClose, onSav
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-2 mb-1.5">
-                <span className="text-[#14f195] font-mono text-[10px] uppercase font-bold tracking-wider">
+                <span className="text-[#14f195] font-mono text-xs uppercase font-bold tracking-wider">
                   {isEditing ? '[ EDIT PROJECT ]' : '[ NEW PROJECT ]'}
                 </span>
-                <span className="text-[#4b6385] font-mono text-[10px] uppercase tracking-wider">
+                <span className="text-[#4b6385] font-mono text-xs uppercase tracking-wider">
                   PROJECT {projectNumber}
                 </span>
               </div>
@@ -239,6 +226,7 @@ const EditorDrawer = ({ isOpen, item, projectIndex, projectCount, onClose, onSav
             <button
               onClick={() => !isSaving && onClose()}
               disabled={isSaving}
+              aria-label="Close editor"
               className="w-8 h-8 flex items-center justify-center rounded-md transition-all hover:bg-[#1e2d42] text-[#8b9bb4] hover:text-white disabled:opacity-30"
             >
               <X className="w-4 h-4" />
@@ -255,8 +243,9 @@ const EditorDrawer = ({ isOpen, item, projectIndex, projectCount, onClose, onSav
               <DSL n="01" label="IDENTITY" />
               <div className="space-y-4">
                 <div>
-                  <DFL>Project Title <span className="text-[#14f195]">*</span></DFL>
+                  <DFL htmlFor="project-title">Project Title <span className="text-[#14f195]">*</span></DFL>
                   <input
+                    id="project-title"
                     type="text"
                     value={title}
                     onChange={e => setTitle(e.target.value)}
@@ -265,8 +254,9 @@ const EditorDrawer = ({ isOpen, item, projectIndex, projectCount, onClose, onSav
                   />
                 </div>
                 <div>
-                  <DFL>Description</DFL>
+                  <DFL htmlFor="project-description">Description</DFL>
                   <textarea
+                    id="project-description"
                     value={description}
                     onChange={e => setDescription(e.target.value)}
                     placeholder="Architecture, technical challenges..."
@@ -313,6 +303,7 @@ const EditorDrawer = ({ isOpen, item, projectIndex, projectCount, onClose, onSav
                         <button
                           type="button"
                           onClick={() => setTechTags(prev => prev.filter((_, idx) => idx !== i))}
+                          aria-label="Remove technology"
                           className="text-[#4b6385] group-hover:text-[#14f195] hover:!text-red-400 transition-colors ml-0.5"
                         >
                           <X className="w-3 h-3" />
@@ -329,9 +320,10 @@ const EditorDrawer = ({ isOpen, item, projectIndex, projectCount, onClose, onSav
               <DSL n="04" label="LINKS" />
               <div className="flex gap-4">
                 <div className="flex-1">
-                  <DFL><span className="flex items-center gap-1.5"><GitBranch className="w-3.5 h-3.5" /> GITHUB REPOSITORY</span></DFL>
+                  <DFL htmlFor="project-github"><span className="flex items-center gap-1.5"><GitBranch className="w-3.5 h-3.5" /> GITHUB REPOSITORY</span></DFL>
                   <div className="relative">
                     <input
+                      id="project-github"
                       type="url"
                       value={github}
                       onChange={e => setGithub(e.target.value)}
@@ -347,9 +339,10 @@ const EditorDrawer = ({ isOpen, item, projectIndex, projectCount, onClose, onSav
                   </div>
                 </div>
                 <div className="flex-1">
-                  <DFL><span className="flex items-center gap-1.5"><ExternalLink className="w-3.5 h-3.5" /> LIVE DEMO</span></DFL>
+                  <DFL htmlFor="project-live"><span className="flex items-center gap-1.5"><ExternalLink className="w-3.5 h-3.5" /> LIVE DEMO</span></DFL>
                   <div className="relative">
                     <input
+                      id="project-live"
                       type="url"
                       value={live}
                       onChange={e => setLive(e.target.value)}
@@ -418,7 +411,7 @@ const EditorDrawer = ({ isOpen, item, projectIndex, projectCount, onClose, onSav
                       {title || 'Untitled Project'}
                     </h4>
                     <span
-                      className="shrink-0 text-[8px] font-mono font-bold uppercase tracking-widest px-1.5 py-0.5 rounded"
+                      className="shrink-0 text-[10px] font-mono font-bold uppercase tracking-widest px-1.5 py-0.5 rounded"
                       style={status === 'published'
                         ? { color: '#14f195', background: 'rgba(20,241,149,0.1)' }
                         : { color: '#f59e0b', background: 'rgba(245,158,11,0.1)' }
@@ -434,13 +427,13 @@ const EditorDrawer = ({ isOpen, item, projectIndex, projectCount, onClose, onSav
                     {techTags.slice(0, 3).map((t, i) => (
                       <span
                         key={i}
-                        className="text-[8px] font-mono uppercase px-1.5 py-0.5 rounded bg-[#050914] border border-[#1e2d42] text-[#8b9bb4]"
+                        className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-[#050914] border border-[#1e2d42] text-[#8b9bb4]"
                       >
                         {t}
                       </span>
                     ))}
                     {techTags.length > 3 && (
-                      <span className="text-[8px] font-mono text-[#4b6385] px-1 py-0.5">+{techTags.length - 3}</span>
+                      <span className="text-[10px] font-mono text-[#4b6385] px-1 py-0.5">+{techTags.length - 3}</span>
                     )}
                   </div>
                 </div>
@@ -514,8 +507,8 @@ const DSL = ({ n, label }) => (
   </div>
 );
 
-const DFL = ({ children }) => (
-  <label className="block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5">
+const DFL = ({ htmlFor, children }) => (
+  <label htmlFor={htmlFor} className="block text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8b9bb4] mb-1.5">
     {children}
   </label>
 );
@@ -523,7 +516,7 @@ const DFL = ({ children }) => (
 // ─────────────────────────────────────────────────────────────────────────────
 // DELETE DIALOG
 // ─────────────────────────────────────────────────────────────────────────────
-const DeleteDialog = ({ item, onCancel, onConfirm }) => {
+const DeleteDialog = ({ item, isDeleting, onCancel, onConfirm }) => {
   if (!item) return null;
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-[#030814]/80 animate-in fade-in">
@@ -531,7 +524,7 @@ const DeleteDialog = ({ item, onCancel, onConfirm }) => {
         <div className="w-11 h-11 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto mb-4">
           <AlertTriangle className="w-5 h-5 text-red-500" />
         </div>
-        <span className="font-mono text-[9px] text-red-500/70 uppercase tracking-[0.2em] mb-2 block">
+        <span className="font-mono text-[10px] text-red-500/70 uppercase tracking-[0.2em] mb-2 block">
           DELETE PROJECT?
         </span>
         <p className="text-gray-400 text-[13px] leading-relaxed mb-1">Permanently delete:</p>
@@ -540,15 +533,17 @@ const DeleteDialog = ({ item, onCancel, onConfirm }) => {
         <div className="flex gap-2">
           <button
             onClick={onCancel}
-            className="flex-1 px-4 py-2 rounded-lg text-gray-400 font-bold text-sm hover:text-white hover:bg-[#1a2440] transition-colors"
+            disabled={isDeleting}
+            className="flex-1 px-4 py-2 rounded-lg text-gray-400 font-bold text-sm hover:text-white hover:bg-[#1a2440] transition-colors disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 px-4 py-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 font-bold text-sm hover:bg-red-500 hover:text-white hover:border-red-500 transition-all"
+            disabled={isDeleting}
+            className="flex-1 px-4 py-2 flex justify-center items-center rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 font-bold text-sm hover:bg-red-500 hover:text-white hover:border-red-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Delete
+            {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Delete'}
           </button>
         </div>
       </div>
@@ -570,6 +565,7 @@ export default function ProjectsManager() {
   const [viewMode,      setViewMode]      = useState('LIST');
   const [editorState,   setEditorState]   = useState({ isOpen: false, item: null });
   const [deleteTarget,  setDeleteTarget]  = useState(null);
+  const [isDeleting,    setIsDeleting]    = useState(false);
 
   // ── Enrich raw data ────────────────────────────────────────────────────────
   const projects = useMemo(() => {
@@ -620,6 +616,7 @@ export default function ProjectsManager() {
 
   const handleDeleteConfirm = async () => {
     if (!deleteTarget) return;
+    setIsDeleting(true);
     try {
       await remove(deleteTarget.id);
       await fetchAll();
@@ -627,6 +624,7 @@ export default function ProjectsManager() {
     } catch {
       toast.error('Failed to delete project.');
     } finally {
+      setIsDeleting(false);
       setDeleteTarget(null);
     }
   };
@@ -705,6 +703,7 @@ export default function ProjectsManager() {
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
+              aria-label="Clear search"
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-white transition-colors"
             >
               <X className="w-3.5 h-3.5" />
@@ -741,6 +740,7 @@ export default function ProjectsManager() {
             <button
               onClick={() => setViewMode('LIST')}
               title="List view"
+              aria-label="List view"
               className={`p-2 rounded-md transition-colors ${viewMode === 'LIST' ? 'bg-[#1a2440] text-white' : 'text-gray-600 hover:text-gray-400'}`}
             >
               <ListIcon className="w-3.5 h-3.5" />
@@ -748,6 +748,7 @@ export default function ProjectsManager() {
             <button
               onClick={() => setViewMode('GRID')}
               title="Grid view"
+              aria-label="Grid view"
               className={`p-2 rounded-md transition-colors ${viewMode === 'GRID' ? 'bg-[#1a2440] text-white' : 'text-gray-600 hover:text-gray-400'}`}
             >
               <Grid className="w-3.5 h-3.5" />
@@ -797,11 +798,10 @@ export default function ProjectsManager() {
         <div>
           {/* Column headers */}
           <div
-            className="hidden lg:grid px-5 pb-2 mb-0.5"
-            style={{ gridTemplateColumns: '1fr 100px 190px 64px 80px 68px' }}
+            className="hidden lg:grid px-5 pb-2 mb-0.5 lg:grid-cols-[1fr_100px_190px_64px_80px_68px]"
           >
             {['PROJECT', 'STATUS', 'TECH STACK', 'LINKS', 'UPDATED', 'ACTIONS'].map(col => (
-              <span key={col} className="text-[9px] font-mono text-gray-700 uppercase tracking-[0.14em]">{col}</span>
+              <span key={col} className="text-[10px] font-mono text-gray-700 uppercase tracking-[0.14em]">{col}</span>
             ))}
           </div>
 
@@ -817,8 +817,7 @@ export default function ProjectsManager() {
                 >
                   <div className="absolute left-0 top-3 bottom-3 w-[2px] bg-[#14f195] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                   <div
-                    className="flex flex-col lg:grid lg:items-center gap-3 lg:gap-0 p-4 pl-5"
-                    style={{ gridTemplateColumns: '1fr 100px 190px 64px 80px 68px' }}
+                    className="flex flex-col lg:grid lg:items-center gap-3 lg:gap-0 p-4 pl-5 lg:grid-cols-[1fr_100px_190px_64px_80px_68px]"
                   >
                     {/* PROJECT */}
                     <div className="flex items-start gap-3 min-w-0">
@@ -875,6 +874,7 @@ export default function ProjectsManager() {
                       <button
                         onClick={() => openEditor(project)}
                         title="Edit"
+                        aria-label="Edit project"
                         className="p-2 text-gray-600 hover:text-[#14f195] hover:bg-[#14f195]/8 rounded-lg transition-colors"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
@@ -882,6 +882,7 @@ export default function ProjectsManager() {
                       <button
                         onClick={() => setDeleteTarget(project)}
                         title="Delete"
+                        aria-label="Delete project"
                         className="p-2 text-gray-600 hover:text-red-400 hover:bg-red-500/8 rounded-lg transition-colors"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -939,6 +940,7 @@ export default function ProjectsManager() {
                       <button
                         onClick={() => openEditor(project)}
                         title="Edit"
+                        aria-label="Edit project"
                         className="p-1.5 text-gray-600 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
@@ -946,6 +948,7 @@ export default function ProjectsManager() {
                       <button
                         onClick={() => setDeleteTarget(project)}
                         title="Delete"
+                        aria-label="Delete project"
                         className="p-1.5 text-gray-600 hover:text-red-400 hover:bg-red-500/8 rounded-lg transition-colors"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -960,17 +963,20 @@ export default function ProjectsManager() {
       )}
 
       {/* ══ OVERLAYS ══ */}
-      <EditorDrawer
-        isOpen={editorState.isOpen}
-        item={editorState.item}
-        projectIndex={editorState.item ? projects.findIndex(p => p.id === editorState.item.id) : -1}
-        projectCount={projects.length}
-        onClose={closeEditor}
-        onSave={handleSave}
-      />
+      {editorState.isOpen && (
+        <EditorDrawer
+          isOpen={editorState.isOpen}
+          item={editorState.item}
+          projectIndex={editorState.item ? projects.findIndex(p => p.id === editorState.item.id) : -1}
+          projectCount={projects.length}
+          onClose={closeEditor}
+          onSave={handleSave}
+        />
+      )}
 
       <DeleteDialog
         item={deleteTarget}
+        isDeleting={isDeleting}
         onCancel={() => setDeleteTarget(null)}
         onConfirm={handleDeleteConfirm}
       />

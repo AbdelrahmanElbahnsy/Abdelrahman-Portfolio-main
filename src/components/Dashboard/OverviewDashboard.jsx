@@ -102,7 +102,7 @@ const OverviewDashboard = () => {
     );
   }
 
-  const allSystemsOnline = systemHealth && Object.values(systemHealth).every(s => ['online', 'configured', 'unknown'].includes(s.status));
+  const allSystemsOnline = systemHealth && Object.values(systemHealth).every(s => ['online', 'configured', 'unknown', 'unmonitored'].includes(s.status));
   const activeWarnings = (notifications ?? []).filter(n => !dismissedWarnings.has(n.id) && (n.type === 'warning' || n.type === 'error'));
 
   return (

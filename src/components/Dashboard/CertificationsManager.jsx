@@ -10,7 +10,7 @@ import toast from 'react-hot-toast';
 // ─────────────────────────────────────────────────────────────────────────────
 // DELETE CONFIRMATION DIALOG
 // ─────────────────────────────────────────────────────────────────────────────
-const DeleteDialog = ({ certification, onCancel, onConfirm }) => {
+const DeleteDialog = ({ certification, isDeleting, onCancel, onConfirm }) => {
   if (!certification) return null;
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-[#030814]/80 animate-in fade-in">
@@ -18,7 +18,7 @@ const DeleteDialog = ({ certification, onCancel, onConfirm }) => {
         <div className="w-11 h-11 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto mb-4">
           <AlertTriangle className="w-5 h-5 text-red-500" />
         </div>
-        <span className="font-mono text-[9px] text-red-500/70 uppercase tracking-[0.2em] mb-2 block">
+        <span className="font-mono text-[10px] text-red-500/70 uppercase tracking-[0.2em] mb-2 block">
           DELETE CERTIFICATION
         </span>
         <p className="text-gray-400 text-[13px] leading-relaxed mb-1">Are you sure you want to remove:</p>
@@ -27,15 +27,17 @@ const DeleteDialog = ({ certification, onCancel, onConfirm }) => {
         <div className="flex gap-2">
           <button
             onClick={onCancel}
-            className="flex-1 px-4 py-2.5 rounded-lg text-gray-400 font-bold text-sm hover:text-white hover:bg-[#1a2440] transition-colors"
+            disabled={isDeleting}
+            className="flex-1 px-4 py-2.5 rounded-lg text-gray-400 font-bold text-sm hover:text-white hover:bg-[#1a2440] transition-colors disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 px-4 py-2.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 font-bold text-sm hover:bg-red-500 hover:text-white hover:border-red-500 transition-all"
+            disabled={isDeleting}
+            className="flex-1 flex justify-center items-center px-4 py-2.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 font-bold text-sm hover:bg-red-500 hover:text-white hover:border-red-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Delete Certification
+            {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Delete Certification'}
           </button>
         </div>
       </div>
@@ -56,12 +58,13 @@ const SectionHeader = ({ number, title }) => (
 // ─────────────────────────────────────────────────────────────────────────────
 // INPUT FIELD
 // ─────────────────────────────────────────────────────────────────────────────
-const InputField = ({ label, name, value, onChange, required, placeholder, helper, isMonospace, type = 'text' }) => (
+const InputField = ({ id, label, name, value, onChange, required, placeholder, helper, isMonospace, type = 'text' }) => (
   <div className="w-full">
-    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+    <label htmlFor={id} className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
       <span>{label} {required && <span className="text-[#14f195]">*</span>}</span>
     </label>
     <input
+      id={id}
       type={type}
       name={name}
       value={value || ''}
@@ -116,8 +119,6 @@ const CertificationEditor = ({ isOpen, onClose, certification, onSave, isSaving,
 
   // Determine if date field has a real value to show
   const hasDate = certification && certification.date && String(certification.date).trim() !== '';
-
-  if (!isOpen) return null;
 
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -190,6 +191,7 @@ const CertificationEditor = ({ isOpen, onClose, certification, onSave, isSaving,
             <SectionHeader number="01" title="IDENTITY" />
             <div className="space-y-5">
               <InputField
+                id="certification-title"
                 label="CERTIFICATION TITLE"
                 name="title"
                 value={formData.title}
@@ -198,6 +200,7 @@ const CertificationEditor = ({ isOpen, onClose, certification, onSave, isSaving,
                 placeholder="e.g. CCNA (Routing & Switching)"
               />
               <InputField
+                id="certification-issuer"
                 label="ISSUER / INSTRUCTOR"
                 name="issuer"
                 value={formData.issuer}
@@ -210,6 +213,7 @@ const CertificationEditor = ({ isOpen, onClose, certification, onSave, isSaving,
             <SectionHeader number="02" title="CREDENTIAL DETAILS" />
             <div className="space-y-5">
               <InputField
+                id="certification-link"
                 label="CREDENTIAL URL"
                 name="link"
                 value={formData.link}
@@ -219,6 +223,7 @@ const CertificationEditor = ({ isOpen, onClose, certification, onSave, isSaving,
                 helper="Link to the certificate document or verification page."
               />
               <InputField
+                id="certification-icon"
                 label="ICON CLASS"
                 name="icon"
                 value={formData.icon}
@@ -233,6 +238,7 @@ const CertificationEditor = ({ isOpen, onClose, certification, onSave, isSaving,
             <div className="space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <InputField
+                  id="certification-order"
                   label="DISPLAY ORDER"
                   name="order"
                   value={formData.order}
@@ -246,6 +252,7 @@ const CertificationEditor = ({ isOpen, onClose, certification, onSave, isSaving,
                     or when creating new (empty, user can optionally fill) */}
                 {(hasDate || !certification) && (
                   <InputField
+                    id="certification-date"
                     label="ISSUE DATE"
                     name="date"
                     value={formData.date}
@@ -505,6 +512,7 @@ const CertificationsManager = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'list'
   const [deletingCert, setDeletingCert] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Subscribe to real-time updates
   useEffect(() => {
@@ -531,12 +539,15 @@ const CertificationsManager = () => {
 
   const handleDeleteConfirm = useCallback(async () => {
     if (!deletingCert) return;
+    setIsDeleting(true);
     try {
       await remove(deletingCert.id);
       toast.success('Certification deleted');
       setDeletingCert(null);
     } catch (err) {
       toast.error('Failed to delete certification');
+    } finally {
+      setIsDeleting(false);
     }
   }, [deletingCert, remove]);
 
@@ -719,6 +730,7 @@ const CertificationsManager = () => {
           />
           {isSearchActive && (
             <button
+              aria-label="Clear search"
               onClick={() => setSearchQuery('')}
               className="ml-2 text-gray-500 hover:text-white transition-colors shrink-0"
             >
@@ -730,6 +742,7 @@ const CertificationsManager = () => {
         {/* View toggle */}
         <div className="flex items-center bg-[#131b2c] rounded-xl border border-[#1e293b] p-1 shrink-0 self-start sm:self-auto">
           <button
+            aria-label="Grid view"
             onClick={() => setViewMode('grid')}
             className={`p-2.5 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-[#1e293b] text-[#14f195]' : 'text-gray-500 hover:text-gray-300'}`}
             title="Grid View"
@@ -737,6 +750,7 @@ const CertificationsManager = () => {
             <Grid className="w-4 h-4" />
           </button>
           <button
+            aria-label="List view"
             onClick={() => setViewMode('list')}
             className={`p-2.5 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-[#1e293b] text-[#14f195]' : 'text-gray-500 hover:text-gray-300'}`}
             title="List View"
@@ -851,18 +865,21 @@ const CertificationsManager = () => {
       )}
 
       {/* ═══ EDITOR MODAL ═══ */}
-      <CertificationEditor
-        isOpen={isEditorOpen}
-        onClose={() => { setIsEditorOpen(false); setEditingCert(null); }}
-        certification={editingCert}
-        onSave={handleSave}
-        isSaving={isSaving}
-        nextOrderNumber={items ? items.length : 0}
-      />
+      {isEditorOpen && (
+        <CertificationEditor
+          isOpen={isEditorOpen}
+          onClose={() => { setIsEditorOpen(false); setEditingCert(null); }}
+          certification={editingCert}
+          onSave={handleSave}
+          isSaving={isSaving}
+          nextOrderNumber={items ? items.length : 0}
+        />
+      )}
 
       {/* ═══ DELETE DIALOG ═══ */}
       <DeleteDialog
         certification={deletingCert}
+        isDeleting={isDeleting}
         onCancel={handleDeleteCancel}
         onConfirm={handleDeleteConfirm}
       />

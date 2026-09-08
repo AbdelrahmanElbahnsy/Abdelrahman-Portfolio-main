@@ -1,9 +1,47 @@
 import React, { useState, useEffect, useCallback, memo } from 'react';
 import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
-import { Plus, Loader2, FolderOpen } from 'lucide-react';
+import { Plus, Loader2, FolderOpen, AlertTriangle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import ExperienceCard from './UI/ExperienceCard';
 import ExperienceEditor from './UI/ExperienceEditor';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DELETE CONFIRMATION DIALOG
+// ─────────────────────────────────────────────────────────────────────────────
+const DeleteDialog = ({ experience, isDeleting, onCancel, onConfirm }) => {
+  if (!experience) return null;
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-[#030814]/80 animate-in fade-in">
+      <div className="bg-[#0f1829] border border-[#1a2440] rounded-2xl w-full max-w-[380px] shadow-2xl p-6 text-center animate-in zoom-in-95 duration-150">
+        <div className="w-11 h-11 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto mb-4">
+          <AlertTriangle className="w-5 h-5 text-red-500" />
+        </div>
+        <span className="font-mono text-[10px] text-red-500/70 uppercase tracking-[0.2em] mb-2 block">
+          DELETE EXPERIENCE
+        </span>
+        <p className="text-gray-400 text-[13px] leading-relaxed mb-1">Are you sure you want to remove:</p>
+        <p className="text-white font-bold text-sm mb-1 px-4 break-words">&ldquo;{experience.title}&rdquo;</p>
+        <p className="text-gray-700 text-[11px] mb-5">This action cannot be undone.</p>
+        <div className="flex gap-2">
+          <button
+            onClick={onCancel}
+            disabled={isDeleting}
+            className="flex-1 px-4 py-2.5 rounded-lg text-gray-400 font-bold text-sm hover:text-white hover:bg-[#1a2440] transition-colors disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={isDeleting}
+            className="flex-1 flex justify-center items-center px-4 py-2.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 font-bold text-sm hover:bg-red-500 hover:text-white hover:border-red-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Delete Experience'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const JourneyManager = () => {
   const { data: items, loading, create, update, remove, subscribe } = useFirestoreCrud('journey', {
@@ -16,6 +54,8 @@ const JourneyManager = () => {
   const [activePhaseId, setActivePhaseId] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [deletingExperience, setDeletingExperience] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Update active phase to the latest item by default if none selected
   useEffect(() => {
@@ -43,14 +83,26 @@ const JourneyManager = () => {
     setIsEditorOpen(true);
   };
 
-  const handleDelete = async (experience) => {
-    if (window.confirm(`Delete Experience?\n\nYou are about to permanently remove:\n"${experience.title}"\n\nThis action cannot be undone.`)) {
-      try {
-        await remove(experience.id);
-        toast.success('Experience deleted successfully');
-      } catch (err) {
-        toast.error('Failed to delete experience');
-      }
+  const handleDelete = (experience) => {
+    setDeletingExperience(experience);
+  };
+
+  const handleDeleteCancel = () => {
+    if (isDeleting) return;
+    setDeletingExperience(null);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deletingExperience) return;
+    setIsDeleting(true);
+    try {
+      await remove(deletingExperience.id);
+      toast.success('Experience deleted successfully');
+      setDeletingExperience(null);
+    } catch (err) {
+      toast.error('Failed to delete experience');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -301,12 +353,22 @@ const JourneyManager = () => {
         </div>
       )}
 
-      <ExperienceEditor 
-        isOpen={isEditorOpen}
-        onClose={() => setIsEditorOpen(false)}
-        experience={editingExperience}
-        onSave={handleSave}
-        isSaving={isSaving}
+      {isEditorOpen && (
+        <ExperienceEditor 
+          isOpen={isEditorOpen}
+          onClose={() => setIsEditorOpen(false)}
+          experience={editingExperience}
+          onSave={handleSave}
+          isSaving={isSaving}
+        />
+      )}
+
+      {/* ═══ DELETE DIALOG ═══ */}
+      <DeleteDialog
+        experience={deletingExperience}
+        isDeleting={isDeleting}
+        onCancel={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
       />
     </div>
   );

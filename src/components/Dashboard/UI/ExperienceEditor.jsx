@@ -10,9 +10,9 @@ const SectionHeader = ({ number, title }) => (
   </div>
 );
 
-const InputField = ({ label, name, value, onChange, required, placeholder, helper, isMonospace, type = 'text', maxLength }) => (
+const InputField = ({ id, label, name, value, onChange, required, placeholder, helper, isMonospace, type = 'text', maxLength }) => (
   <div className="w-full">
-    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 flex justify-between">
+    <label htmlFor={id} className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 flex justify-between">
       <span>{label} {required && <span className="text-[#14f195]">*</span>}</span>
       {maxLength && type === 'textarea' && (
         <span className="text-gray-600 font-normal">
@@ -22,6 +22,7 @@ const InputField = ({ label, name, value, onChange, required, placeholder, helpe
     </label>
     {type === 'textarea' ? (
       <textarea 
+        id={id}
         name={name}
         value={value || ''}
         onChange={onChange}
@@ -32,6 +33,7 @@ const InputField = ({ label, name, value, onChange, required, placeholder, helpe
       />
     ) : (
       <input 
+        id={id}
         type="text"
         name={name}
         value={value || ''}
@@ -46,22 +48,12 @@ const InputField = ({ label, name, value, onChange, required, placeholder, helpe
 );
 
 const ExperienceEditor = ({ isOpen, onClose, experience, onSave, isSaving }) => {
-  const [formData, setFormData] = useState({});
-
-  useEffect(() => {
-    if (isOpen) {
-      if (experience) {
-        setFormData({ ...experience });
-      } else {
-        setFormData({
-          title: '',
-          description: '',
-          order: '',
-          technologies: ''
-        });
-      }
-    }
-  }, [isOpen, experience]);
+  const [formData, setFormData] = useState(experience ? { ...experience } : {
+    title: '',
+    description: '',
+    order: '',
+    technologies: ''
+  });
 
   // Handle escape to close
   useEffect(() => {
@@ -73,8 +65,6 @@ const ExperienceEditor = ({ isOpen, onClose, experience, onSave, isSaving }) => 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, isSaving, onClose]);
-
-  if (!isOpen) return null;
 
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -152,6 +142,7 @@ const ExperienceEditor = ({ isOpen, onClose, experience, onSave, isSaving }) => 
                 <SectionHeader number="01" title="CORE INFORMATION" />
                 <div className="space-y-5">
                   <InputField 
+                    id="experience-title"
                     label="TITLE / ROLE" 
                     name="title" 
                     value={formData.title} 
@@ -160,6 +151,7 @@ const ExperienceEditor = ({ isOpen, onClose, experience, onSave, isSaving }) => 
                     placeholder="Networking foundations"
                   />
                   <InputField 
+                    id="experience-description"
                     label="DESCRIPTION" 
                     name="description" 
                     value={formData.description} 
@@ -173,6 +165,7 @@ const ExperienceEditor = ({ isOpen, onClose, experience, onSave, isSaving }) => 
                 <SectionHeader number="02" title="JOURNEY POSITION" />
                 <div className="space-y-5 w-1/2">
                   <InputField 
+                    id="experience-order"
                     label="ORDER / PHASE" 
                     name="order" 
                     value={formData.order} 
@@ -187,10 +180,11 @@ const ExperienceEditor = ({ isOpen, onClose, experience, onSave, isSaving }) => 
                 <SectionHeader number="03" title="TECHNICAL STACK" />
                 <div className="space-y-5">
                   <div className="w-full">
-                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                    <label htmlFor="experience-technologies" className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
                       TECHNOLOGIES
                     </label>
                     <input 
+                      id="experience-technologies"
                       type="text"
                       name="technologies"
                       value={formData.technologies || ''}
@@ -221,19 +215,19 @@ const ExperienceEditor = ({ isOpen, onClose, experience, onSave, isSaving }) => 
                 <SectionHeader number="04" title="ADDITIONAL DETAILS (OPTIONAL)" />
                 <div className="space-y-5">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <InputField label="COMPANY" name="company" value={formData.company} onChange={handleChange} />
-                    <InputField label="ORGANIZATION" name="organization" value={formData.organization} onChange={handleChange} />
+                    <InputField id="experience-company" label="COMPANY" name="company" value={formData.company} onChange={handleChange} />
+                    <InputField id="experience-organization" label="ORGANIZATION" name="organization" value={formData.organization} onChange={handleChange} />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <InputField label="DATE" name="date" value={formData.date} onChange={handleChange} placeholder="e.g. 2021 - Present" />
-                    <InputField label="BADGE" name="badge" value={formData.badge} onChange={handleChange} />
+                    <InputField id="experience-date" label="DATE" name="date" value={formData.date} onChange={handleChange} placeholder="e.g. 2021 - Present" />
+                    <InputField id="experience-badge" label="BADGE" name="badge" value={formData.badge} onChange={handleChange} />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <InputField label="STATUS" name="status" value={formData.status} onChange={handleChange} />
-                    <InputField label="ICON" name="icon" value={formData.icon} onChange={handleChange} isMonospace />
+                    <InputField id="experience-status" label="STATUS" name="status" value={formData.status} onChange={handleChange} />
+                    <InputField id="experience-icon" label="ICON" name="icon" value={formData.icon} onChange={handleChange} isMonospace />
                   </div>
                   <div className="w-1/2">
-                    <InputField label="COLOR" name="color" value={formData.color} onChange={handleChange} isMonospace placeholder="#14f195" />
+                    <InputField id="experience-color" label="COLOR" name="color" value={formData.color} onChange={handleChange} isMonospace placeholder="#14f195" />
                   </div>
                 </div>
 

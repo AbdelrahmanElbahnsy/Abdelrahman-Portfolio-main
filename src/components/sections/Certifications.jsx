@@ -12,6 +12,7 @@ import { certifications as fallbackCertifications } from '../../data/portfolioDa
 import { SiMicrosoftazure } from 'react-icons/si';
 import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { safeUrl } from '../../utils/safeUrl';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -165,7 +166,7 @@ const Certifications = () => {
                                                     <div className={`h-[1px] w-full bg-gradient-to-r from-transparent via-[var(--theme-border-strong)] to-transparent mb-6 transition-opacity duration-500 ${isActive ? 'opacity-100' : 'opacity-0'}`}></div>
                                                     
                                                     <a
-                                                        href={cert.link}
+                                                        href={safeUrl(cert.link) || undefined}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         className={`w-full py-4 rounded-xl flex items-center justify-center gap-3 font-bold text-sm transition-all duration-300

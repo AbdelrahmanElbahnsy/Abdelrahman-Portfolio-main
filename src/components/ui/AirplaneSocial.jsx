@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
 import { useMagneticEffect } from '../../hooks/useMagneticEffect';
 import { socialLinks } from '../../data/portfolioData';
+import { safeUrl } from '../../utils/safeUrl';
 
 const AirplaneSocial = () => {
     const { data: firestoreData, loading, error, subscribe } = useFirestoreCrud('socials', { orderByField: 'order', orderDirection: 'asc' });
@@ -67,7 +68,7 @@ const AirplaneSocial = () => {
                     return (
                         <a
                             key={idx}
-                            href={social.url || social.link || social.href}
+                            href={safeUrl(social.url || social.link || social.href) || undefined}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="group relative flex items-center h-12"

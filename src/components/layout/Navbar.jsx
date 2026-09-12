@@ -6,6 +6,7 @@ import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
 import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { useVisitorPreferences } from '../../context/VisitorPreferencesContext';
+import { safeUrl } from '../../utils/safeUrl';
 
 const Navbar = ({ splashDone = true }) => {
     const { data: profileData, subscribe: subscribeProfile } = useFirestoreSingleDoc('profile', 'main');
@@ -411,7 +412,7 @@ const Navbar = ({ splashDone = true }) => {
                         {[...navLinks, { name: language === 'ar' ? 'تواصل معي' : 'Contact', href: '#contact', id: 'contact', icon: 'fas fa-paper-plane' }].map((link, idx) => (
                             <li key={idx} className="mobile-nav-item">
                                 <a
-                                    href={link.href}
+                                    href={safeUrl(link.href) || undefined}
                                     onClick={(e) => handleNavClick(e, link.id)}
                                     className={`flex items-center gap-3.5 md:gap-5 text-[26px] md:text-3xl font-black tracking-tighter transition-all duration-500 ${activeSection === link.id ? 'text-[var(--theme-accent)]' : 'text-[var(--theme-text)]'}`}
                                 >
@@ -426,7 +427,7 @@ const Navbar = ({ splashDone = true }) => {
                         <p className="text-[var(--theme-text-dim)] uppercase text-[10px] font-black tracking-[0.2em] mb-6">{t("Let's Connect")}</p>
                         <div className="flex gap-8">
                             {socialLinks.navbarMobile.map((social, idx) => (
-                                <a key={idx} href={social.link} target="_blank" rel="noopener noreferrer" className="text-[35px] md:text-3xl text-[var(--theme-text)] hover:text-[var(--theme-accent)] transition-all relative z-50">
+                                <a key={idx} href={safeUrl(social.link) || undefined} target="_blank" rel="noopener noreferrer" className="text-[35px] md:text-3xl text-[var(--theme-text)] hover:text-[var(--theme-accent)] transition-all relative z-50">
                                     <i className={social.icon}></i>
                                 </a>
                             ))}

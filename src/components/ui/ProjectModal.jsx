@@ -2,6 +2,7 @@ import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from '
 import { normalizeProjectTechnologies } from '../../utils/projectTechnologies';
 import TechTags from './TechTags';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { safeUrl } from '../../utils/safeUrl';
 
 const FALLBACK_IMAGE = '/portfolio-preview.png';
 
@@ -138,7 +139,7 @@ const ProjectModal = ({ project, onClose }) => {
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-end">
             {repoLink ? (
               <a
-                href={repoLink}
+                href={safeUrl(repoLink) || undefined}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[var(--theme-accent)] to-[var(--theme-accent-hover)] px-5 py-3 text-sm font-semibold text-white shadow-[0_0_30px_-10px_rgba(200,162,110,0.4)] transition hover:shadow-[0_0_30px_0_rgba(200,162,110,0.6)]"

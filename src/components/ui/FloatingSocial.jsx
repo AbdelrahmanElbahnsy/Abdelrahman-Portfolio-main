@@ -2,6 +2,7 @@ import React from 'react';
 import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
 import { useEffect } from 'react';
 import { socialLinks } from '../../data/portfolioData';
+import { safeUrl } from '../../utils/safeUrl';
 
 const FloatingSocial = () => {
   const { data: firestoreData, loading, error, subscribe } = useFirestoreCrud('socials', { orderByField: 'order', orderDirection: 'asc' });
@@ -21,7 +22,7 @@ const FloatingSocial = () => {
         {socialsData.map((social, idx) => (
           <a
             key={idx}
-            href={social.url || social.link}
+            href={safeUrl(social.url || social.link) || undefined}
             target="_blank"
             rel="noopener noreferrer"
             className="group relative w-10 h-10 rounded-full bg-[#161b22] border border-white/5 flex items-center justify-center text-gray-500 hover:text-[var(--theme-accent)] hover:border-[var(--theme-accent)] transition-all duration-300 hover:-translate-y-1 shadow-lg"

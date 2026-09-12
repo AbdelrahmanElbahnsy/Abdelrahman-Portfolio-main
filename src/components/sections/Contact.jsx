@@ -5,6 +5,7 @@ import { useGSAP } from '@gsap/react';
 import { contact } from "../../data/portfolioData";
 import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { safeUrl } from '../../utils/safeUrl';
 
 const Contact = () => {
     const { t, language } = useLanguage();
@@ -192,7 +193,7 @@ const Contact = () => {
                                             <div className="channel-info min-w-0 flex-1 text-left rtl:text-right">
                                                 <span className="channel-label text-[10px] font-mono tracking-widest text-[var(--theme-text-muted)] block mb-1">{t(channel.label)}</span>
                                                 {channel.link ? (
-                                                    <a href={channel.link} className="channel-link font-bold text-[var(--theme-text)] hover:text-[var(--theme-accent)] transition-colors break-words text-sm sm:text-base leading-tight block rtl:text-left rtl:inline-block" style={{ overflowWrap: 'anywhere' }} dir="ltr">{channel.value}</a>
+                                                    <a href={safeUrl(channel.link) || undefined} className="channel-link font-bold text-[var(--theme-text)] hover:text-[var(--theme-accent)] transition-colors break-words text-sm sm:text-base leading-tight block rtl:text-left rtl:inline-block" style={{ overflowWrap: 'anywhere' }} dir="ltr">{channel.value}</a>
                                                 ) : (
                                                     <span className="channel-value font-bold text-[var(--theme-text)] break-words text-sm sm:text-base rtl:text-left rtl:inline-block" style={{ overflowWrap: 'anywhere' }} dir="ltr">{channel.value}</span>
                                                 )}

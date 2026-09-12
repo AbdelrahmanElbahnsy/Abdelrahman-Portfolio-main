@@ -6,6 +6,7 @@ import { SiMicrosoftazure } from 'react-icons/si';
 import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
 import { useEffect } from 'react';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { safeUrl } from '../../utils/safeUrl';
 
 const Footer = () => {
     const { t, language } = useLanguage();
@@ -138,7 +139,7 @@ const Footer = () => {
                         <h4 className="text-lg font-bold mb-6 text-[var(--theme-text)] text-left rtl:text-right" dir="ltr">$ cat ./contact</h4>
                         <div className="footer-social-icons flex gap-4 mb-8">
                             {socialLinks.footer.map((social, i) => (
-                                <a key={i} href={social.link} target="_blank" rel="noreferrer" title={social.title} className="footer-social-icon text-xl text-[var(--theme-text-secondary)] hover:text-[var(--theme-accent)] transition-all hover:scale-110">
+                                <a key={i} href={safeUrl(social.link) || undefined} target="_blank" rel="noreferrer" title={social.title} className="footer-social-icon text-xl text-[var(--theme-text-secondary)] hover:text-[var(--theme-accent)] transition-all hover:scale-110">
                                     <i className={social.icon}></i>
                                 </a>
                             ))}

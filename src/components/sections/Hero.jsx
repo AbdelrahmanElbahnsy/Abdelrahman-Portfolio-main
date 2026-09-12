@@ -10,6 +10,7 @@ import { useMagneticEffect } from '../../hooks/useMagneticEffect';
 import SplitText from '../ui/SplitText';
 import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { safeUrl } from '../../utils/safeUrl';
 
 const Hero = ({ splashDone = true }) => {
     const { t, language } = useLanguage();
@@ -268,7 +269,7 @@ const Hero = ({ splashDone = true }) => {
                         <div ref={ctaRef} className="flex gap-6 hero-cta-group">
                             <a
                                 id="hero-btn-cv"
-                                href={cvUrl}
+                                href={safeUrl(cvUrl) || undefined}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="btn-cv flex items-center gap-2 px-6 py-3 rounded-full bg-[var(--theme-accent)] text-black font-bold hover:scale-105 transition-transform shadow-[var(--theme-shadow-strong)]"

@@ -3,6 +3,7 @@ import { normalizeProjectTechnologies } from '../../utils/projectTechnologies';
 import TechTags from './TechTags';
 import { useTiltEffect } from '../../hooks/useTiltEffect';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { safeUrl } from '../../utils/safeUrl';
 
 const FALLBACK_IMAGE = '/portfolio-preview.png';
 
@@ -81,7 +82,7 @@ const ProjectCard = ({ project, onClickDetails }) => {
 
           {project?.repo ? (
             <a
-              href={project.repo}
+              href={safeUrl(project.repo) || undefined}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center rounded-lg border border-[var(--theme-border-strong)] px-3.5 py-2 text-xs font-semibold text-[var(--theme-text-secondary)] transition hover:border-[var(--theme-accent)] hover:text-[var(--theme-text)]"

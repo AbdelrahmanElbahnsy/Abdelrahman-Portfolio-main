@@ -218,8 +218,10 @@ service cloud.firestore {
     // ─── ANALYTICS ───────────────────────────────────────────────────────────
     match /visits/{document=**} {
       allow create: if request.resource.data.keys().hasAll(['timestamp', 'page'])
+        && request.resource.data.keys().hasOnly(['timestamp', 'page'])
         && request.resource.data.page is string
-        && request.resource.data.keys().hasOnly(['timestamp', 'page']);
+        && request.resource.data.page.size() < 200
+        && request.resource.data.timestamp == request.time;
       allow read, update, delete: if isAdmin();
     }
 

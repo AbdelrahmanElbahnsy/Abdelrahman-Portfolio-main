@@ -101,7 +101,7 @@ flowchart TD
     
     AdminOS -->|Content management| Firestore[(Cloud Firestore)]
     AdminOS -->|Media upload| Cloudinary[Cloudinary CDN]
-    Cloudinary -->|Asset reference/URL| Firestore
+    AdminOS -->|Saves Media Metadata| Firestore
     Firestore -->|Reads Data| Portfolio
     
     Portfolio -->|Submits Forms| EmailJS[EmailJS Service]

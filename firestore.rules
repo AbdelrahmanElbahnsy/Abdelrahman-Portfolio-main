@@ -10,7 +10,6 @@ service cloud.firestore {
     }
 
     function getRole() {
-      // Safely fetch role from the admins collection (returns null if doesn't exist)
       return isAuthenticated() && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
         ? get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role
         : null;
@@ -29,61 +28,212 @@ service cloud.firestore {
     }
 
     function isViewer() {
-      // If they have any valid role, they are at least a viewer
       return getRole() in ['owner', 'admin', 'editor', 'viewer'];
     }
 
+    // ─── FIELD TYPE VALIDATION HELPERS ────────────────────────────────────────
+    function isStringSafe(val) { return val is string; }
+    function isNumberSafe(val) { return val is number; }
+    function isBoolSafe(val)   { return val is bool; }
+    function isListSafe(val)   { return val is list; }
+
+    // Optional field type validators (allow absent, reject wrong types)
+    function isValidString(data, field) { return !(field in data) || isStringSafe(data[field]); }
+    function isValidNumber(data, field) { return !(field in data) || isNumberSafe(data[field]); }
+    function isValidBool(data, field)   { return !(field in data) || isBoolSafe(data[field]); }
+    function isValidList(data, field)   { return !(field in data) || isListSafe(data[field]); }
+
+    // Required field type validators (field must exist AND have correct type)
+    function requiredString(data, field) { return (field in data) && isStringSafe(data[field]); }
+
+
     // ─── ADMINS & USERS COLLECTION ───────────────────────────────────────────
     match /admins/{userId} {
-      // Users can read their own role; Owners and Admins can read all roles.
       allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
-      
-      // All writes to /admins are strictly disabled from the client.
-      // Modifying roles/access MUST go through the secure Vercel API (/api/admin/users)
-      // This prevents ANY client-side privilege escalation or accidental lockout.
-      allow write: if false; 
+      allow write: if false;
     }
 
     // ─── CMS PORTFOLIO CONTENT (PUBLIC READ, EDITOR+ WRITE) ──────────────────
-    // Public visitors can ONLY read. 
-    // Owners, Admins, and Editors can read, create, update, delete.
-    
-    match /hero/{document=**} { allow read: if true; allow write: if isEditor(); }
-    match /about/{document=**} { allow read: if true; allow write: if isEditor(); }
-    match /skills/{document=**} { allow read: if true; allow write: if isEditor(); }
-    match /journey/{document=**} { allow read: if true; allow write: if isEditor(); }
-    match /projects/{document=**} { allow read: if true; allow write: if isEditor(); }
-    match /certifications/{document=**} { allow read: if true; allow write: if isEditor(); }
-    match /socials/{document=**} { allow read: if true; allow write: if isEditor(); }
-    match /contact/{document=**} { allow read: if true; allow write: if isEditor(); }
-    match /navbarItems/{document=**} { allow read: if true; allow write: if isEditor(); }
-    match /profile/{document=**} { allow read: if true; allow write: if isEditor(); }
-    match /settings/appearance { allow read: if true; allow create, update: if isEditor(); }
-    match /settings/general { allow read: if true; allow create, update: if isEditor(); }
 
-    // ─── MEDIA LIBRARY (PHASE 1) ─────────────────────────────────────────────
-    // Public cannot read/write. Authenticated users can read. Editors+ can write.
-    match /media/{document=**} { 
-      allow read: if isAuthenticated(); 
-      allow write: if isEditor(); 
+    match /hero/{document=**} {
+      allow read: if true;
+      allow create, update: if isEditor()
+        && isValidString(request.resource.data, 'firstName')
+        && isValidString(request.resource.data, 'lastName')
+        && isValidString(request.resource.data, 'badge')
+        && isValidString(request.resource.data, 'roles')
+        && isValidString(request.resource.data, 'description')
+        && isValidString(request.resource.data, 'portrait')
+        && isValidString(request.resource.data, 'cvUrl')
+        && isValidString(request.resource.data, 'availabilityStatus')
+        && isValidString(request.resource.data, 'cta1')
+        && isValidString(request.resource.data, 'cta2');
+      allow delete: if isEditor();
+    }
+
+    match /about/{document=**} {
+      allow read: if true;
+      allow create, update: if isEditor()
+        && isValidString(request.resource.data, 'title')
+        && isValidString(request.resource.data, 'subtitle')
+        && isValidString(request.resource.data, 'lead')
+        && isValidString(request.resource.data, 'paragraphsJson')
+        && isValidString(request.resource.data, 'badgesJson')
+        && isValidString(request.resource.data, 'terminalItemsJson');
+      allow delete: if isEditor();
+    }
+
+    match /skills/{document=**} {
+      allow read: if true;
+      allow create, update: if isEditor()
+        && isValidString(request.resource.data, 'name')
+        && isValidString(request.resource.data, 'category')
+        && isValidString(request.resource.data, 'categoryIcon')
+        && isValidString(request.resource.data, 'circularSub')
+        && isValidNumber(request.resource.data, 'percent')
+        && isValidNumber(request.resource.data, 'order')
+        && isValidBool(request.resource.data, 'isCircular');
+      allow delete: if isEditor();
+    }
+
+    match /journey/{document=**} {
+      allow read: if true;
+      allow create, update: if isEditor()
+        && isValidString(request.resource.data, 'title')
+        && isValidString(request.resource.data, 'order')
+        && isValidString(request.resource.data, 'company')
+        && isValidString(request.resource.data, 'organization')
+        && isValidString(request.resource.data, 'description')
+        && isValidString(request.resource.data, 'date')
+        && isValidString(request.resource.data, 'badge')
+        && isValidString(request.resource.data, 'technologies')
+        && isValidString(request.resource.data, 'status')
+        && isValidString(request.resource.data, 'icon')
+        && isValidString(request.resource.data, 'color');
+      allow delete: if isEditor();
+    }
+
+    match /projects/{document=**} {
+      allow read: if true;
+      allow create, update: if isEditor()
+        && isValidString(request.resource.data, 'title')
+        && isValidString(request.resource.data, 'description')
+        && isValidString(request.resource.data, 'github')
+        && isValidString(request.resource.data, 'live')
+        && isValidString(request.resource.data, 'image')
+        && isValidString(request.resource.data, 'status')
+        && isValidString(request.resource.data, 'technologies');
+      allow delete: if isEditor();
+    }
+
+    match /certifications/{document=**} {
+      allow read: if true;
+      allow create, update: if isEditor()
+        && isValidString(request.resource.data, 'title')
+        && isValidString(request.resource.data, 'issuer')
+        && isValidString(request.resource.data, 'link')
+        && isValidString(request.resource.data, 'icon')
+        && isValidString(request.resource.data, 'date')
+        && isValidNumber(request.resource.data, 'order');
+      allow delete: if isEditor();
+    }
+
+    match /socials/{document=**} {
+      allow read: if true;
+      allow create, update: if isEditor()
+        && isValidString(request.resource.data, 'platform')
+        && isValidString(request.resource.data, 'url')
+        && isValidString(request.resource.data, 'icon')
+        && isValidNumber(request.resource.data, 'order');
+      allow delete: if isEditor();
+    }
+
+    match /contact/{document=**} {
+      allow read: if true;
+      allow create, update: if isEditor()
+        && isValidString(request.resource.data, 'email')
+        && isValidString(request.resource.data, 'phone')
+        && isValidString(request.resource.data, 'location')
+        && isValidList(request.resource.data, 'emails')
+        && isValidList(request.resource.data, 'phones')
+        && isValidList(request.resource.data, 'locations');
+      allow delete: if isEditor();
+    }
+
+    match /navbarItems/{document=**} {
+      allow read: if true;
+      allow create, update: if isEditor()
+        && isValidString(request.resource.data, 'label')
+        && isValidString(request.resource.data, 'href')
+        && isValidNumber(request.resource.data, 'order');
+      allow delete: if isEditor();
+    }
+
+    match /profile/{document=**} {
+      allow read: if true;
+      allow create, update: if isEditor()
+        && isValidString(request.resource.data, 'fullName')
+        && isValidString(request.resource.data, 'firstName')
+        && isValidString(request.resource.data, 'lastName')
+        && isValidString(request.resource.data, 'bio')
+        && isValidString(request.resource.data, 'email')
+        && isValidString(request.resource.data, 'github')
+        && isValidString(request.resource.data, 'linkedin')
+        && isValidString(request.resource.data, 'resumeUrl')
+        && isValidString(request.resource.data, 'avatar')
+        && isValidString(request.resource.data, 'fullNameAr')
+        && isValidString(request.resource.data, 'firstNameAr')
+        && isValidString(request.resource.data, 'lastNameAr')
+        && isValidString(request.resource.data, 'footerTagline')
+        && isValidString(request.resource.data, 'footerTaglineAr');
+      allow delete: if isEditor();
+    }
+
+    match /settings/{docId} {
+      allow read: if true;
+      allow create, update: if isEditor()
+        && (docId in ['appearance', 'general'])
+        && isValidString(request.resource.data, 'siteTitle')
+        && isValidString(request.resource.data, 'siteDescription')
+        && isValidString(request.resource.data, 'theme')
+        && isValidBool(request.resource.data, 'portfolioEnabled');
+    }
+
+    // ─── MEDIA LIBRARY ───────────────────────────────────────────────────────
+    match /media/{document=**} {
+      allow read: if isAuthenticated();
+      allow create, update: if isEditor()
+        && isValidString(request.resource.data, 'url')
+        && isValidString(request.resource.data, 'publicId')
+        && isValidString(request.resource.data, 'format')
+        && isValidNumber(request.resource.data, 'bytes')
+        && isValidNumber(request.resource.data, 'width')
+        && isValidNumber(request.resource.data, 'height')
+        && isValidString(request.resource.data, 'originalFilename')
+        && isValidString(request.resource.data, 'resourceType')
+        && isValidString(request.resource.data, 'uploadedBy');
+      allow delete: if isEditor();
     }
 
     // ─── ANALYTICS ───────────────────────────────────────────────────────────
     match /visits/{document=**} {
-      // Public can record visits
-      allow create: if true;
-      // Only Admin+ can read/modify analytics
+      allow create: if request.resource.data.keys().hasAll(['timestamp', 'page'])
+        && request.resource.data.page is string
+        && request.resource.data.keys().hasOnly(['timestamp', 'page']);
       allow read, update, delete: if isAdmin();
     }
 
     // ─── INTERNAL AUDIT TRAIL ────────────────────────────────────────────────
     match /activityLog/{document=**} {
-      // Only Admin+ can read/write activity logs
-      allow read, write: if isAdmin();
+      allow create: if isAuthenticated()
+        && requiredString(request.resource.data, 'type')
+        && requiredString(request.resource.data, 'collectionName')
+        && requiredString(request.resource.data, 'documentId')
+        && requiredString(request.resource.data, 'title');
+      allow read, update, delete: if isAdmin();
     }
 
     // ─── DEFAULT DENY ────────────────────────────────────────────────────────
-    // Safely block access to any other collections not explicitly defined above
     match /{document=**} {
       allow read, write: if false;
     }

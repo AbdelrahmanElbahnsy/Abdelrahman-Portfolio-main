@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const dir = 'src/cms/migrations';
+const dir = path.join(__dirname, '../../src/cms/migrations');
 const files = fs.readdirSync(dir).filter(f => f.startsWith('migrate') && f.endsWith('.js'));
 
 files.forEach(file => {
@@ -15,7 +15,7 @@ files.forEach(file => {
 });
 
 // Now update runMigration.js
-const runMigPath = 'src/cms/migrations/runMigration.js';
+const runMigPath = path.join(__dirname, '../../src/cms/migrations/runMigration.js');
 let runMigContent = fs.readFileSync(runMigPath, 'utf8');
 
 const newCheckAndPrint = `

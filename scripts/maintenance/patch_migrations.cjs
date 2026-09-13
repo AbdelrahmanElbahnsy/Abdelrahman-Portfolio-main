@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const dir = 'src/cms/migrations';
+const dir = path.join(__dirname, '../../src/cms/migrations');
 const files = fs.readdirSync(dir).filter(f => f.startsWith('migrate') && f.endsWith('.js'));
 
 files.forEach(file => {

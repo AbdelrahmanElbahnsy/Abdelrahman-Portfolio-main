@@ -1,5 +1,11 @@
 import { chromium } from 'playwright';
 import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const screenshotsDir = path.resolve(__dirname, '../../docs/screenshots');
 
 const viewports = [
   { width: 320, height: 800 },
@@ -19,8 +25,8 @@ async function runTests() {
   const context = await browser.newContext();
   const page = await context.newPage();
   
-  if (!fs.existsSync('./screenshots')) {
-    fs.mkdirSync('./screenshots');
+  if (!fs.existsSync(screenshotsDir)) {
+    fs.mkdirSync(screenshotsDir, { recursive: true });
   }
 
   const url = 'http://localhost:5174/'; // Dev server port
@@ -113,7 +119,7 @@ async function runTests() {
         failed = true;
       }
 
-      await page.screenshot({ path: `./screenshots/${lang}_${vp.width}x${vp.height}.png` });
+      await page.screenshot({ path: path.join(screenshotsDir, `${lang}_${vp.width}x${vp.height}.png`) });
     }
   }
 

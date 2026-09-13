@@ -156,7 +156,7 @@ const Hero = ({ splashDone = true }) => {
 
     if (loading) {
         return (
-            <section id="hero" className="relative flex items-center justify-center min-h-[100vh] lg:min-h-[95vh] pt-[120px] pb-24 overflow-hidden bg-transparent">
+            <section id="hero" className="relative flex items-center justify-center min-h-[85vh] lg:min-h-[85vh] pt-[90px] md:pt-[100px] pb-20 lg:pb-16 overflow-hidden bg-transparent">
                 <div className="flex flex-col items-center justify-center text-[var(--theme-accent)]">
                     <i className="fas fa-spinner fa-spin text-4xl mb-4"></i>
                     <p>{t('Loading...')}</p>
@@ -167,7 +167,7 @@ const Hero = ({ splashDone = true }) => {
 
     if (error) {
         return (
-            <section id="hero" className="relative flex items-center justify-center min-h-[100vh] lg:min-h-[95vh] pt-[120px] pb-24 overflow-hidden bg-transparent">
+            <section id="hero" className="relative flex items-center justify-center min-h-[85vh] lg:min-h-[85vh] pt-[90px] md:pt-[100px] pb-20 lg:pb-16 overflow-hidden bg-transparent">
                 <div className="flex flex-col items-center justify-center text-red-500 bg-red-500/10 p-6 rounded-2xl border border-red-500/20">
                     <i className="fas fa-exclamation-triangle text-3xl mb-3"></i>
                     <p>{t('Failed to load hero section')}</p>
@@ -179,7 +179,7 @@ const Hero = ({ splashDone = true }) => {
 
     if (!dataSource) {
         return (
-            <section id="hero" className="relative flex items-center justify-center min-h-[100vh] lg:min-h-[95vh] pt-[120px] pb-24 overflow-hidden bg-transparent">
+            <section id="hero" className="relative flex items-center justify-center min-h-[85vh] lg:min-h-[85vh] pt-[90px] md:pt-[100px] pb-20 lg:pb-16 overflow-hidden bg-transparent">
                 <div className="flex flex-col items-center justify-center text-[var(--theme-text-muted)] bg-[var(--theme-surface)] p-8 rounded-3xl border border-[var(--theme-border)] shadow-inner">
                     <i className="fas fa-folder-open text-4xl mb-4 opacity-50"></i>
                     <p>{t('No hero information found.')}</p>
@@ -192,7 +192,7 @@ const Hero = ({ splashDone = true }) => {
         <section
             id="hero"
             ref={sectionRef}
-            className="relative flex items-start lg:items-center min-h-[100vh] lg:min-h-[95vh] pt-[120px] md:pt-[140px] pb-32 lg:pb-24 overflow-hidden bg-transparent"
+            className="relative flex items-start lg:items-center min-h-[85vh] lg:min-h-[85vh] pt-[90px] md:pt-[100px] pb-20 lg:pb-16 overflow-hidden bg-transparent"
         >
             <div className="container px-6 sm:px-8 mx-auto h-full flex flex-col justify-start lg:justify-center">
                 <div className="grid items-center grid-cols-1 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)] gap-8 md:gap-12 lg:gap-[clamp(2rem,5vw,5rem)] hero-grid w-full max-w-full min-w-0" dir="ltr">

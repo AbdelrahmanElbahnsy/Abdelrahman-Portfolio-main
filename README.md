@@ -3,250 +3,203 @@
 # Abdelrahman El-bahnsy
 ### Cloud & DevOps Engineer
 
-*A serverless portfolio platform featuring a responsive public experience and a secure, role-aware AdminOS content management system.*
+> A serverless portfolio platform featuring a custom Firestore-backed CMS (AdminOS), strict role-aware authorization, centralized media management, and a responsive bilingual public experience.
 
 [🌐 Live Portfolio](https://abdelrahman-el-bahnsy.vercel.app/) &nbsp;&middot;&nbsp; [⚙️ AdminOS](https://abdelrahman-el-bahnsy.vercel.app/admin/overview) &nbsp;&middot;&nbsp; [📦 Repository](https://github.com/AbdelrahmanElbahnsy/Abdelrahman-Portfolio-main)
+
+<br />
+
+![React](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
 
 </div>
 
 <br />
 
-## 📊 Project Snapshot
+## 👁️ Visual Showcase
 
-| Area | Implementation |
-|---|---|
-| **Frontend** | React 19 + Vite |
-| **Styling** | Tailwind CSS |
-| **Authentication** | Firebase Authentication |
-| **Database** | Cloud Firestore |
-| **Media Management** | Cloudinary |
-| **Communications** | EmailJS |
-| **Hosting & Functions** | Vercel |
-| **Content Management** | AdminOS (Custom Internal CMS) |
-| **Access Control** | Firebase Auth + Firestore RBAC |
+### The Public Experience
+A highly polished, responsive interface serving dynamic content directly from the Cloud Firestore backend.
 
----
+<div align="center">
+  <img src="./docs/assets/media_1789315076403.png" alt="Public Portfolio View" width="100%" style="border-radius: 12px; border: 1px solid #333; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+</div>
 
-## 📖 Overview
+### AdminOS (Content Management System)
+A fully authenticated, role-protected dashboard where authorized administrators and editors manage every aspect of the portfolio's data.
 
-This repository houses a serverless web application that serves as a dynamic professional portfolio. Rather than a static site, this platform is deeply integrated with a custom backend content management system known as **AdminOS**. 
-
-The **AdminOS** allows authorized users to manage all portfolio data—including projects, skills, journey milestones, certifications, and settings—directly from a secure dashboard. The public portfolio dynamically consumes this content via Cloud Firestore. Authentication, role-based authorization (RBAC), and strict Firestore rules secure all administrative functionality.
+<div align="center">
+  <img src="./docs/assets/media_1789315102932.png" alt="AdminOS Dashboard View" width="100%" style="border-radius: 12px; border: 1px solid #333; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+</div>
 
 ---
 
-## 🚀 Live Product
+## 🚀 Why This Project Is Different
 
-### Public Portfolio
-The public-facing application showcases my professional experience, skills, projects, and certifications. It features internationalization (Arabic/English), theme toggling (Dark/Light), and fluid animations.
+This repository goes far beyond a standard static portfolio. It represents a fully engineered, decoupled **Content Management Architecture**. 
 
-**URL:** [https://abdelrahman-el-bahnsy.vercel.app/](https://abdelrahman-el-bahnsy.vercel.app/)
-
-<img src="./docs/assets/media_1789315076403.png" alt="Public Portfolio Preview" width="900" style="border-radius: 8px; border: 1px solid #333;">
-
-<br />
-
-### AdminOS
-The secure internal dashboard used for comprehensive content management and system administration. It is fully role-protected and strictly enforces authentication.
-
-**URL:** [https://abdelrahman-el-bahnsy.vercel.app/admin/overview](https://abdelrahman-el-bahnsy.vercel.app/admin/overview)
-
-<img src="./docs/assets/media_1789315102932.png" alt="AdminOS Dashboard Preview" width="900" style="border-radius: 8px; border: 1px solid #333;">
+Instead of hardcoding personal data into source files, every major section of the public portfolio—including projects, skills, certifications, and hero text—is consumed dynamically from a NoSQL database. The **AdminOS** acts as a secure, role-restricted internal product used to manage that data. This architecture demonstrates practical implementations of serverless API security, Firebase authorization rules, media abstraction, and real-time state synchronization.
 
 ---
 
-## ✨ Key Features
+## 📦 Core Product Overview
 
-### Public Portfolio
-- **Dynamic Content:** Hero, About, Skills, Projects, Certifications, Journey, and Contact sections fully driven by Firestore data.
-- **Internationalization:** Seamless Arabic and English language support.
-- **Theming:** Integrated Dark and Light modes.
-- **Animations:** Fluid interactions powered by GSAP and Framer Motion.
-- **Responsiveness:** Fully responsive behavior from mobile screens to ultrawide desktops.
+### 1. Public Portfolio
+The public-facing frontend is optimized for performance, accessibility, and fluid user experience.
+- **Dynamic CMS Consumption:** Hero, About, Skills, Projects, Certifications, Journey, Contact, and Navbar content are all rendered live from Firestore.
+- **Bilingual Interface:** Deeply integrated Arabic (RTL) and English (LTR) support managed through React Context.
+- **Thematic Consistency:** CSS variable-driven Dark and Light modes.
+- **Responsive Engineering:** Fluid typography and layout adaptations from mobile viewports to ultrawide displays.
+- **Animation System:** Scroll-triggered micro-interactions powered by GSAP and Framer Motion.
 
-### AdminOS
-The AdminOS features dedicated modules for managing all aspects of the platform:
-- **Dashboard & Analytics:** Overview metrics and site settings.
-- **Content Modules:** Manage Projects, Skills, Certifications, Journey, Hero, About, Navbar, and Contact data.
-- **Media Library:** Direct integration with Cloudinary for asset uploads and management.
-- **User Management:** Role-aware user administration backed by server-side authorization.
-- **Account & Profile:** Personal profile and security configurations.
-
----
-
-## 🔄 Content Management Model
-
-The application operates on a centralized, Firestore-backed content management model:
-
-```
-AdminOS (Editors / Admins)
-       │
-       ▼ (Secure Writes)
- Cloud Firestore
-       │
-       ▼ (Public Reads)
- Public Portfolio
-```
-
-AdminOS manages and structures the data via protected write operations. The public portfolio acts as a read-only consumer of that structured content, resulting in immediate UI updates when data changes in Firestore.
+### 2. AdminOS
+A comprehensive, secure internal administration panel built on a modular architecture.
+- **Dashboard & Analytics:** High-level metrics, system health, and page visit insights.
+- **Content Modules:** Dedicated CRUD interfaces for managing Projects, Skills, Certifications, Journey milestones, Hero content, About descriptions, and Contact information.
+- **Media Library:** Direct integration with Cloudinary for uploading and managing visual assets, complete with a custom media picker.
+- **Account Center:** Profile management and secure authentication flows.
+- **Settings:** Global site configuration, including theme enforcement and portfolio visibility toggles.
 
 ---
 
 ## 🏗️ Architecture & Data Flow
+
+The platform relies on a unidirectional content flow where AdminOS acts as the authorized writer, and the Public Portfolio acts as the consumer.
 
 ```mermaid
 flowchart TD
     Visitor([Public Visitor]) --> Portfolio[Public Portfolio UI]
     Admin([Administrator]) --> AdminOS[AdminOS Dashboard]
     
-    AdminOS -->|Content management| Firestore[(Cloud Firestore)]
-    AdminOS -->|Media upload| Cloudinary[Cloudinary CDN]
-    AdminOS -->|Saves Media Metadata| Firestore
-    Firestore -->|Reads Data| Portfolio
+    AdminOS -->|Secure Content Management| Firestore[(Cloud Firestore)]
+    AdminOS -->|Asset Uploads| Cloudinary[Cloudinary CDN]
+    AdminOS -->|Saves Asset Metadata| Firestore
+    Firestore -->|Live Data Sync| Portfolio
     
-    Portfolio -->|Submits Forms| EmailJS[EmailJS Service]
+    Portfolio -->|Form Submissions| EmailJS[EmailJS Service]
     
-    AdminOS -->|Serverless API Calls| VercelAPI[Vercel Serverless Functions]
-    VercelAPI -.->|Server-side Firebase verification| FirebaseAuth[Firebase Authentication]
+    AdminOS -->|Serverless APIs| VercelAPI[Vercel Serverless Functions]
+    VercelAPI -.->|Server-side Token Verification| FirebaseAuth[Firebase Authentication]
 ```
-
-- **Media Flow:** `AdminOS` → `Cloudinary` → `Firestore (Metadata)` → `Public Portfolio`.
-- **Contact Flow:** `Public Portfolio` → `EmailJS`.
 
 ---
 
 ## 🛡️ Security Architecture
 
-The platform prioritizes security across the stack, implementing strict controls to separate public consumption from administrative capabilities.
+Security is implemented at multiple layers, protecting both the client application and the backend infrastructure.
 
-### Authentication & Authorization (RBAC)
-All administrative routes are protected by Firebase Authentication. The system implements a granular Role-Based Access Control model with four distinct tiers:
-- **Owner:** Highest privilege level with full administrative access.
-- **Admin:** System administration, User Management, and content editing.
-- **Editor:** Access to manage content and media, but no User Management capabilities.
-- **Viewer:** Read-only access to the AdminOS dashboard.
+### Role-Based Access Control (RBAC)
+Firebase Authentication handles identity, while a dedicated Firestore `admins` collection enforces roles.
 
-### Server-Side Verification
-User Management and sensitive API actions are protected by Vercel Serverless Functions (e.g., `api/admin/users.js`). The API enforces server-side token validation and explicit role checks before permitting the Firebase Admin SDK to execute account creations, updates, or deletions. 
+| Role | Access Level |
+|---|---|
+| **Owner** | Highest privilege. Full access to content, settings, and user administration. |
+| **Admin** | System administration, user management (excluding Owners), and content editing. |
+| **Editor** | Authorized to manage content and media assets. Cannot modify users. |
+| **Viewer** | Read-only access to the AdminOS dashboard. |
 
-### Firestore Security Rules
-Firestore rules (`firestore.rules`) enforce a strict access posture:
-- **Public Read:** Intentional read access to portfolio data collections (`hero`, `projects`, `skills`, etc.).
-- **Protected Writes:** Create/Update operations strictly require `isEditor()` privileges.
-- **Schema Validation:** Field-level type validation ensures data integrity (e.g., `isValidString`, `isValidNumber`) before any write is permitted.
-- **Default Deny:** All unmapped collections default to absolute denial (`allow read, write: if false;`).
+### Server-Side API Security
+Administrative actions, such as user creation or role modification, are processed through Vercel Serverless Functions (e.g., `api/admin/users.js`). These endpoints explicitly verify the caller's Firebase Auth token and cross-reference their Firestore role before leveraging the privileged Firebase Admin SDK.
 
-### Additional Controls
-- **URL Security:** Dynamic CMS URLs are validated through a dedicated safeUrl utility before rendering.
-- **Security Headers:** Enforced via `vercel.json`, including `Strict-Transport-Security (HSTS)`, `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, and `Permissions-Policy`.
-- **CORS:** Serverless APIs enforce robust Cross-Origin Resource Sharing restrictions.
-- **Credential Isolation:** The Firebase Admin SDK utilizes isolated server-side environment variables (`process.env`) entirely separate from the client-exposed Vite (`VITE_*`) variables. 
-- **Git History Sanitization:** Legacy credential-related historical data has been completely eradicated from the repository's reachable Git history.
+### Firestore Rules & Schema Validation
+The `firestore.rules` configuration enforces a strict security posture:
+- **Public Reads:** Specific collections (`projects`, `skills`, etc.) allow unauthenticated reads for the public portfolio.
+- **Protected Writes:** Create, update, and delete operations strictly require the `isEditor()` privilege.
+- **Type Safety:** Field-level schema validation (e.g., `isValidString`, `isValidNumber`) prevents malformed or malicious data injection.
+- **Default Deny:** The configuration falls back to an absolute deny for unmapped paths.
+
+### Additional Hardening
+- **Dynamic URL Safety:** CMS-provided links are sanitized via a dedicated `safeUrl` utility before rendering, mitigating injection risks.
+- **Security Headers & CORS:** Configured via `vercel.json` and explicit API logic to enforce `Strict-Transport-Security`, `X-Frame-Options: DENY`, and strict Cross-Origin Resource Sharing boundaries.
+- **Credential Isolation:** The Firebase Admin SDK utilizes isolated Vercel server-side environment variables, ensuring private keys are never exposed to the Vite client bundle.
 
 ---
 
-## 🛠️ Technology Stack
+## 💻 Technology Stack
 
 | Category | Technologies |
 |---|---|
-| **Frontend Framework** | React 19, Vite, React Router DOM |
-| **Styling & UI** | Tailwind CSS, Lucide React, React Icons |
-| **Animations** | GSAP, Framer Motion, tsParticles |
-| **Data & Auth** | Firebase (Auth & Firestore), Firebase Admin SDK |
-| **Integrations** | Cloudinary (Media), EmailJS (Contact Forms) |
-| **Infrastructure** | Vercel (Hosting & Serverless APIs) |
-| **Dev Tooling** | ESLint, PostCSS, Playwright (Testing framework) |
+| **Frontend Foundation** | React 19, Vite, React Router DOM |
+| **Styling & Components** | Tailwind CSS, Lucide React, React Icons |
+| **State & Animation** | GSAP, Framer Motion, React Context |
+| **Data & Auth (BaaS)** | Firebase Auth, Cloud Firestore |
+| **Serverless Backend** | Vercel Serverless Functions, Firebase Admin SDK |
+| **Integrations** | Cloudinary (Media CDN), EmailJS (Communications) |
+| **Tooling & Auditing** | ESLint, PostCSS, Playwright |
 
 ---
 
 ## ⚙️ Engineering Highlights
 
-- Firestore-backed CMS architecture shared by AdminOS and the public portfolio.
-- Firebase Authentication with role-based authorization.
-- Server-side Firebase token verification for protected administrative APIs.
-- Firestore security rules with field-level validation.
-- Cloudinary-based media workflow with Firestore metadata.
-- Production security headers and explicit API CORS configuration.
-- Dedicated CMS URL validation for dynamic links.
-- Responsive AdminOS designed for desktop and mobile workflows.
-
----
-
-## 📱 Responsive & UX Capabilities
-
-The application has been engineered to deliver a premium user experience across all devices:
-- **Responsive Layouts:** Both the Public Portfolio and AdminOS adapt fluidly from mobile displays to large desktop monitors.
-- **Adaptive Components:** Modals, tables, and navigation elements behave intelligently based on viewport constraints.
-- **Thematic Consistency:** Deeply integrated CSS variables power seamless transitions between Dark and Light appearances.
-- **Bilingual Interface:** Robust Arabic (RTL) and English (LTR) language support built directly into the UI state.
+- **Decoupled Content Architecture:** The public portfolio requires zero source-code deployments to update professional data.
+- **Shared CMS Hooks:** Abstracted custom React hooks (e.g., `useFirestoreCrud`, `useFirestoreSingleDoc`) drive all AdminOS modules and public data fetching.
+- **Server-Side Verification:** API endpoints enforce strict server-side token validation rather than relying on client-side claims.
+- **Playwright-Based Verification:** Playwright-based verification for responsive UI and critical user flows.
+- **Responsive AdminOS:** The internal CMS is fully usable on mobile viewports, featuring responsive tables, fluid modals, and off-canvas navigation.
+- **Bilingual State Management:** Arabic and English layouts seamlessly flip direction (RTL/LTR) without requiring separate style sheets.
 
 ---
 
 ## 📁 Repository Structure
 
-The repository maintains a clean, professional organization, separating application source code from documentation and operational scripts.
+The repository maintains a strictly professional organization, separating source code from operational tooling.
 
 ```text
 .
-├── api/             # Vercel Serverless Functions (Backend APIs)
-├── docs/            # Project documentation and assets
-│   ├── assets/      
-│   ├── audits/      
-│   ├── history/     
-│   ├── scratch/     
-│   └── screenshots/ 
-├── public/          # Static public assets
-├── scripts/         # Operational tooling
-│   ├── audit/       
-│   ├── maintenance/ 
-│   └── verification/
-├── src/             # Application Source Code (React)
-├── package.json     # Project dependencies and scripts
-├── vite.config.js   # Vite build configuration
-├── firebase.json    # Firebase configuration
-├── firestore.rules  # Firestore security rules
+├── api/             # Vercel Serverless Functions (Backend APIs & User Management)
+├── docs/            # Project documentation and visual assets
+├── public/          # Static public resources
+├── scripts/         # Operational, auditing, and maintenance tooling
+├── src/             # Application Source Code
+│   ├── cms/         # Firestore abstractions and schemas
+│   ├── components/  # AdminOS and Public Portfolio React components
+│   ├── context/     # Global state providers
+│   ├── hooks/       # Reusable React hooks
+│   ├── i18n/        # Internationalization logic
+│   └── styles/      # Global CSS and Tailwind directives
+├── package.json     # Project dependencies and script aliases
+├── vite.config.js   # Vite bundler configuration
+├── firebase.json    # Firebase deployment configuration
+├── firestore.rules  # Cloud Firestore security rules
 └── vercel.json      # Vercel hosting, rewrites, and security headers
 ```
 
 ---
 
-## 💻 Getting Started
+## 🛠️ Local Development
 
 ### 1. Requirements
-- Node.js (v18 or higher recommended)
-- Firebase Project (with Auth and Firestore enabled)
+- Node.js (v18+ recommended)
+- A configured Firebase Project (Auth & Firestore)
 - Cloudinary Account
 - EmailJS Account
 
-### 2. Clone the Repository
+### 2. Installation
 ```bash
 git clone https://github.com/AbdelrahmanElbahnsy/Abdelrahman-Portfolio-main.git
 cd Abdelrahman-Portfolio-main
-```
-
-### 3. Install Dependencies
-```bash
 npm install
 ```
 
-### 4. Environment Configuration
-Copy the `.env.example` file to create your local `.env`:
-```bash
-cp .env.example .env
-```
-Provide the required keys. 
-> ⚠️ **IMPORTANT:** Never commit your `.env` file or expose real credentials to Git.
+### 3. Environment Configuration
+Duplicate the `.env.example` file (or create `.env`) and provide the necessary keys.
+
+> ⚠️ **CRITICAL:** Never commit your `.env` file. Keep server-side credentials strictly separated.
 
 **Client-Side Variables (`VITE_*`)**
-These are safely exposed to the browser for Firebase initialization, Cloudinary uploads, and EmailJS configuration.
+Safe to expose to the browser bundle.
 ```env
 VITE_FIREBASE_API_KEY="..."
+VITE_FIREBASE_PROJECT_ID="..."
 VITE_CLOUDINARY_CLOUD_NAME="..."
 # ...
 ```
 
 **Server-Side Variables**
-These are strictly for Vercel Serverless Functions and must *never* be prefixed with `VITE_`.
+Strictly for Vercel deployment. Do **not** prefix with `VITE_`.
 ```env
 FIREBASE_PROJECT_ID="..."
 FIREBASE_CLIENT_EMAIL="..."
@@ -254,23 +207,24 @@ FIREBASE_PRIVATE_KEY="..."
 OWNER_EMAILS="..."
 ```
 
-### 5. Start the Development Server
+### 4. Running the Application
 ```bash
 npm run dev
 ```
-The application will be available at `http://localhost:5173`.
+The application will launch on `http://localhost:5173`.
 
-### 6. Production Build
+### 5. Production Build
 ```bash
 npm run build
 ```
 
 ---
 
-## 🔮 Roadmap / Future Work
-- **Firebase App Check:** Implement robust App Check (reCAPTCHA Enterprise) to further protect backend services.
-- **Server-Side Rate Limiting:** Enforce strict rate limits on the EmailJS contact submission flow to prevent abuse.
-- **Dependency Modernization:** Keep the Firebase Admin SDK updated in alignment with emerging serverless best practices.
+## 🔮 Roadmap
+
+- **Firebase App Check:** Integration of reCAPTCHA Enterprise to strictly enforce verified client origins.
+- **Server-Side Rate Limiting:** Migrating Contact form submission limits from client-side storage to Edge infrastructure.
+- **Dependency Modernization:** Updating the Firebase Admin SDK to align with the latest serverless deployment standards.
 
 ---
 

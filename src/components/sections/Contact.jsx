@@ -124,6 +124,14 @@ const Contact = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        
+        // Client-side anti-spam cooldown
+        const lastSent = localStorage.getItem('contact_last_sent');
+        if (lastSent && Date.now() - parseInt(lastSent) < 60000) {
+            alert(t("Please wait a minute before sending another message."));
+            return;
+        }
+
         setStatus("PROVISIONING");
         setLogLines([]);
 
@@ -145,6 +153,7 @@ const Contact = () => {
 
         emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, formRef.current, { publicKey: PUBLIC_KEY })
             .then(() => {
+                localStorage.setItem('contact_last_sent', Date.now().toString());
                 setTimeout(() => {
                     setLogLines(prev => [...prev, { text: "$ message delivered successfully ✔", class: "success" }]);
                     setTimeout(() => {

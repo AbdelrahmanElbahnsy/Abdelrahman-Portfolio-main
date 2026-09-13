@@ -2,11 +2,10 @@ import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 
-const OWNER_EMAILS = [
-  "abdelrahmanelbahnsy5@gmail.com",
-  "abdelrahmanelbahnsy3@gmail.com",
-  "abdelrahmanelbahnsy19@gmail.com",
-];
+const OWNER_EMAILS = (process.env.OWNER_EMAILS || "")
+  .split(',')
+  .map(email => email.trim().toLowerCase())
+  .filter(Boolean);
 
 // Helper to initialize and retrieve Firebase Admin securely
 const initFirebaseAdmin = () => {

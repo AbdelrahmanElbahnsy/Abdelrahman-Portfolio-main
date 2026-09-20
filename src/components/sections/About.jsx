@@ -4,6 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { about as fallbackAbout, personalInfo } from '../../data/portfolioData';
 import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
+import { IconRenderer } from '../ui/IconRenderer';
 import { useLanguage } from '../../i18n/LanguageContext';
 
 const About = () => {
@@ -172,7 +173,7 @@ const About = () => {
                                 <div ref={badgesRef} className="about-badges flex flex-wrap gap-4 mt-6">
                                     {badges.map((badge, idx) => (
                                         <div key={idx} className="badge flex items-center gap-3 px-5 py-3 rounded-xl bg-[var(--theme-surface-elevated)] border border-[var(--theme-border-gold)] text-sm font-bold hover:border-[var(--theme-accent)] hover:bg-[var(--theme-accent-soft)] transition-all duration-300">
-                                            <i className={`${badge.icon} text-[var(--theme-accent)] text-lg`}></i> {language === 'ar' ? (badge.labelAr || t(badge.label)) : badge.label}
+                                            <IconRenderer icon={badge.icon} className="text-[var(--theme-accent)] text-lg" fallbackIcon="fas fa-certificate" /> {language === 'ar' ? (badge.labelAr || t(badge.label)) : badge.label}
                                         </div>
                                     ))}
                                 </div>

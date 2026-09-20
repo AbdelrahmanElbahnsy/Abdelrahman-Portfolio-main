@@ -7,7 +7,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { skills as fallbackSkills } from '../../data/portfolioData';
-import { SiMicrosoftazure } from 'react-icons/si';
+import { IconRenderer } from '../ui/IconRenderer';
 import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
 import { transformSkills } from '../../cms/utils/transformSkills';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -137,11 +137,11 @@ const Skills = () => {
                                             <circle className="progress-ring-circle transition-none" cx="50%" cy="50%" r="58" fill="transparent" stroke="var(--theme-accent)" strokeWidth="6" strokeDasharray="364.42" strokeDashoffset="364.42" strokeLinecap="round" />
                                         </svg>
                                         <div className="absolute inset-2 md:inset-3 bg-[var(--theme-bg)] rounded-full flex items-center justify-center z-10 shadow-[var(--theme-shadow-strong)] group-hover:scale-110 transition-transform duration-500">
-                                            {skill.icon?.trim().toLowerCase() === 'simicrosoftazure' ? (
-                                                <SiMicrosoftazure className="text-3xl md:text-4xl text-[var(--theme-accent)] group-hover:text-[var(--theme-text)] transition-colors" />
-                                            ) : (
-                                                <i className={`${skill.icon} text-3xl md:text-4xl text-[var(--theme-accent)] group-hover:text-[var(--theme-text)] transition-colors`}></i>
-                                            )}
+                                            <IconRenderer 
+                                                icon={skill.icon} 
+                                                className="text-3xl md:text-4xl text-[var(--theme-accent)] group-hover:text-[var(--theme-text)] transition-colors" 
+                                                fallbackIcon="fas fa-code" 
+                                            />
                                         </div>
                                         {/* Glow effect */}
                                         <div className="absolute inset-0 rounded-full bg-[var(--theme-accent)] opacity-0 group-hover:opacity-10 blur-xl transition-opacity duration-500 pointer-events-none"></div>
@@ -201,11 +201,7 @@ const Skills = () => {
                                                 {/* Card Header */}
                                                 <div className="flex items-center gap-4 mb-8 relative z-10">
                                                     <div className="w-16 h-16 flex items-center justify-center bg-[var(--theme-accent-soft)] border border-[var(--theme-border-gold)] rounded-2xl text-2xl text-[var(--theme-accent)] group-hover:scale-110 group-hover:bg-[var(--theme-accent)] group-hover:text-[var(--theme-bg)] transition-all duration-500 flex-shrink-0">
-                                                        {card.icon?.trim().toLowerCase() === 'simicrosoftazure' ? (
-                                                            <SiMicrosoftazure />
-                                                        ) : (
-                                                            <i className={card.icon}></i>
-                                                        )}
+                                                        <IconRenderer icon={card.icon} fallbackIcon="fas fa-code" />
                                                     </div>
                                                     <div className="text-left rtl:text-right" dir={language === 'ar' ? 'rtl' : 'ltr'}>
                                                         <h3 className="text-xl md:text-2xl font-bold text-[var(--theme-text)] mb-1 tracking-tight leading-tight">{language === 'ar' ? (card.titleAr || t(card.title)) : card.title}</h3>

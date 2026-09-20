@@ -5,7 +5,7 @@ import 'swiper/css';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { heroTechSlider, personalInfo } from '../../data/portfolioData';
-import { SiMicrosoftazure } from 'react-icons/si';
+import { IconRenderer } from '../ui/IconRenderer';
 import { useMagneticEffect } from '../../hooks/useMagneticEffect';
 import SplitText from '../ui/SplitText';
 import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
@@ -254,11 +254,7 @@ const Hero = ({ splashDone = true }) => {
                                 {heroTechSlider.map((item, idx) => (
                                     <SwiperSlide key={idx} style={{ width: 'auto' }}>
                                         <span className="tech-badge flex items-center gap-2 px-4 md:px-5 py-2 rounded-full border border-[var(--theme-border-gold)] bg-[var(--theme-surface-soft)] text-[var(--theme-text-secondary)] hover:text-[var(--theme-accent)] transition-all duration-300 text-[0.85rem] md:text-base whitespace-nowrap">
-                                            {item.icon === 'SiMicrosoftazure' ? (
-                                                <SiMicrosoftazure />
-                                            ) : (
-                                                <i className={item.icon}></i>
-                                            )}
+                                            <IconRenderer icon={item.icon} fallbackIcon="fas fa-certificate" />
                                             {item.label}
                                         </span>
                                     </SwiperSlide>

@@ -9,7 +9,7 @@ import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import { certifications as fallbackCertifications } from '../../data/portfolioData';
-import { SiMicrosoftazure } from 'react-icons/si';
+import { IconRenderer } from '../ui/IconRenderer';
 import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { safeUrl } from '../../utils/safeUrl';
@@ -33,7 +33,7 @@ const Certifications = () => {
             const fallbackMatch = fallbackCertifications.find(c => c.title === cert.title);
             return {
                 ...cert,
-                icon: cert.icon || (fallbackMatch ? fallbackMatch.icon : 'fas fa-certificate')
+                icon: cert.icon || (fallbackMatch ? fallbackMatch.icon : '')
             };
         });
     }, [firestoreData]);
@@ -145,7 +145,7 @@ const Certifications = () => {
                                                 <div>
                                                     <div className="flex justify-between items-start mb-8">
                                                         <div className="w-16 h-16 rounded-2xl bg-[var(--theme-accent-soft)] border border-[var(--theme-border-gold)] flex items-center justify-center text-3xl text-[var(--theme-accent)] shadow-inner">
-                                                            {cert.icon === 'SiMicrosoftazure' ? <SiMicrosoftazure /> : <i className={cert.icon}></i>}
+                                                            <IconRenderer icon={cert.icon} />
                                                         </div>
                                                         <div className="px-3 py-1 bg-[var(--theme-accent-soft)] border border-[var(--theme-border-gold)] text-[var(--theme-accent)] text-[9px] font-black tracking-widest rounded-full">
                                                             {t('Verified')}

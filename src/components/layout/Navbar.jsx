@@ -4,6 +4,7 @@ import { useGSAP } from '@gsap/react';
 import { personalInfo, socialLinks } from '../../data/portfolioData';
 import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
 import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
+import { IconRenderer } from '../ui/IconRenderer';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { useVisitorPreferences } from '../../context/VisitorPreferencesContext';
 import { safeUrl } from '../../utils/safeUrl';
@@ -349,7 +350,7 @@ const Navbar = ({ splashDone = true }) => {
                                             onClick={(e) => handleNavClick(e, link.id)}
                                             className={`flex items-center justify-center gap-1.5 px-2.5 2xl:px-4 py-2.5 rounded-full text-[10px] 2xl:text-[11px] font-black tracking-[0.12em] transition-all duration-300 ${activeSection === link.id ? 'bg-[var(--theme-nav-active-bg)] text-[var(--theme-nav-active-text)] shadow-[var(--theme-nav-active-shadow)]' : 'text-[var(--theme-nav-text-dim)] hover:text-[var(--theme-nav-text)] hover:bg-[var(--theme-nav-hover-bg)]'}`}
                                         >
-                                            <i className={`${link.icon} ${activeSection === link.id ? 'opacity-100 scale-110' : 'opacity-70'}`}></i>
+                                            <IconRenderer icon={link.icon} className={activeSection === link.id ? 'opacity-100 scale-110' : 'opacity-70'} fallbackIcon="fas fa-circle" />
                                             <span>{link.name}</span>
                                         </a>
                                     </li>
@@ -416,7 +417,7 @@ const Navbar = ({ splashDone = true }) => {
                                     onClick={(e) => handleNavClick(e, link.id)}
                                     className={`flex items-center gap-3.5 md:gap-5 text-[26px] md:text-3xl font-black tracking-tighter transition-all duration-500 ${activeSection === link.id ? 'text-[var(--theme-accent)]' : 'text-[var(--theme-text)]'}`}
                                 >
-                                    <i className={`${link.icon} text-[22px] md:text-2xl opacity-70`}></i>
+                                    <IconRenderer icon={link.icon} className="text-[22px] md:text-2xl opacity-70" fallbackIcon="fas fa-circle" />
                                     {link.name}
                                 </a>
                             </li>
@@ -428,7 +429,7 @@ const Navbar = ({ splashDone = true }) => {
                         <div className="flex gap-8">
                             {socialLinks.navbarMobile.map((social, idx) => (
                                 <a key={idx} href={safeUrl(social.link) || undefined} target="_blank" rel="noopener noreferrer" className="text-[35px] md:text-3xl text-[var(--theme-text)] hover:text-[var(--theme-accent)] transition-all relative z-50">
-                                    <i className={social.icon}></i>
+                                    <IconRenderer icon={social.icon} fallbackIcon="fas fa-link" />
                                 </a>
                             ))}
                         </div>

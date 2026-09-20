@@ -4,6 +4,7 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { contact } from "../../data/portfolioData";
 import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
+import { IconRenderer } from '../ui/IconRenderer';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { safeUrl } from '../../utils/safeUrl';
 
@@ -197,7 +198,7 @@ const Contact = () => {
                                     {channels.map((channel, i) => (
                                         <div key={i} className="channel-item flex items-center gap-4 group">
                                             <div className="icon-box w-12 h-12 flex-shrink-0 sm:w-14 sm:h-14 rounded-xl bg-[var(--theme-surface)] flex items-center justify-center text-[var(--theme-accent)] text-lg sm:text-xl group-hover:scale-110 transition-all border border-[var(--theme-border-strong)]">
-                                                <i className={channel.icon}></i>
+                                                <IconRenderer icon={channel.icon} fallbackIcon="fas fa-link" />
                                             </div>
                                             <div className="channel-info min-w-0 flex-1 text-left rtl:text-right">
                                                 <span className="channel-label text-[10px] font-mono tracking-widest text-[var(--theme-text-muted)] block mb-1">{t(channel.label)}</span>
@@ -338,7 +339,7 @@ const Contact = () => {
                         {opportunities.map((opp, i) => (
                             <div key={i} className="opp-card p-6 sm:p-8 bg-[var(--theme-surface-elevated)] border border-[var(--theme-border-strong)] rounded-2xl hover:border-[var(--theme-accent)] transition-all group">
                                 <div className="opp-icon text-3xl text-[var(--theme-accent)] mb-4 group-hover:scale-110 transition-transform">
-                                    <i className={opp.icon}></i>
+                                    <IconRenderer icon={opp.icon} fallbackIcon="fas fa-briefcase" />
                                 </div>
                                 <h4 className="font-bold mb-2 text-[var(--theme-text)]">{t(opp.title)}</h4>
                                 <p className="text-sm text-[var(--theme-text-secondary)]">{t(opp.desc)}</p>

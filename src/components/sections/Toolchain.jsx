@@ -4,6 +4,7 @@ import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { IconRenderer } from '../ui/IconRenderer';
 import { useGSAP } from '@gsap/react';
 import { toolchain } from '../../data/portfolioData';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -65,7 +66,7 @@ const Toolchain = () => {
                     {[...row1, ...row1, ...row1].map((tool, idx) => (
                         <SwiperSlide key={`r1-${idx}`} className="!w-auto">
                             <div className="tool-card flex items-center gap-3 md:gap-3 px-7 py-4 md:px-6 md:py-3 rounded-2xl bg-[var(--theme-surface-elevated)] border border-[var(--theme-border)] hover:border-[var(--theme-accent)] hover:bg-[var(--theme-accent-soft)] transition-all duration-300 group cursor-grab active:cursor-grabbing">
-                                <i className={`${tool.icon} text-2xl md:text-xl text-[var(--theme-accent)] group-hover:scale-110 transition-transform`}></i>
+                                <IconRenderer icon={tool.icon} className="text-2xl md:text-xl text-[var(--theme-accent)] group-hover:scale-110 transition-transform" fallbackIcon="fas fa-tools" />
                                 <span className="text-base md:text-sm font-medium tracking-tight whitespace-nowrap text-[var(--theme-text)]">{tool.name}</span>
                             </div>
                         </SwiperSlide>
@@ -92,7 +93,7 @@ const Toolchain = () => {
                     {[...row2, ...row2, ...row2].map((tool, idx) => (
                         <SwiperSlide key={`r2-${idx}`} className="!w-auto">
                             <div className="tool-card flex items-center gap-3 md:gap-3 px-7 py-4 md:px-6 md:py-3 rounded-2xl bg-[var(--theme-surface-elevated)] border border-[var(--theme-border)] hover:border-[var(--theme-accent)] hover:bg-[var(--theme-accent-soft)] transition-all duration-300 group cursor-grab active:cursor-grabbing">
-                                <i className={`${tool.icon} text-2xl md:text-xl text-[var(--theme-accent)] group-hover:scale-110 transition-transform`}></i>
+                                <IconRenderer icon={tool.icon} className="text-2xl md:text-xl text-[var(--theme-accent)] group-hover:scale-110 transition-transform" fallbackIcon="fas fa-tools" />
                                 <span className="text-base md:text-sm font-medium tracking-tight whitespace-nowrap text-[var(--theme-text)]">{tool.name}</span>
                             </div>
                         </SwiperSlide>

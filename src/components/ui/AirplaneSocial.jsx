@@ -3,6 +3,7 @@ import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
 import { useMagneticEffect } from '../../hooks/useMagneticEffect';
 import { socialLinks } from '../../data/portfolioData';
 import { safeUrl } from '../../utils/safeUrl';
+import { IconRenderer } from './IconRenderer';
 
 const AirplaneSocial = () => {
     const { data: firestoreData, loading, error, subscribe } = useFirestoreCrud('socials', { orderByField: 'order', orderDirection: 'asc' });
@@ -89,7 +90,7 @@ const AirplaneSocial = () => {
                                     border: '2px solid rgba(255, 255, 255, 0.15)'
                                 }}
                             >
-                                <i className={`${social.icon} transition-transform duration-300 group-hover:rotate-[15deg]`}></i>
+                                <IconRenderer icon={social.icon} className="transition-transform duration-300 group-hover:rotate-[15deg]" fallbackIcon="fas fa-link" />
                             </div>
                         </a>
                     );

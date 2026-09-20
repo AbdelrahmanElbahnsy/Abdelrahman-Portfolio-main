@@ -2,6 +2,7 @@ import React from 'react';
 import { useFirestoreCrud } from '../../cms/hooks/useFirestoreCrud';
 import { useEffect } from 'react';
 import { socialLinks } from '../../data/portfolioData';
+import { IconRenderer } from './IconRenderer';
 import { safeUrl } from '../../utils/safeUrl';
 
 const FloatingSocial = () => {
@@ -28,7 +29,7 @@ const FloatingSocial = () => {
             className="group relative w-10 h-10 rounded-full bg-[#161b22] border border-white/5 flex items-center justify-center text-gray-500 hover:text-[var(--theme-accent)] hover:border-[var(--theme-accent)] transition-all duration-300 hover:-translate-y-1 shadow-lg"
             title={social.platform || social.label}
           >
-            <i className={`${social.icon} text-lg`}></i>
+            <IconRenderer icon={social.icon} className="text-lg" fallbackIcon="fas fa-link" />
             <span className="absolute left-14 px-3 py-1 rounded bg-[var(--theme-accent)] text-black text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl rtl:left-auto rtl:right-14">
               {social.platform || social.label}
             </span>

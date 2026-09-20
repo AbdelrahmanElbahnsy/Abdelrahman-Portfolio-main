@@ -6,6 +6,7 @@ import {
   ArrowUp, ArrowDown, ChevronRight
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { IconRenderer } from '../ui/IconRenderer';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DELETE CONFIRMATION DIALOG
@@ -222,16 +223,32 @@ const CertificationEditor = ({ isOpen, onClose, certification, onSave, isSaving,
                 placeholder="https://drive.google.com/..."
                 helper="Link to the certificate document or verification page."
               />
-              <InputField
-                id="certification-icon"
-                label="ICON CLASS"
-                name="icon"
-                value={formData.icon}
-                onChange={handleChange}
-                isMonospace
-                placeholder="e.g. fas fa-network-wired"
-                helper="FontAwesome class or 'SiMicrosoftazure' for React Icons. Use the exact value from the original source."
-              />
+              <div>
+                <label htmlFor="certification-icon" className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                  <span>ICON CLASS</span>
+                </label>
+                <div className="flex gap-4">
+                  <div className="flex-grow">
+                    <input
+                      id="certification-icon"
+                      type="text"
+                      name="icon"
+                      value={formData.icon || ''}
+                      onChange={handleChange}
+                      className="w-full px-4 h-[48px] bg-[#0a0f1c] border border-[#1e293b] rounded-lg focus:border-[#14f195] text-white outline-none transition-colors font-mono text-sm"
+                      placeholder="e.g. SiDocker, fas fa-network-wired"
+                    />
+                    <p className="text-xs text-gray-500 mt-2">
+                      Supported formats: React Icons (e.g., SiAzuredevops, FaGithub, MdCloud) or Font Awesome (e.g., fas fa-code, fab fa-docker).
+                    </p>
+                  </div>
+                  <div className="shrink-0">
+                    <div className="w-[48px] h-[48px] bg-[#0a0f1c] border border-[#1e293b] rounded-lg flex items-center justify-center text-xl text-[#14f195]">
+                      <IconRenderer icon={formData.icon} showErrorState={true} fallbackIcon="fas fa-certificate" className="text-xl" />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <SectionHeader number="03" title="DISPLAY" />

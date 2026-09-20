@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { personalInfo, socialLinks } from '../../data/portfolioData';
 import { SiMicrosoftazure } from 'react-icons/si';
+import { IconRenderer } from '../ui/IconRenderer';
 import { useFirestoreSingleDoc } from '../../cms/hooks/useFirestoreSingleDoc';
 import { useEffect } from 'react';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -140,7 +141,7 @@ const Footer = () => {
                         <div className="footer-social-icons flex gap-4 mb-8">
                             {socialLinks.footer.map((social, i) => (
                                 <a key={i} href={safeUrl(social.link) || undefined} target="_blank" rel="noreferrer" title={social.title} className="footer-social-icon text-xl text-[var(--theme-text-secondary)] hover:text-[var(--theme-accent)] transition-all hover:scale-110">
-                                    <i className={social.icon}></i>
+                                    <IconRenderer icon={social.icon} fallbackIcon="fas fa-link" />
                                 </a>
                             ))}
                         </div>
